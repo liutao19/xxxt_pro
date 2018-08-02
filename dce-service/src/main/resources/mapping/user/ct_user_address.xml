@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dce.business.dao.user.IUserAddressDao">
+	<resultMap id="BaseResultMap" type="com.dce.business.entity.user.UserAddressDo">
+		<id column="addressId" jdbcType="INTEGER" property="addressid" />
+		<result column="userId" jdbcType="INTEGER" property="userid" />
+		<result column="userName" jdbcType="VARCHAR" property="username" />
+		<result column="userPhone" jdbcType="VARCHAR" property="userphone" />
+		<result column="userTel" jdbcType="VARCHAR" property="usertel" />
+		<result column="areaId1" jdbcType="INTEGER" property="areaid1" />
+		<result column="areaId2" jdbcType="INTEGER" property="areaid2" />
+		<result column="areaId3" jdbcType="INTEGER" property="areaid3" />
+		<result column="communityId" jdbcType="INTEGER" property="communityid" />
+		<result column="address" jdbcType="VARCHAR" property="address" />
+		<result column="postCode" jdbcType="CHAR" property="postcode" />
+		<result column="isDefault" jdbcType="TINYINT" property="isdefault" />
+		<result column="addressFlag" jdbcType="TINYINT" property="addressflag" />
+		<result column="createTime" jdbcType="VARCHAR" property="createtime" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		addressId, userId, userName, userPhone, userTel, areaId1, areaId2, areaId3, communityId,
+		address, postCode, isDefault, addressFlag, createTime
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ct_user_address
+		where addressId = #{addressid,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from ct_user_address
+		where addressId = #{addressid,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" keyColumn="addressId" keyProperty="addressid" parameterType="com.dce.business.entity.user.UserAddressDo"
+		useGeneratedKeys="true">
+		insert into ct_user_address (userId, userName, userPhone,
+		userTel, areaId1, areaId2,
+		areaId3, communityId, address,
+		postCode, isDefault, addressFlag,
+		createTime)
+		values (#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{userphone,jdbcType=VARCHAR},
+		#{usertel,jdbcType=VARCHAR}, #{areaid1,jdbcType=INTEGER}, #{areaid2,jdbcType=INTEGER},
+		#{areaid3,jdbcType=INTEGER}, #{communityid,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR},
+		#{postcode,jdbcType=CHAR}, #{isdefault,jdbcType=TINYINT}, #{addressflag,jdbcType=TINYINT},
+		#{createtime,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" keyColumn="addressId" keyProperty="addressid" parameterType="com.dce.business.entity.user.UserAddressDo"
+		useGeneratedKeys="true">
+		insert into ct_user_address
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				userId,
+			</if>
+			<if test="username != null">
+				userName,
+			</if>
+			<if test="userphone != null">
+				userPhone,
+			</if>
+			<if test="usertel != null">
+				userTel,
+			</if>
+			<if test="areaid1 != null">
+				areaId1,
+			</if>
+			<if test="areaid2 != null">
+				areaId2,
+			</if>
+			<if test="areaid3 != null">
+				areaId3,
+			</if>
+			<if test="communityid != null">
+				communityId,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="postcode != null">
+				postCode,
+			</if>
+			<if test="isdefault != null">
+				isDefault,
+			</if>
+			<if test="addressflag != null">
+				addressFlag,
+			</if>
+			<if test="createtime != null">
+				createTime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				#{userid,jdbcType=INTEGER},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="userphone != null">
+				#{userphone,jdbcType=VARCHAR},
+			</if>
+			<if test="usertel != null">
+				#{usertel,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid1 != null">
+				#{areaid1,jdbcType=INTEGER},
+			</if>
+			<if test="areaid2 != null">
+				#{areaid2,jdbcType=INTEGER},
+			</if>
+			<if test="areaid3 != null">
+				#{areaid3,jdbcType=INTEGER},
+			</if>
+			<if test="communityid != null">
+				#{communityid,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="postcode != null">
+				#{postcode,jdbcType=CHAR},
+			</if>
+			<if test="isdefault != null">
+				#{isdefault,jdbcType=TINYINT},
+			</if>
+			<if test="addressflag != null">
+				#{addressflag,jdbcType=TINYINT},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserAddressDo">
+		update ct_user_address
+		<set>
+			<if test="userid != null">
+				userId = #{userid,jdbcType=INTEGER},
+			</if>
+			<if test="username != null">
+				userName = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="userphone != null">
+				userPhone = #{userphone,jdbcType=VARCHAR},
+			</if>
+			<if test="usertel != null">
+				userTel = #{usertel,jdbcType=VARCHAR},
+			</if>
+			<if test="areaid1 != null">
+				areaId1 = #{areaid1,jdbcType=INTEGER},
+			</if>
+			<if test="areaid2 != null">
+				areaId2 = #{areaid2,jdbcType=INTEGER},
+			</if>
+			<if test="areaid3 != null">
+				areaId3 = #{areaid3,jdbcType=INTEGER},
+			</if>
+			<if test="communityid != null">
+				communityId = #{communityid,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="postcode != null">
+				postCode = #{postcode,jdbcType=CHAR},
+			</if>
+			<if test="isdefault != null">
+				isDefault = #{isdefault,jdbcType=TINYINT},
+			</if>
+			<if test="addressflag != null">
+				addressFlag = #{addressflag,jdbcType=TINYINT},
+			</if>
+			<if test="createtime != null">
+				createTime = #{createtime,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where addressId = #{addressid,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserAddressDo">
+		update ct_user_address
+		set userId = #{userid,jdbcType=INTEGER},
+		userName = #{username,jdbcType=VARCHAR},
+		userPhone = #{userphone,jdbcType=VARCHAR},
+		userTel = #{usertel,jdbcType=VARCHAR},
+		areaId1 = #{areaid1,jdbcType=INTEGER},
+		areaId2 = #{areaid2,jdbcType=INTEGER},
+		areaId3 = #{areaid3,jdbcType=INTEGER},
+		communityId = #{communityid,jdbcType=INTEGER},
+		address = #{address,jdbcType=VARCHAR},
+		postCode = #{postcode,jdbcType=CHAR},
+		isDefault = #{isdefault,jdbcType=TINYINT},
+		addressFlag = #{addressflag,jdbcType=TINYINT},
+		createTime = #{createtime,jdbcType=VARCHAR}
+		where addressId = #{addressid,jdbcType=INTEGER}
+	</update>
+</mapper>

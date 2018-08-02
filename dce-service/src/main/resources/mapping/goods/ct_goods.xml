@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dce.business.dao.goods.ICTGoodsDao">
+	<resultMap id="BaseResultMap" type="com.dce.business.entity.goods.CTGoodsDo">
+		<id column="goodsId" property="goodsId" />
+		<result column="goodsSn" property="goodsSn" />
+		<result column="title" property="title" />
+		<result column="goodsImg" property="goodsImg" />
+		<result column="goodsThums" property="goodsThums" />
+		<result column="brandId" property="brandId" />
+		<result column="shopId" property="shopId" />
+		<result column="marketPrice" property="marketPrice" />
+		<result column="shopPrice" property="shopPrice" />
+		<result column="goodsStock" property="goodsStock" />
+		<result column="saleCount" property="saleCount" />
+		<result column="isBook" property="isBook" />
+		<result column="bookQuantity" property="bookQuantity" />
+		<result column="warnStock" property="warnStock" />
+		<result column="goodsUnit" property="goodsUnit" />
+		<result column="goodsSpec" property="goodsSpec" />
+		<result column="isSale" property="isSale" />
+		<result column="isBest" property="isBest" />
+		<result column="isHot" property="isHot" />
+		<result column="isRecomm" property="isRecomm" />
+		<result column="isNew" property="isNew" />
+		<result column="isAdminBest" property="isAdminBest" />
+		<result column="isAdminRecom" property="isAdminRecom" />
+		<result column="recommDesc" property="recommDesc" />
+		<result column="cid1" property="cid1" />
+		<result column="cid2" property="cid2" />
+		<result column="cid3" property="cid3" />
+		<result column="shopCatId1" property="shopCatId1" />
+		<result column="shopCatId2" property="shopCatId2" />
+		<result column="goodsDesc" property="goodsDesc" />
+		<result column="isShopRecomm" property="isShopRecomm" />
+		<result column="isIndexRecomm" property="isIndexRecomm" />
+		<result column="isActivityRecomm" property="isActivityRecomm" />
+		<result column="isInnerRecomm" property="isInnerRecomm" />
+		<result column="status" property="status" />
+		<result column="saleTime" property="saleTime" />
+		<result column="attrCatId" property="attrCatId" />
+		<result column="goodsKeywords" property="goodsKeywords" />
+		<result column="goodsFlag" property="goodsFlag" />
+		<result column="statusRemarks" property="statusRemarks" />
+		<result column="createTime" property="createTime" />
+		
+	</resultMap>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select * from ct_goods where goodsId=#{goodsId}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from ct_goods where goodsId = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" keyColumn="goodsId" keyProperty="goodsId" parameterType="com.dce.business.entity.goods.CTGoodsDo"
+		useGeneratedKeys="true">
+		insert into ct_goods (goodsSn, 
+		title, 
+		goodsImg,
+		goodsThums, 
+		brandId, 
+		shopId,
+		marketPrice, 
+		shopPrice, 
+		goodsStock,
+		saleCount, 
+		isBook, 
+		bookQuantity, 
+		warnStock,
+		goodsUnit,
+		goodsSpec,
+		isSale,
+		isBest,
+		isHot,
+		isRecomm,
+		isNew,
+		isAdminBest,
+		isAdminRecom,
+		recommDesc,
+		cid1,
+		cid2,
+		cid3,
+		shopCatId1,
+		shopCatId2,
+		goodsDesc,
+		isShopRecomm,
+		isIndexRecomm,
+		isActivityRecomm,
+		isInnerRecomm,
+		status,
+		saleTime,
+		attrCatId,
+		goodsKeywords,
+		goodsFlag,
+		statusRemarks
+		)
+		values (
+		#{goodsSn}, 
+		#{title}, 
+		#{goodsImg}, 
+		#{goodsThums}, 
+		#{brandId}, 
+		#{shopId}, 
+		#{marketPrice}, 
+		#{shopPrice}, 
+		#{goodsStock}, 
+		#{saleCount}, 
+		#{isBook}, 
+		#{bookQuantity}, 
+		#{warnStock}, 
+		#{goodsUnit}, 
+		#{goodsSpec}, 
+		#{isSale}, 
+		#{isBest}, 
+		#{isHot}, 
+		#{isRecomm}, 
+		#{isNew}, 
+		#{isAdminBest}, 
+		#{isAdminRecom}, 
+		#{recommDesc}, 
+		#{cid1}, 
+		#{cid2}, 
+		#{cid3}, 
+		#{shopCatId1}, 
+		#{shopCatId2}, 
+		#{goodsDesc}, 
+		#{isShopRecomm}, 
+		#{isIndexRecomm}, 
+		#{isActivityRecomm}, 
+		#{isInnerRecomm}, 
+		#{status}, 
+		#{saleTime}, 
+		#{attrCatId}, 
+		#{goodsKeywords}, 
+		#{goodsFlag}, 
+		#{statusRemarks} 
+		)
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.goods.CTGoodsDo">
+		update ct_goods
+		<set>
+			<if test="goodsSn != null">
+				goodsSn = #{goodsSn},
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="goodsImg != null">
+				goodsImg = #{goodsImg},
+			</if>
+			<if test="goodsThums != null">
+				goodsThums = #{goodsThums},
+			</if>
+			<if test="brandId != null">
+				brandId = #{brandId},
+			</if>
+			<if test="shopId != null">
+				shopId = #{shopId},
+			</if>
+			<if test="marketPrice != null">
+				marketPrice = #{marketPrice},
+			</if>
+			<if test="shopPrice != null">
+				shopPrice = #{shopPrice},
+			</if>
+			<if test="goodsStock != null">
+				goodsStock = #{goodsStock},
+			</if>
+			<if test="saleCount != null">
+				saleCount = #{saleCount},
+			</if>
+			<if test="isBook != null">
+				isBook = #{isBook},
+			</if>
+			<if test="bookQuantity != null">
+				bookQuantity = #{bookQuantity},
+			</if>
+			<if test="warnStock != null">
+				warnStock = #{warnStock},
+			</if>
+		</set>
+		where goodsId = #{goodsId}
+	</update>
+	
+	
+	<update id="updateBookQty" parameterType="com.dce.business.entity.goods.CTGoodsDo">
+		update ct_goods
+		<set>
+			
+			<if test="bookQuantity != null">
+				goodsStock = goodsStock - #{bookQuantity},
+			</if>
+			<if test="bookQuantity != null">
+				saleCount = saleCount + #{bookQuantity},
+			</if>
+			
+		</set>
+		<![CDATA[
+		where goodsId = #{goodsId} and goodsStock - #{bookQuantity} >=0
+		]]>
+	</update>
+	
+	
+	<!-- 自定义查询 -->
+    <select id="selectByPage4App" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select goodsId,
+        title,
+        saleCount,
+        marketPrice,
+        shopPrice,
+        goodsimg
+        from ct_goods limit #{offset},#{rows}
+         
+    </select>
+</mapper>

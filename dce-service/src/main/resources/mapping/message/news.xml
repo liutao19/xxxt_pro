@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dce.business.dao.message.INewsDao">
+
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.dce.business.entity.message.NewsDo">
+		SELECT
+		    id,
+		    news_type as newsType,
+		    title,
+		    list_image,
+		    banner_image,
+		    content,
+		    author,
+		    hot_news,
+		    top_news,
+		    click,
+		    latest_news,
+		    remark,
+		    status,
+		    create_date as creatDate,
+		    create_name,
+		    update_date,
+		    update_name,
+		    sys_company_code,
+		    sys_org_code
+		FROM
+		    t_ys_news
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	
+	<!-- 自定义查询 -->
+    <select id="select" parameterType="java.util.Map" resultType="com.dce.business.entity.message.NewsDo">
+        SELECT
+		    id,
+		    news_type as `newstype`,
+		    title,
+		    list_image,
+		    banner_image,
+		    content,
+		    author,
+		    hot_news,
+		    top_news,
+		    click,
+		    latest_news,
+		    remark,
+		    status,
+		    create_date as creatDate,
+		    create_name,
+		    update_date,
+		    update_name,
+		    sys_company_code,
+		    sys_org_code
+		FROM
+		    t_ys_news
+        ORDER BY create_date DESC LIMIT #{offset},#{rows}
+    </select>
+</mapper>

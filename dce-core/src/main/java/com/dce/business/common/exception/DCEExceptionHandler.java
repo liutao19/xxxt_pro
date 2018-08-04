@@ -15,7 +15,6 @@ import com.dce.business.common.result.Result;
 public class DCEExceptionHandler implements HandlerExceptionResolver {
 
     @Override
-    @SuppressWarnings("unused")
     public ModelAndView resolveException( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
         if (ex instanceof IllegalArgumentException || ex instanceof BusinessException) {

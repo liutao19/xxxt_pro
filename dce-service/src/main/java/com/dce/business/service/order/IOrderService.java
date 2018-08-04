@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.page.PageDo;
 
 public interface IOrderService {
 
@@ -66,4 +67,13 @@ public interface IOrderService {
     List<Map<String,Object>> selectOrderForReport(Map<String, Object> paraMap);
     
     int selectOrderForReportCount(Map<String, Object> paraMap);
+    
+    public PageDo<Map<String,Object>> selectOrderByPage(PageDo<Map<String,Object>> page,Map<String, Object> params);
+    
+    /**
+     * 统计挂单量
+     * @param paraMap
+     * @return
+     */
+    Long selectGuadanAmount(Map<String, Object> paraMap);
 }

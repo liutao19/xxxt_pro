@@ -168,6 +168,9 @@
 				AND accountType = #{accountType}
 			</if>
 		</trim>
+		<if test="offset != null">
+			limit #{offset}, #{rows}
+		</if>
 	</select>
 
 	<update id="updateUserAmountById" parameterType="com.dce.business.entity.account.UserAccountDo">
@@ -217,5 +220,38 @@
 		values (#{userId,jdbcType=INTEGER}, #{qrcode,jdbcType=VARCHAR},now())
 	</insert>
 	
+	<select id="selectAccountInfoByPage" parameterType="Map" resultType="Map">
+		SELECT CONCAT(b.user_name,'[',b.true_name,']') AS userName, a.userId,
+		
+		MAX(CASE a.accountType WHEN 'wallet_original' THEN a.amount ELSE 0 END ) wallet_original,
+		
+		MAX(CASE a.accountType WHEN 'wallet_original_release' THEN a.amount ELSE 0 END) wallet_original_release ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_interest' THEN a.amount ELSE 0 END) wallet_interest ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_bonus' THEN a.amount ELSE 0 END) wallet_bonus ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_release_release' THEN a.amount ELSE 0 END) wallet_release_release ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_score' THEN a.amount ELSE 0 END) wallet_score ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_cash' THEN a.amount ELSE 0 END) wallet_cash 
+		
+		FROM ct_user_account a LEFT JOIN ct_user b on a.userId=b.id
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="userName != null">
+				AND (b.user_name = #{userName} OR b.true_name=#{userName})
+			</if>
+			<if test="trueName != null">
+				AND b.true_name = #{trueName}
+			</if>
+		</trim>
+		GROUP BY a.userId
+		
+	</select>
 	
+	<select id="sumAccount" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT  SUM(amount) AS amount, accountType FROM ct_user_account	GROUP BY accountType
+		
+	</select>
 </mapper>

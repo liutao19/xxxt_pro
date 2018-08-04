@@ -40,10 +40,13 @@ public class CtCurrencyDo implements Serializable {
 	private Integer currency_digit_num;
 	private String guanwang_url;
 	private Integer utime;
-	private Integer is_ctstatus;// '充币提币状态0不可1可',
+	private Integer is_ctstatus;// '充币状态0不可1可',
+	private Integer is_tbstatus;// '提币状态0不可1可',
 	private BigDecimal guadanum;// '卖出挂单量',
 	private BigDecimal buynum;// '买进量',
 	private BigDecimal guabuynum;// '买入挂单量',
+	private Integer is_award_switch; //'奖金开关：0 关  1：开
+	private Integer is_shifang_switch; //'释放开关：0 关  1：开
 
 	public Integer getId() {
 		return id;
@@ -347,6 +350,30 @@ public class CtCurrencyDo implements Serializable {
 
 	public void setGuabuynum(BigDecimal guabuynum) {
 		this.guabuynum = guabuynum;
+	}
+
+	public Integer getIs_award_switch() {
+		return is_award_switch;
+	}
+
+	public void setIs_award_switch(Integer is_award_switch) {
+		this.is_award_switch = is_award_switch;
+	}
+
+	public Integer getIs_shifang_switch() {
+		return is_shifang_switch;
+	}
+
+	public void setIs_shifang_switch(Integer is_shifang_switch) {
+		this.is_shifang_switch = is_shifang_switch;
+	}
+
+	public Integer getIs_tbstatus() {
+		return is_tbstatus;
+	}
+
+	public void setIs_tbstatus(Integer is_tbstatus) {
+		this.is_tbstatus = is_tbstatus;
 	}
 
 }

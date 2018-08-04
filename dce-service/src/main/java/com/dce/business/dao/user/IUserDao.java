@@ -39,5 +39,26 @@ public interface IUserDao {
      * @param params
      * @return  
      */
-    List<UserDo> selectPage(Map<String, Object> params);
+    List<UserDo> selectFenYe(Map<String, Object> params);
+    
+    /**
+     * 分页查询  加入拦截器后的实现方式
+     * @param params
+     * @return
+     */
+    List<UserDo> selectByPage(Map<String, Object> params);
+    
+    /**
+     * 
+     * @param params
+     * @return
+     */
+    List<UserDo> selectEthAccountByPage(Map<String, Object> params);
+    
+    /**
+     * 统计报单金额
+     * @param params
+     * @return
+     */
+    Long selectBaoDanAmount(Map<String,Object> params);
 }

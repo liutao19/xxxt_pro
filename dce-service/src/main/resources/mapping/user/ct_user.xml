@@ -1011,6 +1011,9 @@
 			<if test="tranDirect != null">
 				tran_direct = #{tranDirect,jdbcType=DECIMAL},
 			</if>
+			<if test="isActivated != null">
+				isActivated = #{isActivated},
+			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
@@ -1268,4 +1271,67 @@
 		  limit #{offset},10
 		</if>
 	</select>
+	
+	<select id="selectByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		SELECT u.*,u1.user_name AS refereeUserName
+		FROM ct_user u LEFT JOIN  ct_user u1 ON u.refereeid = u1.id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userName != null">
+				AND u.user_name like concat('', #{userName}, '%')
+			</if>
+			<if test="trueName != null">
+                AND u.true_name like concat('', #{trueName}, '%')
+            </if>
+            <if test="mobile != null">
+                AND u.mobile like concat('', #{mobile}, '%')
+            </if>
+            <if test="startDate != null">
+                AND <![CDATA[ u.reg_time >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null">
+                AND <![CDATA[ u.reg_time <= #{endDate} ]]>
+            </if>
+		</trim>
+	</select>
+	<select id="selectEthAccountByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select u.*, c.account  as ethAccount
+        from ct_user u
+        left join ct_ethereum_account c on u.id = c.userId
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userName != null">
+				AND u.user_name like concat('', #{userName}, '%')
+			</if>
+			<if test="trueName != null">
+                AND u.true_name like concat('', #{trueName}, '%')
+            </if>
+            <if test="mobile != null">
+                AND u.mobile like concat('', #{mobile}, '%')
+            </if>
+            <if test="keyword != null">
+                AND (u.mobile like concat('', #{keyword}, '%') or u.true_name like concat('', #{keyword}, '%') or u.user_name like concat('', #{keyword}, '%'))
+            </if>
+		</trim>
+	</select>
+	<select id="selectBaoDanAmount" parameterType="java.util.Map" resultType="Long">
+		SELECT sum(u.baodan_amount) as amount
+		FROM ct_user u
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userName != null">
+				AND u.user_name like concat('', #{userName}, '%')
+			</if>
+			<if test="trueName != null">
+                AND u.true_name like concat('', #{trueName}, '%')
+            </if>
+            <if test="mobile != null">
+                AND u.mobile like concat('', #{mobile}, '%')
+            </if>
+            <if test="startDate != null">
+                AND <![CDATA[ u.reg_time >= #{startDate} ]]>
+            </if>
+            <if test="endDate != null">
+                AND <![CDATA[ u.reg_time <= #{endDate} ]]>
+            </if>
+		</trim>
+	</select>
+	
 </mapper>

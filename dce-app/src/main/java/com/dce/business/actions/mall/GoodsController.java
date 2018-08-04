@@ -97,6 +97,7 @@ public class GoodsController extends BaseController {
 		String address = getString("address");
 		String receiveName = getString("receiveName");
 		String receivePhone = getString("receivePhone");
+		String addressId = getString("addressId");
 		Assert.hasText(address, "收货地址不能为空");
 		Assert.hasText(receiveName, "收货人不能为空");
 		Assert.hasText(receivePhone, "收货人电话不能为空");
@@ -109,7 +110,19 @@ public class GoodsController extends BaseController {
 		addressDo.setUserPhone(receivePhone);
 		addressDo.setUserTel(receivePhone);
 		addressDo.setUserId(userId);
+		if(StringUtils.isNotBlank(addressId)){
+			addressDo.setAddressId(Integer.parseInt(addressId));
+		}
 		return ctUserAddressService.save(addressDo);
+	}
+	
+	@RequestMapping(value = "/address", method = { RequestMethod.GET })
+	public Result<?> getAddress() {
+
+		Integer userId = getUserId();
+
+		CTUserAddressDo addressDo = ctUserAddressService.getAddress(userId);
+		return Result.successResult("查询成功", addressDo);
 	}
 	
 	@RequestMapping(value = "/product/buy", method = {RequestMethod.POST})

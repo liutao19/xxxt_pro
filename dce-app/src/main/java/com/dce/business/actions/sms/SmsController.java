@@ -3,7 +3,6 @@ package com.dce.business.actions.sms;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +16,7 @@ import com.dce.business.service.sms.ISmsService;
 @RequestMapping("/sms")
 public class SmsController extends BaseController {
 	
-    private final static Logger logger = Logger.getLogger(SmsController.class);
+  //  private final static Logger logger = Logger.getLogger(SmsController.class);
 
     @Resource
     private ISmsService smsService;
@@ -31,7 +30,7 @@ public class SmsController extends BaseController {
     public Result<?> sendSms() {
         Integer userId = getUserId();
         String page = getString("page");
-        Result result = Result.successResult("发送成功");
+        Result<?> result = Result.successResult("发送成功");
         try{
         	smsService.send(userId,page);
         }catch(BusinessException be){
@@ -71,7 +70,7 @@ public class SmsController extends BaseController {
     	Integer userId = getUserId();
     	String page = getString("page");
     	String smsCode = getString("smsCode");
-    	Result result = Result.successResult("验证通过");
+    	Result<?> result = Result.successResult("验证通过");
     	try{
     		return smsService.checkSms(userId,page,smsCode);
     	}catch(Exception e){

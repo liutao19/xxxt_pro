@@ -23,27 +23,30 @@ import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.goods.CTUserAddressDo;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.account.IAccountService;
+import com.dce.business.service.account.IPayService;
 import com.dce.business.service.goods.ICTGoodsService;
 
 @Service("ctGoodsService")
 public class CTGoodsServiceImpl implements ICTGoodsService {
-	
+
 	private final static Logger logger = Logger.getLogger(CTGoodsServiceImpl.class);
-	
+
 	@Resource
-    private ICTGoodsDao ctGoodsDao;
+	private ICTGoodsDao ctGoodsDao;
 	@Resource
 	private ICTUserAddressDao ctUserAddressDao;
 	@Resource
-    private IOrderDao orderDao;
-	
+	private IOrderDao orderDao;
+
 	@Resource
-    private IAccountService accountService;
-	
+	private IAccountService accountService;
+	@Resource
+	private IPayService payService;
+
 	@Override
-	public List<CTGoodsDo> selectByPage(int pageNum,int pageCount) {
-		Map<String,Object> params = new HashMap<String,Object>();
-		pageNum = pageNum > 0?pageNum - 1:pageNum;
+	public List<CTGoodsDo> selectByPage(int pageNum, int pageCount) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		pageNum = pageNum > 0 ? pageNum - 1 : pageNum;
 		int offset = pageNum * pageCount;
 		int rows = pageCount;
 		params.put("offset", offset);
@@ -57,38 +60,38 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
-	public Result<?> buyGoods(OrderDo order,Integer addressId) {
-		if(order.getGoodsId() == null || order.getQty().intValue() <= 0){
-			
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Result<?> buyGoods(OrderDo order, Integer addressId) {
+		if (order.getGoodsId() == null || order.getQty().intValue() <= 0) {
+
 			logger.error("购买商品参数错误:goodsId=" + order.getGoodsId() + ",qty=" + order.getQty());
 			return Result.failureResult("购买商品参数错误");
 		}
-		
+
 		CTGoodsDo goods = selectById(order.getGoodsId());
 		//判断购买数量是否大于库存量
-		if(order.getQty().intValue() > goods.getGoodsStock()){
+		if (order.getQty().intValue() > goods.getGoodsStock()) {
 			return Result.failureResult("购买商品数量大于库存量");
 		}
-		
+
 		//如果没传收货地址,则查询默认且有效的收货地址
-		if(addressId == null){
-			
-			Map<String,Object> params = new HashMap<String,Object>();
+		if (addressId == null) {
+
+			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("userId", order.getUserId());
 			params.put("isDefault", 1);
 			params.put("addressFlag", 1);
-			
+
 			List<CTUserAddressDo> addressList = ctUserAddressDao.select(params);
 			if (CollectionUtils.isEmpty(addressList)) {
-			    return Result.failureResult("请先设置收货地址");
+				return Result.failureResult("请先设置收货地址");
 			}
 			order.setRecAddress(addressList.get(0).getAddress());
-		}else{
+		} else {
 			CTUserAddressDo address = ctUserAddressDao.selectByPrimaryKey(addressId);
 			order.setRecAddress(address.getAddress());
 		}
-		
+
 		order.setCreateTime(new Date());
 		order.setOrderCode(OrderCodeUtil.genOrderCode(order.getUserId()));
 		order.setOrderStatus(2);
@@ -98,27 +101,27 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		order.setTotalPrice(order.getQty().multiply(order.getPrice()).setScale(6, RoundingMode.HALF_UP));
 		order.setPayTime(new Date());
 		int flag = orderDao.insertSelective(order);
-		
-		if(flag < 1){
+
+		if (flag < 1) {
 			return Result.failureResult("购买订单保存失败");
 		}
-		
+
 		CTGoodsDo _goods = new CTGoodsDo();
 		_goods.setGoodsId(goods.getGoodsId());
 		_goods.setBookQuantity(order.getQty().longValue());
 		//修改库存
-		try{
-			 int ret = ctGoodsDao.updateBookQty(_goods);
-			 if(ret<1){
-				 return Result.failureResult("购买失败库存不够");
-			 }
-		}catch(Exception e){
+		try {
+			int ret = ctGoodsDao.updateBookQty(_goods);
+			if (ret < 1) {
+				return Result.failureResult("购买失败库存不够");
+			}
+		} catch (Exception e) {
 			logger.error(e);
 			return Result.failureResult("购买失败库存不够");
 		}
-		
-		return accountService.buyGoods(order.getUserId(),order.getTotalPrice());
-		
+
+		return payService.buyGoods(order.getUserId(), order.getTotalPrice());
+
 	}
 
 }

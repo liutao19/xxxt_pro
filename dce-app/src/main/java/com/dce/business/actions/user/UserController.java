@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
@@ -30,12 +29,11 @@ import com.dce.business.common.token.TokenUtil;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.NumberUtil;
 import com.dce.business.entity.account.UserAccountDo;
-import com.dce.business.entity.dict.LoanDictDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.message.NewsDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
-import com.dce.business.service.award.IStaticAwardService;
+import com.dce.business.service.award.IReleaseService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.message.INewsService;
 import com.dce.business.service.user.IUserService;
@@ -56,7 +54,7 @@ public class UserController extends BaseController {
     @Resource
     private IAccountService accountService;
     @Resource
-    private IStaticAwardService staticAwardService;
+    private IReleaseService staticAwardService;
     @Resource
     private INewsService  newsService;
     @Resource
@@ -319,7 +317,7 @@ public class UserController extends BaseController {
 	        Assert.hasText(trueName, "姓名不能为空");
 	        Assert.hasText(mobile, "手机号码不能为空");
 	        //        Assert.hasText(email, "邮箱不能为空");
-	        Assert.hasText(idnumber, "身份证不能为空");
+	        //	      Assert.hasText(idnumber, "身份证不能为空");
 	        //        Assert.hasText(banktype, "银行不能为空");
 	        //        Assert.hasText(bankUserName, "开户名不能为空");
 	        //        Assert.hasText(banknumber, "银行卡号不能为空");
@@ -345,9 +343,9 @@ public class UserController extends BaseController {
 	        }
 	        userDo.setBankUserName(bankUserName);
 	        
-	        if (StringUtils.isNotBlank(idnumber)) {
+	        if (StringUtils.isNotBlank(banknumber)) {
 	        	
-	        	idnumber =  idnumber.replaceAll(" ","");
+	        	banknumber =  banknumber.replaceAll(" ","");
 	        	userDo.setBanknumber(banknumber);
 	        }
 	        userDo.setBankContent(bankContent);
@@ -371,30 +369,6 @@ public class UserController extends BaseController {
         }
     }
 
-    /**   
-     * 每天0点计算
-    */
-//    @RequestMapping(value = "/calStaticByAdmin", method = RequestMethod.GET)
-//    public void calStaticByAdmin() {
-//        staticAwardService.calStatic();
-//    }
-     
-    
-    /**   
-     * 每天0点计算
-     */
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void calStatic() {
-    	
-    	LoanDictDo loanDict = loanDictService.getLoanDict("staticAwardOnOff");
-    	if(loanDict != null && "off".equalsIgnoreCase(loanDict.getRemark())){
-            logger.error("系统设置停止释放"); 
-    		throw new BusinessException("系统设置停止释放");
-    	}
-    	
-        staticAwardService.calStatic();
-    }
-    
     @RequestMapping(value="toLevel",method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView tosetLevel(){
     	ModelAndView mv = new ModelAndView("jjzd/set_user_level");

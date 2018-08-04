@@ -49,7 +49,6 @@ public class LingDaoAwardServiceImpl implements IAwardService {
     private IUserRefereeDao userRefereeDao;
 
     @Override
-    @SuppressWarnings("unused")
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void calAward(Integer userId, BigDecimal amount,Integer userLevel) {
         List<TouchBonusRecordDo> list = getTouchBonus(userId);
@@ -92,7 +91,7 @@ public class LingDaoAwardServiceImpl implements IAwardService {
             UserAccountDo accountDo = new UserAccountDo();
             accountDo.setUserId(refereeDo.getRefereeid());
             accountDo.setAmount(leaderBonus);
-            accountDo.setAccountType(AccountType.current.getAccountType());
+            accountDo.setAccountType(AccountType.wallet_bonus.getAccountType());
             accountDo.setRemark(remark);
             accountService.updateUserAmountById(accountDo, IncomeType.TYPE_AWARD_LEADER);
         }

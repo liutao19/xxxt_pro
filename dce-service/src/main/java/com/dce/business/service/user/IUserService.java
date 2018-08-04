@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dce.business.common.result.Result;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
 
 public interface IUserService {
@@ -98,5 +99,16 @@ public interface IUserService {
      * @return
      */
     Result<?> setUserLevel(String userCode,String userLevel);
+    
+    PageDo<UserDo> selectUserByPage(PageDo<UserDo> page, Map<String, Object> params);
+    
+    PageDo<UserDo> selectEthAccountByPage(PageDo<UserDo> page, Map<String, Object> params);
+    
+    /**
+     * 统计报单金额
+     * @param params
+     * @return
+     */
+    Long selectBaoDanAmount(Map<String,Object> params);
     
 }

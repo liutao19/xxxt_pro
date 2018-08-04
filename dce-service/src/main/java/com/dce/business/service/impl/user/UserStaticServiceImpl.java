@@ -37,8 +37,8 @@ public class UserStaticServiceImpl implements IUserStaticService {
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void insert(UserStaticDo userStaticDo) {
-        userStaticDao.insertSelective(userStaticDo);
+    public int insert(UserStaticDo userStaticDo) {
+        return userStaticDao.insertSelective(userStaticDo);
     }
 
 	@Override
@@ -49,5 +49,11 @@ public class UserStaticServiceImpl implements IUserStaticService {
 		}else{
 			return false;
 		}
+	}
+
+	@Override
+	public int updateStatic(UserStaticDo staticDo) {
+		
+		return userStaticDao.updateByPrimaryKeySelective(staticDo);
 	}
 }

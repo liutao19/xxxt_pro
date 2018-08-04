@@ -440,4 +440,65 @@
 		where id = #{id,jdbcType=INTEGER} and process_status = '2'	
 	</update>
 	
+	<select id="selectWithDrawByPage" parameterType="map" resultType="map">
+		SELECT a.*, 
+	       b.true_name,
+	       b.user_name,b.mobile, 
+		CASE WHEN a.withdraw_date > 0 THEN FROM_UNIXTIME(a.withdraw_date) ELSE '' END AS withdrawDateStr, 
+		CASE WHEN a.confirm_date > 0 THEN FROM_UNIXTIME(a.confirm_date) ELSE '' END AS confirmDateStr, 
+		CASE a.process_status WHEN 1 THEN '待审批' WHEN 2 THEN '已审批' WHEN 3 THEN '已拒绝' END AS processStatusStr,
+		CASE c.confirmed WHEN 'true' THEN '已到账'  ELSE '未到账' END confirmed, 
+		c.updateTime AS confirmed_date,
+		c.actualAmount AS confirmedAmt
+		FROM ct_withdrawals a LEFT JOIN ct_user b  ON a.userid = b.id
+		                      LEFT JOIN  ct_ethereum_trans_info c ON a.id = c.withdrawalsId and c.hash <![CDATA[ <> ]]> ''
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="mobile != null">  
+              AND  b.mobile=#{mobile}
+			</if>
+			<if test="userName != null">  
+               AND b.user_name=#{userName}
+			</if>
+			<if test="trueName != null">  
+               AND b.true_name=#{trueName}
+			</if>
+			<if test="processStatus != null">  
+               AND a.process_status=#{processStatus}
+			</if>
+			<if test="startDate != null">  
+               AND <![CDATA[a.withdraw_date >= UNIX_TIMESTAMP(#{startDate})]]>
+           </if>
+           <if test="endDate != null">  
+               AND <![CDATA[a.withdraw_date <= UNIX_TIMESTAMP(#{endDate})]]>
+           </if>
+		</trim>
+        order by a.withdraw_date desc
+	</select>
+	
+	<select id="selectWithDrawTotallAmount" parameterType="Map" resultType="Long">
+		select sum(a.amount) as amount 
+		FROM ct_withdrawals a LEFT JOIN ct_user b  ON a.userid = b.id
+		                      LEFT JOIN  ct_ethereum_trans_info c ON a.id = c.withdrawalsId and c.hash <![CDATA[ <> ]]> ''
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="mobile != null">  
+              AND  b.mobile=#{mobile}
+			</if>
+			<if test="userName != null">  
+               AND b.user_name=#{userName}
+			</if>
+			<if test="trueName != null">  
+               AND b.true_name=#{trueName}
+			</if>
+			<if test="processStatus != null">  
+               AND a.process_status=#{processStatus}
+			</if>
+			<if test="startDate != null">  
+               AND <![CDATA[a.withdraw_date >= UNIX_TIMESTAMP(#{startDate})]]>
+           </if>
+           <if test="endDate != null">  
+               AND <![CDATA[a.withdraw_date <= UNIX_TIMESTAMP(#{endDate})]]>
+           </if>
+		</trim> 
+	
+	</select>
 </mapper>

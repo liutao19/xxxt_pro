@@ -44,4 +44,13 @@ public interface IUserAccountDao {
 	 * @return
 	 */
 	Integer getUserIdByQRCode(String qrCode);
+	
+	/**
+	 * 分页分组查询用户账户信息
+	 * @param prarams
+	 * @return
+	 */
+	List<Map<String,Object>> selectAccountInfoByPage(Map<String,Object> prarams);
+
+	List<UserAccountDo> sumAccount(Map<String,Object> emptyMap);
 }

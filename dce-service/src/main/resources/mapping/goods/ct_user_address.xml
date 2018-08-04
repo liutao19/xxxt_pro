@@ -51,6 +51,9 @@
 			<if test="createTime != null">
 				createTime,
 			</if>
+			<if test="updateTime != null">
+				updateTime,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="userId != null">
@@ -90,7 +93,10 @@
 				#{addressFlag,jdbcType=TINYINT},
 			</if>
 			<if test="createTime != null">
-				#{createTime,jdbcType=VARCHAR},
+				now(),
+			</if>
+			<if test="updateTime != null">
+				now(),
 			</if>
 		</trim>
 	</insert>
@@ -133,6 +139,9 @@
 			<if test="addressFlag != null">
 				addressFlag = #{addressFlag},
 			</if>
+			<if test="updateTime != null">
+				updateTime = now(),
+			</if>
 		</set>
 		where addressId = #{addressId}
 	</update>
@@ -169,5 +178,6 @@
                AND addressFlag = #{addressFlag}
            </if>
         </trim> 
+        order by updateTime desc;
     </select>
 </mapper>

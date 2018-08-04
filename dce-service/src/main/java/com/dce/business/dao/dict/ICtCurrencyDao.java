@@ -8,4 +8,5 @@ public interface ICtCurrencyDao {
 	
 	CtCurrencyDo selectByName(@Param("currency_name") String currency_name);
 
+	int update(CtCurrencyDo ct);
 }

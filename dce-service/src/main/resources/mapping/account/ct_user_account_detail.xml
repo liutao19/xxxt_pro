@@ -14,6 +14,8 @@
 		<result property="userName" column="userName" />
 		<result property="balanceAmount" column="balanceAmount" />
 		<result property="seqId" column="seqId" />
+		<result property="transactionObject" column="transactionObject" />
+		<result property="relevantUser" column="relevantUser" />
 	</resultMap>
 
 	<select id="getById" parameterType="Long" resultMap="userAccountDetailResultMap">
@@ -22,7 +24,7 @@
 	</select>
 
 	<select id="selectUserAccountDetail" parameterType="Map" resultMap="userAccountDetailResultMap">
-		SELECT d.*,  u.user_name as userName
+		SELECT d.*,  u.user_name as userName,  d.relevantUser as transactionObject
 		  FROM ct_user_account_detail d
 		  left join ct_user u on d.userId = u.id
 		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
@@ -110,6 +112,9 @@
 		</if>				
 		<if test="remark != null">  
 				remark = #{remark},
+		</if>	
+		<if test="relevantUser != null">  
+				relevantUser = #{relevantUser},
 		</if>				
 		</trim>
 		WHERE id = #{id} 
@@ -126,6 +131,7 @@
 		,remark
 		,balanceAmount
 		,seqId
+		,relevantUser
 		)
 		   VALUES (#{userId}
 		,#{amount}
@@ -136,6 +142,7 @@
 		,#{remark}
 		,#{balanceAmount}
 		,#{seqId}
+		,#{relevantUser}
 		)
 	</insert>
 	
@@ -207,5 +214,46 @@
 		DELETE FROM ct_user_account_detail WHERE id = #{id}
 	</delete>
 	
+	<select id="selectUserAccountDetailByPage" parameterType="Map" resultMap="userAccountDetailResultMap">
+		SELECT d.*,  u.user_name as userName
+		  FROM ct_user_account_detail d
+		  left join ct_user u on d.userId = u.id
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND d.id = #{id}
+			</if>
+			<if test="userId != null">  
+				AND d.userId = #{userId}
+			</if>
+			<if test="userName != null">  
+				AND u.user_name = #{userName}
+			</if>
+			<if test="amount != null">  
+				AND d.amount = #{amount}
+			</if>
+			<if test="moreOrLess != null">  
+				AND d.moreOrLess = #{moreOrLess}
+			</if>
+			<if test="incomeType != null">  
+				AND d.incomeType = #{incomeType}
+			</if>
+			<if test="accountType != null">  
+				AND d.accountType = #{accountType}
+			</if>
+			<if test="remark != null">  
+				AND d.remark = #{remark}
+			</if>
+			<if test="createTime != null">  
+				AND date_format(d.createTime,'%Y-%m-%d') = #{createTime}
+			</if>
+			<if test="startDate != null">  
+			    <![CDATA[AND d.createTime >= str_to_date(#{startDate},'%Y-%m-%d %H') ]]>
+            </if>
+            <if test="endDate != null">  
+                <![CDATA[AND d.createTime <= str_to_date(#{endDate},'%Y-%m-%d %H') ]]>
+            </if>
+         </trim> 
+			order by d.createTime desc
+	</select>
 </mapper>
 

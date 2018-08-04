@@ -63,4 +63,19 @@
         </set>
         where no = #{no,jdbcType=INTEGER}
     </update>
+    
+    
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="map">
+		select * from ct_ethereum_account_platform where status = 'T'
+		<if test="isDefault != null">
+			AND isDefault = #{isDefault}
+		</if>
+		<if test="no != null">
+            AND no = #{no}
+        </if>
+        <if test="account != null">
+            AND account = #{account}
+        </if>
+		order by updateTime desc
+	</select> 
 </mapper>

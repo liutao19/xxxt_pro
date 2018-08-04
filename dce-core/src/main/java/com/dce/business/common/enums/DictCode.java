@@ -6,7 +6,7 @@ public enum DictCode {
      */
     BaoDanFei("BaoDanFei"),
     /**
-     * 美元点转人民币比例
+     * 人民币N:现金币 1
      */
     Point2RMB("Point2RMB"),
     /**
@@ -42,7 +42,57 @@ public enum DictCode {
      */
     GasLimit("GasLimit"),
     BaoDanZengSong("BaoDanZengSong"), LiangPeng("LiangPeng"), LiangPengFengDing("LiangPengFengDing"), LiangPengRate("LiangPengRate"), ZhiTui(
-            "ZhiTui"), HuZhuJiaQuan("HuZhuJiaQuan"), LingDao("LingDao"), JiaJin("JiaJin");
+            "ZhiTui"), HuZhuJiaQuan("HuZhuJiaQuan"), LingDao("LingDao"), JiaJin("JiaJin"),
+    
+    /**
+     * 持币生息
+     */
+    ProfitRate("ProfitRate"), 
+    /**
+     * 小区分享奖
+     */
+    ShareRate("ShareRate"), 
+    /**
+     * 直推有效时间
+     */
+    ZhiTuiTime("ZhiTuiTime"),
+    /**
+     * 封顶
+     */
+    FengDin("FengDin"),
+    /**
+     * 原始仓钱包释放
+     */
+    OrigShiFangRate("OrigShiFangRate"),
+    /**
+     * 日息钱包释放
+     */
+    DaysShiFangRate("DaysShiFangRate"),
+    /**
+     * 奖金钱包释放
+     */
+    AwardShiFangRate("AwardShiFangRate"),
+    /**
+     * 二次释放比例
+     */
+    SecondShiFangRate("SecondShiFangRate"),
+    /**
+     * 提现手续费比例
+     */
+    WithDrawFee("WithDrawFee"),
+    /**
+     * 流通币释放比例
+     */
+    ScoreShiFangRate("ScoreShiFangRate"),
+    /**
+     * 现金币与IBAC比例  1现金币=N IBAC币
+     */
+    CashToIBAC("CashToIBAC"),
+    /**
+     * 流通币与IBAC比例  1流通币=N IBAC币
+     */
+    ScoreToIBAC("ScoreToIBAC")
+    ;
 
     private String code;
 

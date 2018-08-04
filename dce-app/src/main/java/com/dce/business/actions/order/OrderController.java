@@ -39,7 +39,7 @@ import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.award.IAwardService;
-import com.dce.business.service.award.IBonusLogService;
+import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.order.IOrderService;
 
 @RestController
@@ -87,6 +87,7 @@ public class OrderController extends BaseController {
         String price = getString("price");
         String qty = getString("qty");
         String orderType = getString("orderType");//1--买入；2--卖出
+        String accountType = getString("accountType"); //账户类型
         logger.info("用户挂单, userId:" + userId + "; price:" + price + "; qty:" + qty + "; orderType:" + orderType);
         if(StringUtils.isBlank(price)){
         	logger.error("买入价格不能为空");
@@ -105,6 +106,8 @@ public class OrderController extends BaseController {
         	}
         }
         
+        Assert.notNull(accountType, "钱包类型不能为空");
+        
         if(StringUtils.isBlank(orderType)){
         	logger.error("挂单类型不能为空");
         	Assert.hasText(orderType, "挂单类型不能为空");
@@ -122,7 +125,7 @@ public class OrderController extends BaseController {
 	        orderDo.setOrderStatus(OrderStatus.effective.getCode()); //有效
 	        orderDo.setPayStatus(PayStatus.paying.getCode());   //未成交
 	        orderDo.setCreateTime(new Date());
-	
+	        orderDo.setAccountType(accountType);
 	        return orderService.guadan(orderDo);
         }catch(Exception e){
         	logger.error("挂单报错:" , e);
@@ -187,6 +190,7 @@ public class OrderController extends BaseController {
             map.put("date", DateUtil.dateToString(order.getCreateTime())); //挂单时间
             map.put("orderType", order.getOrderType()); //订单类型
             map.put("payStatus", order.getPayStatus()); //支付状态 0 待付  1 已支付
+            map.put("accountType", order.getAccountType()); //账户类型
             
             list.add(map);
         }
@@ -335,6 +339,7 @@ public class OrderController extends BaseController {
             map.put("amount", NumberUtil.formatterBigDecimal(order.getTotalPrice())); //总额
             map.put("date", DateUtil.dateToString(order.getCreateTime())); //挂单时间
             map.put("orderType", order.getOrderType()); //订单类型
+            map.put("accountType", order.getAccountType()); //账户类型
             list.add(map);
         }
         return Result.successResult("成功", list);
@@ -359,44 +364,65 @@ public class OrderController extends BaseController {
     	return result;
     }
 
-    /**
-     * 报单
-     * @return
-     */
-    @RequestMapping(value = "/baodan", method = RequestMethod.POST)
-    public Result<?> baodan() {
-        String qty = getString("qty");
-        String accountType = getString("buyType");
-        String level = getString("userLevel");
+	/**
+	 * 报单
+	 * @return
+	 */
+	@RequestMapping(value = "/baodan", method = RequestMethod.POST)
+	public Result<?> baodan() {
+		String scoreAmountStr = getString("scoreAmount"); //积分
+		String cashAmountStr = getString("cashAmount"); //现金 
+		String userLevelStr = getString("userLevel");
 
-        logger.info("报单：qty=" + qty + ",buyType=" + accountType);
+		Integer userId = getUserId();
+		logger.info("用户报单， userid:" + userId);
+		logger.info("scoreAmount=" + scoreAmountStr);
+		logger.info("cashAmount=" + cashAmountStr);
+		logger.info("userLevel:" + userLevelStr);
 
-        Assert.hasText(qty, "数量不能为空!");
-        Assert.hasText(level, "用户级别不能为空!");
-        Assert.hasText(accountType, "请选择美元点或现持仓!");
+		Assert.hasText(cashAmountStr, "请输入报单金额!");
+		Assert.hasText(userLevelStr, "请选择报单级别！");
 
-        BigDecimal qtyVal = BigDecimal.ZERO;
-        try {
-            qtyVal = new BigDecimal(qty);
-            if (qtyVal.compareTo(BigDecimal.ZERO) <= 0) {
-                return Result.failureResult("报单数量必须大于0!");
-            }
-        } catch (Exception e) {
-        	logger.error("报单出错1",e);
-            return Result.failureResult("无效的报单数量!");
-        }
+		BigDecimal cashAmount = BigDecimal.ZERO;
+		BigDecimal scoreAmount = BigDecimal.ZERO;
+		Integer userLevel = 0;
+		try {
+			cashAmount = new BigDecimal(cashAmountStr);
 
-        Integer userId = getUserId();
-        try {
-            baodanService.baodan(userId, qtyVal, accountType, Integer.valueOf(level));
-            return Result.successResult("报单成功!");
-        } catch (Exception e) {
-        	logger.error("报单出错1",e);
-            return Result.failureResult(e.getMessage());
-        }
+			//可能全部现金报单
+			if (StringUtils.isNotBlank(scoreAmountStr)) {
+				scoreAmount = new BigDecimal(scoreAmountStr);
+			}
 
-    }
-    
+			if (cashAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				return Result.failureResult("报单金额必须大于0!");
+			}
+		} catch (Exception e) {
+			logger.error("报单出错：", e);
+			return Result.failureResult("请输入正确的报单金额!");
+		}
+
+		try {
+			userLevel = Integer.valueOf(userLevelStr);
+			if (userLevel <= 0) {
+				return Result.failureResult("请选择报单级别");
+			}
+		} catch (Exception e) {
+			logger.error("报单出错：", e);
+			return Result.failureResult("请选择报单级别");
+		}
+
+		try {
+			baodanService.baodan(userId, cashAmount, scoreAmount, userLevel);
+			return Result.successResult("报单成功!");
+		} catch (IllegalArgumentException | BusinessException e) {
+			logger.error("报单出错:", e);
+			return Result.failureResult(e.getMessage());
+		} catch (Exception e) {
+			logger.error("报单出错:", e);
+			return Result.failureResult("系统繁忙，请稍后再试");
+		}
+	}
     
     
     /**

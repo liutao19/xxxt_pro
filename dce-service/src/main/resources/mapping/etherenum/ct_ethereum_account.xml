@@ -77,4 +77,29 @@
            </if>
         </trim> 
 	</select>
+	<select id="selectEthereumAccountByPage" parameterType="java.util.Map" resultType="Map">
+		select a.*,b.user_name as userName,b.true_name as trueName from ct_ethereum_account a 
+		left join ct_user b on a.userId = b.id
+		 <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+           <if test="userId != null">  
+               AND a.userId = #{userId}
+           </if>
+           <if test="userName != null">  
+               AND b.user_name = #{userName}
+           </if>
+           <if test="account != null">  
+               AND a.account = #{account}
+           </if>
+           <if test="startDate != null">
+                AND <![CDATA[ a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s') ]]>
+            </if>
+            <if test="endDate != null">
+                AND <![CDATA[ a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s') ]]>
+            </if>
+        </trim> 
+	</select>
+	<update id="updateBalance" parameterType="com.dce.business.entity.etherenum.EthereumAccountDo">
+		update ct_ethereum_account set balance = #{balance} 
+		where userId = #{userid}
+	</update>
 </mapper>

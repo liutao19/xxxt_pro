@@ -2,12 +2,11 @@ package com.dce.business.service.impl.account;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -27,7 +26,6 @@ import com.dce.business.common.util.DateUtil;
 import com.dce.business.dao.user.IUserDao;
 import com.dce.business.dao.user.IUserStaticDao;
 import com.dce.business.entity.account.UserAccountDo;
-import com.dce.business.entity.dict.LoanDictDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserStaticDo;
@@ -40,262 +38,251 @@ import com.dce.business.service.user.IUserStaticService;
 
 @Service("baodanService")
 public class BaodanServiceImpl implements IBaodanService {
-    private final static Logger logger = Logger.getLogger(BaodanServiceImpl.class);
-    @Resource
-    private IUserStaticDao userStaticDao;
-    @Resource(name = "awardServiceAsync")
-    private IAwardService awardService;
-    @Resource
-    private IUserDao userDao;
-    @Resource
-    private ILoanDictService loanDictService;
-    @Resource
-    private IAccountService accountService;
-    @Resource
-    private IUserStaticService userStaticService;
+	private final static Logger logger = Logger.getLogger(BaodanServiceImpl.class);
+	@Resource
+	private IUserStaticDao userStaticDao;
+	@Resource(name = "awardServiceAsync")
+	private IAwardService awardService;
+	@Resource
+	private IUserDao userDao;
+	@Resource
+	private ILoanDictService loanDictService;
+	@Resource
+	private IAccountService accountService;
+	@Resource
+	private IUserStaticService userStaticService;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public Result<?> reCast(Integer userId, BigDecimal qty, String accountType) {
-        UserDo user = userDao.selectByPrimaryKey(userId);
-        if (user == null) {
-            logger.info("用户不存在");
-            return Result.failureResult("用户不存在!");
-        }
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public void baodan(Integer userId, BigDecimal cashAmount, BigDecimal scoreAmount, Integer userLevel) {
+		logger.info("用户报单，userId:" + userId);
+		logger.info("cashAmount:" + cashAmount);
+		logger.info("scoreAmount:" + scoreAmount);
+		logger.info("userLevel:" + userLevel);
 
-        List<UserStaticDo> oldBaoDan = this.getBaoDan(userId);
+		//校验  用户是否已经报过单
+		UserDo user = userDao.selectByPrimaryKey(userId);
+		if (user == null) {
+			logger.info("用户不存在 userId:" + userId);
+			throw new BusinessException("用户不存在");
+		}
 
-        if (CollectionUtils.isEmpty(oldBaoDan)) {
-            logger.info("用户还未报单,不能复投. userId" + userId);
-            return Result.failureResult("你还未报单,不能复投!");
-        }
-        //获取复投金额 为报单金额
-        BigDecimal oldQty = oldBaoDan.get(0).getTotalmoney();
-        if (oldQty.compareTo(qty) > 0) {
-            return Result.failureResult("复投不能小于原报单金额");
-        }
+		//检查用户是否已报单
+		checkHasBaoDan(userId);
 
-        //复投修改级别
-        String userLevel = getLevelByQty(qty);
+		//报单成功累计推荐人
+		userDao.addRefereeNumber(user.getRefereeid());
 
-        /*
-        BigDecimal originalQty = calBaodanByLevel(userLevel, qty);
-        UserDo record = new UserDo();
-        record.setId(userId);
-        record.setUserLevel( new Byte(userLevel));
-        userDao.updateByPrimaryKeySelective(record );
-        //原始仓账户添加
-        UserAccountDo userAccountDo = new UserAccountDo();
-        userAccountDo.setUserId(userId);
-        userAccountDo.setAmount(originalQty);
-        userAccountDo.setAccountType(AccountType.original.getAccountType());
-        updateUserAmountById(userAccountDo, IncomeType.TYPE_AWARD_JIAJIN);
-        
-        //现持仓账户减少
-        userAccountDo = new UserAccountDo();
-        userAccountDo.setUserId(userId);
-        userAccountDo.setAmount(qty.negate());
-        userAccountDo.setAccountType(AccountType.current.getAccountType());
-        updateUserAmountById(userAccountDo, IncomeType.TYPE_AWARD_JIAJIN);
-        
-        UserStaticDo userStatic = new UserStaticDo();
-        userStatic.setUserid(userId);
-        userStatic.setMoney(calMoney(originalQty));
-        userStatic.setStatus((byte) 1);
-        userStatic.setType(StaticType.FuTou.getType());
-        userStatic.setTotalmoney(originalQty);
-        userStatic.setEndDate(DateUtil.getDate(new Date(), 365)); //365天结束
-        userStaticService.insert(userStatic);
-        */
+		//根据报单级别查看报单所需金额
+		LoanDictDtlDo loanDictDtl = loanDictService.getLoanDictDtl(DictCode.BaoDanFei.getCode(), userLevel.toString());
+		Assert.notNull(loanDictDtl, "报单费未配置");
+		Assert.hasText(loanDictDtl.getRemark(), "报单费未配置");
 
-        int model = 2;//2 代表复投
-        this.changeAccountByBaodan(userId, qty, accountType, Integer.parseInt(userLevel), model);
+		LoanDictDtlDo CashToIBAC = loanDictService.getLoanDictDtl(DictCode.CashToIBAC.getCode());
+		LoanDictDtlDo ScoreToIBAC = loanDictService.getLoanDictDtl(DictCode.ScoreToIBAC.getCode());
+		
+		BigDecimal baodanFei = new BigDecimal(loanDictDtl.getRemark());
+		
+		BigDecimal cashToIBAC = new BigDecimal(CashToIBAC.getRemark());
+		BigDecimal scoreToIBAC = new BigDecimal(ScoreToIBAC.getRemark());
+		
+		BigDecimal totalAmount = cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN).add(scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN)); //现金+积分
+		if (totalAmount.compareTo(baodanFei) != 0) {
+			throw new BusinessException("报单金额与用户等级不匹配");
+		}
 
-        return Result.successResult("复投成功");
-    }
+		//判断积分比例
+		loanDictDtl = loanDictService.getLoanDictDtl(DictCode.ScoreShiFangRate.getCode(), userLevel.toString());
+		Assert.notNull(loanDictDtl, "报单流通币比例未配置");
+		Assert.hasText(loanDictDtl.getRemark(), "报单流通币比例未配置");
+		BigDecimal rate = new BigDecimal(loanDictDtl.getRemark());
+		BigDecimal maxScoreAmount = baodanFei.multiply(rate).setScale(6, RoundingMode.HALF_UP); //报单时至多只能用这么多积分，其余的必须用现金券
+		if (scoreAmount.compareTo(maxScoreAmount) > 0) {
+			throw new BusinessException("流通币金额不能大于" + maxScoreAmount.toString());
+		}
 
-    private String getLevelByQty(BigDecimal qty) {
-        List<LoanDictDtlDo> loanDictLst = loanDictService.queryDictDtlListByDictCode(DictCode.BaoDanFei.getCode());
-        Assert.notEmpty(loanDictLst, "报单费未配置");
-        for (LoanDictDtlDo dtl : loanDictLst) {
-            if (qty.compareTo(new BigDecimal(dtl.getRemark())) <= 0) {
-                return dtl.getCode();
-            }
-        }
-        return "5";
-    }
+		try {
+			checkAccountAmount(userId, AccountType.wallet_cash, cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN));
+			checkAccountAmount(userId, AccountType.wallet_score, scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN));
 
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void baodan(Integer userId, BigDecimal qty, String accountType, Integer userLevel) {
+			//更新账户
+			updateAccountAmount(userId, cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN), scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN), baodanFei);
 
-    	LoanDictDo loanDict = loanDictService.getLoanDict("baodanOnOff");
-    	if(loanDict != null && "off".equalsIgnoreCase(loanDict.getRemark())){
-             throw new BusinessException("停止报单");
-    	}
-    	
-    	
-        logger.info("用户报单，userId:" + userId + "; qty:" + qty + "; accountType:" + accountType + "; userlevel:" + userLevel);
+			UserStaticDo userStatic = new UserStaticDo();
+			userStatic.setUserid(userId);
+			userStatic.setMoney(calMoney(totalAmount, userLevel));
+			userStatic.setStatus((byte) 1);
+			userStatic.setType(StaticType.BaoDan.getType());
+			userStatic.setTotalmoney(totalAmount);
+			userStatic.setEndDate(DateUtil.getDate(new Date(), 365)); //365天结束
+			userStaticService.insert(userStatic);
+		} catch (BusinessException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error("账户金额不足", e);
+			throw new BusinessException("账户金额不足");
+		}
 
-        //校验  用户是否已经报过单
-        UserDo user = userDao.selectByPrimaryKey(userId);
+		//更新用户级别
+		try {
+			UserDo record = new UserDo();
+			record.setId(userId);
+			record.setUserLevel(userLevel.byteValue());
+			record.setActivationTime(new Date().getTime());
+			record.setBaodan_amount(baodanFei);
+			record.setIsActivated(1);
+			userDao.updateByPrimaryKeySelective(record);
+		} catch (Exception e) {
+			logger.error("更新用户级别出错", e);
+			throw new BusinessException("更新用户级别出错");
+		}
 
-        if (user == null) {
-            logger.info("用户不存在 userId:" + userId);
-            throw new BusinessException("用户不存在");
-        }
-        if (!CollectionUtils.isEmpty(getBaoDan(userId))) {
-            logger.info("用户已报过单 不能在报单.userId:" + userId);
-            throw new BusinessException("你已报过单, 不能在报单!");
-        }
+		//异步调用 ，统计业绩
+		awardService.calAward(userId, totalAmount, userLevel);
+	}
 
-        //报单成功累计推荐人
-        userDao.addRefereeNumber(user.getRefereeid());
-        //int model = 1; //model=1表示报单
-        changeAccountByBaodan(userId, qty, accountType, userLevel, 1);
+	public static void main(String[] args) {
+		BigDecimal b1 = new BigDecimal("1.3");
+		BigDecimal b2 = new BigDecimal("2.88");
+		BigDecimal b3 = new BigDecimal("4");
+		System.out.println(b3.compareTo(b1.add(b2)));
+	}
+	private void updateAccountAmount(Integer userId, BigDecimal cashAmount, BigDecimal scoreAmount, BigDecimal baodanFei) {
+		String seqId = UUID.randomUUID().toString();
 
-        //计算业绩
-        //userService.updateAllPerformance(qty, userId);
+		//1、现金账户
+		UserAccountDo cashAccount = new UserAccountDo();
+		cashAccount.setUserId(userId);
+		cashAccount.setAmount(cashAmount.negate());
+		cashAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+		cashAccount.setSeqId(seqId);
+		accountService.updateUserAmountById(cashAccount, IncomeType.TYPE_AWARD_BAODAN);
 
-        //异步调用 
-        awardService.calAward(userId, qty, userLevel);
-    }
+		//2、积分账户
+		UserAccountDo scoreAccount = new UserAccountDo();
+		scoreAccount.setUserId(userId);
+		scoreAccount.setAmount(scoreAmount.negate());
+		scoreAccount.setAccountType(AccountType.wallet_score.getAccountType());
+		scoreAccount.setSeqId(seqId);
+		accountService.updateUserAmountById(scoreAccount, IncomeType.TYPE_AWARD_BAODAN);
 
-    private void changeAccountByBaodan(Integer userId, BigDecimal qty, String accountType, Integer userLevel, int model) {
-        //根据报单级别查看报单所需金额
-        LoanDictDtlDo loanDictDtl = loanDictService.getLoanDictDtl(DictCode.BaoDanFei.getCode(), userLevel.toString());
-        Assert.notNull(loanDictDtl, "报单费未配置");
-        Assert.hasText(loanDictDtl.getRemark(), "报单费未配置");
-        String range = loanDictDtl.getRemark();
-        if (qty.compareTo(new BigDecimal(range)) != 0) {
-            throw new BusinessException("报单数量与用户等级不匹配");
-        }
+		//3、原始仓账户
+		UserAccountDo originalAccount = new UserAccountDo();
+		originalAccount.setUserId(userId);
+		originalAccount.setAmount(baodanFei);
+		originalAccount.setAccountType(AccountType.wallet_original.getAccountType());
+		originalAccount.setSeqId(seqId);
+		accountService.updateUserAmountById(originalAccount, IncomeType.TYPE_AWARD_BAODAN);
+	}
 
-        //查询报单赠送比例
-        loanDictDtl = loanDictService.getLoanDictDtl(DictCode.BaoDanZengSong.getCode(), userLevel.toString());
-        Assert.notNull(loanDictDtl, "报单赠送未配置");
-        Assert.hasText(loanDictDtl.getRemark(), "报单赠送未配置");
+	/**
+	 * 判断账户余额是否充足
+	 * @param userId
+	 * @param accountType
+	 * @param amount
+	 */
+	private void checkAccountAmount(Integer userId, AccountType accountType, BigDecimal amount) {
+		UserAccountDo account = accountService.selectUserAccount(userId, accountType.getAccountType());
+		if (account == null || account.getAmount() == null || account.getAmount().compareTo(amount) < 0) {
+			throw new BusinessException("报单失败，余额不足!");
+		}
+	}
 
-        BigDecimal targetQty = qty.multiply(new BigDecimal(loanDictDtl.getRemark())).setScale(6, RoundingMode.HALF_UP);
-        //维护账户资金变动
-        try {
-            //先查询是否有对应账户  且账户中是否有足够余额
-            UserAccountDo account = accountService.selectUserAccount(userId, accountType);
-            if (account == null) {
-                throw new BusinessException("报单失败，余额不足!");
-            }
+	/**
+	 * 检查是否已报单
+	 * @param userId
+	 * @return
+	 */
+	private void checkHasBaoDan(Integer userId) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("type", StaticType.BaoDan.getType());
+		params.put("userid", userId);
+		List<UserStaticDo> list = userStaticDao.select(params);
+		if (CollectionUtils.isEmpty(list)) {
+			return;
+		}
 
-            BigDecimal sourceQty = qty;
-            if (AccountType.current.name().equals(accountType)) {
-                if (account.getAmount().compareTo(qty) < 0) {
-                    throw new BusinessException("当前现持仓额度【" + account.getAmount() + "】小于要加金的额度【" + qty + "】");
-                }
-            } else if (AccountType.point.name().equals(accountType)) {
-                //计算，根据当前价格 计算需要多少个美元点
-                BigDecimal point = account.getAmount();
-                /** sourceQty = qty * 当天dce当天价格  /7  **/
-                //查询美元点比DCE币的比例 N:1
-                LoanDictDtlDo MYDBXCC = loanDictService.getLoanDictDtl(DictCode.MYDBXCC.getCode());
-                BigDecimal decp = new BigDecimal(MYDBXCC.getRemark());
-                //计算需要的美元点
-                sourceQty = qty.multiply(decp);
+		throw new BusinessException("请勿重复报单");
+	}
 
-                if (point.compareTo(sourceQty) < 0) {
-                    throw new BusinessException("当前美元点账户余额不足");
-                }
-            }
+	/**
+	 * 计算原始每日释放金额
+	 * @param amount
+	 * @param userLevel
+	 * @return
+	 */
+	private BigDecimal calMoney(BigDecimal amount, Integer userLevel) {
+		if(amount.compareTo(BigDecimal.ZERO) < 0){
+			return BigDecimal.ZERO;
+		}
+		LoanDictDtlDo loanDictDtlDo = loanDictService.getLoanDictDtl(DictCode.OrigShiFangRate.getCode(), userLevel.toString());
+		Assert.notNull(loanDictDtlDo, "未设置原始币钱包释放比例");
+		Assert.hasText(loanDictDtlDo.getRemark(), "未设置原始币钱包释放比例");
 
-            IncomeType actionFrom = IncomeType.TYPE_AWARD_BAODAN;
-            IncomeType actionTo = IncomeType.TYPE_AWARD_BAODAN;
-            if (2 == model) {//复投
-                actionFrom = IncomeType.TYPE_AWARD_FUTOU;
-                actionTo = IncomeType.TYPE_AWARD_FUTOU;
-            }
+		BigDecimal rate = new BigDecimal(loanDictDtlDo.getRemark());
 
-            convertBetweenAccount(userId, userId, sourceQty, accountType, AccountType.original.name(), actionFrom, actionTo, targetQty);
+		BigDecimal money = amount.multiply(rate).setScale(6, RoundingMode.HALF_UP);
 
-            UserStaticDo userStatic = new UserStaticDo();
-            userStatic.setUserid(userId);
-            userStatic.setMoney(calMoney(targetQty));
-            userStatic.setStatus((byte) 1);
-            if (1 == model) {
-                userStatic.setType(StaticType.BaoDan.getType());
-            } else {
-                userStatic.setType(StaticType.FuTou.getType());
-            }
-            userStatic.setTotalmoney(targetQty);
-            userStatic.setEndDate(DateUtil.getDate(new Date(), 365)); //365天结束
-            userStaticService.insert(userStatic);
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error("账户金额不足", e);
-            throw new BusinessException("账户金额不足");
-        }
-
-        //更新用户级别
-        try {
-            UserDo record = new UserDo();
-            record.setId(userId);
-            record.setUserLevel(userLevel.byteValue());
-            record.setActivationTime(new Date().getTime());
-            record.setBaodan_amount(qty);
-            userDao.updateByPrimaryKeySelective(record);
-        } catch (Exception e) {
-            logger.error("更新用户级别出错", e);
-            throw new BusinessException("更新用户级别出错");
-        }
-    }
-
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    private void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal amount, String fromAccount, String toAccount,
-            IncomeType sourceMsg, IncomeType targetMsg, BigDecimal addAmount) {
-
-        UserAccountDo source = new UserAccountDo();
-        source.setUserId(sourceUserId);
-        source.setAmount(amount.negate());
-        source.setAccountType(fromAccount);
-        accountService.updateUserAmountById(source, sourceMsg);
-
-        UserAccountDo target = new UserAccountDo();
-        target.setUserId(targetUserId);
-        target.setAmount(addAmount);
-        target.setAccountType(toAccount);
-        accountService.updateUserAmountById(target, targetMsg);
-
-    }
-
-    /** 
-     * 计算每日返利
-     * @param totalMoney
-     * @return  
-     */
-    private BigDecimal calMoney(BigDecimal totalMoney) {
-        return totalMoney.divide(new BigDecimal("365"), 6, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * 检查是否已报单
-     * @param userId
-     * @return
-     */
-    private List<UserStaticDo> getBaoDan(Integer userId) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("type", 1);
-        params.put("userid", userId);
-        List<UserStaticDo> retLst = userStaticDao.select(params);
-        if (retLst == null) {
-            return Collections.EMPTY_LIST;
-        }
-
-        Collections.sort(retLst, new Comparator<UserStaticDo>() {
-            @Override
-            public int compare(UserStaticDo o1, UserStaticDo o2) {
-                return o1.getId().compareTo(o2.getId());
-            }
-        });
-
-        return retLst;
-    }
-
+		return money;
+	}
+	
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Result<?> upgradeLevel(UserDo userDo, Integer userLevel) {
+		Integer userId = userDo.getId();
+		UserDo user = userDao.selectByPrimaryKey(userId);
+		if(user == null){
+			logger.info("用户ID为:" + userId + "的用户不存在");
+			return Result.failureResult("用户不存在!");
+		}
+		
+		int flag = 0;
+		//判断是否为空单激活 
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("type", StaticType.BaoDan.getType());
+		params.put("userid", userId);
+		List<UserStaticDo> list = userStaticDao.select(params);
+		//如果为空  表示该用户只是报了空单  但是没有产生过业绩，此时需要向 ct_user_static表中新增一条报单记录  用于记录业绩和释放
+		if (CollectionUtils.isEmpty(list)) {
+			//根据报单级别查看报单所需金额
+			logger.info("报单释放记录为空,新增一条报单记录 ,用户ID userId=" + userId);
+			LoanDictDtlDo loanDictDtl = loanDictService.getLoanDictDtl(DictCode.BaoDanFei.getCode(), userLevel.toString());
+			Assert.notNull(loanDictDtl, "报单费未配置");
+			Assert.hasText(loanDictDtl.getRemark(), "报单费未配置");
+			
+			BigDecimal totalAmount = new BigDecimal(loanDictDtl.getRemark());
+			UserStaticDo userStatic = new UserStaticDo();
+			userStatic.setUserid(userId);
+			userStatic.setMoney(calMoney(totalAmount, userLevel));
+			userStatic.setStatus((byte) 1);
+			userStatic.setType(StaticType.BaoDan.getType());
+			userStatic.setTotalmoney(totalAmount);
+			userStatic.setEndDate(DateUtil.getDate(new Date(), 365)); //365天结束
+			flag = userStaticService.insert(userStatic);
+			
+		}else{
+				
+				logger.info("用户报单级别升级 原等级为 :" + user.getUserLevel().intValue() + ",修改后等级为:" + userLevel.intValue());
+				LoanDictDtlDo loanDictDtlNew = loanDictService.getLoanDictDtl(DictCode.BaoDanFei.getCode(), userLevel.toString());
+				Assert.notNull(loanDictDtlNew, "报单费未配置");
+				Assert.hasText(loanDictDtlNew.getRemark(), "报单费未配置");
+				
+				UserStaticDo  userStatic = list.get(0);
+				BigDecimal totalAmount = new BigDecimal(loanDictDtlNew.getRemark());
+				userStatic.setMoney(calMoney(totalAmount.subtract(userStatic.getYfBonus()), userLevel));
+				userStatic.setType(StaticType.BaoDan.getType());
+				userStatic.setTotalmoney(totalAmount);
+				userStatic.setEndDate(DateUtil.getDate(new Date(), 365)); //365天结束
+				flag = userStaticService.updateStatic(userStatic);
+		}
+		logger.info("报单升级结果flag=" + flag);
+		if(flag > 0){
+			//修改用户信息
+			userDao.updateByPrimaryKeySelective(userDo);
+			return Result.successResult("用户信息修改成功!");
+		}else{
+			
+			return Result.failureResult("用户信息修改失败!");
+		}
+	}
 }

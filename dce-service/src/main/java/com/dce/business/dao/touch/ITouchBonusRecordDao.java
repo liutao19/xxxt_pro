@@ -20,6 +20,8 @@ public interface ITouchBonusRecordDao {
 
     List<TouchBonusRecordDo> select(Map<String, Object> params);
     
+    List<TouchBonusRecordDo> selectList(Map<String, Object> params);
+    
     /**
      * 查询用户最后一次量碰记录 
      * @param userId

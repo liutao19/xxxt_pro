@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -16,9 +15,6 @@ import com.dce.business.service.message.INewsService;
 
 @Service("newsService")
 public class NewsServiceImpl implements INewsService {
-
-	private static Logger logger = Logger.getLogger(NewsServiceImpl.class); 
-	
 	@Resource
 	private INewsDao newsDao;
 	

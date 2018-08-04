@@ -3,7 +3,6 @@ package com.dce.business.service.impl.user;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,30 +15,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.DictCode;
-import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.DataEncrypt;
-import com.dce.business.common.util.DateUtil;
 import com.dce.business.dao.account.IUserAccountDao;
 import com.dce.business.dao.touch.ITouchBonusRecordDao;
 import com.dce.business.dao.user.IUserDao;
 import com.dce.business.dao.user.IUserParentDao;
 import com.dce.business.dao.user.IUserRefereeDao;
-import com.dce.business.dao.user.IUserStaticDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
 import com.dce.business.entity.user.UserRefereeDo;
-import com.dce.business.entity.user.UserStaticDo;
-import com.dce.business.entity.user.UserStaticDo.StaticType;
-import com.dce.business.service.award.IAwardService;
+import com.dce.business.service.bonus.IPerformanceDailyService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.third.IEthereumService;
 import com.dce.business.service.user.IUserService;
@@ -63,7 +58,11 @@ public class UserServiceImpl implements IUserService {
     private IEthereumService ethereumService;
     @Resource
     private ITouchBonusRecordDao touchBonusRecordDao;
-
+    @Resource
+	private IPerformanceDailyService performanceDailyService;
+//    @Resource
+//    private IBaodanService baodanService;
+    
     @Override
     public UserDo getUser(String userName) {
         Map<String, Object> params = new HashMap<>();
@@ -139,44 +138,20 @@ public class UserServiceImpl implements IUserService {
         return result > 0?Result.successResult("注册成功!"):Result.failureResult("注册失败");
     }
     
-    //维护賬戶
-    private void maintainUserAccount(Integer id) {
-    	UserAccountDo record = new UserAccountDo();
-    	record.setUserId(id);
-    	record.setAccountType(AccountType.current.name());
-    	record.setAmount(BigDecimal.ZERO);
-    	record.setUpdateTime(new Date());
-		userAccountDao.insert(record );
-		
-		UserAccountDo record1 = new UserAccountDo();
-		record1.setUserId(id);
-		record1.setAccountType(AccountType.score.name());
-		record1.setAmount(BigDecimal.ZERO);
-		record1.setUpdateTime(new Date());
-		userAccountDao.insert(record1 );
-		
-		
-		
-		UserAccountDo record2 = new UserAccountDo();
-		record2.setUserId(id);
-		record2.setAccountType(AccountType.point.name());
-		record2.setAmount(BigDecimal.ZERO);
-		record2.setUpdateTime(new Date());
-		userAccountDao.insert(record2 );
-		
-		UserAccountDo record3 = new UserAccountDo();
-		record3.setUserId(id);
-		record3.setAccountType(AccountType.original.name());
-		record3.setAmount(BigDecimal.ZERO);
-		record3.setUpdateTime(new Date());
-		userAccountDao.insert(record3 );
-		
-		UserAccountDo record4 = new UserAccountDo();
-		record4.setUserId(id);
-		record4.setAccountType(AccountType.locked.name());
-		record4.setAmount(BigDecimal.ZERO);
-		record4.setUpdateTime(new Date());
-		userAccountDao.insert(record4 );
+	//维护賬戶
+	private void maintainUserAccount(Integer userId) {
+		String[] accountTypes = new String[] { AccountType.wallet_original.name(), AccountType.wallet_original_release.name(),
+				AccountType.wallet_bonus.name(), AccountType.wallet_interest.name(),
+				AccountType.wallet_release_release.name(), AccountType.wallet_cash.name(), AccountType.wallet_score.name() };
+
+		for (String accountType : accountTypes) {
+			UserAccountDo record = new UserAccountDo();
+			record.setUserId(userId);
+			record.setAccountType(accountType);
+			record.setAmount(BigDecimal.ZERO);
+			record.setUpdateTime(new Date());
+			userAccountDao.insert(record);
+		}
 	}
 
 	/**
@@ -340,45 +315,236 @@ public class UserServiceImpl implements IUserService {
         return userRefereeDao.selectMyGroup(params);
     }
 
-    @Override
+    /**
+     * 此方法注释，重写， 2018-07-08
+     */
+    /*
+    @SuppressWarnings("unchecked")
+	@Override
     public List<Map<String, Object>> listMyOrg(Integer userId,int level) {
     	List<Map<String, Object>> ret =  userParentDao.listMyOrg(userId,level);
     	if(CollectionUtils.isEmpty(ret)){
     		return Collections.EMPTY_LIST;
     	}
     	
+    	BigDecimal leftPerformance = BigDecimal.ZERO;
+    	BigDecimal rightPerformance = BigDecimal.ZERO;
+    	
     	//填充左右业绩
     	for(Map<String,Object> m : ret){
     		Long recordUserId = (Long)m.get("id");
     		
     		calPerformance(recordUserId, m);
+    		
+    		//统计root节点左右业绩
+    		if(Integer.parseInt(m.get("id").toString()) != userId.intValue() && "2".equals(m.get("lr_district").toString())){  //右区
+    			
+    			rightPerformance = rightPerformance.add((BigDecimal) m.get("lr_amount"));
+    			rightPerformance = rightPerformance.add((BigDecimal) m.get("lf_amount"));
+    			rightPerformance = rightPerformance.add((BigDecimal) m.get("baodan_amount")).setScale(2, RoundingMode.HALF_DOWN);
+    		}
+    		if(Integer.parseInt(m.get("id").toString()) != userId.intValue() && "1".equals(m.get("lr_district").toString())){  //左区
+    			
+    			leftPerformance = leftPerformance.add((BigDecimal) m.get("lr_amount"));
+    			leftPerformance = leftPerformance.add((BigDecimal) m.get("lf_amount"));
+    			leftPerformance = leftPerformance.add((BigDecimal) m.get("baodan_amount")).setScale(2, RoundingMode.HALF_DOWN);
+    		}
+    	}
+    	
+		
+    	for(Map<String,Object> m : ret){
+    		Long recordUserId = (Long)m.get("id");
+    		
+    		if(recordUserId.intValue() == userId.intValue()){
+    			m.put("lf_amount", leftPerformance);
+    			m.put("lr_amount", rightPerformance);
+    			break;
+    		}
     	}
     	return ret;
     }
     
-    private void calPerformance(Long userId, Map<String, Object> m) {
-        BigDecimal leftPerformance = BigDecimal.ZERO;
-        BigDecimal rightPerformance = BigDecimal.ZERO;
-        BigDecimal totalPerformance = BigDecimal.ZERO;
-        try {
-            Map<String, Object> map = touchBonusRecordDao.calTotalPerformance(userId.intValue());
-            if (map != null) {
-                leftPerformance = (BigDecimal) map.get("leftPerformance"); //左区剩余业绩
-                rightPerformance = (BigDecimal) map.get("rightPerformance"); //右区剩余业绩
-                BigDecimal touchPerformance = (BigDecimal) map.get("touchPerformance"); //已量碰业绩
 
-                leftPerformance = leftPerformance.add(touchPerformance); //左区总业绩
-                rightPerformance = rightPerformance.add(touchPerformance); //右区总业绩
-                totalPerformance = leftPerformance.add(rightPerformance); //总业绩
-            }
-        } catch (Exception e) {
-            logger.error("统计总业绩异常：", e);
-        }
-        m.put("lf_amount", leftPerformance);
-        m.put("lr_amount", rightPerformance);
-        m.put("total_performance", totalPerformance);
-    }
+	private void calPerformance(Long userId, Map<String, Object> m) {
+		BigDecimal todayPerformance = BigDecimal.ZERO;
+		BigDecimal totalPerformance = BigDecimal.ZERO;
+		BigDecimal leftPerformance = BigDecimal.ZERO;
+		BigDecimal rightPerformance = BigDecimal.ZERO;
+		BigDecimal todayLeftPerformance = BigDecimal.ZERO;
+		BigDecimal todayRightPerformance = BigDecimal.ZERO;
+		try {
+			//总业绩
+			TouchBonusRecordDo touchBonusRecordDo = touchBonusRecordDao.getUserTouchBonusRecord(userId.intValue());
+			if (touchBonusRecordDo != null) {
+				if (touchBonusRecordDo.getBalanceLeft() != null) {
+					totalPerformance = totalPerformance.add(touchBonusRecordDo.getBalanceLeft());
+					leftPerformance = leftPerformance.add(touchBonusRecordDo.getBalanceLeft());
+				}
+				if (touchBonusRecordDo.getBalanceRight() != null) {
+					totalPerformance = totalPerformance.add(touchBonusRecordDo.getBalanceRight());
+					rightPerformance = rightPerformance.add(touchBonusRecordDo.getBalanceRight());
+				}
+			}
 
+			//当日业绩
+			PerformanceDailyDo performanceDailyDo = performanceDailyService.getPerformanceDaily(userId.intValue(), new Date());
+			if (performanceDailyDo != null) {
+				if (performanceDailyDo.getBalance() != null) {
+					todayPerformance = todayPerformance.add(performanceDailyDo.getBalance());
+				}
+				if (performanceDailyDo.getBalance_left() != null) {
+					todayLeftPerformance = todayLeftPerformance.add(performanceDailyDo.getBalance_left());
+				}
+				if (performanceDailyDo.getBalance_right() != null) {
+					todayRightPerformance = todayRightPerformance.add(performanceDailyDo.getBalance_right());
+				}
+			}
+		} catch (Exception e) {
+			logger.error("统计总业绩异常：", e);
+		}
+		m.put("today_performance", todayPerformance);
+		m.put("total_performance", totalPerformance);
+		m.put("lf_amount", leftPerformance);
+		m.put("lr_amount", rightPerformance);
+		m.put("today_lf_amount", todayLeftPerformance);
+		m.put("today_lr_amount", todayRightPerformance);
+	}
+*/
+    @SuppressWarnings("unchecked")
+   	@Override
+       public List<Map<String, Object>> listMyOrg(Integer userId,int level) {
+       	List<Map<String, Object>> ret =  userParentDao.listMyOrg(userId,level);
+       	if(CollectionUtils.isEmpty(ret)){
+       		return Collections.EMPTY_LIST;
+       	}
+       	
+//       	BigDecimal leftPerformance = BigDecimal.ZERO;
+//       	BigDecimal rightPerformance = BigDecimal.ZERO;
+       	
+       	//填充左右业绩
+       	for(Map<String,Object> m : ret){
+       		Long recordUserId = (Long)m.get("id");
+       		getyj(m, 1, recordUserId);  //统计左区总业绩
+       		getyj(m, 2, recordUserId);  //统计右区总业绩
+       		
+       		getTodayyj(m, 1, recordUserId);  //统计左区总业绩
+       		getTodayyj(m, 2, recordUserId);  //统计右区总业绩
+       		
+       	}
+       	return ret;
+       }
+
+	private void getyj(Map<String, Object> m, int lr, Long recordUserId) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("parentid", recordUserId); 
+		params.put("lr_district", lr);
+		//左右业绩
+		BigDecimal yj = BigDecimal.ZERO;
+		Map<String, Object> yjMap = userParentDao.getYJ(params);
+		if (null != yjMap && !yjMap.isEmpty()) {
+			yj = (BigDecimal) yjMap.get("yj");
+		}
+		
+		if(yj == null){
+			yj = BigDecimal.ZERO;
+		}
+
+		yj = yj.setScale(2, RoundingMode.HALF_UP);
+		if (1 == lr) {
+			m.put("lf_amount", yj);
+		} else {
+			m.put("lr_amount", yj);
+		}
+
+		BigDecimal totalPerformance = BigDecimal.ZERO;
+		if (m.get("total_performance") != null) {
+			totalPerformance = (BigDecimal) m.get("total_performance");
+		}
+		
+		totalPerformance = totalPerformance.add(yj).setScale(2, RoundingMode.HALF_UP);
+		m.put("total_performance", totalPerformance); //总业绩
+	}
+       
+	/**
+	 * 计算今日业绩
+	 * @param m
+	 * @param lr
+	 * @param recordUserId
+	 */
+	private void getTodayyj(Map<String, Object> m, int lr, Long recordUserId) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("parentid", recordUserId); 
+		params.put("lr_district", lr);
+		//左右业绩
+		BigDecimal yj = BigDecimal.ZERO;
+		Map<String, Object> yjMap = userParentDao.getTodayYJ(params);
+		if (null != yjMap && !yjMap.isEmpty()) {
+			yj = (BigDecimal) yjMap.get("yj");
+		}
+
+
+		yj = yj.setScale(2, RoundingMode.HALF_UP);
+		if (1 == lr) {
+			m.put("today_lf_amount", yj);
+		} else {
+			m.put("today_lr_amount", yj);
+		}
+
+		BigDecimal totalPerformance = BigDecimal.ZERO;
+		if (m.get("today_performance") != null) {
+			totalPerformance = (BigDecimal) m.get("today_performance");
+		}
+		
+		totalPerformance = totalPerformance.add(yj).setScale(2, RoundingMode.HALF_UP);
+		m.put("today_performance", totalPerformance); //总业绩
+	}
+	
+
+//   	private void calPerformance(Long userId, Map<String, Object> m) {
+//   		BigDecimal todayPerformance = BigDecimal.ZERO;
+//   		BigDecimal totalPerformance = BigDecimal.ZERO;
+//   		BigDecimal leftPerformance = BigDecimal.ZERO;
+//   		BigDecimal rightPerformance = BigDecimal.ZERO;
+//   		BigDecimal todayLeftPerformance = BigDecimal.ZERO;
+//   		BigDecimal todayRightPerformance = BigDecimal.ZERO;
+//   		try {
+//   			//总业绩
+//   			TouchBonusRecordDo touchBonusRecordDo = touchBonusRecordDao.getUserTouchBonusRecord(userId.intValue());
+//   			if (touchBonusRecordDo != null) {
+//   				if (touchBonusRecordDo.getBalanceLeft() != null) {
+//   					totalPerformance = totalPerformance.add(touchBonusRecordDo.getBalanceLeft());
+//   					leftPerformance = leftPerformance.add(touchBonusRecordDo.getBalanceLeft());
+//   				}
+//   				if (touchBonusRecordDo.getBalanceRight() != null) {
+//   					totalPerformance = totalPerformance.add(touchBonusRecordDo.getBalanceRight());
+//   					rightPerformance = rightPerformance.add(touchBonusRecordDo.getBalanceRight());
+//   				}
+//   			}
+//
+//   			//当日业绩
+//   			PerformanceDailyDo performanceDailyDo = performanceDailyService.getPerformanceDaily(userId.intValue(), new Date());
+//   			if (performanceDailyDo != null) {
+//   				if (performanceDailyDo.getBalance() != null) {
+//   					todayPerformance = todayPerformance.add(performanceDailyDo.getBalance());
+//   				}
+//   				if (performanceDailyDo.getBalance_left() != null) {
+//   					todayLeftPerformance = todayLeftPerformance.add(performanceDailyDo.getBalance_left());
+//   				}
+//   				if (performanceDailyDo.getBalance_right() != null) {
+//   					todayRightPerformance = todayRightPerformance.add(performanceDailyDo.getBalance_right());
+//   				}
+//   			}
+//   		} catch (Exception e) {
+//   			logger.error("统计总业绩异常：", e);
+//   		}
+//   		m.put("today_performance", todayPerformance);
+//   		m.put("total_performance", totalPerformance);
+//   		m.put("lf_amount", leftPerformance);
+//   		m.put("lr_amount", rightPerformance);
+//   		m.put("today_lf_amount", todayLeftPerformance);
+//   		m.put("today_lr_amount", todayRightPerformance);
+//   	}
+    
     @Override
     public List<Map<String, Object>> listMyRef(Integer userId, int startRow,
             int pageSize) {
@@ -392,7 +558,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<UserDo> selectPage(Map<String, Object> params) {
-        return userDao.selectPage(params);
+        return userDao.selectFenYe(params);
     }
 
 	@Override
@@ -435,7 +601,34 @@ public class UserServiceImpl implements IUserService {
 		//userDao.addRefereeNumber(user.getRefereeid());
 		return Result.successResult("修改成功!");
 	}
-	
-	
-    
+
+	@Override
+	public PageDo<UserDo> selectUserByPage(PageDo<UserDo> page,
+			Map<String, Object> params) {
+		
+		if(params == null){
+			params = new HashMap<String, Object>();
+		}
+        params.put(Constants.MYBATIS_PAGE, page);
+        List<UserDo> list = userDao.selectByPage(params);
+        page.setModelList(list);
+		return page;
+	}
+
+	@Override
+	public PageDo<UserDo> selectEthAccountByPage(PageDo<UserDo> page, Map<String, Object> params) {
+		if(params == null){
+			params = new HashMap<String,Object>();
+		}
+		params.put(Constants.MYBATIS_PAGE, page);
+		List<UserDo> list = userDao.selectEthAccountByPage(params);
+		page.setModelList(list);
+		return page;
+	}
+
+	@Override
+	public Long selectBaoDanAmount(Map<String, Object> params) {
+		return userDao.selectBaoDanAmount(params);
+	}
+
 }

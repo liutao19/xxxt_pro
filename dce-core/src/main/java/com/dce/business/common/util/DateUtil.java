@@ -89,6 +89,11 @@ public final class DateUtil {
     		return YYYY_MM_DD_MM_HH_SS.parse(dateStr + "23:59:59");
     	}
     }
+    //根据日期时间获取对应的java时间戳
+    public static long getTimeStamp(String dateTime) throws ParseException{
+    	
+    	return YYYY_MM_DD_MM_HH_SS.parse(dateTime).getTime();
+    }
     /**
      * 计算两个日期相隔天数
      * @param begin

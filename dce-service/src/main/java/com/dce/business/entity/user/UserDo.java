@@ -7,214 +7,216 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class UserDo {
-    private Integer id;
+	private Integer id;
 
-    @NotBlank(message = "验证编号不能为空")
-    private String userName;
+	@NotBlank(message = "验证编号不能为空")
+	private String userName;
 
-    @NotBlank(message = "姓名不能为空")
-    private String trueName;
+	@NotBlank(message = "姓名不能为空")
+	private String trueName;
 
-    private String email;
+	private String email;
 
-    private String mobile;
+	private String mobile;
 
-    @NotBlank(message = "登录密码不能为空")
-    private String userPassword;
+	@NotBlank(message = "登录密码不能为空")
+	private String userPassword;
 
-    @NotBlank(message = "安全密码不能为空")
-    private String twoPassword;
+	@NotBlank(message = "安全密码不能为空")
+	private String twoPassword;
 
-    private Integer userFace;
+	private Integer userFace;
 
-    private BigDecimal balanceIntegral;
+	private BigDecimal balanceIntegral;
 
-    private String sex;
+	private String sex;
 
-    private Long loginTimes;
+	private Long loginTimes;
 
-    private Long lastLoginTime;
+	private Long lastLoginTime;
 
-    private String lastLoginIp;
+	private String lastLoginIp;
 
-    private String regIp;
+	private String regIp;
 
-    private Long regTime;
+	private Long regTime;
 
-    private Byte status;
+	private Byte status;
 
-    private BigDecimal balanceBonus;
+	private BigDecimal balanceBonus;
 
-    private BigDecimal balanceRepeat;
+	private BigDecimal balanceRepeat;
 
-    private BigDecimal balanceCash;
+	private BigDecimal balanceCash;
 
-    private BigDecimal balanceDongjie;
+	private BigDecimal balanceDongjie;
 
-    private BigDecimal balanceShopping;
+	private BigDecimal balanceShopping;
 
-    private BigDecimal forzenShopping;
+	private BigDecimal forzenShopping;
 
-    private BigDecimal totalBonus;
+	private BigDecimal totalBonus;
 
-    private BigDecimal totalRepeat;
+	private BigDecimal totalRepeat;
 
-    private BigDecimal totalCash;
+	private BigDecimal totalCash;
 
-    private BigDecimal totalIntegral;
+	private BigDecimal totalIntegral;
 
-    private BigDecimal totalShopping;
+	private BigDecimal totalShopping;
 
-    private Integer refereeid;
+	private Integer refereeid;
 
-    private Integer parentid;
+	private Integer parentid;
 
-    private BigDecimal baodan_amount; //报单金额
-    
-    @NotBlank(message = "推荐人不能为空")
-    private String refereeUserName; //推荐人用户名
+	private BigDecimal baodan_amount; //报单金额
 
-    @NotBlank(message = "接点人不能为空")
-    private String parentUserName; //接点人用户名
+	@NotBlank(message = "推荐人不能为空")
+	private String refereeUserName; //推荐人用户名
 
-    private Integer refereeNumber;
+	@NotBlank(message = "接点人不能为空")
+	private String parentUserName; //接点人用户名
 
-    private Byte refereeStatus;
+	private Integer refereeNumber;
 
-    private Integer sonNumber;
+	private Byte refereeStatus;
 
-    private Byte isServerCenter;
+	private Integer sonNumber;
 
-    private Integer myServerCenter;
+	private Byte isServerCenter;
 
-    private Integer userscore;
+	private Integer myServerCenter;
 
-    private Byte userType;
+	private Integer userscore;
 
-    private Byte userGroup;
+	private Byte userType;
 
-    private Byte userLevel;
+	private Byte userGroup;
 
-    private Byte userPost;
+	private Byte userLevel;
 
-    private BigDecimal regMoney;
+	private Byte userPost;
 
-    private BigDecimal yfMoney;
+	private BigDecimal regMoney;
 
-    private BigDecimal fdMoney;
+	private BigDecimal yfMoney;
 
-    private BigDecimal totalPerformance;
+	private BigDecimal fdMoney;
 
-    private BigDecimal touchedPerformance;
+	private BigDecimal totalPerformance;
 
-    private Long activationTime;
+	private BigDecimal touchedPerformance;
 
-    private Integer userQq;
+	private Long activationTime;
 
-    private String userWechat;
+	private Integer userQq;
 
-    private String openid;
+	private String userWechat;
 
-    private String register;
+	private String openid;
 
-    private String expressPassword;
+	private String register;
 
-    private BigDecimal totalDividends;
+	private String expressPassword;
 
-    private Integer dividendsDays;
+	private BigDecimal totalDividends;
 
-    private Integer country;
+	private Integer dividendsDays;
 
-    private Integer province;
+	private Integer country;
 
-    private Integer city;
+	private Integer province;
 
-    private Integer darea;
+	private Integer city;
 
-    private BigDecimal balanceEt;
+	private Integer darea;
 
-    private String idnumber;
+	private BigDecimal balanceEt;
 
-    private Byte banktype;
+	private String idnumber;
 
-    private String bankUserName;
+	private Byte banktype;
 
-    private String banknumber;
+	private String bankUserName;
 
-    private String bankContent;
+	private String banknumber;
 
-    private String question1;
+	private String bankContent;
 
-    private String question2;
+	private String question1;
 
-    private String question3;
+	private String question2;
 
-    private String answer1;
+	private String question3;
 
-    private String answer2;
+	private String answer1;
 
-    private String answer3;
+	private String answer2;
 
-    private Integer groupid;
+	private String answer3;
 
-    private String ticket;
+	private Integer groupid;
 
-    private BigDecimal balanceGouwu;
+	private String ticket;
 
-    private Byte qrcodeStatus;
+	private BigDecimal balanceGouwu;
 
-    private Long bonusTime;
+	private Byte qrcodeStatus;
 
-    private Byte isEmpty;
+	private Long bonusTime;
 
-    private BigDecimal balanceHeart;
+	private Byte isEmpty;
 
-    private Integer kuoLevel;
+	private BigDecimal balanceHeart;
 
-    private Byte backfillStatus;
+	private Integer kuoLevel;
 
-    private BigDecimal backfillMoney;
+	private Byte backfillStatus;
 
-    private BigDecimal backfillSheng;
+	private BigDecimal backfillMoney;
 
-    private Integer guadanNum;
+	private BigDecimal backfillSheng;
 
-    private BigDecimal allstatic;
+	private Integer guadanNum;
 
-    private Integer dis;
+	private BigDecimal allstatic;
 
-    private Long releaseTime;
+	private Integer dis;
 
-    private Byte isshop;
+	private Long releaseTime;
 
-    private Byte isimport;
+	private Byte isshop;
 
-    @NotNull(message = "请选择左右区")
-    private Byte pos;
+	private Byte isimport;
 
-    private Byte isout;
+	@NotNull(message = "请选择左右区")
+	private Byte pos;
 
-    private String touchDistance;
+	private Byte isout;
 
-    private String userLevelName;
+	private String touchDistance;
 
-    private BigDecimal ableTouchQty = BigDecimal.ZERO; //本次可量碰数量
+	private String userLevelName;
 
-    private String ethAccount; //以太坊账户
-    
-    /**
-     * 用户不允许的动作权限：具体看{@IncomeType}， 空值表示不限制
-     * 存储以逗号分隔：601,702
-     */
-    private String undoOpts;
-    
-    /**
-     * 用户转让的方向:up,down
-     * 存储以逗号分隔: up,down 空值不受限制
-     */
-    private String tranDirect;
-    
-    public String getUndoOpts() {
+	private BigDecimal ableTouchQty = BigDecimal.ZERO; //本次可量碰数量
+
+	private String ethAccount; //以太坊账户
+
+	/**
+	 * 用户不允许的动作权限：具体看{@IncomeType}， 空值表示不限制
+	 * 存储以逗号分隔：601,702
+	 */
+	private String undoOpts;
+
+	/**
+	 * 用户转让的方向:up,down
+	 * 存储以逗号分隔: up,down 空值不受限制
+	 */
+	private String tranDirect;
+
+	private Integer isActivated; //是否已激活
+
+	public String getUndoOpts() {
 		return undoOpts;
 	}
 
@@ -231,748 +233,748 @@ public class UserDo {
 	}
 
 	public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getTrueName() {
-        return trueName;
-    }
-
-    public void setTrueName(String trueName) {
-        this.trueName = trueName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getUserPassword() {
-        return userPassword;
-    }
-
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
-
-    public String getTwoPassword() {
-        return twoPassword;
-    }
-
-    public void setTwoPassword(String twoPassword) {
-        this.twoPassword = twoPassword;
-    }
-
-    public Integer getUserFace() {
-        return userFace;
-    }
-
-    public void setUserFace(Integer userFace) {
-        this.userFace = userFace;
-    }
-
-    public BigDecimal getBalanceIntegral() {
-        return balanceIntegral;
-    }
-
-    public void setBalanceIntegral(BigDecimal balanceIntegral) {
-        this.balanceIntegral = balanceIntegral;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public Long getLoginTimes() {
-        return loginTimes;
-    }
-
-    public void setLoginTimes(Long loginTimes) {
-        this.loginTimes = loginTimes;
-    }
-
-    public Long getLastLoginTime() {
-        return lastLoginTime;
-    }
-
-    public void setLastLoginTime(Long lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
-    }
-
-    public String getLastLoginIp() {
-        return lastLoginIp;
-    }
-
-    public void setLastLoginIp(String lastLoginIp) {
-        this.lastLoginIp = lastLoginIp;
-    }
-
-    public String getRegIp() {
-        return regIp;
-    }
-
-    public void setRegIp(String regIp) {
-        this.regIp = regIp;
-    }
-
-    public Long getRegTime() {
-        return regTime;
-    }
-
-    public void setRegTime(Long regTime) {
-        this.regTime = regTime;
-    }
-
-    public Byte getStatus() {
-        return status;
-    }
-
-    public void setStatus(Byte status) {
-        this.status = status;
-    }
-
-    public BigDecimal getBalanceBonus() {
-        return balanceBonus;
-    }
-
-    public void setBalanceBonus(BigDecimal balanceBonus) {
-        this.balanceBonus = balanceBonus;
-    }
-
-    public BigDecimal getBalanceRepeat() {
-        return balanceRepeat;
-    }
-
-    public void setBalanceRepeat(BigDecimal balanceRepeat) {
-        this.balanceRepeat = balanceRepeat;
-    }
-
-    public BigDecimal getBalanceCash() {
-        return balanceCash;
-    }
-
-    public void setBalanceCash(BigDecimal balanceCash) {
-        this.balanceCash = balanceCash;
-    }
-
-    public BigDecimal getBalanceDongjie() {
-        return balanceDongjie;
-    }
-
-    public void setBalanceDongjie(BigDecimal balanceDongjie) {
-        this.balanceDongjie = balanceDongjie;
-    }
-
-    public BigDecimal getBalanceShopping() {
-        return balanceShopping;
-    }
-
-    public void setBalanceShopping(BigDecimal balanceShopping) {
-        this.balanceShopping = balanceShopping;
-    }
-
-    public BigDecimal getForzenShopping() {
-        return forzenShopping;
-    }
-
-    public void setForzenShopping(BigDecimal forzenShopping) {
-        this.forzenShopping = forzenShopping;
-    }
-
-    public BigDecimal getTotalBonus() {
-        return totalBonus;
-    }
-
-    public void setTotalBonus(BigDecimal totalBonus) {
-        this.totalBonus = totalBonus;
-    }
-
-    public BigDecimal getTotalRepeat() {
-        return totalRepeat;
-    }
-
-    public void setTotalRepeat(BigDecimal totalRepeat) {
-        this.totalRepeat = totalRepeat;
-    }
-
-    public BigDecimal getTotalCash() {
-        return totalCash;
-    }
-
-    public void setTotalCash(BigDecimal totalCash) {
-        this.totalCash = totalCash;
-    }
-
-    public BigDecimal getTotalIntegral() {
-        return totalIntegral;
-    }
-
-    public void setTotalIntegral(BigDecimal totalIntegral) {
-        this.totalIntegral = totalIntegral;
-    }
-
-    public BigDecimal getTotalShopping() {
-        return totalShopping;
-    }
-
-    public void setTotalShopping(BigDecimal totalShopping) {
-        this.totalShopping = totalShopping;
-    }
-
-    public Integer getRefereeid() {
-        return refereeid;
-    }
-
-    public void setRefereeid(Integer refereeid) {
-        this.refereeid = refereeid;
-    }
-
-    public Integer getParentid() {
-        return parentid;
-    }
-
-    public void setParentid(Integer parentid) {
-        this.parentid = parentid;
-    }
-
-    public Integer getRefereeNumber() {
-        return refereeNumber;
-    }
-
-    public void setRefereeNumber(Integer refereeNumber) {
-        this.refereeNumber = refereeNumber;
-    }
-
-    public Byte getRefereeStatus() {
-        return refereeStatus;
-    }
-
-    public void setRefereeStatus(Byte refereeStatus) {
-        this.refereeStatus = refereeStatus;
-    }
-
-    public Integer getSonNumber() {
-        return sonNumber;
-    }
-
-    public void setSonNumber(Integer sonNumber) {
-        this.sonNumber = sonNumber;
-    }
-
-    public Byte getIsServerCenter() {
-        return isServerCenter;
-    }
-
-    public void setIsServerCenter(Byte isServerCenter) {
-        this.isServerCenter = isServerCenter;
-    }
-
-    public Integer getMyServerCenter() {
-        return myServerCenter;
-    }
-
-    public void setMyServerCenter(Integer myServerCenter) {
-        this.myServerCenter = myServerCenter;
-    }
-
-    public Integer getUserscore() {
-        return userscore;
-    }
-
-    public void setUserscore(Integer userscore) {
-        this.userscore = userscore;
-    }
-
-    public Byte getUserType() {
-        return userType;
-    }
-
-    public void setUserType(Byte userType) {
-        this.userType = userType;
-    }
-
-    public Byte getUserGroup() {
-        return userGroup;
-    }
-
-    public void setUserGroup(Byte userGroup) {
-        this.userGroup = userGroup;
-    }
-
-    public Byte getUserLevel() {
-        return userLevel;
-    }
-
-    public void setUserLevel(Byte userLevel) {
-        this.userLevel = userLevel;
-    }
-
-    public Byte getUserPost() {
-        return userPost;
-    }
-
-    public void setUserPost(Byte userPost) {
-        this.userPost = userPost;
-    }
-
-    public BigDecimal getRegMoney() {
-        return regMoney;
-    }
-
-    public void setRegMoney(BigDecimal regMoney) {
-        this.regMoney = regMoney;
-    }
-
-    public BigDecimal getYfMoney() {
-        return yfMoney;
-    }
-
-    public void setYfMoney(BigDecimal yfMoney) {
-        this.yfMoney = yfMoney;
-    }
-
-    public BigDecimal getFdMoney() {
-        return fdMoney;
-    }
-
-    public void setFdMoney(BigDecimal fdMoney) {
-        this.fdMoney = fdMoney;
-    }
-
-    public BigDecimal getTotalPerformance() {
-        return totalPerformance;
-    }
-
-    public void setTotalPerformance(BigDecimal totalPerformance) {
-        this.totalPerformance = totalPerformance;
-    }
-
-    public Long getActivationTime() {
-        return activationTime;
-    }
-
-    public void setActivationTime(Long activationTime) {
-        this.activationTime = activationTime;
-    }
-
-    public Integer getUserQq() {
-        return userQq;
-    }
-
-    public void setUserQq(Integer userQq) {
-        this.userQq = userQq;
-    }
-
-    public String getUserWechat() {
-        return userWechat;
-    }
-
-    public void setUserWechat(String userWechat) {
-        this.userWechat = userWechat;
-    }
-
-    public String getOpenid() {
-        return openid;
-    }
-
-    public void setOpenid(String openid) {
-        this.openid = openid;
-    }
-
-    public String getRegister() {
-        return register;
-    }
-
-    public void setRegister(String register) {
-        this.register = register;
-    }
-
-    public String getExpressPassword() {
-        return expressPassword;
-    }
-
-    public void setExpressPassword(String expressPassword) {
-        this.expressPassword = expressPassword;
-    }
-
-    public BigDecimal getTotalDividends() {
-        return totalDividends;
-    }
-
-    public void setTotalDividends(BigDecimal totalDividends) {
-        this.totalDividends = totalDividends;
-    }
-
-    public Integer getDividendsDays() {
-        return dividendsDays;
-    }
-
-    public void setDividendsDays(Integer dividendsDays) {
-        this.dividendsDays = dividendsDays;
-    }
-
-    public Integer getCountry() {
-        return country;
-    }
-
-    public void setCountry(Integer country) {
-        this.country = country;
-    }
-
-    public Integer getProvince() {
-        return province;
-    }
-
-    public void setProvince(Integer province) {
-        this.province = province;
-    }
-
-    public Integer getCity() {
-        return city;
-    }
-
-    public void setCity(Integer city) {
-        this.city = city;
-    }
-
-    public Integer getDarea() {
-        return darea;
-    }
-
-    public void setDarea(Integer darea) {
-        this.darea = darea;
-    }
-
-    public BigDecimal getBalanceEt() {
-        return balanceEt;
-    }
-
-    public void setBalanceEt(BigDecimal balanceEt) {
-        this.balanceEt = balanceEt;
-    }
-
-    public String getIdnumber() {
-        return idnumber;
-    }
-
-    public void setIdnumber(String idnumber) {
-        this.idnumber = idnumber;
-    }
-
-    public Byte getBanktype() {
-        return banktype;
-    }
-
-    public void setBanktype(Byte banktype) {
-        this.banktype = banktype;
-    }
-
-    public String getBankUserName() {
-        return bankUserName;
-    }
-
-    public void setBankUserName(String bankUserName) {
-        this.bankUserName = bankUserName;
-    }
-
-    public String getBanknumber() {
-        return banknumber;
-    }
-
-    public void setBanknumber(String banknumber) {
-        this.banknumber = banknumber;
-    }
-
-    public String getBankContent() {
-        return bankContent;
-    }
-
-    public void setBankContent(String bankContent) {
-        this.bankContent = bankContent;
-    }
-
-    public String getQuestion1() {
-        return question1;
-    }
-
-    public void setQuestion1(String question1) {
-        this.question1 = question1;
-    }
-
-    public String getQuestion2() {
-        return question2;
-    }
-
-    public void setQuestion2(String question2) {
-        this.question2 = question2;
-    }
-
-    public String getQuestion3() {
-        return question3;
-    }
-
-    public void setQuestion3(String question3) {
-        this.question3 = question3;
-    }
-
-    public String getAnswer1() {
-        return answer1;
-    }
-
-    public void setAnswer1(String answer1) {
-        this.answer1 = answer1;
-    }
-
-    public String getAnswer2() {
-        return answer2;
-    }
-
-    public void setAnswer2(String answer2) {
-        this.answer2 = answer2;
-    }
-
-    public String getAnswer3() {
-        return answer3;
-    }
-
-    public void setAnswer3(String answer3) {
-        this.answer3 = answer3;
-    }
-
-    public Integer getGroupid() {
-        return groupid;
-    }
-
-    public void setGroupid(Integer groupid) {
-        this.groupid = groupid;
-    }
-
-    public String getTicket() {
-        return ticket;
-    }
-
-    public void setTicket(String ticket) {
-        this.ticket = ticket;
-    }
-
-    public BigDecimal getBalanceGouwu() {
-        return balanceGouwu;
-    }
-
-    public void setBalanceGouwu(BigDecimal balanceGouwu) {
-        this.balanceGouwu = balanceGouwu;
-    }
-
-    public Byte getQrcodeStatus() {
-        return qrcodeStatus;
-    }
-
-    public void setQrcodeStatus(Byte qrcodeStatus) {
-        this.qrcodeStatus = qrcodeStatus;
-    }
-
-    public Long getBonusTime() {
-        return bonusTime;
-    }
-
-    public void setBonusTime(Long bonusTime) {
-        this.bonusTime = bonusTime;
-    }
-
-    public Byte getIsEmpty() {
-        return isEmpty;
-    }
-
-    public void setIsEmpty(Byte isEmpty) {
-        this.isEmpty = isEmpty;
-    }
-
-    public BigDecimal getBalanceHeart() {
-        return balanceHeart;
-    }
-
-    public void setBalanceHeart(BigDecimal balanceHeart) {
-        this.balanceHeart = balanceHeart;
-    }
-
-    public Integer getKuoLevel() {
-        return kuoLevel;
-    }
-
-    public void setKuoLevel(Integer kuoLevel) {
-        this.kuoLevel = kuoLevel;
-    }
-
-    public Byte getBackfillStatus() {
-        return backfillStatus;
-    }
-
-    public void setBackfillStatus(Byte backfillStatus) {
-        this.backfillStatus = backfillStatus;
-    }
-
-    public BigDecimal getBackfillMoney() {
-        return backfillMoney;
-    }
-
-    public void setBackfillMoney(BigDecimal backfillMoney) {
-        this.backfillMoney = backfillMoney;
-    }
-
-    public BigDecimal getBackfillSheng() {
-        return backfillSheng;
-    }
-
-    public void setBackfillSheng(BigDecimal backfillSheng) {
-        this.backfillSheng = backfillSheng;
-    }
-
-    public Integer getGuadanNum() {
-        return guadanNum;
-    }
-
-    public void setGuadanNum(Integer guadanNum) {
-        this.guadanNum = guadanNum;
-    }
-
-    public BigDecimal getAllstatic() {
-        return allstatic;
-    }
-
-    public void setAllstatic(BigDecimal allstatic) {
-        this.allstatic = allstatic;
-    }
-
-    public Integer getDis() {
-        return dis;
-    }
-
-    public void setDis(Integer dis) {
-        this.dis = dis;
-    }
-
-    public Long getReleaseTime() {
-        return releaseTime;
-    }
-
-    public void setReleaseTime(Long releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public Byte getIsshop() {
-        return isshop;
-    }
-
-    public void setIsshop(Byte isshop) {
-        this.isshop = isshop;
-    }
-
-    public Byte getIsimport() {
-        return isimport;
-    }
-
-    public void setIsimport(Byte isimport) {
-        this.isimport = isimport;
-    }
-
-    public Byte getPos() {
-        return pos;
-    }
-
-    public void setPos(Byte pos) {
-        this.pos = pos;
-    }
-
-    public Byte getIsout() {
-        return isout;
-    }
-
-    public void setIsout(Byte isout) {
-        this.isout = isout;
-    }
-
-    public String getTouchDistance() {
-        return touchDistance;
-    }
-
-    public void setTouchDistance(String touchDistance) {
-        this.touchDistance = touchDistance;
-    }
-
-    public String getRefereeUserName() {
-        return refereeUserName;
-    }
-
-    public void setRefereeUserName(String refereeUserName) {
-        this.refereeUserName = refereeUserName;
-    }
-
-    public String getParentUserName() {
-        return parentUserName;
-    }
-
-    public void setParentUserName(String parentUserName) {
-        this.parentUserName = parentUserName;
-    }
-
-    public BigDecimal getTouchedPerformance() {
-        return touchedPerformance;
-    }
-
-    public void setTouchedPerformance(BigDecimal touchedPerformance) {
-        this.touchedPerformance = touchedPerformance;
-    }
-
-    public String getUserLevelName() {
-        return userLevelName;
-    }
-
-    public void setUserLevelName(String userLevelName) {
-        this.userLevelName = userLevelName;
-    }
-
-    public BigDecimal getAbleTouchQty() {
-        return ableTouchQty;
-    }
-
-    public void setAbleTouchQty(BigDecimal ableTouchQty) {
-        this.ableTouchQty = ableTouchQty;
-    }
-
-    public String getEthAccount() {
-        return ethAccount;
-    }
-
-    public void setEthAccount(String ethAccount) {
-        this.ethAccount = ethAccount;
-    }
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getTrueName() {
+		return trueName;
+	}
+
+	public void setTrueName(String trueName) {
+		this.trueName = trueName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getUserPassword() {
+		return userPassword;
+	}
+
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
+
+	public String getTwoPassword() {
+		return twoPassword;
+	}
+
+	public void setTwoPassword(String twoPassword) {
+		this.twoPassword = twoPassword;
+	}
+
+	public Integer getUserFace() {
+		return userFace;
+	}
+
+	public void setUserFace(Integer userFace) {
+		this.userFace = userFace;
+	}
+
+	public BigDecimal getBalanceIntegral() {
+		return balanceIntegral;
+	}
+
+	public void setBalanceIntegral(BigDecimal balanceIntegral) {
+		this.balanceIntegral = balanceIntegral;
+	}
+
+	public String getSex() {
+		return sex;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public Long getLoginTimes() {
+		return loginTimes;
+	}
+
+	public void setLoginTimes(Long loginTimes) {
+		this.loginTimes = loginTimes;
+	}
+
+	public Long getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+	public void setLastLoginTime(Long lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
+	}
+
+	public String getLastLoginIp() {
+		return lastLoginIp;
+	}
+
+	public void setLastLoginIp(String lastLoginIp) {
+		this.lastLoginIp = lastLoginIp;
+	}
+
+	public String getRegIp() {
+		return regIp;
+	}
+
+	public void setRegIp(String regIp) {
+		this.regIp = regIp;
+	}
+
+	public Long getRegTime() {
+		return regTime;
+	}
+
+	public void setRegTime(Long regTime) {
+		this.regTime = regTime;
+	}
+
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+
+	public BigDecimal getBalanceBonus() {
+		return balanceBonus;
+	}
+
+	public void setBalanceBonus(BigDecimal balanceBonus) {
+		this.balanceBonus = balanceBonus;
+	}
+
+	public BigDecimal getBalanceRepeat() {
+		return balanceRepeat;
+	}
+
+	public void setBalanceRepeat(BigDecimal balanceRepeat) {
+		this.balanceRepeat = balanceRepeat;
+	}
+
+	public BigDecimal getBalanceCash() {
+		return balanceCash;
+	}
+
+	public void setBalanceCash(BigDecimal balanceCash) {
+		this.balanceCash = balanceCash;
+	}
+
+	public BigDecimal getBalanceDongjie() {
+		return balanceDongjie;
+	}
+
+	public void setBalanceDongjie(BigDecimal balanceDongjie) {
+		this.balanceDongjie = balanceDongjie;
+	}
+
+	public BigDecimal getBalanceShopping() {
+		return balanceShopping;
+	}
+
+	public void setBalanceShopping(BigDecimal balanceShopping) {
+		this.balanceShopping = balanceShopping;
+	}
+
+	public BigDecimal getForzenShopping() {
+		return forzenShopping;
+	}
+
+	public void setForzenShopping(BigDecimal forzenShopping) {
+		this.forzenShopping = forzenShopping;
+	}
+
+	public BigDecimal getTotalBonus() {
+		return totalBonus;
+	}
+
+	public void setTotalBonus(BigDecimal totalBonus) {
+		this.totalBonus = totalBonus;
+	}
+
+	public BigDecimal getTotalRepeat() {
+		return totalRepeat;
+	}
+
+	public void setTotalRepeat(BigDecimal totalRepeat) {
+		this.totalRepeat = totalRepeat;
+	}
+
+	public BigDecimal getTotalCash() {
+		return totalCash;
+	}
+
+	public void setTotalCash(BigDecimal totalCash) {
+		this.totalCash = totalCash;
+	}
+
+	public BigDecimal getTotalIntegral() {
+		return totalIntegral;
+	}
+
+	public void setTotalIntegral(BigDecimal totalIntegral) {
+		this.totalIntegral = totalIntegral;
+	}
+
+	public BigDecimal getTotalShopping() {
+		return totalShopping;
+	}
+
+	public void setTotalShopping(BigDecimal totalShopping) {
+		this.totalShopping = totalShopping;
+	}
+
+	public Integer getRefereeid() {
+		return refereeid;
+	}
+
+	public void setRefereeid(Integer refereeid) {
+		this.refereeid = refereeid;
+	}
+
+	public Integer getParentid() {
+		return parentid;
+	}
+
+	public void setParentid(Integer parentid) {
+		this.parentid = parentid;
+	}
+
+	public Integer getRefereeNumber() {
+		return refereeNumber;
+	}
+
+	public void setRefereeNumber(Integer refereeNumber) {
+		this.refereeNumber = refereeNumber;
+	}
+
+	public Byte getRefereeStatus() {
+		return refereeStatus;
+	}
+
+	public void setRefereeStatus(Byte refereeStatus) {
+		this.refereeStatus = refereeStatus;
+	}
+
+	public Integer getSonNumber() {
+		return sonNumber;
+	}
+
+	public void setSonNumber(Integer sonNumber) {
+		this.sonNumber = sonNumber;
+	}
+
+	public Byte getIsServerCenter() {
+		return isServerCenter;
+	}
+
+	public void setIsServerCenter(Byte isServerCenter) {
+		this.isServerCenter = isServerCenter;
+	}
+
+	public Integer getMyServerCenter() {
+		return myServerCenter;
+	}
+
+	public void setMyServerCenter(Integer myServerCenter) {
+		this.myServerCenter = myServerCenter;
+	}
+
+	public Integer getUserscore() {
+		return userscore;
+	}
+
+	public void setUserscore(Integer userscore) {
+		this.userscore = userscore;
+	}
+
+	public Byte getUserType() {
+		return userType;
+	}
+
+	public void setUserType(Byte userType) {
+		this.userType = userType;
+	}
+
+	public Byte getUserGroup() {
+		return userGroup;
+	}
+
+	public void setUserGroup(Byte userGroup) {
+		this.userGroup = userGroup;
+	}
+
+	public Byte getUserLevel() {
+		return userLevel;
+	}
+
+	public void setUserLevel(Byte userLevel) {
+		this.userLevel = userLevel;
+	}
+
+	public Byte getUserPost() {
+		return userPost;
+	}
+
+	public void setUserPost(Byte userPost) {
+		this.userPost = userPost;
+	}
+
+	public BigDecimal getRegMoney() {
+		return regMoney;
+	}
+
+	public void setRegMoney(BigDecimal regMoney) {
+		this.regMoney = regMoney;
+	}
+
+	public BigDecimal getYfMoney() {
+		return yfMoney;
+	}
+
+	public void setYfMoney(BigDecimal yfMoney) {
+		this.yfMoney = yfMoney;
+	}
+
+	public BigDecimal getFdMoney() {
+		return fdMoney;
+	}
+
+	public void setFdMoney(BigDecimal fdMoney) {
+		this.fdMoney = fdMoney;
+	}
+
+	public BigDecimal getTotalPerformance() {
+		return totalPerformance;
+	}
+
+	public void setTotalPerformance(BigDecimal totalPerformance) {
+		this.totalPerformance = totalPerformance;
+	}
+
+	public Long getActivationTime() {
+		return activationTime;
+	}
+
+	public void setActivationTime(Long activationTime) {
+		this.activationTime = activationTime;
+	}
+
+	public Integer getUserQq() {
+		return userQq;
+	}
+
+	public void setUserQq(Integer userQq) {
+		this.userQq = userQq;
+	}
+
+	public String getUserWechat() {
+		return userWechat;
+	}
+
+	public void setUserWechat(String userWechat) {
+		this.userWechat = userWechat;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
+	public String getRegister() {
+		return register;
+	}
+
+	public void setRegister(String register) {
+		this.register = register;
+	}
+
+	public String getExpressPassword() {
+		return expressPassword;
+	}
+
+	public void setExpressPassword(String expressPassword) {
+		this.expressPassword = expressPassword;
+	}
+
+	public BigDecimal getTotalDividends() {
+		return totalDividends;
+	}
+
+	public void setTotalDividends(BigDecimal totalDividends) {
+		this.totalDividends = totalDividends;
+	}
+
+	public Integer getDividendsDays() {
+		return dividendsDays;
+	}
+
+	public void setDividendsDays(Integer dividendsDays) {
+		this.dividendsDays = dividendsDays;
+	}
+
+	public Integer getCountry() {
+		return country;
+	}
+
+	public void setCountry(Integer country) {
+		this.country = country;
+	}
+
+	public Integer getProvince() {
+		return province;
+	}
+
+	public void setProvince(Integer province) {
+		this.province = province;
+	}
+
+	public Integer getCity() {
+		return city;
+	}
+
+	public void setCity(Integer city) {
+		this.city = city;
+	}
+
+	public Integer getDarea() {
+		return darea;
+	}
+
+	public void setDarea(Integer darea) {
+		this.darea = darea;
+	}
+
+	public BigDecimal getBalanceEt() {
+		return balanceEt;
+	}
+
+	public void setBalanceEt(BigDecimal balanceEt) {
+		this.balanceEt = balanceEt;
+	}
+
+	public String getIdnumber() {
+		return idnumber;
+	}
+
+	public void setIdnumber(String idnumber) {
+		this.idnumber = idnumber;
+	}
+
+	public Byte getBanktype() {
+		return banktype;
+	}
+
+	public void setBanktype(Byte banktype) {
+		this.banktype = banktype;
+	}
+
+	public String getBankUserName() {
+		return bankUserName;
+	}
+
+	public void setBankUserName(String bankUserName) {
+		this.bankUserName = bankUserName;
+	}
+
+	public String getBanknumber() {
+		return banknumber;
+	}
+
+	public void setBanknumber(String banknumber) {
+		this.banknumber = banknumber;
+	}
+
+	public String getBankContent() {
+		return bankContent;
+	}
+
+	public void setBankContent(String bankContent) {
+		this.bankContent = bankContent;
+	}
+
+	public String getQuestion1() {
+		return question1;
+	}
+
+	public void setQuestion1(String question1) {
+		this.question1 = question1;
+	}
+
+	public String getQuestion2() {
+		return question2;
+	}
+
+	public void setQuestion2(String question2) {
+		this.question2 = question2;
+	}
+
+	public String getQuestion3() {
+		return question3;
+	}
+
+	public void setQuestion3(String question3) {
+		this.question3 = question3;
+	}
+
+	public String getAnswer1() {
+		return answer1;
+	}
+
+	public void setAnswer1(String answer1) {
+		this.answer1 = answer1;
+	}
+
+	public String getAnswer2() {
+		return answer2;
+	}
+
+	public void setAnswer2(String answer2) {
+		this.answer2 = answer2;
+	}
+
+	public String getAnswer3() {
+		return answer3;
+	}
+
+	public void setAnswer3(String answer3) {
+		this.answer3 = answer3;
+	}
+
+	public Integer getGroupid() {
+		return groupid;
+	}
+
+	public void setGroupid(Integer groupid) {
+		this.groupid = groupid;
+	}
+
+	public String getTicket() {
+		return ticket;
+	}
+
+	public void setTicket(String ticket) {
+		this.ticket = ticket;
+	}
+
+	public BigDecimal getBalanceGouwu() {
+		return balanceGouwu;
+	}
+
+	public void setBalanceGouwu(BigDecimal balanceGouwu) {
+		this.balanceGouwu = balanceGouwu;
+	}
+
+	public Byte getQrcodeStatus() {
+		return qrcodeStatus;
+	}
+
+	public void setQrcodeStatus(Byte qrcodeStatus) {
+		this.qrcodeStatus = qrcodeStatus;
+	}
+
+	public Long getBonusTime() {
+		return bonusTime;
+	}
+
+	public void setBonusTime(Long bonusTime) {
+		this.bonusTime = bonusTime;
+	}
+
+	public Byte getIsEmpty() {
+		return isEmpty;
+	}
+
+	public void setIsEmpty(Byte isEmpty) {
+		this.isEmpty = isEmpty;
+	}
+
+	public BigDecimal getBalanceHeart() {
+		return balanceHeart;
+	}
+
+	public void setBalanceHeart(BigDecimal balanceHeart) {
+		this.balanceHeart = balanceHeart;
+	}
+
+	public Integer getKuoLevel() {
+		return kuoLevel;
+	}
+
+	public void setKuoLevel(Integer kuoLevel) {
+		this.kuoLevel = kuoLevel;
+	}
+
+	public Byte getBackfillStatus() {
+		return backfillStatus;
+	}
+
+	public void setBackfillStatus(Byte backfillStatus) {
+		this.backfillStatus = backfillStatus;
+	}
+
+	public BigDecimal getBackfillMoney() {
+		return backfillMoney;
+	}
+
+	public void setBackfillMoney(BigDecimal backfillMoney) {
+		this.backfillMoney = backfillMoney;
+	}
+
+	public BigDecimal getBackfillSheng() {
+		return backfillSheng;
+	}
+
+	public void setBackfillSheng(BigDecimal backfillSheng) {
+		this.backfillSheng = backfillSheng;
+	}
+
+	public Integer getGuadanNum() {
+		return guadanNum;
+	}
+
+	public void setGuadanNum(Integer guadanNum) {
+		this.guadanNum = guadanNum;
+	}
+
+	public BigDecimal getAllstatic() {
+		return allstatic;
+	}
+
+	public void setAllstatic(BigDecimal allstatic) {
+		this.allstatic = allstatic;
+	}
+
+	public Integer getDis() {
+		return dis;
+	}
+
+	public void setDis(Integer dis) {
+		this.dis = dis;
+	}
+
+	public Long getReleaseTime() {
+		return releaseTime;
+	}
+
+	public void setReleaseTime(Long releaseTime) {
+		this.releaseTime = releaseTime;
+	}
+
+	public Byte getIsshop() {
+		return isshop;
+	}
+
+	public void setIsshop(Byte isshop) {
+		this.isshop = isshop;
+	}
+
+	public Byte getIsimport() {
+		return isimport;
+	}
+
+	public void setIsimport(Byte isimport) {
+		this.isimport = isimport;
+	}
+
+	public Byte getPos() {
+		return pos;
+	}
+
+	public void setPos(Byte pos) {
+		this.pos = pos;
+	}
+
+	public Byte getIsout() {
+		return isout;
+	}
+
+	public void setIsout(Byte isout) {
+		this.isout = isout;
+	}
+
+	public String getTouchDistance() {
+		return touchDistance;
+	}
+
+	public void setTouchDistance(String touchDistance) {
+		this.touchDistance = touchDistance;
+	}
+
+	public String getRefereeUserName() {
+		return refereeUserName;
+	}
+
+	public void setRefereeUserName(String refereeUserName) {
+		this.refereeUserName = refereeUserName;
+	}
+
+	public String getParentUserName() {
+		return parentUserName;
+	}
+
+	public void setParentUserName(String parentUserName) {
+		this.parentUserName = parentUserName;
+	}
+
+	public BigDecimal getTouchedPerformance() {
+		return touchedPerformance;
+	}
+
+	public void setTouchedPerformance(BigDecimal touchedPerformance) {
+		this.touchedPerformance = touchedPerformance;
+	}
+
+	public String getUserLevelName() {
+		return userLevelName;
+	}
+
+	public void setUserLevelName(String userLevelName) {
+		this.userLevelName = userLevelName;
+	}
+
+	public BigDecimal getAbleTouchQty() {
+		return ableTouchQty;
+	}
+
+	public void setAbleTouchQty(BigDecimal ableTouchQty) {
+		this.ableTouchQty = ableTouchQty;
+	}
+
+	public String getEthAccount() {
+		return ethAccount;
+	}
+
+	public void setEthAccount(String ethAccount) {
+		this.ethAccount = ethAccount;
+	}
 
 	public BigDecimal getBaodan_amount() {
 		return baodan_amount;
@@ -981,17 +983,24 @@ public class UserDo {
 	public void setBaodan_amount(BigDecimal baodan_amount) {
 		this.baodan_amount = baodan_amount;
 	}
-  
+
+	public Integer getIsActivated() {
+		return isActivated;
+	}
+
+	public void setIsActivated(Integer isActivated) {
+		this.isActivated = isActivated;
+	}
+
 	/**
 	 * 判断是否激活 
 	 * @return  
 	 */
 	public boolean isActivated() {
-	    //if (userLevel != null && userLevel > 0 && activationTime != null && activationTime > 0) {
-	    if (userLevel != null && userLevel > 0) { //经过与王总确认，只需要判断用户等级
-	        return true;
-	    }
-	    
-	    return false;
+		if (userLevel != null && userLevel.intValue() > 0) {
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -18,7 +18,7 @@ public interface ILoanDictDao {
 
     int updateByPrimaryKey(LoanDictDo record);
     
-    public List<LoanDictDo> queryListPage(Map<String,Object> searchItem );
+    List<LoanDictDo> queryListPage(Map<String,Object> searchItem );
 
     /**
      * 查询数据字典

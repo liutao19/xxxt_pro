@@ -48,7 +48,6 @@ public class HuZhuAwardServiceImpl implements IAwardService {
     private ITouchBonusRecordDao touchBonusRecordDao;
 
     @Override
-    @SuppressWarnings("unused")
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void calAward(Integer userId, BigDecimal amount, Integer userLevel) {
         List<TouchBonusRecordDo> list = getTouchBonus(userId);
@@ -112,7 +111,7 @@ public class HuZhuAwardServiceImpl implements IAwardService {
             UserAccountDo tempAccountDo = new UserAccountDo();
             tempAccountDo.setUserId(userReferee.getUserid());
             tempAccountDo.setAmount(huzhuAward);
-            tempAccountDo.setAccountType(AccountType.current.getAccountType());
+            tempAccountDo.setAccountType(AccountType.wallet_bonus.getAccountType());
             tempAccountDo.setRemark(remark);
             accountService.updateUserAmountById(tempAccountDo, IncomeType.TYPE_AWARD_HUZHU);
         }

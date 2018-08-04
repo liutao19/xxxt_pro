@@ -93,5 +93,12 @@ public interface IUserAccountDetailDao {
 			                      @Param("fromAccount")String fromAccount, 
 			                      @Param("toAccount")String toAccount,
 			                      @Param("sourceMsg")IncomeType sourceMsg);
+	
+	/**
+	 * 分页查询用户账户详细信息
+	 * @param parameterMap
+	 * @return
+	 */
+	public List<UserAccountDetailDo> selectUserAccountDetailByPage(Map<String, Object> parameterMap);
 
 }

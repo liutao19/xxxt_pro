@@ -69,7 +69,7 @@ public class DataDecrypt {
     }
     
     public static void main(String[] args) {
-    	System.setProperty("catalina.home", "D:/apache-tomcat-7.0.79");
-		System.out.println(decrypt("7D51EA0B236647CF9240826253777F25"));
+    	System.setProperty("catalina.home", "C:\\Program Files\\Apache Software Foundation\\apache-tomcat-7.0.88");
+		System.out.println(decrypt("B5D26895BC35CA09848D16150A0B3E1C"));
 	}
 }

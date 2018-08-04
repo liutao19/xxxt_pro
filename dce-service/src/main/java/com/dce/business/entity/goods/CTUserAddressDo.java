@@ -1,5 +1,7 @@
 package com.dce.business.entity.goods;
 
+import java.util.Date;
+
 public class CTUserAddressDo {
 
 	  private Integer addressId;
@@ -15,7 +17,8 @@ public class CTUserAddressDo {
 	  private String postCode ;
 	  private Integer isDefault ;//DEFAULT '0',
 	  private Integer addressFlag ;// DEFAULT '1',
-	  private String createTime ;
+	  private Date createTime ;
+	  private Date updateTime ;
 	  
 	public Integer getAddressId() {
 		return addressId;
@@ -95,11 +98,17 @@ public class CTUserAddressDo {
 	public void setAddressFlag(Integer addressFlag) {
 		this.addressFlag = addressFlag;
 	}
-	public String getCreateTime() {
+	public Date getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(String createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 	  
 	  

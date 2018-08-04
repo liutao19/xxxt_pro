@@ -26,4 +26,7 @@ public interface IEthAccountPlatformDao {
 	 * @return  
 	 */
 	int updateByPrimaryKeySelective(EthAccountPlatformDo record);
+	
+	
+	List<EthAccountPlatformDo> selectByPage(Map<String, Object> params);
 }

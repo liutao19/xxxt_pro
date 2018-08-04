@@ -181,6 +181,18 @@
 				AND u.relevant_userid = #{relevantUserid}
 			</if>
 		</trim>
+		<if test="offset != null">
+			limit #{offset}, #{rows}
+		</if>
+	</select>
+	
+	<!-- 自定义查询 -->
+	<select id="selectList" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ct_touch_bonus_record u
+		where id in (select max(id) from ct_touch_bonus_record group by userid)
+		limit #{offset}, #{rows}
 	</select>
 	
     <select id="getUserTouchBonusRecord" parameterType="java.lang.Integer" resultMap="BaseResultMap">

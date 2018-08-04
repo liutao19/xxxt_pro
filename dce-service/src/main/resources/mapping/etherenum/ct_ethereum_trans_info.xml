@@ -341,4 +341,48 @@
            </if>
         </trim> 
     </select>
+    
+    <select id="selectEthTransByPage" parameterType="java.util.Map" resultType="map">
+        select  
+				u.id,
+				u.userId,
+				u.fromAccount,
+				u.toAccount,
+				u.amount,
+				u.actualAmount,
+				u.pointAmount,
+				u.gas,
+				u.gasLimit,
+				u.ActualGas,
+				u.confirmed,
+				case u.status when 'true' then '已到账' else '未到账' end status,
+				u.hash,
+				case u.type when '1' then '充值' when '2' then '提现'  when '3' then '平台外转账-会员转出'  when '4' then '平台外转账-平台转出' end `type`,
+				u.createTime,
+				u.updateTime,
+				u.withdrawFee
+				, b.user_name
+        from ct_ethereum_trans_info u left join ct_user b on u.userid = b.id 
+        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+           <if test="status != null">  
+               AND u.status = #{status}
+           </if>
+           <if test="userId != null">  
+               AND u.userId = #{userId}
+           </if>
+           <if test="confirmed != null">  
+               AND u.confirmed = #{confirmed}
+           </if>
+           <if test="userName != null">  
+               AND b.user_name = #{userName}
+           </if>
+           <if test="startDate != null">  
+               AND <![CDATA[u.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+           </if>
+           <if test="endDate != null">  
+               AND <![CDATA[u.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+           </if>
+        </trim> 
+        order by createTime desc
+    </select>
 </mapper>

@@ -78,7 +78,7 @@
 			<version>${spring.security.version}</version>
 		</dependency>
 		<!-- spring security  -->
-		<dependency>
+<!-- 		<dependency>
             <groupId>com.cloudhopper.proxool</groupId>
             <artifactId>proxool</artifactId>
             <version>0.9.1</version>
@@ -94,7 +94,7 @@
             <groupId>com.cloudhopper.proxool</groupId>
             <artifactId>proxool-cglib</artifactId>
             <version>0.9.1</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>

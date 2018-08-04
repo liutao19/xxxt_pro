@@ -1,12 +1,11 @@
 package com.dce.business.common.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
 
 public class PayUtil {
 	
 	
-	private static Logger logger = Logger.getLogger(PayUtil.class);
+	//private static Logger logger = Logger.getLogger(PayUtil.class);
     
     /**
      * 生成支付码

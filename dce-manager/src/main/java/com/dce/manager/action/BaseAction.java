@@ -20,6 +20,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSON;
+import com.dce.business.entity.secrety.UserInfos;
 import com.dce.manager.util.DataEncrypt;
 import com.dce.manager.util.StringUtil;
 
@@ -89,8 +90,8 @@ public class BaseAction {
         SecurityContext ctx = SecurityContextHolder.getContext();
         Authentication auth = ctx.getAuthentication();
         if (auth.getPrincipal() instanceof UserDetails) {
-//            UserInfos user = (UserInfos) auth.getPrincipal();
-//            return user.getUserId();
+            UserInfos user = (UserInfos) auth.getPrincipal();
+            return user.getUserId();
         }
         return 0;
     }
@@ -99,21 +100,21 @@ public class BaseAction {
         SecurityContext ctx = SecurityContextHolder.getContext();
         Authentication auth = ctx.getAuthentication();
         if (auth.getPrincipal() instanceof UserDetails) {
-//            UserInfos user = (UserInfos) auth.getPrincipal();
-//            return user.getUsername();
+            UserInfos user = (UserInfos) auth.getPrincipal();
+            return user.getUsername();
         }
         return "";
     }
 
-//    public UserInfos getUserInfos() {
-//        SecurityContext ctx = SecurityContextHolder.getContext();
-//        Authentication auth = ctx.getAuthentication();
-//        if (auth.getPrincipal() instanceof UserDetails) {
-//            UserInfos user = (UserInfos) auth.getPrincipal();
-//            return user;
-//        }
-//        return null;
-//    }
+    public UserInfos getUserInfos() {
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        Authentication auth = ctx.getAuthentication();
+        if (auth.getPrincipal() instanceof UserDetails) {
+            UserInfos user = (UserInfos) auth.getPrincipal();
+            return user;
+        }
+        return null;
+    }
 
     public void removeUserInfosWhenLogout() {
         SecurityContextHolder.getContext().setAuthentication(null);

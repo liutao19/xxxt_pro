@@ -84,7 +84,7 @@ public class TradeController extends BaseController {
         if(userAccountDo != null && userAccountDo.getAmount() != null){
         	pointAmount = userAccountDo.getAmount();
         }
-        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 //        LoanDictDtlDo dtl = loanDictService.getLoanDictDtl(DictCode.DEC2RMB.getCode());
 //        LoanDictDtlDo rate = loanDictService.getLoanDictDtl(DictCode.TRANS_RATE.getCode());
 //        BigDecimal price = new BigDecimal(dtl.getRemark());
@@ -116,7 +116,7 @@ public class TradeController extends BaseController {
 //        LoanDictDtlDo dtl = loanDictService.getLoanDictDtl(DictCode.DEC2RMB.getCode());
         
         Map<String,Object> result = orderService.getBaseInfo(DateUtil.dateToString(new Date()));
-        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
         
         Map<String, Object> map = new HashMap<>();
         map.put("latestPrice", ct.getPrice_open()); //当前价格
@@ -157,7 +157,7 @@ public class TradeController extends BaseController {
     @RequestMapping(value = "/getTradeOpenStatu", method = RequestMethod.POST)
     public Result<?> getTradeOpenStatu() {
         logger.info("获取当前是否允许交易的状态");
-        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
         Result<String> result = Result.successResult("获取当前是否允许交易的状态成功");
         result.setData("T");
 		if(ct == null || ct.getIs_lock() == null || 0 == ct.getIs_lock().intValue()){
@@ -201,7 +201,7 @@ public class TradeController extends BaseController {
      */
     @RequestMapping(value = "/calRmb2Dce", method = RequestMethod.POST)
     public Result<?> calRmb2Dce() {
-        logger.info("人民币转dce币");
+        logger.info("人民币转现金币");
         String amt = this.getString("amt");
         BigDecimal rmbAmt = null;
         try{
@@ -215,7 +215,7 @@ public class TradeController extends BaseController {
         try{
         	BigDecimal dceamt = loanDictService.rmb2Dce(rmbAmt);
             
-        	return  Result.successResult("人民币转dce币成功", dceamt);
+        	return  Result.successResult("人民币转现金币成功", dceamt);
         }catch(BusinessException be){
         	return Result.failureResult(be.getMessage());
         }catch(Exception bee){

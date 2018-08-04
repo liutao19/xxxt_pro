@@ -33,6 +33,8 @@ public class OrderDo {
     private Long matchOrderId;
     
     private BigDecimal salqty;
+    
+    private String accountType; //账户类型
 
     /**
      * 获取剩余的挂单数量
@@ -161,6 +163,12 @@ public class OrderDo {
 	public void setSalqty(BigDecimal salqty) {
 		this.salqty = salqty;
 	}
-    
-    
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
 }

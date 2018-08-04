@@ -1,7 +1,7 @@
 package com.dce.business.common.enums;
 
 public enum CurrencyType {
-	DCE,
+	IBAC,
 	EDD,
 	DEF,
 	DEG,

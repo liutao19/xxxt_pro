@@ -20,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.HttpUtil;
 import com.dce.business.dao.etherenum.IEthAccountPlatformDao;
@@ -27,6 +28,7 @@ import com.dce.business.dao.etherenum.IEthereumAccountDao;
 import com.dce.business.dao.etherenum.IEthereumTransInfoDao;
 import com.dce.business.entity.etherenum.EthAccountPlatformDo;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.third.IEthereumPlatformService;
 import com.dce.business.service.third.IEthereumService;
@@ -145,7 +147,6 @@ public class EthereumPlatformServiceImpl implements IEthereumPlatformService {
     }
 
     //加签
-    @SuppressWarnings("unused")
     private String sign(String[] fields) {
         return null;
     }
@@ -232,7 +233,6 @@ public class EthereumPlatformServiceImpl implements IEthereumPlatformService {
 
         String toAccount = receiveAddress; //转入账号
 
-//        BigDecimal gas = getGas();
         result = ethereumService.trans(0, accountNo, toAccount, pwd, amt, amount, 4,BigDecimal.ZERO);
 
         //以太坊转账失败
@@ -240,26 +240,20 @@ public class EthereumPlatformServiceImpl implements IEthereumPlatformService {
             return result;
         }
 
-//        Map<String, Object> map = (Map<String, Object>) result.getData();
-//
-//        //记录转账流水
-//        EthereumTransInfoDo transInfo = new EthereumTransInfoDo();
-//        transInfo.setUserid(0);
-//        transInfo.setFromaccount(accountNo);
-//        transInfo.setToaccount(toAccount);
-//        transInfo.setAmount(amount.toString());
-//        //transInfo.setActualamount(map.get("value").toString());
-//        transInfo.setPointamount(amount);
-//        transInfo.setGas(gas.toString());
-//        transInfo.setGaslimit(gas.toString());
-//        //transInfo.setActualgas(map.get("gas").toString());
-//        transInfo.setHash(map.get("hash").toString());
-//        transInfo.setType(3); //1.充值， 2. 提现 3.发送
-//        transInfo.setCreatetime(new Date());
-//        transInfo.setUpdatetime(new Date());
-//        ethereumTransInfoDao.insertSelective(transInfo);
         return result;
     }
+
+	@Override
+	public PageDo<EthAccountPlatformDo> selectEthAccountPlatByPage(
+			PageDo<EthAccountPlatformDo> page, Map<String, Object> params) {
+		if(params == null){
+			params = new HashMap<String,Object>();
+		}
+		params.put(Constants.MYBATIS_PAGE, page);
+		List<EthAccountPlatformDo> list = ethAccountDao.selectByPage(params);
+		page.setModelList(list);
+		return page;
+	}
     
     /** 
      * 以太坊交易费

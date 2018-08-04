@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
-import com.dce.business.service.account.IAccountService;
+import com.dce.business.service.account.IPayService;
 
 @RestController
 @RequestMapping("/withdraw")
@@ -20,7 +20,7 @@ public class WithDrawController extends BaseController {
     private final static Logger logger = Logger.getLogger(WithDrawController.class);
 
     @Resource
-    private IAccountService accountService;
+    private IPayService payService;
 
     /** 
      * 用户提现
@@ -36,7 +36,7 @@ public class WithDrawController extends BaseController {
         Assert.hasText(qty, "提现以太坊数量不能为空");
         logger.info("用户提现, userId:" + userId + "; qty:" + qty);
 
-        return accountService.withdraw(getUserId(), password, new BigDecimal(qty));
+        return payService.withdraw(getUserId(), password, new BigDecimal(qty));
     }
 
 }

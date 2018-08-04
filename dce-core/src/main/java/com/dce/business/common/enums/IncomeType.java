@@ -90,15 +90,40 @@ public enum IncomeType {
     /*
     * 美元点转入
     */
-    TYPE_POINT_IN(801, "美元点转入"),
+    TYPE_POINT_IN(801, "转入"),
     /*
     * 美元点转出
     */
-    TYPE_POINT_OUT(802, "美元点转出"),
+    TYPE_POINT_OUT(802, "转出"),
     /**
      * 商城消费
      */
-    TYPE_GOODS_BUY(902, "商城消费");
+    TYPE_GOODS_BUY(902, "商城消费"),
+    /**
+     * 持币生息
+     */
+    TYPE_INTEREST(1001, "持币生息"),
+    /**
+     * 分享奖
+     */
+    TYPE_SHARED(1002, "分享奖"),
+    /**
+     * 奖金钱包释放
+     */
+    TYPE_REALESE_BONUS(1003, "奖金币钱包释放"),
+    /**
+     * 原始钱包释放
+     */
+    TYPE_REALESE_ORIGINAL(1004, "原始币钱包释放"),
+    /**
+     * 日息钱包释放
+     */
+    TYPE_REALESE_INTEREST(1005, "日息币钱包释放"),
+    /**
+     * 释放币钱包释放
+     */
+    TYPE_REALESE_RELEASE(1006, "释放币钱包释放")
+    ;
 
     private int incomeType;
     private String remark;

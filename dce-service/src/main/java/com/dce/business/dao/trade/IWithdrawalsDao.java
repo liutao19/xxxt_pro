@@ -3,8 +3,6 @@ package com.dce.business.dao.trade;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.dce.business.entity.trade.WithdrawalsDo;
 
 public interface IWithdrawalsDao {
@@ -49,4 +47,8 @@ public interface IWithdrawalsDao {
 	void auditWithdrawById4(WithdrawalsDo withdraw);
 	
 	int selectWithdrawCount(Map<String,Object> param);
+	
+	List<Map<String,Object>> selectWithDrawByPage(Map<String,Object> param);
+	
+	Long selectWithDrawTotallAmount(Map<String,Object> param);
 }

@@ -43,4 +43,8 @@ public interface IUserParentDao {
 	 * @return
 	 */
 	List<Map<String,Object>> selectPerformance(Map<String, Object> params);
+
+	Map<String, Object> getYJ(Map<String, Object> params);
+	
+	Map<String, Object> getTodayYJ(Map<String, Object> params);
 }

@@ -5,6 +5,7 @@ import com.dce.business.entity.goods.CTUserAddressDo;
 
 public interface ICTUserAddressService {
 
-	public Result<?> save(CTUserAddressDo address);
+	Result<?> save(CTUserAddressDo address);
 	
+	CTUserAddressDo getAddress(Integer userId);
 }

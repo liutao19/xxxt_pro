@@ -180,11 +180,11 @@ public class LoanDictServiceImpl implements ILoanDictService {
 
 	@Override
 	public BigDecimal rmb2Dce(BigDecimal rmb) {
-		LoanDictDtlDo MYDBXCC = this.getLoanDictDtl(DictCode.MYDBXCC.getCode());
+		LoanDictDtlDo MYDBXCC = this.getLoanDictDtl(DictCode.Point2RMB.getCode());
         BigDecimal decp = new BigDecimal(MYDBXCC.getRemark());
         //计算需要的美元点
-        BigDecimal pointAmt = rmb.divide(new BigDecimal(6), 6, RoundingMode.HALF_UP);
+//        BigDecimal pointAmt = rmb.divide(new BigDecimal(6), 6, RoundingMode.HALF_UP);
         
-        return pointAmt.divide(decp,6,RoundingMode.HALF_UP);
+        return rmb.divide(decp,6,RoundingMode.HALF_UP);
 	}
 }

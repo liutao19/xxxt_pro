@@ -16,17 +16,14 @@ public class AwardServiceImpl implements IAwardService {
     private IAwardService liangPengAwardService;
     @Resource(name = "zhiTuiAwardService")
     private IAwardService zhiTuiAwardService;
-    @Resource(name = "lingDaoAwardService")
-    private IAwardService lingDaoAwardService;
-    @Resource(name = "huZhuAwardService")
-    private IAwardService huZhuAwardService;
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void calAward(Integer userId, BigDecimal amount, Integer userLevel) {
+    	//计算业绩
         liangPengAwardService.calAward(userId, amount, userLevel);
+        
+        //计算直推奖
         zhiTuiAwardService.calAward(userId, amount, userLevel);
-        lingDaoAwardService.calAward(userId, amount, userLevel);
-        huZhuAwardService.calAward(userId, amount, userLevel);
     }
 }

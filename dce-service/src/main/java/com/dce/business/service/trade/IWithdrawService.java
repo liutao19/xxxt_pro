@@ -3,7 +3,8 @@ package com.dce.business.service.trade;
 import java.util.List;
 import java.util.Map;
 
-import com.dce.business.entity.trade.WithdrawalsDo;
+import com.dce.business.common.result.Result;
+import com.dce.business.entity.page.PageDo;
 
 public interface IWithdrawService {
 
@@ -21,7 +22,21 @@ public interface IWithdrawService {
      * @param auditResult 审批意见
      * @return  
      */
-    void auditWithdrawById(String auditResult,Integer withdrawId);
+    Result<?> auditWithdrawById(String auditResult,Integer withdrawId);
     
     int selectWithdrawCount(Map<String,Object> param);
+    
+    /**
+     * 查询申请提现记录 分页
+     * @param userId
+     * @return  
+     */
+    PageDo<Map<String,Object>> selectWithDrawByPage(PageDo<Map<String,Object>> page,Map<String,Object> param);
+    
+    /**
+     * 体现金额统计
+     * @param param
+     * @return
+     */
+    Long selectWithDrawTotallAmount(Map<String,Object> param);
 }

@@ -29,4 +29,11 @@ public interface IEthereumTransInfoDao {
 	List<Map<String, Object>> queryEthTrans(Map<String, Object> params);
 	
 	int queryEthTransCount(Map<String, Object> params);
+	
+	/**
+	 * 分页查询
+	 * @param params
+	 * @return
+	 */
+	List<Map<String, Object>> selectEthTransByPage(Map<String, Object> params);
 }

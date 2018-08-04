@@ -24,12 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.dce.business.actions.common.BaseController;
+import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.ExeclTools;
+import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.etherenum.EthAccountPlatformDo;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
 import com.dce.business.entity.user.UserDo;
+import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.third.IEthereumPlatformService;
 import com.dce.business.service.third.IEthereumService;
 import com.dce.business.service.third.IEthereumTransInfoService;
@@ -53,6 +56,9 @@ public class EthereumController extends BaseController {
     @Resource
     private IEthereumTransInfoService ethTranService;
 
+    @Resource
+	private ILoanDictService loanDictService;
+    
     @Value("#{sysconfig['app.host']}")
     private String hostUrl;
 
@@ -343,10 +349,22 @@ public class EthereumController extends BaseController {
      */
     @RequestMapping(value = "/getEthPrice", method = { RequestMethod.GET, RequestMethod.POST })
     public Result<?> getEthPrice() {
-        Result<BigDecimal> result = Result.successResult("操作成功");
+        Result<Map<String,Object>> result = Result.successResult("操作成功");
         try {
             BigDecimal usdPrice = ethereumService.getMarketPrice(); //美元价格
-            result.setData(usdPrice);
+            Map<String,Object> data = new HashMap<String,Object>();
+            data.put("price", usdPrice);
+            BigDecimal rate = null;
+            LoanDictDtlDo loanDictDtlDo = loanDictService.getLoanDictDtl(DictCode.Point2RMB.getCode(), DictCode.Point2RMB.getCode());
+            if(loanDictDtlDo != null && loanDictDtlDo.getRemark() != null){
+            	
+            	 rate = new BigDecimal(loanDictDtlDo.getRemark());
+            }else{
+            	
+            	 rate = new BigDecimal("1");
+            }
+            data.put("rate", rate);
+            result.setData(data);
         } catch (Exception e) {
             Result.failureResult(e.getMessage());
         }
@@ -361,7 +379,7 @@ public class EthereumController extends BaseController {
     public Result<?> auditWithdraw() {
         String withdrawId = getString("withdrawId");
         String auditResult = getString("auditResult");
-        Result result = Result.successResult("操作成功", withdrawId);
+        Result<?> result = Result.successResult("操作成功", withdrawId);
         try {
             withdrawService.auditWithdrawById(auditResult, Integer.valueOf(withdrawId));
         } catch (BusinessException e) {
@@ -383,7 +401,7 @@ public class EthereumController extends BaseController {
         String centerAccount = getString("centerAccount");
         String password = getString("password");
         ModelAndView mav = new ModelAndView("redirect:/eth/platform/accounts.do");
-        Result result = Result.successResult("设置成功", centerAccount);
+        Result<?> result = Result.successResult("设置成功", centerAccount);
         try {
             platformService.createPlatformAccount(centerAccount, password);
         } catch (Exception e) {

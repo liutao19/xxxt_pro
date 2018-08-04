@@ -31,6 +31,8 @@ public class UserAccountDo {
      * 流水id
      */
     private String seqId;
+    
+    private String relevantUser; //发生对象用户
 
     public Integer getId() {
         return id;
@@ -127,5 +129,12 @@ public class UserAccountDo {
 	public void setSeqId(String seqId) {
 		this.seqId = seqId;
 	}
-    
+
+	public String getRelevantUser() {
+		return relevantUser;
+	}
+
+	public void setRelevantUser(String relevantUser) {
+		this.relevantUser = relevantUser;
+	}
 }

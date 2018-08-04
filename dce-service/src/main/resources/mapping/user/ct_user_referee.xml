@@ -100,7 +100,7 @@
 	
 	<select id="listMyRef" parameterType="Map" resultType="Map">			
 		SELECT 	
-	        b.user_name AS user_name,
+	        CONCAT(b.true_name,'[',b.user_name,']') AS user_name,
 			b.total_performance,
 			b.referee_number,
 			b.user_level,

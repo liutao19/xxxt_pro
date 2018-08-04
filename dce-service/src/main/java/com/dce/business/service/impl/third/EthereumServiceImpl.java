@@ -1,8 +1,10 @@
 package com.dce.business.service.impl.third;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,6 +13,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.HttpUtil;
 import com.dce.business.dao.etherenum.IEthereumAccountDao;
@@ -25,6 +29,7 @@ import com.dce.business.dao.etherenum.IEthereumTransInfoDao;
 import com.dce.business.entity.dict.CtCurrencyDo;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
 import com.dce.business.entity.etherenum.EthereumTransInfoDo;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.third.IEthereumService;
 
@@ -108,46 +113,15 @@ public class EthereumServiceImpl implements IEthereumService {
         //只返回美元价格
         return new BigDecimal(result.get("usd").toString());
     }
-
-//    @Override
-//    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-//    public Result<?> trans(String fromAccount, String toAccount, String password, BigDecimal amount, BigDecimal gas, BigDecimal gasLimit) {
-//        logger.info("以太坊转账");
-//        logger.info("fromAccount:" + fromAccount);
-//        logger.info("toAccount:" + toAccount);
-//        logger.info("amount:" + amount);
-//        logger.info("gas:" + gas);
-//        logger.info("gasLimit:" + gasLimit);
-//
-//        String sign = sign(new String[] { fromAccount, toAccount, amount.toString(), gas.toString() });
-//
-//        JSONObject params = buildCommonParams();
-//        params.put("account", fromAccount);
-//        params.put("password", password);
-//        params.put("to", toAccount);
-//        params.put("value", amount);
-//        params.put("gas", gas);
-//        params.put("gasLimit", gasLimit);
-//        String url = transUrl + "?sign=" + sign;
-//
-//        Map<String, Object> response = HttpUtil.post(url, params);
-//
-//        Result result = Result.successResult("正在处理中", response);
-//        if (response == null || response.get("status") == null || !"OK".equals(response.get("status").toString()) || response.get("account") == null
-//                || StringUtils.isBlank(response.get("account").toString())) {
-//            result = Result.failureResult("以太坊转账失败");
-//        }
-//
-//        return result;
-//    }
-//
-//    @Override
+ 
+    @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public Result<?> trans(Integer userId, String fromAccount, String toAccount, String password, BigDecimal amount, String pointAmount,
             Integer type,BigDecimal fee) {
         return this.trans(userId, fromAccount, toAccount, password, amount, pointAmount, type, fee, null);
     }
     
+    @Async
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public Result<?> trans(Integer userId, String fromAccount, String toAccount, String password, BigDecimal amount, String pointAmount,
             Integer type,BigDecimal fee,Integer withdrawId) {
@@ -195,7 +169,7 @@ public class EthereumServiceImpl implements IEthereumService {
             ethereumTransInfoDao.insertSelective(transInfo);
         }
 
-        Result result = Result.successResult("正在处理中", response);
+        Result<?> result = Result.successResult("正在处理中", response);
 
         return result;
     }
@@ -205,7 +179,7 @@ public class EthereumServiceImpl implements IEthereumService {
      * @return  
      */
     private BigDecimal getGas() {
-        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+        CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 
         if (ct != null && ct.getWith_fee() != null) {
             return ct.getWith_fee();
@@ -215,7 +189,7 @@ public class EthereumServiceImpl implements IEthereumService {
     }
 
     @Override
-    public Result<?> getTransResult(String hash) {
+    public Result<Map<String, Object>> getTransResult(String hash) {
         logger.info("查询转账结果");
         logger.info("hash:" + hash);
 
@@ -259,7 +233,6 @@ public class EthereumServiceImpl implements IEthereumService {
     }
 
     //加签
-    @SuppressWarnings("unused")
     private String sign(String[] fields) {
         return null;
     }
@@ -272,4 +245,31 @@ public class EthereumServiceImpl implements IEthereumService {
         return ethereumAccountDao.getEthereumAccount(params);
     }
 
+	@Override
+	public BigDecimal getEthernumAmount(Integer userId) {
+		BigDecimal ethereumAmount = BigDecimal.ZERO;
+		EthereumAccountDo ethereumAccountDo = getByUserId(userId);
+		if (ethereumAccountDo != null && StringUtils.isNotBlank(ethereumAccountDo.getAccount())) {
+			Map<String, String> map = getBalance(ethereumAccountDo.getAccount());
+			if (map != null) {
+				ethereumAmount = new BigDecimal(map.get("balance"));
+				ethereumAccountDo.setBalance(ethereumAmount.setScale(8,RoundingMode.HALF_DOWN).toString());
+				ethereumAccountDao.updateBalance(ethereumAccountDo);
+			}
+		}
+		return ethereumAmount;
+	}
+
+	@Override
+	public PageDo<Map<String, Object>> selectEthereumAccountByPage(
+			PageDo<Map<String, Object>> page, Map<String, Object> params) {
+		
+		if(params == null){
+			params = new HashMap<String,Object>();
+		}
+		params.put(Constants.MYBATIS_PAGE, page);
+		List<Map<String,Object>> list = ethereumAccountDao.selectEthereumAccountByPage(params);
+		page.setModelList(list);
+		return page;
+	}
 }

@@ -21,12 +21,14 @@ import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.enums.OrderStatus;
 import com.dce.business.common.enums.OrderType;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.order.IOrderDao;
 import com.dce.business.dao.trade.IKLineDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.CtCurrencyDo;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.trade.KLineDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ICtCurrencyService;
@@ -103,14 +105,14 @@ public class OrderServiceImpl implements IOrderService {
     	 * 如果订单是买入 那么当前用户是在卖出DEC币  所以需要查询挂单用户的美元点账户是否有足够的额度来买当前用户的DEC币
     	 */
     	if(orderType == OrderType.GD_SAL.getOrderType()){
-    		pointAcc = accountService.selectUserAccount(userId, AccountType.point.getAccountType());
+    		pointAcc = accountService.selectUserAccount(userId, matchOrder.getAccountType());
     	}else{
-    		pointAcc = accountService.selectUserAccount(matchOrder.getUserId(), AccountType.point.getAccountType());
+    		pointAcc = accountService.selectUserAccount(matchOrder.getUserId(), matchOrder.getAccountType());
     	}
     	BigDecimal needpoint = qty.multiply(matchOrder.getPrice()).setScale(6, RoundingMode.HALF_UP);
 //    	needpoint = needpoint.divide(new BigDecimal(rmb2point.getRemark()),6,RoundingMode.HALF_UP);
     	if(pointAcc == null || pointAcc.getAmount().compareTo(needpoint) < 0){
-    		return Result.failureResult("当前美元点账户余额不足扣取买入点额度所需美元点");
+    		return Result.failureResult("当前现金币账户余额不足");
     	}
     	
     	return Result.successResult("条件判断成功,符合买卖条件",needpoint);
@@ -159,10 +161,10 @@ public class OrderServiceImpl implements IOrderService {
     	
     	BigDecimal needpoint = (BigDecimal) bfResult.getData();
     	/** 更新两个用户之间的美元点账户余额 **/
-    	accountService.convertBetweenAccount(userId, matchOrder.getUserId(), needpoint, AccountType.point.getAccountType(), AccountType.point.getAccountType(), IncomeType.TYPE_PURCHASE, IncomeType.TYPE_SELL);
+    	accountService.convertBetweenAccount(userId, matchOrder.getUserId(), needpoint, AccountType.wallet_cash.getAccountType(), AccountType.wallet_cash.getAccountType(), IncomeType.TYPE_PURCHASE, IncomeType.TYPE_SELL);
     	
         //需要扣减卖家手续费，美元点
-        CtCurrencyDo ctCurrencyDo = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+        CtCurrencyDo ctCurrencyDo = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
         if (ctCurrencyDo != null && ctCurrencyDo.getCurrency_sell_fee() != null) {
             BigDecimal feeRate = ctCurrencyDo.getCurrency_sell_fee().divide(new BigDecimal("100"), 6, RoundingMode.HALF_UP);
             BigDecimal fee = feeRate.multiply(needpoint).setScale(6, RoundingMode.HALF_UP);
@@ -170,7 +172,7 @@ public class OrderServiceImpl implements IOrderService {
 
             UserAccountDo feeAccount = new UserAccountDo();
             feeAccount.setUserId(matchOrder.getUserId());
-            feeAccount.setAccountType(AccountType.point.getAccountType());
+            feeAccount.setAccountType(AccountType.wallet_cash.getAccountType());
             feeAccount.setAmount(fee.negate());
             accountService.updateUserAmountById(feeAccount, IncomeType.TYPE_TRADE_FEE);
         }
@@ -178,7 +180,7 @@ public class OrderServiceImpl implements IOrderService {
     	
     	/** 更新当前买入用户的现持仓额度 += qty **/
     	UserAccountDo currentAcc = new UserAccountDo();
-    	currentAcc.setAccountType(AccountType.current.getAccountType());
+    	currentAcc.setAccountType(matchOrder.getAccountType());
     	currentAcc.setAmount(qty);
     	currentAcc.setUserId(userId);
     	accountService.updateUserAmountById(currentAcc, IncomeType.TYPE_PURCHASE);
@@ -214,7 +216,7 @@ public class OrderServiceImpl implements IOrderService {
     	}
     	
     	/** 判断现持仓是否有足够(>=qty)的币可以出售 **/
-    	UserAccountDo currentAcc = accountService.selectUserAccount(userId, AccountType.current.getAccountType());
+    	UserAccountDo currentAcc = accountService.selectUserAccount(userId, matchOrder.getAccountType());
     	if(currentAcc.getAmount().compareTo(qty) < 0){
     		return Result.failureResult("你当前现持仓没有足够的币可以出售!");
     	}
@@ -241,10 +243,10 @@ public class OrderServiceImpl implements IOrderService {
     	
     	BigDecimal needpoint = (BigDecimal) bfResult.getData();
     	/** 更新两个用户之间的美元点账户余额 **/
-    	accountService.convertBetweenAccount(matchOrder.getUserId(), userId, needpoint, AccountType.point.getAccountType(), AccountType.point.getAccountType(), IncomeType.TYPE_SELL, IncomeType.TYPE_PURCHASE);
+    	accountService.convertBetweenAccount(matchOrder.getUserId(), userId,qty.negate(), needpoint, matchOrder.getAccountType(), AccountType.wallet_cash.getAccountType(), IncomeType.TYPE_SELL, IncomeType.TYPE_PURCHASE);
     	/** 更新当前卖出DEC用户的现持仓额度 -= qty **/
     	UserAccountDo _currentAcc = new UserAccountDo();
-    	_currentAcc.setAccountType(AccountType.current.getAccountType());
+    	_currentAcc.setAccountType(matchOrder.getAccountType());
     	_currentAcc.setAmount(qty.negate());
     	_currentAcc.setUserId(userId);
     	accountService.updateUserAmountById(_currentAcc, IncomeType.TYPE_SELL);
@@ -266,14 +268,14 @@ public class OrderServiceImpl implements IOrderService {
         addOrder(newOrder);
         
         afterMatchOrder(matchOrder);
-        return Result.successResult("卖出DCE订单成功!");
+        return Result.successResult("卖出订单成功!");
 	}
     
     @Override
     public Result<?> matchOrder(Integer userId, Long orderId,BigDecimal qty){
     	
     	//判断系统设置是否可交易
-		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 		if(ct == null || ct.getIs_lock() == null || 0 == ct.getIs_lock().intValue()){
 			logger.info("交易设置关闭,当前不允许买卖挂单交易....");
 			return Result.failureResult("当前系统不允许交易!");
@@ -312,7 +314,7 @@ public class OrderServiceImpl implements IOrderService {
 		logger.info("开始挂单:" + JSON.toJSONString(orderDo));
 		
 		//判断系统设置是否可交易
-		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.DCE.name());
+		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 		if(ct == null || ct.getIs_lock() == null || 0 == ct.getIs_lock().intValue()){
 			logger.info("交易设置关闭,当前不允许挂单交易....");
 			return Result.failureResult("当前系统不允许交易!");
@@ -341,20 +343,20 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	private Result<?> guadanBuy(OrderDo orderDo){
 		//判断当前用户现持仓是否有足够的DEC
-		UserAccountDo currentAcc = accountService.selectUserAccount(orderDo.getUserId(), AccountType.point.getAccountType());
+		UserAccountDo currentAcc = accountService.selectUserAccount(orderDo.getUserId(), AccountType.wallet_cash.getAccountType());
 		
 		BigDecimal needpoint = orderDo.getQty().multiply(orderDo.getPrice()).setScale(6, RoundingMode.HALF_UP);
 		if(currentAcc == null || currentAcc.getAmount() == null ||currentAcc.getAmount().compareTo(needpoint) < 0){
 			logger.info("买入，没有足够美元点");
-			return Result.failureResult("美元点额度不够");
+			return Result.failureResult("现金币余额不足");
 		}
 		
 		//从美元点减 qty的额度用于挂单
 		UserAccountDo _acct = new UserAccountDo();
-		_acct.setAccountType(AccountType.point.getAccountType());
+		_acct.setAccountType(AccountType.wallet_cash.getAccountType());
 		_acct.setAmount(needpoint.negate());
 		_acct.setUserId(orderDo.getUserId());
-		int i = accountService.updateUserAmountById(_acct, IncomeType.TYPE_GD_BUY);
+		accountService.updateUserAmountById(_acct, IncomeType.TYPE_GD_BUY);
 				
 		Long id = addOrder(orderDo);
 		if(id == null){
@@ -371,15 +373,15 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	private Result<?> guadanSal(OrderDo orderDo){
 		//判断当前用户现持仓是否有足够的DEC
-		UserAccountDo currentAcc = accountService.selectUserAccount(orderDo.getUserId(), AccountType.current.getAccountType());
+		UserAccountDo currentAcc = accountService.selectUserAccount(orderDo.getUserId(), orderDo.getAccountType());
 		if(currentAcc == null || currentAcc.getAmount() == null ||currentAcc.getAmount().compareTo(orderDo.getQty()) < 0){
 			logger.info("当前现持仓没有足够的额度挂单,当前额度");
-			return Result.failureResult("当前现持仓没有足够的额度挂单");
+			return Result.failureResult("钱包的余额不足，挂单失败");
 		}
 		
 		//从现持仓减 qty的额度用于挂单
 		UserAccountDo _acct = new UserAccountDo();
-		_acct.setAccountType(AccountType.current.getAccountType());
+		_acct.setAccountType(orderDo.getAccountType());
 		_acct.setAmount(orderDo.getQty().negate());
 		_acct.setUserId(orderDo.getUserId());
 		int i = accountService.updateUserAmountById(_acct, IncomeType.TYPE_GD_SAL);
@@ -419,14 +421,14 @@ public class OrderServiceImpl implements IOrderService {
 			BigDecimal remain = order.getQty().subtract(salqty);
 			
 			UserAccountDo currentAcc = new UserAccountDo();
-			currentAcc.setAccountType(AccountType.current.getAccountType());
+			currentAcc.setAccountType(order.getAccountType());
 			currentAcc.setAmount(remain);
 			currentAcc.setUserId(order.getUserId());
 			accountService.updateUserAmountById(currentAcc, IncomeType.TYPE_CANCEL);
 		}else if(order.getOrderType().intValue() == OrderType.GD_BUY.getOrderType()){
 			logger.info("退回挂单中买单美元到用户美元点.....");
 			UserAccountDo currentAcc = new UserAccountDo();
-			currentAcc.setAccountType(AccountType.point.getAccountType());
+			currentAcc.setAccountType(AccountType.wallet_cash.getAccountType());
 			currentAcc.setAmount(order.getTotalPrice());
 			currentAcc.setUserId(order.getUserId());
 			accountService.updateUserAmountById(currentAcc, IncomeType.TYPE_CANCEL_BUY);
@@ -466,6 +468,23 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public int selectOrderForReportCount(Map<String, Object> paraMap) {
 		return orderDao.selectOrderForReportCount(paraMap);
+	}
+
+	@Override
+	public PageDo<Map<String, Object>> selectOrderByPage(
+			PageDo<Map<String, Object>> page, Map<String, Object> params) {
+		if(params == null){
+			params = new HashMap<String, Object>();
+		}
+        params.put(Constants.MYBATIS_PAGE, page);
+        List<Map<String,Object>> list =  orderDao.selectOrderByPage(params);
+        page.setModelList(list);;
+		return page;
+	}
+
+	@Override
+	public Long selectGuadanAmount(Map<String, Object> paraMap) {
+		return orderDao.selectGuadanAmount(paraMap);
 	}
 	
 }

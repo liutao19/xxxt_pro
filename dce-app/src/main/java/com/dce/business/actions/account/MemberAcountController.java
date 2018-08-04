@@ -54,7 +54,7 @@ public class MemberAcountController extends BaseController {
 		Integer userId = getUserId();
 		String price = getString("price");
 		String qty = getString("qty");
-		String password = getString("password");
+		//String password = getString("password");
 		logger.info("会员充值, userId:" + userId + "; price:" + price + "; qty:"+ qty );
 		Assert.hasText(price, "买入价格不能为空");
 		Assert.hasText(qty, "买入数量不能为空");

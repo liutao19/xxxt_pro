@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
+import com.dce.business.entity.page.PageDo;
 
 public interface IEthereumService {
 
@@ -31,19 +32,6 @@ public interface IEthereumService {
      * @return
      */
     EthereumAccountDo getByUserId(Integer userId);
-
-    /** 
-     * 以太坊转账
-     * @param fromAccount 转出账户地址
-     * @param toAccount 转入账户地址
-     * @param password 以太坊密码
-     * @param amount 转账数额
-     * @param gas 交易费
-     * @param gasLimit 最大交易费
-     * @return  
-     */
-//    Result<?> trans(String fromAccount, String toAccount, String password, BigDecimal amount, BigDecimal gas, BigDecimal gasLimit);
-
     
     /** 
      * 以太坊转账
@@ -78,7 +66,7 @@ public interface IEthereumService {
      * @param hash
      * @return  
      */
-    Result<?> getTransResult(String hash);
+    Result<Map<String, Object>> getTransResult(String hash);
 
     /**
      * 查询账户余额 
@@ -86,4 +74,13 @@ public interface IEthereumService {
      * @return  
      */
     Map<String, String> getBalance(String account);
+    
+    /**
+     * 查询账户余额
+     * @param userId
+     * @return
+     */
+    BigDecimal getEthernumAmount(Integer userId);
+    
+    PageDo<Map<String,Object>> selectEthereumAccountByPage(PageDo<Map<String,Object>> page, Map<String, Object> params);
 }

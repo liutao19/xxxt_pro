@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.etherenum.EthAccountPlatformDo;
+import com.dce.business.entity.page.PageDo;
 
 
 public interface IEthereumPlatformService {
@@ -43,4 +44,6 @@ public interface IEthereumPlatformService {
 	 */
 	Result<?> sendPlatform(String accountNo, String receiveAddress,
 			String amount, String pwd);
+	
+	PageDo<EthAccountPlatformDo> selectEthAccountPlatByPage(PageDo<EthAccountPlatformDo> page,Map<String, Object> params);
 }

@@ -19,7 +19,7 @@ public interface IUserStaticService {
      */
     void updateStaticMoney(Integer id);
 
-    void insert(UserStaticDo userStaticDo);
+    int insert(UserStaticDo userStaticDo);
 
     /**
      * 是否不释放
@@ -27,4 +27,6 @@ public interface IUserStaticService {
      * @return
      */
 	boolean getUnStaticAward(Integer userid);
+	
+	int updateStatic(UserStaticDo staticDo);
 }

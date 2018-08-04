@@ -12,6 +12,9 @@
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/login/modal.css'/>">
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/login/dlsywglst.css'/>">
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/login/pagination.css'/>">
+    
+    <link href="<c:url value='/css/login/login.css'/>" rel="stylesheet" type="text/css" /> 
+	<link href="<c:url value='/css/login/hhydConfirm.css'/>" rel="stylesheet" type="text/css" /> 
 </head>
 <style>
     input{
@@ -131,7 +134,7 @@
         line-height: 40px;
     }
     p{
-        position: absolute;
+        
         bottom: 0;
         left: 0;
         right: 0;
@@ -168,12 +171,12 @@
 <body>
 <div class="login">
     <div  class="logo" style="float:left;width:400px;">
-     	<font style="color:#FFFFFF;font-size:32px;">加斯链后台管理系统</font>
+     	<font style="color:#FFFFFF;font-size:32px;">ATBT后台管理系统</font>
     </div>
 <%--     <img src="<c:url value='/images/login_logo.png'/>" class="logo"> --%>
     <div class="login-wapper">
         <div class="login-head">
-            	让开发更简单 加斯链
+            	让开发更简单 ATBT
         </div>
         <form method="post"  id="submitForm">
         <div class="form">
@@ -204,13 +207,14 @@
         </div>
         </form>
     </div>
-    <p>Powered by 加斯链 v1.0.2 Copyright © 加斯链 All rights reserved.</p>
+    <p style="position: absolute;">Powered by ATBT v1.0.2 Copyright © ATBT All rights reserved.</p>
 </div>
 </body>
 </html>
 <script type="text/javascript" src="<c:url value='/js/login/jquery-1.9.1.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/login/global.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/login/modal.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/js/common/hhydConfirm.js'/>"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $(".form .item .itxt").on("focus" , function(){
@@ -225,7 +229,7 @@
         var password = $("#password").val();
 
         if(HHN.checkEmpty(mobile)){
-            HHN.webPopup("请输入代理商编号！");
+            HHN.webPopup("请输入用户名！");
             return false;
         }
         if(HHN.checkEmpty(password)){
@@ -233,7 +237,20 @@
             return false;
         }
         
-        $.post("<c:url value='/auth/activityLogin.html'/>", {"mobile":mobile,"password":password}, function(data) {
+        var param = {"username":mobile,"password":password};
+        var loginUrl = "<c:url value='/login'/>";
+        $.post(loginUrl, param, function(data) {
+            if(data.success && data.resultCode == '0'){
+                if (data.resultMessage != undefined && data.resultMessage != '') {
+                    window.hhyd.info(data.resultMessage);
+                }
+                window.location.href = "<c:url value='/menu/index.html'/>";
+            } else {
+                window.hhyd.info(data.resultMessage);
+            }
+        },"json");
+        
+    /*     $.post("<c:url value='/auth/activityLogin.html'/>", {"mobile":mobile,"password":password}, function(data) {
         	console.log(data);
         	if(data.resultCode == "0"){
             	//HHN.webPopup(data.msg);
@@ -241,7 +258,7 @@
             }else{
             	HHN.webPopup(data.msg);
             }
-	    },"json");
+	    },"json"); */
         
     }
 </script>

@@ -28,6 +28,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * poi Excel创建工具
  * @time 2017年9月25日15:35:14 添加复杂表头 tangkmf
  */
+@SuppressWarnings({"rawtypes","deprecation", "unused"})
 public class ExeclTools {
     public final static Double defaultDoubleValue = -1D;
     public final static Integer defaultIntValue = -1;
@@ -199,7 +200,7 @@ public class ExeclTools {
      * @param <T>
      * @return
      */
-    public static <T> HSSFWorkbook execlExportByModule(String[] excelData, String sheetName, List<T> pojoList, String path) throws IOException {
+	public static <T> HSSFWorkbook execlExportByModule(String[] excelData, String sheetName, List<T> pojoList, String path) throws IOException {
 
         InputStream in = new FileInputStream(new File(path));
         HSSFWorkbook wb = new HSSFWorkbook(in);
@@ -321,7 +322,7 @@ public class ExeclTools {
      * @param pojoList      导出值
      * @return
      */
-    public static <T> HSSFWorkbook execlExport(List<String[]> execlhearList,
+	public static <T> HSSFWorkbook execlExport(List<String[]> execlhearList,
                                                String[] excelData, 
                                                String sheetName, 
                                                List<T> pojoList,

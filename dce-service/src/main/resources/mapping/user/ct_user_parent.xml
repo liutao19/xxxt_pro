@@ -165,6 +165,8 @@
 			b.referee_number,
 			b.user_level,
 			b.reg_time,
+			b.baodan_amount,
+			b.isActivated,
 			a.distance,
 			a.lr_district,
 			a.position,
@@ -190,6 +192,8 @@
 			referee_number,
 			user_level,
 			reg_time,
+			baodan_amount,
+			isActivated,
 			0 as distance,
 			0 as lr_district,
 			0 as position,
@@ -200,6 +204,21 @@
 			)aa
 	        order by aa.distance, aa.`lr_district`
 			 
+	</select>
+	
+	
+	
+	<select id="getYJ" parameterType="java.util.Map" resultType="Map">
+		SELECT SUM(totalMoney) AS yj, a.parentid AS yj_userId 
+		FROM ct_user_parent a LEFT JOIN ct_user_static b ON a.userid = b.userid AND b.type=1
+		WHERE a.parentid = #{parentid} and a.lr_district=#{lr_district}
+	</select>
+	
+	<select id="getTodayYJ" parameterType="java.util.Map" resultType="Map">
+		SELECT  SUM(totalMoney) AS yj, a.parentid AS yj_userId  
+		FROM ct_user_parent a LEFT JOIN ct_user_static b ON a.userid = b.userid AND b.type=1
+		WHERE a.parentid = #{parentid} and a.lr_district=#{lr_district}
+		and DATE_FORMAT(date_sub(b.endDate,interval 365 day), '%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
 	</select>
 	
 	<!-- 自定义查询 -->

@@ -13,9 +13,6 @@ import com.dce.manager.action.BaseAction;
 @RequestMapping("/auth/*")
 public class LoginController extends BaseAction{
 
-
-
-
     @RequestMapping(value = "/tologin", method = RequestMethod.GET)
     public String tologin(ModelMap model) {
         return "/login/login";

@@ -13,7 +13,7 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-	<bean id="sysconfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+	<!-- <bean id="sysconfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
 			<list>
 				<value>file:${catalina.home}/conf/dce.properties</value>
@@ -25,7 +25,7 @@
 		<property name="properties" ref="sysconfig" />
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 	</bean>
-
+ -->
 	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
 		<constructor-arg value="UTF-8" index="0" />
 		<property name="supportedMediaTypes">

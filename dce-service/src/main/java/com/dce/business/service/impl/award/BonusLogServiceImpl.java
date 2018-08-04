@@ -10,7 +10,7 @@ import com.dce.business.dao.bonus.IBonusLogDao;
 import com.dce.business.entity.bonus.BonusLogDo;
 import com.dce.business.service.award.IBonusLogService;
 
-@Service("bonusLogService")
+@Service("awardBonusLogService")
 public class BonusLogServiceImpl implements IBonusLogService {
  
     @Resource 

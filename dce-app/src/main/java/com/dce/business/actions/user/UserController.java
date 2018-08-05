@@ -53,8 +53,8 @@ public class UserController extends BaseController {
     private IUserService userService;
     @Resource
     private IAccountService accountService;
-    @Resource
-    private IReleaseService staticAwardService;
+//    @Resource
+//    private IReleaseService staticAwardService;
     @Resource
     private INewsService  newsService;
     @Resource

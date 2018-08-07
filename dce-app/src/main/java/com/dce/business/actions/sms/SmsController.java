@@ -65,7 +65,7 @@ public class SmsController extends BaseController {
      * 发送短信
      * @return  
      */
-    @RequestMapping(value = "checkSms", method = RequestMethod.POST)
+    @RequestMapping(value = "checkSms", method = {RequestMethod.POST,RequestMethod.GET})
     public Result<?> checkSms() {
     	Integer userId = getUserId();
     	String page = getString("page");

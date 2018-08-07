@@ -11,7 +11,7 @@ public final class OrderCodeUtil {
      * @return  
      */
     public static String genOrderCode(Integer userId) {
-        StringBuffer sb = new StringBuffer("DCE");
+        StringBuffer sb = new StringBuffer("XX");
         sb.append(userId).append(DateUtil.YYYYMMDDHHMMSS.format(new Date())).append(random());
         return sb.toString();
     }

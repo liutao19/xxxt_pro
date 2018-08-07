@@ -35,12 +35,14 @@ import com.dce.business.common.util.ExeclTools;
 import com.dce.business.common.util.NumberUtil;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.entity.bonus.BonusLogDo;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.order.IOrderService;
+import com.dce.business.service.order.OrderService;
 
 @RestController
 @RequestMapping("order")
@@ -54,11 +56,37 @@ public class OrderController extends BaseController {
     @Resource
     private IBaodanService baodanService;
     
+    @Resource 
+	private OrderService orderService1;
+    
     @Resource
     private IBonusLogService bonusServiceLog;
     
     @Resource(name = "awardServiceAsync")
     private IAwardService awardService;
+    
+    @RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
+    public Result<?> orderList(){
+    	//Integer userId = getUserId();
+    	//Integer userId = 1;
+    	System.out.println("查询订单");
+    	
+    	List<Order> orderList = orderService1.selectByUserId(1);
+    	List<Map<String,Object>> list = new ArrayList<>();
+    	for(Order order : orderList){
+    		Map<String,Object> map = new HashMap<>();
+    		map.put("orderId ", order.getOrderid());
+    		map.put("totalPrice ", order.getTotalprice());
+    		map.put("orderType", order.getOrdertype());
+    		map.put("qty ", order.getQty());
+    		map.put("payTime ", order.getPaytime());
+    		map.put("payStatus", order.getPaystatus());
+    		map.put("orderStatus", order.getOrderstatus());
+    		list.add(map);
+    	}
+    	System.err.println("------------>>>>"+list);
+    	return Result.successResult("成功", list);
+    }
     
     /** 
      * 重新计算奖金
@@ -196,7 +224,6 @@ public class OrderController extends BaseController {
         }
         return Result.successResult("成功", list);
     }
-    
     
     /** 
      * 后台查询：交易流水

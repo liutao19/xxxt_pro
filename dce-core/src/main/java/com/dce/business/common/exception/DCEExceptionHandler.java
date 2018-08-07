@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -13,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.dce.business.common.result.Result;
 
 public class DCEExceptionHandler implements HandlerExceptionResolver {
+	Logger logger = Logger.getLogger(DCEExceptionHandler.class);
 
     @Override
     public ModelAndView resolveException( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
@@ -20,6 +22,7 @@ public class DCEExceptionHandler implements HandlerExceptionResolver {
         if (ex instanceof IllegalArgumentException || ex instanceof BusinessException) {
             print(response, Result.failureCode, ex.getMessage());
         } else {
+        	logger.error(ex);
             print(response, Result.failureCode, "系统繁忙，请稍后再试");
         }
         return null;

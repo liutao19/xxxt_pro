@@ -478,7 +478,7 @@ public class OrderServiceImpl implements IOrderService {
 		}
         params.put(Constants.MYBATIS_PAGE, page);
         List<Map<String,Object>> list =  orderDao.selectOrderByPage(params);
-        page.setModelList(list);;
+        page.setModelList(list);
 		return page;
 	}
 

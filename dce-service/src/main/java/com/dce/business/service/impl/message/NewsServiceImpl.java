@@ -20,21 +20,24 @@ public class NewsServiceImpl implements INewsService {
 	
 
 	@Override
-	public List<NewsDo> selectNewsList(int pageNum,int rows) {
-		Map<String,Object> params = new HashMap<String,Object>();
-		int offset = (pageNum - 1) * rows;
-		params.put("offset", offset);
-		params.put("rows", rows);
-		return newsDao.select(params);
+	public List<NewsDo> selectNewsList() {
+	
+		return newsDao.select();
 	}
 
 	@Override
 	public NewsDo selectNewsDetail(Integer newsId) {
 		return newsDao.selectByPrimaryKey(newsId);
 	}
-	
 
 	@Override
+	public NewsDo selectLatestNews() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+/*	@Override
 	public NewsDo selectLatestNews() {
 		Map<String,Object> params = new HashMap<String,Object>();
 		params.put("offset", 0);
@@ -45,5 +48,5 @@ public class NewsServiceImpl implements INewsService {
 		}
 		return list.get(0);
 	}
-
+*/
 }

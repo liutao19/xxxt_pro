@@ -8,19 +8,21 @@ public class NewsDo {
 	  private Integer id ;//'消息ID',
 	  private String title ;// '消息内容',
 	  private String content ;// '消息内容',
-	  private Integer newsType ;// '0系统消息,1评论消息,2私信消息',
-	  private Integer is_read ;//'是否已读',
-	  private Date creatDate  ;// '创建时间',
-	  private Integer sort ;// '排序',
-	  private Integer status ;// '状态',
-	  
+	  private String image ;//图片
+	  private String author ;//作者
+	  private Integer topNews ;//是否置顶（0是/1否）
+	  private String remark ;//备注
+	  private Integer status ;//状态
+	  private Date creatDate  ;//创建时间
+	  private String creatName ;//创建人
+	  private Date updateDate  ;//更新时间
+	  private String updateName ;//更新人
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
 	public String getTitle() {
 		return title;
 	}
@@ -33,19 +35,29 @@ public class NewsDo {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
-	public Integer getIs_read() {
-		return is_read;
+	public String getImage() {
+		return image;
 	}
-	public void setIs_read(Integer is_read) {
-		this.is_read = is_read;
+	public void setImage(String image) {
+		this.image = image;
 	}
-	
-	public Integer getSort() {
-		return sort;
+	public String getAuthor() {
+		return author;
 	}
-	public void setSort(Integer sort) {
-		this.sort = sort;
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+	public Integer getTopNews() {
+		return topNews;
+	}
+	public void setTopNews(Integer topNews) {
+		this.topNews = topNews;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 	public Integer getStatus() {
 		return status;
@@ -53,18 +65,33 @@ public class NewsDo {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	public Integer getNewsType() {
-		return newsType;
-	}
-	public void setNewsType(Integer newsType) {
-		this.newsType = newsType;
-	}
 	public Date getCreatDate() {
 		return creatDate;
 	}
 	public void setCreatDate(Date creatDate) {
 		this.creatDate = creatDate;
 	}
+	public String getCreatName() {
+		return creatName;
+	}
+	public void setCreatName(String creatName) {
+		this.creatName = creatName;
+	}
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getUpdateName() {
+		return updateName;
+	}
+	public void setUpdateName(String updateName) {
+		this.updateName = updateName;
+	}
+	   
+	
+	  
 	  
 	  
 }

@@ -1,0 +1,57 @@
+package com.dce.business.action.notice;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.dce.business.actions.news.NewsController;
+import com.dce.business.common.result.Result;
+import com.dce.business.entity.notice.NoticeDo;
+import com.dce.business.service.message.INoticeService;
+
+/**
+ * 公告列表
+ * 
+ * @author NI
+ *
+ */
+@RestController
+@RequestMapping("/notice")
+public class NoticeController {
+	private final static Logger logger = Logger.getLogger(NewsController.class);
+	@Resource
+	private INoticeService noticeService;
+	 /** 
+     * 公告列表
+     * @return  
+     */
+	
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+    public Result<?> list() {
+
+        logger.info("查询公告.....");
+
+        List<NoticeDo> noticeList = noticeService.selectNoticeList();
+        List<Map<String, Object>> result = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(noticeList)) {
+            for (NoticeDo message : noticeList) {
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("title", message.getTitle());
+                map.put("content", message.getContent());
+                result.add(map);
+            }
+        }
+
+        return Result.successResult("查询成功", result);
+    }
+}

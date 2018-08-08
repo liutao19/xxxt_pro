@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.dce.business.common.result.Result;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.PageDo;
 
 public interface IOrderService {
+	
+    //获取当前用户所有的订单
+    List<Order> selectByUesrId(Integer userId);
 
     /** 
      * 添加订单

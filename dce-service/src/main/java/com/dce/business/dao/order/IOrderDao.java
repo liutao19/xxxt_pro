@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 
 public interface IOrderDao {
@@ -35,4 +36,7 @@ public interface IOrderDao {
     List<Map<String,Object>> selectOrderByPage(Map<String, Object> paraMap);
     
     Long selectGuadanAmount(Map<String, Object> paraMap);
+    
+    //获取当前用户所有的订单
+    List<Order> selectByUesrId(Integer userId);
 }

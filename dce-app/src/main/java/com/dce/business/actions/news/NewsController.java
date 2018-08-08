@@ -57,8 +57,8 @@ public class NewsController extends BaseController {
 
         logger.info("查询新闻公告列表:pageNum=" + pageNum + ",rows=" + rows);
 
-        List<NewsDo> newsList = newsService.selectNewsList(Integer.parseInt(pageNum), Integer.parseInt(rows));
-
+        //List<NewsDo> newsList = newsService.selectNewsList(Integer.parseInt(pageNum), Integer.parseInt(rows));
+        List<NewsDo> newsList = newsService.selectNewsList();
         List<Map<String, Object>> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(newsList)) {
             for (NewsDo message : newsList) {

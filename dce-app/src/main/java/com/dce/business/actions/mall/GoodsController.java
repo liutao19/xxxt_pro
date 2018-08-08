@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
+import com.dce.business.entity.Realgoods.goods;
+import com.dce.business.entity.Realgoods.goodsWithBLOBs;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.goods.CTUserAddressDo;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.goods.ICTUserAddressService;
+import com.dce.business.service.realgoods.RealgoodsService;
 
 @RestController
 @RequestMapping("mall")
@@ -34,6 +37,9 @@ public class GoodsController extends BaseController {
 	private ICTGoodsService ctGoodsService;
 	@Resource
 	private ICTUserAddressService ctUserAddressService;
+	
+	@Resource
+	private RealgoodsService ctrealgoodsService;
 	
 	@RequestMapping(value = "/list", method = {RequestMethod.POST,RequestMethod.GET})
 	public Result<?> list() {
@@ -50,9 +56,12 @@ public class GoodsController extends BaseController {
 			 rows = "10";
 		 }
 		 
-		 List<CTGoodsDo> resultList = ctGoodsService.selectByPage(Integer.parseInt(pageNum), Integer.parseInt(rows));
+		 Map<String,Object> maps=new HashMap();
+		 maps.put("pageNum", pageNum);
+		 maps.put("rows", rows);
+		// List<CTGoodsDo> resultList = ctGoodsService.selectByPage(Integer.parseInt(pageNum), Integer.parseInt(rows));
 		 
-		 List<Map<String,Object>> retList = new ArrayList<>();
+		/* List<Map<String,Object>> retList = new ArrayList<>();
 		 if(!CollectionUtils.isEmpty(resultList)){
 			 for(CTGoodsDo good : resultList){
 				 Map<String,Object> map = new HashMap<String,Object>();
@@ -62,6 +71,23 @@ public class GoodsController extends BaseController {
 				 map.put("soldQty", good.getSaleCount());
 				 map.put("price", good.getMarketPrice());
 				 map.put("barginPrice", good.getShopPrice());
+				 retList.add(map);
+			 }
+		 }*/
+		 
+		 List<goodsWithBLOBs> resultList=ctrealgoodsService.selectgoods(maps);
+		 
+		 
+		 List<Map<String,Object>> retList = new ArrayList<>();
+		 if(!CollectionUtils.isEmpty(resultList)){
+			 for(goodsWithBLOBs good : resultList){
+				 Map<String,Object> map = new HashMap<String,Object>();
+				 map.put("productId", good.getGoodsid());
+				 map.put("productName", good.getTitle());
+				 map.put("imgUrl", good.getGoodsimg());
+				 map.put("saleTime", good.getSaletime());
+				 map.put("price", good.getShopprice());
+				 map.put("barginPrice", good.getGoodsdesc());
 				 retList.add(map);
 			 }
 		 }

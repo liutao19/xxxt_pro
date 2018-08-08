@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dce.business.entity.award.AwardConfig;
 import com.dce.business.service.award.AwardConfigService;
 import com.dce.business.service.award.AwardService;
-import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
 
 
@@ -24,21 +23,21 @@ import com.dce.manager.action.BaseAction;
 public class AwardController  extends BaseAction{
 	
 	@Resource
-	private AwardConfigService awardconfig;
+	private AwardConfigService awardConfigService;
+	
+	/*@Resource
+	private AwardService awardway;*/
+	
+	/*@Resource
+	private IUserService iuser;*/
 	
 	@Resource
-	private AwardService awardway;
-	
-	@Resource
-	private IUserService iuser;
-	
-	@Resource
-	private AwardService award;
+	private AwardService awardLaterService;
 	
 	@RequestMapping(value="/selectAwardConfig",method={RequestMethod.GET,RequestMethod.POST})
 	public List<Map<String,Object>> selectAwardConfig(){
 		
-		List<AwardConfig> list=awardconfig.selectAward();
+		List<AwardConfig> list=awardConfigService.selectAward();
 		
 		List<Map<String,Object>> listmap=new ArrayList<>();
 		if(!CollectionUtils.isEmpty(list)){
@@ -58,7 +57,7 @@ public class AwardController  extends BaseAction{
 		AwardConfig record=new AwardConfig();
 		record.setAwardtypename(awardTypeName);
 		if(awardTypeName!=null){
-			if(awardconfig.insertSelective(record)){
+			if(awardConfigService.insertSelective(record)){
 				logger.error("添加等级信息成功");
 			}else{
 				logger.error("添加等级信息失败");
@@ -76,7 +75,7 @@ public class AwardController  extends BaseAction{
 		Long awardTypeid=(long) Integer.parseInt(id);
 		record.setId(awardTypeid);
 		if(awardTypeid!=null&&awardTypeid!=0){
-			if(awardconfig.deleteByPrimaryKey(awardTypeid)){
+			if(awardConfigService.deleteByPrimaryKey(awardTypeid)){
 				logger.error("删除等级信息成功");
 			}else{
 				logger.error("删除等级信息失败");
@@ -95,7 +94,7 @@ public class AwardController  extends BaseAction{
 		record.setAwardtypename(awardTypeName);
 		
 		if(record!=null&&record.getAwardtypename()!=null&&record.getId()!=null&&record.getId()!=0){
-			if(awardconfig.updateByPrimaryKeySelective(record)){
+			if(awardConfigService.updateByPrimaryKeySelective(record)){
 				logger.error("修改等级信息成功");
 			}else{
 				logger.error("修改等级信息失败");
@@ -186,7 +185,7 @@ public class AwardController  extends BaseAction{
 		//判断用户是否是会员
 		if(userid==1){
 			//查询会员是否享用过，调用查询奖励记录来判断
-			if(award.selectByPrimaryKey(userid)==null){
+			if(awardLaterService.selectByPrimaryKey(userid)==null){
 				
 			}
 		}

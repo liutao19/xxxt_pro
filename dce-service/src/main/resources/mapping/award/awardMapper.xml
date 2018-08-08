@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.award.AwardDao">
-  <resultMap id="BaseResultMap" type="com.dce.business.entity.grow">
+  <resultMap id="BaseResultMap" type="com.dce.business.entity.award.Award">
     <id column="awardId" jdbcType="INTEGER" property="awardid" />
     <result column="awardTime" jdbcType="TIMESTAMP" property="awardtime" />
     <result column="userId" jdbcType="INTEGER" property="userid" />
@@ -42,7 +42,7 @@
     delete from ct_award
     where awardId = #{awardid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.dce.business.entity.grow">
+  <insert id="insert" parameterType="com.dce.business.entity.award.Award">
     insert into ct_award (awardId, awardTime, userId, 
       awardMoney, awardReason, awardUsedStatus, 
       awardStatus, awardType, awardUsedTime, 
@@ -54,7 +54,7 @@
       #{awardupdatetime,jdbcType=TIMESTAMP}, #{awardcreatetime,jdbcType=TIMESTAMP}, #{awardoperationname,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.dce.business.entity.grow">
+  <insert id="insertSelective" parameterType="com.dce.business.entity.award.Award">
     insert into ct_award
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="awardid != null">
@@ -133,7 +133,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.grow">
+  <update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.award.Award">
     update ct_award
     <set>
       <if test="awardtime != null">
@@ -172,7 +172,7 @@
     </set>
     where awardId = #{awardid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.dce.business.entity.grow">
+  <update id="updateByPrimaryKey" parameterType="com.dce.business.entity.award.Award">
     update ct_award
     set awardTime = #{awardtime,jdbcType=TIMESTAMP},
       userId = #{userid,jdbcType=INTEGER},
@@ -187,7 +187,7 @@
       awardOperationName = #{awardoperationname,jdbcType=VARCHAR}
     where awardId = #{awardid,jdbcType=INTEGER}
   </update>
-  <resultMap id="BaseResultMap" type="com.dce.business.entity.grow">
+  <resultMap id="BaseResultMap" type="com.dce.business.entity.award.Award">
     <id column="awardId" jdbcType="INTEGER" property="awardid" />
     <result column="awardTime" jdbcType="TIMESTAMP" property="awardtime" />
     <result column="userId" jdbcType="INTEGER" property="userid" />
@@ -215,7 +215,7 @@
     delete from ct_award
     where awardId = #{awardid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.dce.business.entity.grow">
+  <insert id="insert" parameterType="com.dce.business.entity.award.Award">
     insert into ct_award (awardId, awardTime, userId, 
       awardMoney, awardReason, awardUsedStatus, 
       awardStatus, awardType, awardUsedTime, 
@@ -227,7 +227,7 @@
       #{awardupdatetime,jdbcType=TIMESTAMP}, #{awardcreatetime,jdbcType=TIMESTAMP}, #{awardoperationname,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.dce.business.entity.grow">
+  <insert id="insertSelective" parameterType="com.dce.business.entity.award.Award">
     insert into ct_award
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="awardid != null">
@@ -306,7 +306,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.grow">
+  <update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.award.Award">
     update ct_award
     <set>
       <if test="awardtime != null">
@@ -345,7 +345,7 @@
     </set>
     where awardId = #{awardid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.dce.business.entity.grow">
+  <update id="updateByPrimaryKey" parameterType="com.dce.business.entity.award.Award">
     update ct_award
     set awardTime = #{awardtime,jdbcType=TIMESTAMP},
       userId = #{userid,jdbcType=INTEGER},

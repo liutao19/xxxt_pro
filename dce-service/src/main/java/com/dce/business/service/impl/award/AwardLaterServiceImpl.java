@@ -6,10 +6,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Service;
+
 import com.dce.business.dao.award.AwardDao;
 import com.dce.business.entity.award.Award;
 import com.dce.business.service.award.AwardService;
-
+@Service("awardLaterService")
 public class AwardLaterServiceImpl implements AwardService{
 
 	@Resource

@@ -6,11 +6,13 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.dce.business.dao.award.AwardConfigDao;
 import com.dce.business.entity.award.AwardConfig;
 import com.dce.business.service.award.AwardConfigService;
 
+@Service("awardConfigService")
 public class AwardConfigServiceImpl implements AwardConfigService{
 
 	

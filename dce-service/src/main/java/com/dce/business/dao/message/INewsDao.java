@@ -7,7 +7,7 @@ import com.dce.business.entity.message.NewsDo;
 
 public interface INewsDao {
 
-	List<NewsDo> select(Map<String,Object> params);
+	List<NewsDo> select();
 	
 	NewsDo selectByPrimaryKey(Integer id);
 	

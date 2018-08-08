@@ -1,62 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.order.IOrderDao">
-	<resultMap id="BaseResultMap" type="com.dce.business.entity.order.OrderDo">
-		<id column="orderId" jdbcType="BIGINT" property="orderId" />
-		<result column="orderCode" jdbcType="VARCHAR" property="orderCode" />
-		<result column="userId" jdbcType="INTEGER" property="userId" />
-		<result column="goodsId" jdbcType="BIGINT" property="goodsId" />
+	<resultMap id="BaseResultMap" type="com.dce.business.entity.order.Order">
+		<id column="orderId" jdbcType="BIGINT" property="orderid" />
+		<result column="orderCode" jdbcType="VARCHAR" property="ordercode" />
+		<result column="userId" jdbcType="INTEGER" property="userid" />
 		<result column="qty" jdbcType="DECIMAL" property="qty" />
-		<result column="price" jdbcType="DECIMAL" property="price" />
-		<result column="totalPrice" jdbcType="DECIMAL" property="totalPrice" />
-		<result column="recAddress" jdbcType="VARCHAR" property="recAddress" />
-		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
-		<result column="orderStatus" jdbcType="INTEGER" property="orderStatus" />
-		<result column="payStatus" jdbcType="INTEGER" property="payStatus" />
-		<result column="payTime" jdbcType="TIMESTAMP" property="payTime" />
-		<result column="orderType" jdbcType="INTEGER" property="orderType" />
-		<result column="matchOrderId" jdbcType="BIGINT" property="matchOrderId" />
+		<result column="totalPrice" jdbcType="DECIMAL" property="totalprice" />
+		<result column="recAddress" jdbcType="VARCHAR" property="recaddress" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="orderStatus" jdbcType="INTEGER" property="orderstatus" />
+		<result column="payStatus" jdbcType="INTEGER" property="paystatus" />
+		<result column="payTime" jdbcType="TIMESTAMP" property="paytime" />
+		<result column="orderType" jdbcType="INTEGER" property="ordertype" />
+		<result column="matchOrderId" jdbcType="BIGINT" property="matchorderid" />
 		<result column="salqty" jdbcType="DECIMAL" property="salqty" />
-		<result column="accountType" jdbcType="VARCHAR" property="accountType" />
+		<result column="accountType" jdbcType="VARCHAR" property="accounttype" />
+		<result column="goodsId" jdbcType="BIGINT" property="goodsid" />
+		<result column="price" jdbcType="DECIMAL" property="price" />
+		<result column="addressId" jdbcType="INTEGER" property="addressid" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
 	</resultMap>
+	
 	<sql id="Base_Column_List">
-		orderId, orderCode, userId, goodsId, qty, price, totalPrice, recAddress, createTime,
-		orderStatus, payStatus,
-		payTime, orderType, matchOrderId,salqty,accountType
+		orderId, orderCode, userId, qty, totalPrice, recAddress,
+		createTime, orderStatus,
+		payStatus, payTime, orderType, matchOrderId,
+		salqty, accountType, goodsId,
+		price,
+		addressId, remark
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+	
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_order
 		where orderId = #{orderId,jdbcType=BIGINT}
 	</select>
+	
+	<!-- 获取当前用户所有的订单 -->
+	<select id="selectByUesrId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"></include>
+		from ct_order
+		where userId = #{userId,jdbcType=INTEGER}
+		order by createTime desc
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ct_order
+		delete from
+		ct_order
 		where orderId = #{orderId,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" keyColumn="orderId" keyProperty="orderId" parameterType="com.dce.business.entity.order.OrderDo"
-		useGeneratedKeys="true">
-		insert into ct_order (orderCode, userId, goodsId,
-		qty, price, totalPrice,
-		recAddress, createTime,
-		orderStatus,
-		payStatus, payTime, orderType,
-		matchOrderId,
-		salqty,
-		accountType)
-		values (#{orderCode,jdbcType=VARCHAR},
-		#{userId,jdbcType=INTEGER}, #{goodsId,jdbcType=BIGINT},
-		#{qty,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL},
-		#{totalPrice,jdbcType=DECIMAL},
-		#{recAddress,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
-		#{orderStatus,jdbcType=INTEGER},
-		#{payStatus,jdbcType=INTEGER}, #{payTime,jdbcType=TIMESTAMP},
-		#{orderType,jdbcType=INTEGER},
-		#{matchOrderId,jdbcType=BIGINT},
+	
+	<insert id="insert" parameterType="com.dce.business.entity.order.Order">
+		insert into ct_order (orderId,
+		orderCode, userId,
+		qty, totalPrice, recAddress,
+		createTime, orderStatus,
+		payStatus,
+		payTime, orderType, matchOrderId,
+		salqty, accountType,
+		goodsId,
+		price, addressId, remark
+		)
+		values (#{orderid,jdbcType=BIGINT},
+		#{ordercode,jdbcType=VARCHAR},
+		#{userid,jdbcType=INTEGER},
+		#{qty,jdbcType=DECIMAL}, #{totalprice,jdbcType=DECIMAL},
+		#{recaddress,jdbcType=VARCHAR},
+		#{createtime,jdbcType=TIMESTAMP},
+		#{orderstatus,jdbcType=INTEGER},
+		#{paystatus,jdbcType=INTEGER},
+		#{paytime,jdbcType=TIMESTAMP}, #{ordertype,jdbcType=INTEGER},
+		#{matchorderid,jdbcType=BIGINT},
 		#{salqty,jdbcType=DECIMAL},
-		#{accountType,jdbcType=VARCHAR})
+		#{accounttype,jdbcType=VARCHAR},
+		#{goodsid,jdbcType=BIGINT},
+		#{price,jdbcType=DECIMAL}, #{addressid,jdbcType=INTEGER},
+		#{remark,jdbcType=VARCHAR}
+		)
 	</insert>
-	<insert id="insertSelective" keyColumn="orderId" keyProperty="orderId" parameterType="com.dce.business.entity.order.OrderDo"
+	
+	<insert id="insertSelective" keyColumn="orderId" keyProperty="orderId"
+		parameterType="com.dce.business.entity.order.OrderDo"
 		useGeneratedKeys="true">
 		insert into ct_order
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -154,172 +181,195 @@
 			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.order.OrderDo">
+	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		<set>
-			<if test="orderCode != null">
-				orderCode = #{orderCode,jdbcType=VARCHAR},
+			<if test="ordercode != null">
+				orderCode = #{ordercode,jdbcType=VARCHAR},
 			</if>
-			<if test="userId != null">
-				userId = #{userId,jdbcType=INTEGER},
-			</if>
-			<if test="goodsId != null">
-				goodsId = #{goodsId,jdbcType=BIGINT},
+			<if test="userid != null">
+				userId = #{userid,jdbcType=INTEGER},
 			</if>
 			<if test="qty != null">
 				qty = #{qty,jdbcType=DECIMAL},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="totalprice != null">
+				totalPrice = #{totalprice,jdbcType=DECIMAL},
 			</if>
-			<if test="totalPrice != null">
-				totalPrice = #{totalPrice,jdbcType=DECIMAL},
+			<if test="recaddress != null">
+				recAddress = #{recaddress,jdbcType=VARCHAR},
 			</if>
-			<if test="recAddress != null">
-				recAddress = #{recAddress,jdbcType=VARCHAR},
+			<if test="createtime != null">
+				createTime = #{createtime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="createTime != null">
-				createTime = #{createTime,jdbcType=TIMESTAMP},
+			<if test="orderstatus != null">
+				orderStatus = #{orderstatus,jdbcType=INTEGER},
 			</if>
-			<if test="orderStatus != null">
-				orderStatus = #{orderStatus,jdbcType=INTEGER},
+			<if test="paystatus != null">
+				payStatus = #{paystatus,jdbcType=INTEGER},
 			</if>
-			<if test="payStatus != null">
-				payStatus = #{payStatus,jdbcType=INTEGER},
+			<if test="paytime != null">
+				payTime = #{paytime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="payTime != null">
-				payTime = #{payTime,jdbcType=TIMESTAMP},
+			<if test="ordertype != null">
+				orderType = #{ordertype,jdbcType=INTEGER},
 			</if>
-			<if test="orderType != null">
-				orderType = #{orderType,jdbcType=INTEGER},
-			</if>
-			<if test="matchOrderId != null">
-				matchOrderId = #{matchOrderId,jdbcType=BIGINT},
+			<if test="matchorderid != null">
+				matchOrderId = #{matchorderid,jdbcType=BIGINT},
 			</if>
 			<if test="salqty != null">
 				salqty = #{salqty,jdbcType=DECIMAL},
 			</if>
-			<if test="accountType != null">
-				accountType = #{accountType,jdbcType=VARCHAR},
+			<if test="accounttype != null">
+				accountType = #{accounttype,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsid != null">
+				goodsId = #{goodsid,jdbcType=BIGINT},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="addressid != null">
+				addressId = #{addressid,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
 			</if>
 		</set>
-		where orderId = #{orderId,jdbcType=BIGINT}
-	</update>
-	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.OrderDo">
-		update ct_order
-		set orderCode = #{orderCode,jdbcType=VARCHAR},
-		userId = #{userId,jdbcType=INTEGER},
-		goodsId = #{goodsId,jdbcType=BIGINT},
-		qty = #{qty,jdbcType=DECIMAL},
-		price = #{price,jdbcType=DECIMAL},
-		totalPrice = #{totalPrice,jdbcType=DECIMAL},
-		recAddress = #{recAddress,jdbcType=VARCHAR},
-		createTime = #{createTime,jdbcType=TIMESTAMP},
-		orderStatus = #{orderStatus,jdbcType=INTEGER},
-		payStatus = #{payStatus,jdbcType=INTEGER},
-		payTime = #{payTime,jdbcType=TIMESTAMP},
-		orderType = #{orderType,jdbcType=INTEGER},
-		matchOrderId = #{matchOrderId,jdbcType=BIGINT},
-		salqty = #{salqty,jdbcType=DECIMAL},
-		accountType = #{accountType,jdbcType=VARCHAR}
-		where orderId = #{orderId,jdbcType=BIGINT}
+		where orderId = #{orderid,jdbcType=BIGINT}
 	</update>
 	
+	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.Order">
+		update ct_order
+		set orderCode = #{ordercode,jdbcType=VARCHAR},
+		userId =
+		#{userid,jdbcType=INTEGER},
+		qty = #{qty,jdbcType=DECIMAL},
+		totalPrice =
+		#{totalprice,jdbcType=DECIMAL},
+		recAddress =
+		#{recaddress,jdbcType=VARCHAR},
+		createTime =
+		#{createtime,jdbcType=TIMESTAMP},
+		orderStatus =
+		#{orderstatus,jdbcType=INTEGER},
+		payStatus =
+		#{paystatus,jdbcType=INTEGER},
+		payTime = #{paytime,jdbcType=TIMESTAMP},
+		orderType = #{ordertype,jdbcType=INTEGER},
+		matchOrderId =
+		#{matchorderid,jdbcType=BIGINT},
+		salqty = #{salqty,jdbcType=DECIMAL},
+		accountType = #{accounttype,jdbcType=VARCHAR},
+		goodsId =
+		#{goodsid,jdbcType=BIGINT},
+		price = #{price,jdbcType=DECIMAL},
+		addressId = #{addressid,jdbcType=INTEGER},
+		remark =
+		#{remark,jdbcType=VARCHAR}
+		where orderId = #{orderid,jdbcType=BIGINT}
+	</update>
+
 	<!-- 自定义查询 -->
-    <select id="selectOrder" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select 
-        <include refid="Base_Column_List" />
-        from ct_order 
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userId != null">  
-               AND userId = #{userId}
-           </if>
-           <if test="orderStatus != null">  
-               AND orderStatus = #{orderStatus}
-           </if>
-           <if test="payStatus != null">  
-               AND payStatus = #{payStatus}
-           </if>
-        </trim> 
-    </select>
-    
-    
-    <!-- 自定义查询 -->
-    <select id="selectOrderForReport" parameterType="java.util.Map" resultType="map">
-        SELECT a.*,b.user_name,b.true_name,b.user_level         
-        FROM ct_order a LEFT JOIN ct_user b ON a.userid = b.id
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userId != null">  
-               AND a.userId = #{userId}
-           </if>
-           <if test="orderStatus != null">  
-               AND a.orderStatus = #{orderStatus}
-           </if>
-           <if test="payStatus != null">  
-               AND a.payStatus = #{payStatus}
-           </if>
-           <if test="orderType != null">  
-               AND a.orderType = #{orderType}
-           </if>
-           <if test="userName != null">  
-               AND b.user_name = #{userName}
-           </if>
-           <if test="startDate != null">  
-               AND <![CDATA[a.payTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-           <if test="endDate != null">  
-               AND <![CDATA[a.payTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-        </trim> 
-        order by a.createTime
-        <if test="offset != null">  
-            limit #{offset}, #{rows}
-        </if>
-    </select>
-    <select id="selectOrderForReportCount" parameterType="java.util.Map" resultType="int">
-        SELECT count(1)         
-        FROM ct_order a LEFT JOIN ct_user b ON a.userid = b.id
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userId != null">  
-               AND a.userId = #{userId}
-           </if>
-           <if test="orderStatus != null">  
-               AND a.orderStatus = #{orderStatus}
-           </if>
-           <if test="payStatus != null">  
-               AND a.payStatus = #{payStatus}
-           </if>
-           <if test="orderType != null">  
-               AND a.orderType = #{orderType}
-           </if>
-           <if test="userName != null">  
-               AND b.user_name = #{userName}
-           </if>
-           <if test="startDate != null">  
-               AND <![CDATA[a.payTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-           <if test="endDate != null">  
-               AND <![CDATA[a.payTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-        </trim> 
-    </select>
-    
-    <update id="updateOrderStatusByOldStatus" parameterType="Map">
-        UPDATE ct_order
-        <trim prefix="SET" suffixOverrides=","> 
-            <if test="newStatus != null">  
-                    orderStatus = #{newStatus},
-            </if>
-            <if test="matchOrderId != null">  
-                    matchOrderId = #{matchOrderId},
-            </if>   
-        </trim> 
-        
-        WHERE orderId = #{orderId}  and orderStatus = #{oldStatus}
-    </update>   
-    
-    <update id="updateMatchOrder" parameterType="com.dce.business.entity.order.OrderDo">
-    	update ct_order
+	<select id="selectOrder" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from ct_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND payStatus = #{payStatus}
+			</if>
+		</trim>
+	</select>
+
+
+	<!-- 自定义查询 -->
+	<select id="selectOrderForReport" parameterType="java.util.Map"
+		resultType="map">
+		SELECT a.*,b.user_name,b.true_name,b.user_level
+		FROM ct_order a LEFT
+		JOIN ct_user b ON a.userid = b.id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND a.userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND a.orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND a.payStatus = #{payStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.orderType = #{orderType}
+			</if>
+			<if test="userName != null">
+				AND b.user_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[a.payTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[a.payTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+		</trim>
+		order by a.createTime
+		<if test="offset != null">
+			limit #{offset}, #{rows}
+		</if>
+	</select>
+	
+	<select id="selectOrderForReportCount" parameterType="java.util.Map"
+		resultType="int">
+		SELECT count(1)
+		FROM ct_order a LEFT JOIN ct_user b ON a.userid = b.id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND a.userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND a.orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND a.payStatus = #{payStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.orderType = #{orderType}
+			</if>
+			<if test="userName != null">
+				AND b.user_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[a.payTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[a.payTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+		</trim>
+	</select>
+
+	<update id="updateOrderStatusByOldStatus" parameterType="Map">
+		UPDATE ct_order
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="newStatus != null">
+				orderStatus = #{newStatus},
+			</if>
+			<if test="matchOrderId != null">
+				matchOrderId = #{matchOrderId},
+			</if>
+		</trim>
+
+		WHERE orderId = #{orderId} and orderStatus = #{oldStatus}
+	</update>
+
+	<update id="updateMatchOrder" parameterType="com.dce.business.entity.order.OrderDo">
+		update ct_order
 		<set>
 			<if test="payStatus != null">
 				payStatus = #{payStatus,jdbcType=INTEGER},
@@ -328,73 +378,78 @@
 				payTime = #{payTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="salqty != null">
-				totalPrice = price * (ifnull(qty,0) - ifnull(salqty,0) - #{salqty}),
+				totalPrice = price * (ifnull(qty,0) - ifnull(salqty,0) -
+				#{salqty}),
 				salqty = ifnull(salqty,0) + #{salqty},
 			</if>
 		</set>
-		where orderId = #{orderId,jdbcType=BIGINT} AND (ifnull(qty,0) - ifnull(salqty,0) - #{salqty})>=0
-    
-    </update>
-    
-    <select id="getBaseInfo" resultType="Map">
-    	SELECT COUNT(1) AS salnum, MAX(price) AS maxPrice,MIN(price) AS minPrice 
-    	FROM ct_order WHERE payStatus = 1 
-    	AND <![CDATA[ createTime > STR_TO_DATE(#{queryTime},'%Y-%m-%d') ]]> 
-    	and orderType IN(1,2);
-    </select>
-    
-    <select id="selectOrderByPage" parameterType="Map" resultType="Map">
-    	SELECT a.*,b.user_name,b.true_name,b.user_level         
-        FROM ct_order a LEFT JOIN ct_user b ON a.userid = b.id
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userId != null">  
-               AND a.userId = #{userId}
-           </if>
-           <if test="orderStatus != null">  
-               AND a.orderStatus = #{orderStatus}
-           </if>
-           <if test="payStatus != null">  
-               AND a.payStatus = #{payStatus}
-           </if>
-           <if test="orderType != null">  
-               AND a.orderType = #{orderType}
-           </if>
-           <if test="userName != null">  
-               AND b.user_name = #{userName}
-           </if>
-           <if test="startDate != null">  
-               AND <![CDATA[a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-           <if test="endDate != null">  
-               AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-        </trim>
-    </select>
-    <select id="selectGuadanAmount" parameterType="Map" resultType="Long">
-    	SELECT sum(qty) as qty         
-        FROM ct_order a LEFT JOIN ct_user b ON a.userid = b.id
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userId != null">  
-               AND a.userId = #{userId}
-           </if>
-           <if test="orderStatus != null">  
-               AND a.orderStatus = #{orderStatus}
-           </if>
-           <if test="payStatus != null">  
-               AND a.payStatus = #{payStatus}
-           </if>
-           <if test="orderType != null">  
-               AND a.orderType = #{orderType}
-           </if>
-           <if test="userName != null">  
-               AND b.user_name = #{userName}
-           </if>
-           <if test="startDate != null">  
-               AND <![CDATA[a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-           <if test="endDate != null">  
-               AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
-           </if>
-        </trim>
-    </select>
+		where orderId = #{orderId,jdbcType=BIGINT} AND (ifnull(qty,0) -
+		ifnull(salqty,0) - #{salqty})>=0
+
+	</update>
+
+	<select id="getBaseInfo" resultType="Map">
+		SELECT COUNT(1) AS salnum, MAX(price) AS maxPrice,MIN(price) AS
+		minPrice
+		FROM ct_order WHERE payStatus = 1
+		AND <![CDATA[ createTime > STR_TO_DATE(#{queryTime},'%Y-%m-%d') ]]>
+		and orderType IN(1,2);
+	</select>
+
+	<select id="selectOrderByPage" parameterType="Map" resultType="Map">
+		SELECT a.*,b.user_name,b.true_name,b.user_level
+		FROM ct_order a LEFT
+		JOIN ct_user b ON a.userid = b.id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND a.userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND a.orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND a.payStatus = #{payStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.orderType = #{orderType}
+			</if>
+			<if test="userName != null">
+				AND b.user_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+		</trim>
+	</select>
+	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
+		SELECT sum(qty) as qty
+		FROM ct_order a LEFT JOIN ct_user b ON a.userid
+		= b.id
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND a.userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND a.orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND a.payStatus = #{payStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.orderType = #{orderType}
+			</if>
+			<if test="userName != null">
+				AND b.user_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+		</trim>
+	</select>
 </mapper>

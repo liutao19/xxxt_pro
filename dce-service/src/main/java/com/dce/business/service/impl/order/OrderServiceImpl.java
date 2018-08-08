@@ -27,6 +27,7 @@ import com.dce.business.dao.order.IOrderDao;
 import com.dce.business.dao.trade.IKLineDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.CtCurrencyDo;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.trade.KLineDo;
@@ -485,6 +486,16 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public Long selectGuadanAmount(Map<String, Object> paraMap) {
 		return orderDao.selectGuadanAmount(paraMap);
+	}
+
+	
+	/**
+	 *获取用户所有的订单
+	 */
+	@Override
+	public List<Order> selectByUesrId(Integer userId) {
+
+		return orderDao.selectByUesrId(userId);
 	}
 	
 }

@@ -35,6 +35,7 @@ import com.dce.business.common.util.ExeclTools;
 import com.dce.business.common.util.NumberUtil;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.entity.bonus.BonusLogDo;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
@@ -60,9 +61,30 @@ public class OrderController extends BaseController {
     @Resource(name = "awardServiceAsync")
     private IAwardService awardService;
     
+    @RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
+    public Result<?> getOrder(){
+    	Integer userId = getUserId();
+    	logger.debug("获取用户id-------》》》》》"+userId);
+    	List<Order> orderLitst = orderService.selectByUesrId(userId);
+    	List<Map<String,Object>> list = new ArrayList<>();
+    	for(Order order : orderLitst){
+    		Map<String,Object> map = new HashMap<>();
+    		map.put("ordercode", order.getOrdercode());
+    		map.put("totalPrice", order.getTotalprice());
+    		map.put("orderType", order.getOrdertype());
+    		map.put("quantity", order.getQty());
+    		map.put("payTime", order.getPaytime());
+    		map.put("payStatus", order.getPaystatus());
+    		map.put("orderStatus", order.getOrderstatus());
+    		list.add(map);
+    	}
+     	return Result.successResult("成功", list);
+    }
+    
     /** 
      * 重新计算奖金
      * @return  
+     * 
      */
     @RequestMapping(value = "/redoAwardForError", method = RequestMethod.POST)
     public Result<?> redoAwardForError() {

@@ -6,24 +6,17 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.dce.business.entity.message.NewsDo">
 		SELECT
 		    id,
-		    news_type as newsType,
 		    title,
-		    list_image,
-		    banner_image,
+		    image,
 		    content,
 		    author,
-		    hot_news,
 		    top_news,
-		    click,
-		    latest_news,
 		    remark,
 		    status,
 		    create_date as creatDate,
 		    create_name,
 		    update_date,
-		    update_name,
-		    sys_company_code,
-		    sys_org_code
+		    update_name
 		FROM
 		    t_ys_news
 		where id = #{id,jdbcType=INTEGER}
@@ -31,29 +24,21 @@
 	
 	
 	<!-- 自定义查询 -->
-    <select id="select" parameterType="java.util.Map" resultType="com.dce.business.entity.message.NewsDo">
+    <select id="select"  resultType="com.dce.business.entity.message.NewsDo">
         SELECT
-		    id,
-		    news_type as `newstype`,
+		   id,
 		    title,
-		    list_image,
-		    banner_image,
+		    image,
 		    content,
 		    author,
-		    hot_news,
 		    top_news,
-		    click,
-		    latest_news,
 		    remark,
 		    status,
-		    create_date as creatDate,
+		    create_date,
 		    create_name,
 		    update_date,
-		    update_name,
-		    sys_company_code,
-		    sys_org_code
+		    update_name
 		FROM
 		    t_ys_news
-        ORDER BY create_date DESC LIMIT #{offset},#{rows}
     </select>
 </mapper>

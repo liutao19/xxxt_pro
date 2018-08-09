@@ -27,4 +27,11 @@ public interface ICTGoodsDao {
 	 * @param _goods
 	 */
    int updateBookQty(CTGoodsDo _goods);
+
+   /**
+    * page  query
+    * @param param
+    * @return
+    */
+	List<CTGoodsDo> queryListPage(Map<String, Object> param);
 }

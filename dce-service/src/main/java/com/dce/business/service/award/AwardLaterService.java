@@ -6,7 +6,7 @@ import java.util.Map;
 import com.dce.business.dao.award.AwardDao;
 import com.dce.business.entity.award.Award;
 
-public interface AwardService {
+public interface AwardLaterService {
 	
 	/**
 	 * id条件删除奖励记录

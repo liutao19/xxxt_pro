@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.goods.ICTGoodsDao;
 import com.dce.business.dao.goods.ICTUserAddressDao;
@@ -22,6 +23,7 @@ import com.dce.business.dao.order.IOrderDao;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.goods.CTUserAddressDo;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IPayService;
 import com.dce.business.service.goods.ICTGoodsService;
@@ -143,6 +145,30 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		}
 		
 		return flag;
+	}
+	
+	/**
+	 * 分页查询
+	 * @param param
+	 * @param page
+	 * @return
+	 */
+	public PageDo<CTGoodsDo> getGoodsPage(Map<String, Object> param, PageDo<CTGoodsDo> page){
+		logger.info("----getGoodsPage----"+param);
+        param.put(Constants.MYBATIS_PAGE, page);
+        List<CTGoodsDo> list =  ctGoodsDao.queryListPage(param);
+        page.setModelList(list);
+        return page;
+	}
+	
+	/**
+	 * 更新
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public int updateGoodsById(CTGoodsDo newGoodsDo){
+		logger.debug("updateGoods(GoodsDo: "+newGoodsDo);
+		return  ctGoodsDao.updateByPrimaryKeySelective(newGoodsDo);		
 	}
 
 }

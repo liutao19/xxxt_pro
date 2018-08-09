@@ -48,6 +48,7 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
 		select * from ct_goods where goodsId=#{goodsId}
 	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from ct_goods where goodsId = #{id,jdbcType=INTEGER}
 	</delete>
@@ -463,4 +464,137 @@
         from ct_goods limit #{offset},#{rows}
          
     </select>
+    
+    
+    <select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_goods
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="goodsId != null">  
+				AND goodsId = #{goodsId}
+			</if>
+			<if test="goodsSn != null">  
+				AND goodsSn = #{goodsSn}
+			</if>
+			<if test="title != null">  
+				AND title = #{title}
+			</if>
+			<if test="goodsImg != null">  
+				AND goodsImg = #{goodsImg}
+			</if>
+			<if test="goodsThums != null">  
+				AND goodsThums = #{goodsThums}
+			</if>
+			<if test="brandId != null">  
+				AND brandId = #{brandId}
+			</if>
+			<if test="shopId != null">  
+				AND shopId = #{shopId}
+			</if>
+			<if test="marketPrice != null">  
+				AND marketPrice = #{marketPrice}
+			</if>
+			<if test="shopPrice != null">  
+				AND shopPrice = #{shopPrice}
+			</if>
+			<if test="goodsStock != null">  
+				AND goodsStock = #{goodsStock}
+			</if>
+			<if test="saleCount != null">  
+				AND saleCount = #{saleCount}
+			</if>
+			<if test="isBook != null">  
+				AND isBook = #{isBook}
+			</if>
+			<if test="bookQuantity != null">  
+				AND bookQuantity = #{bookQuantity}
+			</if>
+			<if test="warnStock != null">  
+				AND warnStock = #{warnStock}
+			</if>
+			<if test="goodsUnit != null">  
+				AND goodsUnit = #{goodsUnit}
+			</if>
+			<if test="goodsSpec != null">  
+				AND goodsSpec = #{goodsSpec}
+			</if>
+			<if test="isSale != null">  
+				AND isSale = #{isSale}
+			</if>
+			<if test="isBest != null">  
+				AND isBest = #{isBest}
+			</if>
+			<if test="isHot != null">  
+				AND isHot = #{isHot}
+			</if>
+			<if test="isRecomm != null">  
+				AND isRecomm = #{isRecomm}
+			</if>
+			<if test="isNew != null">  
+				AND isNew = #{isNew}
+			</if>
+			<if test="isAdminBest != null">  
+				AND isAdminBest = #{isAdminBest}
+			</if>
+			<if test="isAdminRecom != null">  
+				AND isAdminRecom = #{isAdminRecom}
+			</if>
+			<if test="recommDesc != null">  
+				AND recommDesc = #{recommDesc}
+			</if>
+			<if test="cid1 != null">  
+				AND cid1 = #{cid1}
+			</if>
+			<if test="cid2 != null">  
+				AND cid2 = #{cid2}
+			</if>
+			<if test="cid3 != null">  
+				AND cid3 = #{cid3}
+			</if>
+			<if test="shopCatId1 != null">  
+				AND shopCatId1 = #{shopCatId1}
+			</if>
+			<if test="shopCatId2 != null">  
+				AND shopCatId2 = #{shopCatId2}
+			</if>
+			<if test="goodsDesc != null">  
+				AND goodsDesc = #{goodsDesc}
+			</if>
+			<if test="isShopRecomm != null">  
+				AND isShopRecomm = #{isShopRecomm}
+			</if>
+			<if test="isIndexRecomm != null">  
+				AND isIndexRecomm = #{isIndexRecomm}
+			</if>
+			<if test="isActivityRecomm != null">  
+				AND isActivityRecomm = #{isActivityRecomm}
+			</if>
+			<if test="isInnerRecomm != null">  
+				AND isInnerRecomm = #{isInnerRecomm}
+			</if>
+			<if test="status != null">  
+				AND status = #{status}
+			</if>
+			<if test="saleTime != null">  
+				AND saleTime = #{saleTime}
+			</if>
+			<if test="attrCatId != null">  
+				AND attrCatId = #{attrCatId}
+			</if>
+			<if test="goodsKeywords != null">  
+				AND goodsKeywords = #{goodsKeywords}
+			</if>
+			<if test="goodsFlag != null">  
+				AND goodsFlag = #{goodsFlag}
+			</if>
+			<if test="statusRemarks != null">  
+				AND statusRemarks = #{statusRemarks}
+			</if>
+			<if test="createTime != null">  
+				AND createTime = #{createTime}
+			</if>
+         </trim> 
+
+	</select>
+    
 </mapper>

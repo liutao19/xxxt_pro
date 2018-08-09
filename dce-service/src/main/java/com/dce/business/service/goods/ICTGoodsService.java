@@ -1,10 +1,12 @@
 package com.dce.business.service.goods;
 
 import java.util.List;
+import java.util.Map;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.page.PageDo;
 
 public interface ICTGoodsService {
 
@@ -25,4 +27,20 @@ public interface ICTGoodsService {
 	 * @return
 	 */
 	public Result<?> buyGoods(OrderDo order,Integer addressId);
+
+	/**
+	 * page 翻页查询
+	 * 
+	 * @param param
+	 * @param page
+	 * @return
+	 */
+	public PageDo<CTGoodsDo> getGoodsPage(Map<String, Object> param, PageDo<CTGoodsDo> page);
+
+	/**
+	 * 更新
+	 * @param cTGoodsDo
+	 * @return
+	 */
+	public int updateGoodsById(CTGoodsDo cTGoodsDo);
 }

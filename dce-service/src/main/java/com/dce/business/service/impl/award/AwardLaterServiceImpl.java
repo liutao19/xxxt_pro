@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.dce.business.dao.award.AwardDao;
 import com.dce.business.entity.award.Award;
-import com.dce.business.service.award.AwardService;
+import com.dce.business.service.award.AwardLaterService;
 @Service("awardLaterService")
-public class AwardLaterServiceImpl implements AwardService{
+public class AwardLaterServiceImpl implements AwardLaterService{
 
 	@Resource
 	private AwardDao awarddao;

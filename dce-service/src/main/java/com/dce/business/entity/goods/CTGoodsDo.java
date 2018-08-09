@@ -12,9 +12,12 @@ import java.util.Date;
 public class CTGoodsDo implements Serializable {
 
 	  private static final long serialVersionUID = -9153547858826001223L;
+	  //商品id
 	  private Long goodsId;
 	  private String goodsSn ;
+	  //商品名称
 	  private String title ;
+	  //商品图片地址
 	  private String goodsImg ;
 	  private Long goodsThums ;
 	  private Long brandId ;
@@ -46,6 +49,7 @@ public class CTGoodsDo implements Serializable {
 	  private Integer isIndexRecomm ;
 	  private Integer isActivityRecomm ;
 	  private Integer isInnerRecomm ;
+	  //商品状态 0为上架 1 为未上架
 	  private Integer status ;
 	  private Date saleTime ;
 	  private Long attrCatId ;

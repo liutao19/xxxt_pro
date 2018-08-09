@@ -77,20 +77,21 @@ public class UserController extends BaseController {
             return Result.failureResult(errors.get(0).getDefaultMessage());
         }
         
+/*        // 去掉手机号中的所有空格
         if (StringUtils.isNotBlank(userDo.getMobile())) {
             userDo.setMobile(userDo.getMobile().replaceAll(" ", "")); //去掉所有空格
         }
         
-        
+        // 去掉身份号中的所有空格       
         if (StringUtils.isNotBlank(userDo.getIdnumber())) {
         	String idnumber =  userDo.getIdnumber().replaceAll(" ","");
         	userDo.setIdnumber(idnumber);
         }
-
+        // 去掉银行卡中的所有空格
         if (StringUtils.isNotBlank(userDo.getBankContent())) {
         	String bankContent =  userDo.getBankContent().replaceAll(" ","");
         	userDo.setBankContent(bankContent);
-        }
+        }*/
         
         
         Result<?> result = userService.reg(userDo);
@@ -366,6 +367,42 @@ public class UserController extends BaseController {
         	return userService.update(userDo);
         }catch(Exception e){
         	return Result.failureResult("用户信息修改失败");
+        }
+    }
+    
+    
+    
+    /** 
+     * 用户信息认证
+     * @return  
+     */
+    @RequestMapping(value = "/Authentication", method = RequestMethod.POST)
+    public Result<?> Authentication() {
+    	try{
+	        Integer userId = getUserId();
+	        String trueName = getString("trueName");
+	        String mobile = getString("mobile");
+	        String idnumber = getString("idnumber");
+	        String sex=getString("sex");
+
+	        logger.info("用户信息，userId:" + userId);
+	
+	        Assert.hasText(trueName, "姓名不能为空");
+	        Assert.hasText(mobile, "手机号码不能为空");
+	        Assert.hasText(idnumber, "身份证不能为空");
+	        Assert.hasText(sex,"性别不能为空");
+	        //用户信息
+	        UserDo userDo = new UserDo();
+	        userDo.setId(userId);
+	        userDo.setTrueName(trueName);
+	        userDo.setIdnumber(idnumber);
+	        userDo.setSex(sex);
+	       
+        	return userService.Authentication(userDo);
+        	
+        	
+        }catch(Exception e){
+        	return Result.failureResult("用户信息认证失败");
         }
     }
 

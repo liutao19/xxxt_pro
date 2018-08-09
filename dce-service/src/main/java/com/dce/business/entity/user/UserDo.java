@@ -16,11 +16,11 @@ public class UserDo {
 	private Integer id;
 
 	// 登录用户名或昵称
-	@NotBlank(message = "验证编号不能为空")
+	//@NotBlank(message = "验证编号不能为空")
 	private String userName;
 
 	// 证件姓名
-	@NotBlank(message = "姓名不能为空")
+	//@NotBlank(message = "姓名不能为空")
 	private String trueName;
 
 	private String email;
@@ -92,11 +92,11 @@ public class UserDo {
 	private BigDecimal baodan_amount;
 
 	//推荐人用户名
-	@NotBlank(message = "推荐人不能为空")
+	// @NotBlank(message = "推荐人不能为空")
 	private String refereeUserName; 
 
 	//接点人用户名
-	@NotBlank(message = "接点人不能为空")
+	//@NotBlank(message = "接点人不能为空")
 	private String parentUserName;
 
 	private Integer refereeNumber;
@@ -216,7 +216,7 @@ public class UserDo {
 
 	private Byte isimport;
 
-	@NotNull(message = "请选择左右区")
+	//@NotNull(message = "请选择左右区")
 	private Byte pos;
 
 	private Byte isout;

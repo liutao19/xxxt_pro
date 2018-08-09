@@ -2,6 +2,7 @@ package com.dce.business.service.impl.user;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,7 +54,6 @@ public class UserServiceImpl implements IUserService {
     private IUserAccountDao  userAccountDao;
     @Resource
     private ILoanDictService loanDictService;
-    
     @Resource
     private IEthereumService ethereumService;
     @Resource
@@ -84,21 +84,23 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public Result<?> reg(UserDo userDo) {
-    	userDo.setUserName(userDo.getUserName().trim());
-    	userDo.setParentUserName(userDo.getParentUserName().trim());
-    	userDo.setRefereeUserName(userDo.getRefereeUserName().trim());
-    	
+    	// 判断注册用户名是否为空
+    	userDo.setUserName(userDo.getUserName().trim());    	
+    	userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid
+    	//userDo.setRefereeUserName(userDo.getRefereeUserName().trim());
+     
+       /* UserDo ref = getUser(userDo.getRefereeUserName());
+        if(ref == null){
+            return Result.failureResult("推荐人不存在");
+        }*/
+     
         UserDo oldUser = getUser(userDo.getUserName());
         if (oldUser != null) {
             return Result.failureResult("用户已存在");
         }
-
-        UserDo ref = getUser(userDo.getRefereeUserName());
-        if(ref == null){
-            return Result.failureResult("推荐人不存在");
-        }
         
-        UserDo par = getUser(userDo.getParentUserName());
+        
+        /*UserDo par = getUser(userDo.getParentUserName());
         if(par == null){
             return Result.failureResult("接点人不存在!");
         }
@@ -111,11 +113,11 @@ public class UserServiceImpl implements IUserService {
         List<UserParentDo> list = userParentDao.select(params);
         if (!CollectionUtils.isEmpty(list)) {
             return Result.failureResult("接点人左（右）区已有用户，请重新选择!");
-        }
+        }*/
         
         String twoPassword = userDo.getTwoPassword(); //加密前交易密码，用来以太坊开户
-        userDo.setRefereeid(ref.getId());
-        userDo.setParentid(par.getId());
+      /*  userDo.setRefereeid(ref.getId());
+        userDo.setParentid(par.getId());*/
         userDo.setRegTime(new Date().getTime());
         userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); //密码加密处理
         userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
@@ -123,17 +125,17 @@ public class UserServiceImpl implements IUserService {
         //用户注册
         int result = userDao.insertSelective(userDo);
 
-        //维护父节点关系
+       /* //维护父节点关系
         maintainUserParent(userDo.getId(), par.getId(), userDo.getPos());
 
         //维护推荐人关系
         maintainUserReferee(userDo.getId(), ref.getId());
-        
-        //维护賬戶
+*/        
+       /* //维护賬戶
         maintainUserAccount(userDo.getId());
         
         //以太坊开户
-        ethereumService.creatAccount(userDo.getId(), twoPassword);
+        ethereumService.creatAccount(userDo.getId(), twoPassword);*/
         
         return result > 0?Result.successResult("注册成功!"):Result.failureResult("注册失败");
     }
@@ -291,6 +293,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.selectUser(params);
     }
 
+    /**
+     * 修改用户信息
+     */
     @Override
     public Result<?> update(UserDo userDo) {
         if (userDo == null || userDo.getId() == null) {
@@ -306,14 +311,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    /**
-     * 查看团队成员
-     */
-    @Override
-    public List<Map<String, Object>> getMyMember(Map<String,Object> params) {
-    	
-        return userRefereeDao.selectMyGroup(params);
-    }
+   
 
     /**
      * 此方法注释，重写， 2018-07-08
@@ -629,6 +627,40 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public Long selectBaoDanAmount(Map<String, Object> params) {
 		return userDao.selectBaoDanAmount(params);
+	}
+
+	/**
+	 * 实名认证
+	 */
+	@Override
+	public Result<?> Authentication(UserDo userDo) {
+		// TODO Auto-generated method stub
+		
+		if (userDo == null || userDo.getId() == null) {
+            return Result.failureResult("认证用户信息参数错误!");
+        }
+		
+		
+       
+        int flag = userDao.updateByPrimaryKeySelective(userDo);
+        if (flag > 0) {
+            return Result.successResult("认证成功");
+        } else {
+
+            return Result.failureResult("认证失败");
+        }
+	}
+
+	/**
+	 * 查看团员
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public  List<UserParentDo> getMyMember(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		
+		return userParentDao.select(params);
 	}
 
 }

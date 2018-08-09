@@ -221,7 +221,7 @@
 		and DATE_FORMAT(date_sub(b.endDate,interval 365 day), '%Y-%m-%d') = DATE_FORMAT(NOW(),'%Y-%m-%d')
 	</select>
 	
-	<!-- 自定义查询 -->
+	<!-- 团员查询 -->
     <select id="select" parameterType="java.util.Map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />

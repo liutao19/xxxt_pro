@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dce.business.actions.news.NewsController;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.notice.NoticeDo;
 import com.dce.business.service.message.INoticeService;
@@ -27,7 +26,7 @@ import com.dce.business.service.message.INoticeService;
 @RestController
 @RequestMapping("/notice")
 public class NoticeController {
-	private final static Logger logger = Logger.getLogger(NewsController.class);
+	private final static Logger logger = Logger.getLogger(NoticeController.class);
 	@Resource
 	private INoticeService noticeService;
 	 /** 

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +44,7 @@ import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.order.IOrderService;
+import com.dce.business.service.user.UserAdressService;
 
 @RestController
 @RequestMapping("order")
@@ -51,8 +53,13 @@ public class OrderController extends BaseController {
 
     @Resource
     private IOrderService orderService;
+    
+    @Resource
+    private UserAdressService addressService;
+    
     @Resource
     private IAccountService accountService;
+    
     @Resource
     private IBaodanService baodanService;
     
@@ -62,32 +69,68 @@ public class OrderController extends BaseController {
     @Resource(name = "awardServiceAsync")
     private IAwardService awardService;
     
-    @RequestMapping(value = "/showAdress", method = RequestMethod.GET)
-    public List<UserAddressDo> getUserAdress(){
+    /**
+     * 查询出当前用户所有的地址
+     * @return
+     */
+    @RequestMapping(value = "/showAdress", method = RequestMethod.POST)
+    public Result<?> getUserAdress(){
+    	//获取当前用户的id
+    	Integer userId = getUserId();
     	
-    	return null;
+    	List<UserAddressDo> addressList = addressService.selectByUserId(userId);
+    	
+    	return Result.successResult("获取用户地址成功", addressList);
     }
     
     /**
-     * 添加一个订单
+     * 确认订单
      * @return
      */
-    @RequestMapping(value = "/orderPay", method = RequestMethod.POST)
-    public Result<?> insertOrder(){
+    @RequestMapping(value = "/createOrder", method = RequestMethod.POST)
+    public Result<?> insertOrder(HttpServletRequest request){
     	//获取用户id
     	Integer userId = getUserId();
     	
     	//产生订单编号
     	String orderCode = OrderCodeUtil.genOrderCode(userId);
+    	logger.info("产生的订单编号------》》》》》"+orderCode);
     	
     	//获取前台传过来的订单信息
-    	String payStatus = getString("payStatus") == null ? "" : getString("payStatus");
     	String addressId = getString("addressId") == null ? "" : getString("addressId");
-    	String orderPayType = getString("orderPayType") == null ? "" : getString("orderPayType");
+    	String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
     	String remark = getString("remark") == null ? "" : getString("remark");
     	
-    	//解析男女版的商品
+    	//根据地址id查询出收货人信息，返回页面
+    	UserAddressDo userAddress = new UserAddressDo();
+    	userAddress = addressService.selectByPrimaryKey(Integer.valueOf(addressId));
     	
+    	System.out.println("--------------获取到的地址信息--------------");
+    	
+    	String receiver = userAddress.getUsername();
+    	String telPhone = userAddress.getAddress();
+    	String address = userAddress.getAddress();
+    	
+    	System.out.println("获取的收货人的信息-----》》》》receiver："+receiver+"telPhone："+telPhone+"address："+address);
+    	
+    	//获取商品信息
+    	String goods1 = request.getParameter("cart");
+    	
+    	JSONString
+    	String[] goods = request.getParameterValues("cart");
+    	System.out.println("goods信息："+goods1);
+    	
+    	Order order = new Order();
+    	order.setUserid(userId);
+    	order.setOrdercode(orderCode);
+    	order.setOrdertype(Integer.valueOf(orderPayType));
+    	order.setAddressid(Integer.valueOf(addressId));
+    	order.setRemark(remark);
+    	
+    	//封装返回APP页面的数据
+    	List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+    	Map<String,String> map = new HashMap<String,String>();
+    	//map.put("qty", arg1);
     	
     	return null;
     }
@@ -107,13 +150,13 @@ public class OrderController extends BaseController {
     		map.put("ordercode", order.getOrdercode());
     		map.put("totalPrice", order.getTotalprice());
     		map.put("orderType", order.getOrdertype());
-    		map.put("quantity", order.getQty());
+    		map.put("qty", order.getQty());
     		map.put("payTime", order.getPaytime());
     		map.put("payStatus", order.getPaystatus());
     		map.put("orderStatus", order.getOrderstatus());
     		list.add(map);
     	}
-     	return Result.successResult("成功", list);
+     	return Result.successResult("获取订单成功", list);
     }
     
     

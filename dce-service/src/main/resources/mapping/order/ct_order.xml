@@ -53,7 +53,6 @@
 	<!-- 获取用户地址 -->
 	<select id="selectAdress"></select>
 
-	<!-- 生成一个订单 -->
 	<insert id="insert" parameterType="com.dce.business.entity.order.Order">
 		insert into ct_order (orderId,
 		orderCode, userId,
@@ -83,111 +82,81 @@
 		)
 	</insert>
 
-	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from
-		ct_order
-		where orderId = #{orderId,jdbcType=BIGINT}
-	</delete>
-
-	<insert id="insertSelective" keyColumn="orderId" keyProperty="orderId"
-		parameterType="com.dce.business.entity.order.OrderDo"
-		useGeneratedKeys="true">
+	<!-- 生成一个订单 -->
+	<insert id="insertSelective" parameterType="com.dce.business.entity.order.Order">
 		insert into ct_order
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="orderCode != null">
+			<if test="ordercode != null">
 				orderCode,
 			</if>
-			<if test="userId != null">
+			<if test="userid != null">
 				userId,
-			</if>
-			<if test="goodsId != null">
-				goodsId,
 			</if>
 			<if test="qty != null">
 				qty,
 			</if>
-			<if test="price != null">
-				price,
-			</if>
-			<if test="totalPrice != null">
+			<if test="totalprice != null">
 				totalPrice,
 			</if>
-			<if test="recAddress != null">
-				recAddress,
-			</if>
-			<if test="createTime != null">
+			<if test="createtime != null">
 				createTime,
 			</if>
-			<if test="orderStatus != null">
+			<if test="orderstatus != null">
 				orderStatus,
 			</if>
-			<if test="payStatus != null">
+			<if test="paystatus != null">
 				payStatus,
 			</if>
-			<if test="payTime != null">
+			<if test="paytime != null">
 				payTime,
 			</if>
-			<if test="orderType != null">
+			<if test="ordertype != null">
 				orderType,
 			</if>
-			<if test="matchOrderId != null">
-				matchOrderId,
+			<if test="addressid != null">
+				addressId,
 			</if>
-			<if test="salqty != null">
-				salqty,
-			</if>
-			<if test="accountType != null">
-				accountType,
+			<if test="remark != null">
+				remark,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="orderCode != null">
-				#{orderCode,jdbcType=VARCHAR},
+			<if test="ordercode != null">
+				#{ordercode,jdbcType=VARCHAR},
 			</if>
-			<if test="userId != null">
-				#{userId,jdbcType=INTEGER},
-			</if>
-			<if test="goodsId != null">
-				#{goodsId,jdbcType=BIGINT},
+			<if test="userid != null">
+				#{userid,jdbcType=INTEGER},
 			</if>
 			<if test="qty != null">
 				#{qty,jdbcType=DECIMAL},
 			</if>
-			<if test="price != null">
-				#{price,jdbcType=DECIMAL},
+			<if test="totalprice != null">
+				#{totalprice,jdbcType=DECIMAL},
 			</if>
-			<if test="totalPrice != null">
-				#{totalPrice,jdbcType=DECIMAL},
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="recAddress != null">
-				#{recAddress,jdbcType=VARCHAR},
+			<if test="orderstatus != null">
+				#{orderstatus,jdbcType=INTEGER},
 			</if>
-			<if test="createTime != null">
-				#{createTime,jdbcType=TIMESTAMP},
+			<if test="paystatus != null">
+				#{paystatus,jdbcType=INTEGER},
 			</if>
-			<if test="orderStatus != null">
-				#{orderStatus,jdbcType=INTEGER},
+			<if test="paytime != null">
+				#{paytime,jdbcType=TIMESTAMP},
 			</if>
-			<if test="payStatus != null">
-				#{payStatus,jdbcType=INTEGER},
+			<if test="ordertype != null">
+				#{ordertype,jdbcType=INTEGER},
 			</if>
-			<if test="payTime != null">
-				#{payTime,jdbcType=TIMESTAMP},
+			<if test="addressid != null">
+				#{addressid,jdbcType=INTEGER},
 			</if>
-			<if test="orderType != null">
-				#{orderType,jdbcType=INTEGER},
-			</if>
-			<if test="matchOrderId != null">
-				#{matchOrderId,jdbcType=BIGINT},
-			</if>
-			<if test="salqty != null">
-				#{salqty,jdbcType=DECIMAL},
-			</if>
-			<if test="accountType != null">
-				#{accountType,jdbcType=VARCHAR},
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
+	
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		<set>
@@ -296,6 +265,11 @@
 		</trim>
 	</select>
 
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		ct_order
+		where orderId = #{orderId,jdbcType=BIGINT}
+	</delete>
 
 	<!-- 自定义查询 -->
 	<select id="selectOrderForReport" parameterType="java.util.Map"

@@ -505,7 +505,7 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public int insertOrder(Order order) {
 		
-		return orderDao.insert(order);
+		return orderDao.insertSelective(order);
 	}
 	
 }

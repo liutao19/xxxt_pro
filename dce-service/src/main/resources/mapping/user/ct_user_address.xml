@@ -21,12 +21,23 @@
 		addressId, userId, userName, userPhone, userTel, areaId1, areaId2, areaId3, communityId,
 		address, postCode, isDefault, addressFlag, createTime
 	</sql>
+	
+	<!-- 根据主键查询收获人信息 -->
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_user_address
-		where addressId = #{addressid,jdbcType=INTEGER}
+		where addressId = #{addressId,jdbcType=INTEGER}
 	</select>
+	
+	<!-- 获取当前用户的所有收获地址 -->
+	<select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from ct_user_address
+		where userId = #{userId,jdbcType=INTEGER}
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from ct_user_address
 		where addressId = #{addressid,jdbcType=INTEGER}

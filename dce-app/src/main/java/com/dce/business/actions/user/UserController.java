@@ -439,8 +439,6 @@ public class UserController extends BaseController {
 			logger.info("修改报错Exception:",e);
 			return Result.failureResult("修改失败!");
 		}
-		
-		
 	}
 	
 	

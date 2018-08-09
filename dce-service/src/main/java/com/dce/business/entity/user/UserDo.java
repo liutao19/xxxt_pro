@@ -6,19 +6,29 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * 会员管理实体类
+ * @author XEY
+ *
+ */
 public class UserDo {
+	// 会员管理主键（用）
 	private Integer id;
 
+	// 登录用户名或昵称
 	@NotBlank(message = "验证编号不能为空")
 	private String userName;
 
+	// 证件姓名
 	@NotBlank(message = "姓名不能为空")
 	private String trueName;
 
 	private String email;
 
+	// 手机号
 	private String mobile;
 
+	// 登录密码
 	@NotBlank(message = "登录密码不能为空")
 	private String userPassword;
 
@@ -29,6 +39,7 @@ public class UserDo {
 
 	private BigDecimal balanceIntegral;
 
+	// 证件性别
 	private String sex;
 
 	private Long loginTimes;
@@ -39,9 +50,12 @@ public class UserDo {
 
 	private String regIp;
 
+	// 注册时间
 	private Long regTime;
 
+	// 会员禁用
 	private Byte status;
+	
 
 	private BigDecimal balanceBonus;
 
@@ -64,18 +78,26 @@ public class UserDo {
 	private BigDecimal totalIntegral;
 
 	private BigDecimal totalShopping;
-
+	
+	// 用户推荐人
 	private Integer refereeid;
 
+	// 接点人id
 	private Integer parentid;
+	
+	// 认证状态
+	private int certification ;
 
-	private BigDecimal baodan_amount; //报单金额
+	 //报单金额
+	private BigDecimal baodan_amount;
 
+	//推荐人用户名
 	@NotBlank(message = "推荐人不能为空")
-	private String refereeUserName; //推荐人用户名
+	private String refereeUserName; 
 
+	//接点人用户名
 	@NotBlank(message = "接点人不能为空")
-	private String parentUserName; //接点人用户名
+	private String parentUserName;
 
 	private Integer refereeNumber;
 
@@ -93,6 +115,7 @@ public class UserDo {
 
 	private Byte userGroup;
 
+	// 用户等级
 	private Byte userLevel;
 
 	private Byte userPost;
@@ -133,8 +156,12 @@ public class UserDo {
 
 	private BigDecimal balanceEt;
 
+	// 身份证号码
 	private String idnumber;
 
+	// 身份证照片url
+	private String identity;
+	
 	private Byte banktype;
 
 	private String bankUserName;
@@ -214,7 +241,8 @@ public class UserDo {
 	 */
 	private String tranDirect;
 
-	private Integer isActivated; //是否已激活
+	// 是否已激活（状态）
+	private Integer isActivated; 
 
 	public String getUndoOpts() {
 		return undoOpts;

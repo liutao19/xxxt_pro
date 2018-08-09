@@ -1,12 +1,21 @@
 package com.dce.business.entity.user;
 
+/**
+ * 收货地址实体类
+ * @author XEY
+ *
+ */
 public class UserAddressDo {
+	// 收货地址id
     private Integer addressid;
 
+    // 用户表id
     private Integer userid;
 
+    // 收货姓名
     private String username;
 
+    // 收货电话
     private String userphone;
 
     private String usertel;
@@ -19,9 +28,14 @@ public class UserAddressDo {
 
     private Integer communityid;
 
+    // 收货地址
     private String address;
 
+    // 邮政编码
     private String postcode;
+    
+    // 备注
+    private String remark;
 
     private Byte isdefault;
 
@@ -139,5 +153,13 @@ public class UserAddressDo {
 
     public void setCreatetime(String createtime) {
         this.createtime = createtime;
+    }
+    
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = createtime;
     }
 }

@@ -116,8 +116,8 @@ public class OrderController extends BaseController {
     	//获取商品信息
     	String goods1 = request.getParameter("cart");
     	
-    	/*JSONString
-    	String[] goods = request.getParameterValues("cart");*/
+    	JSONArray jsonArray = JSONArray.f
+    	String[] goods = request.getParameterValues("cart");
     	System.out.println("goods信息："+goods1);
     	
     	Order order = new Order();

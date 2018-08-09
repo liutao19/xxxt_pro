@@ -7,6 +7,8 @@ import java.util.Map;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
+import com.dce.business.entity.user.UserParentDo;
+import com.dce.business.entity.user.UserRefereeDo;
 
 public interface IUserService {
 
@@ -61,14 +63,28 @@ public interface IUserService {
 
     List<UserDo> selectUser(Map<String, Object> params);
 
+    /**
+     * 用户个人信息修改
+     * @param userDo
+     * @return
+     */
     Result<?> update(UserDo userDo);
+    
+    
+    
+    /**
+     * 用户信息认证
+     * @param userDo
+     * @return
+     */
+    Result<?>Authentication(UserDo userDo);
 
     /**
      * 查看我的团队
      * @param userId
      * @return
      */
-    List<Map<String, Object>> getMyMember(Map<String,Object> params);
+    List<UserParentDo> getMyMember(Map<String,Object> params);
 
 
     /**

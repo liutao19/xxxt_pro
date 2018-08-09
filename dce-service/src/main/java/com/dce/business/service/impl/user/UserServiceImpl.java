@@ -2,6 +2,7 @@ package com.dce.business.service.impl.user;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -292,6 +293,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.selectUser(params);
     }
 
+    /**
+     * 修改用户信息
+     */
     @Override
     public Result<?> update(UserDo userDo) {
         if (userDo == null || userDo.getId() == null) {
@@ -307,14 +311,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    /**
-     * 查看团队成员
-     */
-    @Override
-    public List<Map<String, Object>> getMyMember(Map<String,Object> params) {
-    	
-        return userRefereeDao.selectMyGroup(params);
-    }
+   
 
     /**
      * 此方法注释，重写， 2018-07-08
@@ -630,6 +627,40 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public Long selectBaoDanAmount(Map<String, Object> params) {
 		return userDao.selectBaoDanAmount(params);
+	}
+
+	/**
+	 * 实名认证
+	 */
+	@Override
+	public Result<?> Authentication(UserDo userDo) {
+		// TODO Auto-generated method stub
+		
+		if (userDo == null || userDo.getId() == null) {
+            return Result.failureResult("认证用户信息参数错误!");
+        }
+		
+		
+       
+        int flag = userDao.updateByPrimaryKeySelective(userDo);
+        if (flag > 0) {
+            return Result.successResult("认证成功");
+        } else {
+
+            return Result.failureResult("认证失败");
+        }
+	}
+
+	/**
+	 * 查看团员
+	 * @param params
+	 * @return
+	 */
+	@Override
+	public  List<UserParentDo> getMyMember(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		
+		return userParentDao.select(params);
 	}
 
 }

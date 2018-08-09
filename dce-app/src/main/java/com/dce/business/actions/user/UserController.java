@@ -369,6 +369,42 @@ public class UserController extends BaseController {
         	return Result.failureResult("用户信息修改失败");
         }
     }
+    
+    
+    
+    /** 
+     * 用户信息认证
+     * @return  
+     */
+    @RequestMapping(value = "/Authentication", method = RequestMethod.POST)
+    public Result<?> Authentication() {
+    	try{
+	        Integer userId = getUserId();
+	        String trueName = getString("trueName");
+	        String mobile = getString("mobile");
+	        String idnumber = getString("idnumber");
+	        String sex=getString("sex");
+
+	        logger.info("用户信息，userId:" + userId);
+	
+	        Assert.hasText(trueName, "姓名不能为空");
+	        Assert.hasText(mobile, "手机号码不能为空");
+	        Assert.hasText(idnumber, "身份证不能为空");
+	        Assert.hasText(sex,"性别不能为空");
+	        //用户信息
+	        UserDo userDo = new UserDo();
+	        userDo.setId(userId);
+	        userDo.setTrueName(trueName);
+	        userDo.setIdnumber(idnumber);
+	        userDo.setSex(sex);
+	       
+        	return userService.Authentication(userDo);
+        	
+        	
+        }catch(Exception e){
+        	return Result.failureResult("用户信息认证失败");
+        }
+    }
 
     @RequestMapping(value="toLevel",method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView tosetLevel(){

@@ -79,12 +79,12 @@ public class GoodsController extends BaseController {
 		 if(!CollectionUtils.isEmpty(resultList)){
 			 for(CTGoodsDo good : resultList){
 				 Map<String,Object> map = new HashMap<String,Object>();
-				 map.put("productId", good.getGoodsId());
-				 map.put("productName", good.getTitle());
-				 map.put("imgUrl", good.getGoodsImg());
+				 map.put("goodsId", good.getGoodsId());
+				 map.put("title", good.getTitle());
+				 map.put("goodsImg", good.getGoodsImg());
 				 map.put("saleTime", good.getSaleTime());
 				 map.put("shopPrice", good.getShopPrice());
-				 map.put("goodsDesc", good.getGoodsDesc());
+				 map.put("goodsDtails", good.getGoodsDesc());
 				 retList.add(map);
 			 }
 		 }

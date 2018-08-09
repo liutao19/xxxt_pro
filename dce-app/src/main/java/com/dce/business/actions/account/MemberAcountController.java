@@ -79,7 +79,7 @@ public class MemberAcountController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/listMyMember", method = RequestMethod.POST)
-	public Result<List<Map<String,Object>>> listMyMember() {
+	public Result<List<UserParentDo>> listMyMember() {
 		
 		Map<String,Object> params = new HashMap<String,Object>();
 		
@@ -138,7 +138,7 @@ public class MemberAcountController extends BaseController {
     	params.put("isActivity", isActivity);
     	params.put("distance", 1);
     	
-		List<Map<String,Object>> userList =  userService.getMyMember(params);
+    	List<UserParentDo> userList =  userService.getMyMember(params);
 		return  Result.successResult("查询成功",userList);
 	}
 	

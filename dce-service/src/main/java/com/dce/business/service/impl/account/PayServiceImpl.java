@@ -87,10 +87,10 @@ public class PayServiceImpl implements IPayService {
 		
 		//1、校验用户金额是否足够
 		BigDecimal ethereumAmount = ethereumService.getEthernumAmount(userId);
-		logger.info("以太坊账户余额:" + ethereumAmount.toString() + ",输入金额:" + qty.toString() + "输入金额所需以太坊数量:" + ethqty);
+		logger.info("账户余额:" + ethereumAmount.toString() + ",输入金额:" + qty.toString() + "输入金额所需以太坊数量:" + ethqty);
 		if (ethqty.compareTo(ethereumAmount) > 0) {
-			logger.info("以太坊账户余额不足");
-			return Result.failureResult("以太坊账户余额不足");
+			logger.info("账户余额不足");
+			return Result.failureResult("账户余额不足");
 		}
 
 		UserDo userDo = userService.getUser(userId);
@@ -109,9 +109,12 @@ public class PayServiceImpl implements IPayService {
 		return result;
 	}
 
+	/**
+	 * 提现申请
+	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> withdraw(Integer userId, String password, BigDecimal qty) {
+	public Result<?> withdraw(Integer userId, String password,String type, BigDecimal qty) {
 
 		//判断系统设置是否可交易
 		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
@@ -132,14 +135,29 @@ public class PayServiceImpl implements IPayService {
 		if (!userDo.getTwoPassword().equals(password)) {
 			return Result.failureResult("交易密码不正确");
 		}
+		
+		//3,判断提现方式，提现到支付宝还是微信
+		
+		if(type.equals("1")){
+			
+			System.out.println("提现到支付宝");
+			
+		}else{
+		
+			System.out.println("提现到微信");
+		}
+		
+		
+		
+		
 
-		//以太坊账户校验
+		//账户校验
 		EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
 		if (ethereumAccountDo == null) {
 			return Result.failureResult("请先获取以太坊地址再提现");
 		}
 
-		//判断开户是否已有24小时
+		/*//判断开户是否已有24小时
 		if (ethereumAccountDo.getCreatetime() != null) {
 			Date date = DateUtil.getDate(ethereumAccountDo.getCreatetime(), 1);
 			if (date.after(new Date())) {
@@ -152,7 +170,7 @@ public class PayServiceImpl implements IPayService {
 		updateAccount.setAccountType(AccountType.wallet_cash.getAccountType());
 		updateAccount.setAmount(qty.negate());
 		updateAccount.setUserId(userId);
-		accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_WITHDRAW);
+		accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_WITHDRAW);*/
 
 		//写提现表
 		WithdrawalsDo record = new WithdrawalsDo();

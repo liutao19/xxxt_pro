@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.dce.business.entity.user.UserParentDo;
 
 public interface IUserParentDao {
+	
     int deleteByPrimaryKey(Integer id);
 
     int insert(UserParentDo record);
@@ -20,11 +21,12 @@ public interface IUserParentDao {
 
     int updateByPrimaryKey(UserParentDo record);
     
+    
+    List<Map<String,Object>> selectMyGroup(Map<String,Object> params);
+   
     /*
      * 查询团队成员
      */
-    List<Map<String,Object>> selectMyGroup(Map<String,Object> params);
-    
     List<UserParentDo> select(Map<String, Object> params);
 
     /**

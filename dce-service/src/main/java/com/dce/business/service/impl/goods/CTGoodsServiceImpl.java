@@ -69,12 +69,12 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		}
 
 		CTGoodsDo goods = selectById(order.getGoodsId());
-		//判断购买数量是否大于库存量
+		// 判断购买数量是否大于库存量
 		if (order.getQty().intValue() > goods.getGoodsStock()) {
 			return Result.failureResult("购买商品数量大于库存量");
 		}
 
-		//如果没传收货地址,则查询默认且有效的收货地址
+		// 如果没传收货地址,则查询默认且有效的收货地址
 		if (addressId == null) {
 
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -109,7 +109,7 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		CTGoodsDo _goods = new CTGoodsDo();
 		_goods.setGoodsId(goods.getGoodsId());
 		_goods.setBookQuantity(order.getQty().longValue());
-		//修改库存
+		// 修改库存
 		try {
 			int ret = ctGoodsDao.updateBookQty(_goods);
 			if (ret < 1) {
@@ -122,6 +122,27 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 
 		return payService.buyGoods(order.getUserId(), order.getTotalPrice());
 
+	}
+
+	@Override
+	public boolean insertSelectiveService(CTGoodsDo goods) {
+
+		boolean flag = false;
+		if (goods != null) {
+			flag = ctGoodsDao.insertSelective(goods) > 0;
+		}
+
+		return flag;
+	}
+
+	@Override
+	public boolean deleteGoodsService(Integer goodsid) {
+		boolean flag=false;
+		if(goodsid!=null&&goodsid!=0){
+			flag=ctGoodsDao.deleteByPrimaryKey(goodsid)>0;
+		}
+		
+		return flag;
 	}
 
 }

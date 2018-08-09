@@ -204,8 +204,8 @@
     <select id="selectByPage4App" parameterType="java.util.Map" resultMap="BaseResultMap">
         select goodsId,
         title,
-        saleCount,
-        marketPrice,
+        goodsDesc,
+        saleTime,
         shopPrice,
         goodsimg
         from ct_goods limit #{offset},#{rows}

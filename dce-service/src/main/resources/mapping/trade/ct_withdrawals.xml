@@ -228,6 +228,11 @@
 		FROM ct_withdrawals a LEFT JOIN ct_user b  ON a.userid = b.id
 		                      LEFT JOIN  ct_ethereum_trans_info c ON a.id = c.withdrawalsId and c.hash <![CDATA[ <> ]]> ''
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		    
+		    <if test="userid!=null">  
+		    and a.userid=#{userid}    
+		    </if>
+		    
 			<if test="mobile != null">  
               AND  b.mobile=#{mobile}
 			</if>

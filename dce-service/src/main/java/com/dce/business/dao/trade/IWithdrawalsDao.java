@@ -19,7 +19,7 @@ public interface IWithdrawalsDao {
     int updateByPrimaryKey(WithdrawalsDo record);
 
     /**
-     * 查询提现列表
+     * 查询提现记录
      * @param param
      * @return
      */

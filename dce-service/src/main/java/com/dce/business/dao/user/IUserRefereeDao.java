@@ -18,6 +18,9 @@ public interface IUserRefereeDao {
 
     int updateByPrimaryKey(UserRefereeDo record);
     
+    /**
+     * 查询团队成员
+     */
     List<UserRefereeDo> select(Map<String, Object> params);
 
     /**
@@ -27,9 +30,7 @@ public interface IUserRefereeDao {
 	List<Map<String, Object>> listMyRef(Map<String, Object> params);
 	
 	
-	/**
-     * 查询团队成员
-     */
+	
     List<Map<String,Object>> selectMyGroup(Map<String,Object> params);
 	
 }

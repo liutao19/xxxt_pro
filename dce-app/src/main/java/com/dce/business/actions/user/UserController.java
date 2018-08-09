@@ -77,20 +77,21 @@ public class UserController extends BaseController {
             return Result.failureResult(errors.get(0).getDefaultMessage());
         }
         
+/*        // 去掉手机号中的所有空格
         if (StringUtils.isNotBlank(userDo.getMobile())) {
             userDo.setMobile(userDo.getMobile().replaceAll(" ", "")); //去掉所有空格
         }
         
-        
+        // 去掉身份号中的所有空格       
         if (StringUtils.isNotBlank(userDo.getIdnumber())) {
         	String idnumber =  userDo.getIdnumber().replaceAll(" ","");
         	userDo.setIdnumber(idnumber);
         }
-
+        // 去掉银行卡中的所有空格
         if (StringUtils.isNotBlank(userDo.getBankContent())) {
         	String bankContent =  userDo.getBankContent().replaceAll(" ","");
         	userDo.setBankContent(bankContent);
-        }
+        }*/
         
         
         Result<?> result = userService.reg(userDo);

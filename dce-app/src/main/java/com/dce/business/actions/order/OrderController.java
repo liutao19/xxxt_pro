@@ -37,6 +37,7 @@ import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.entity.bonus.BonusLogDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.award.IAwardService;
@@ -61,10 +62,44 @@ public class OrderController extends BaseController {
     @Resource(name = "awardServiceAsync")
     private IAwardService awardService;
     
+    @RequestMapping(value = "/showAdress", method = RequestMethod.GET)
+    public List<UserAddressDo> getUserAdress(){
+    	
+    	return null;
+    }
+    
+    /**
+     * 添加一个订单
+     * @return
+     */
+    @RequestMapping(value = "/orderPay", method = RequestMethod.POST)
+    public Result<?> insertOrder(){
+    	//获取用户id
+    	Integer userId = getUserId();
+    	
+    	//产生订单编号
+    	String orderCode = OrderCodeUtil.genOrderCode(userId);
+    	
+    	//获取前台传过来的订单信息
+    	String payStatus = getString("payStatus") == null ? "" : getString("payStatus");
+    	String addressId = getString("addressId") == null ? "" : getString("addressId");
+    	String orderPayType = getString("orderPayType") == null ? "" : getString("orderPayType");
+    	String remark = getString("remark") == null ? "" : getString("remark");
+    	
+    	//解析男女版的商品
+    	
+    	
+    	return null;
+    }
+    
+    /**
+     * 用户订单列表显示
+     * @return
+     */
     @RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
     public Result<?> getOrder(){
     	Integer userId = getUserId();
-    	logger.debug("获取用户id-------》》》》》"+userId);
+    	logger.info("获取用户id:"+userId);
     	List<Order> orderLitst = orderService.selectByUesrId(userId);
     	List<Map<String,Object>> list = new ArrayList<>();
     	for(Order order : orderLitst){
@@ -80,6 +115,8 @@ public class OrderController extends BaseController {
     	}
      	return Result.successResult("成功", list);
     }
+    
+    
     
     /** 
      * 重新计算奖金

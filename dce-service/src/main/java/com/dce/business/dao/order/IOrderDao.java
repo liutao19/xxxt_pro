@@ -7,11 +7,10 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.user.UserAddressDo;
 
 public interface IOrderDao {
     int deleteByPrimaryKey(Long orderId);
-
-    int insert(OrderDo record);
 
     int insertSelective(OrderDo record);
 
@@ -39,4 +38,10 @@ public interface IOrderDao {
     
     //获取当前用户所有的订单
     List<Order> selectByUesrId(Integer userId);
+    
+    //生成一个订单
+    int insert(Order order);
+    
+    //获取用户地址表
+    List<UserAddressDo> selectAdress();
 }

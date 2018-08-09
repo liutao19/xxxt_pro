@@ -489,6 +489,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	
+	
 	/**
 	 *获取用户所有的订单
 	 */
@@ -496,6 +497,15 @@ public class OrderServiceImpl implements IOrderService {
 	public List<Order> selectByUesrId(Integer userId) {
 
 		return orderDao.selectByUesrId(userId);
+	}
+
+	/**
+	 * 生成一个订单
+	 */
+	@Override
+	public int insertOrder(Order order) {
+		
+		return orderDao.insert(order);
 	}
 	
 }

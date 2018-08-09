@@ -244,6 +244,22 @@ public class UserDo {
 	// 是否已激活（状态）
 	private Integer isActivated; 
 
+	public int getCertification() {
+		return certification;
+	}
+
+	public void setCertification(int certification) {
+		this.certification = certification;
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+
 	public String getUndoOpts() {
 		return undoOpts;
 	}

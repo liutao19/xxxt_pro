@@ -43,6 +43,8 @@ public class UserAddressDo {
 
     private String createtime;
 
+    
+    
     public Integer getAddressid() {
         return addressid;
     }

@@ -8,7 +8,6 @@ import com.dce.business.common.result.Result;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
-import com.dce.business.entity.user.UserRefereeDo;
 
 public interface IUserService {
 

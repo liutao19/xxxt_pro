@@ -17,13 +17,13 @@ public class Order {
 
 	private String recaddress; 
 
-	private Date createtime; //订单创建之间
+	private String createtime; //订单创建之间
 
 	private Integer orderstatus; //订单状态（1已发货2未发货）
 
 	private Integer paystatus; //付款状态（1已付2待付）
 
-	private Date paytime; //支付时间
+	private String paytime; //支付时间
 
 	private Integer ordertype; //订单支付方式（1微信2支付宝）
 
@@ -69,8 +69,8 @@ public class Order {
 		return qty;
 	}
 
-	public void setQty(BigDecimal qty) {
-		this.qty = qty;
+	public void setQty(BigDecimal qty2) {
+		this.qty = qty2;
 	}
 
 	public BigDecimal getTotalprice() {
@@ -89,11 +89,11 @@ public class Order {
 		this.recaddress = recaddress;
 	}
 
-	public Date getCreatetime() {
+	public String getCreatetime() {
 		return createtime;
 	}
 
-	public void setCreatetime(Date createtime) {
+	public void setCreatetime(String createtime) {
 		this.createtime = createtime;
 	}
 
@@ -113,11 +113,11 @@ public class Order {
 		this.paystatus = paystatus;
 	}
 
-	public Date getPaytime() {
+	public String getPaytime() {
 		return paytime;
 	}
 
-	public void setPaytime(Date paytime) {
+	public void setPaytime(String paytime) {
 		this.paytime = paytime;
 	}
 

@@ -24,8 +24,8 @@
 
 	<sql id="Base_Column_List">
 		orderId, orderCode, userId, qty, totalPrice, recAddress,
-		createTime, orderStatus,
-		payStatus, payTime, orderType, matchOrderId,
+		date_format(createTime,'%Y-%m-%d %H:%i:%s'), orderStatus,
+		payStatus, date_format(payTime,'%Y-%m-%d %H:%i:%s'), orderType, matchOrderId,
 		salqty, accountType, goodsId,
 		price,
 		addressId, remark

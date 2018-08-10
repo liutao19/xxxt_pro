@@ -36,6 +36,7 @@ import com.dce.business.common.util.ExeclTools;
 import com.dce.business.common.util.NumberUtil;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.entity.bonus.BonusLogDo;
+import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.user.UserAddressDo;
@@ -43,6 +44,7 @@ import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.bonus.IBonusLogService;
+import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.UserAdressService;
 
@@ -53,6 +55,9 @@ public class OrderController extends BaseController {
 
     @Resource
     private IOrderService orderService;
+    
+    @Resource
+	private ICTGoodsService ctGoodsService;
     
     @Resource
     private UserAdressService addressService;
@@ -105,8 +110,6 @@ public class OrderController extends BaseController {
     	UserAddressDo userAddress = new UserAddressDo();
     	userAddress = addressService.selectByPrimaryKey(Integer.valueOf(addressId));
     	
-    	System.out.println("--------------获取到的地址信息--------------");
-    	
     	String receiver = userAddress.getUsername();
     	String telPhone = userAddress.getAddress();
     	String address = userAddress.getAddress();
@@ -115,24 +118,43 @@ public class OrderController extends BaseController {
     	
     	//获取商品信息
     	String goods1 = request.getParameter("cart");
-    	
-    	//JSONArray jsonArray = JSONArray.f
-    	String[] goods = request.getParameterValues("cart");
     	System.out.println("goods信息："+goods1);
+    	
+    	//根据商品id查询出商品，获取单价
+    	long l = Long.parseLong("269") ;
+    	CTGoodsDo goods = ctGoodsService.selectById(l);
+    	BigDecimal price = goods.getShopPrice();
+    	
+    	//计算总价，假设商品1的数量为10
+    	String num = "10";
+    	BigDecimal quantity = new BigDecimal(num);
+    	BigDecimal totalPrice = price.multiply(quantity);
+    	
+    	//假设页面商品总数量为30
+    	BigDecimal qty = new BigDecimal(30);
     	
     	Order order = new Order();
     	order.setUserid(userId);
     	order.setOrdercode(orderCode);
+    	order.setQty(qty);
+    	order.setTotalprice(totalPrice);
     	order.setOrdertype(Integer.valueOf(orderPayType));
     	order.setAddressid(Integer.valueOf(addressId));
     	order.setRemark(remark);
     	
-    	//封装返回APP页面的数据
-    	List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
-    	Map<String,String> map = new HashMap<String,String>();
-    	//map.put("qty", arg1);
+    	//添加订单
+    	orderService.insertOrder(order);
     	
-    	return null;
+    	
+    	//封装返回APP页面的数据
+    	Map<String,Object> map = new HashMap<String,Object>();
+    	map.put("qty", qty);
+    	map.put("totalPrice", totalPrice);
+    	map.put("receiver", receiver);
+    	map.put("address", address);
+    	map.put("telPhone", telPhone);
+    	
+    	return Result.successResult("下单成功，返回商品清单", map);
     }
     
     /**
@@ -146,12 +168,13 @@ public class OrderController extends BaseController {
     	List<Order> orderLitst = orderService.selectByUesrId(userId);
     	List<Map<String,Object>> list = new ArrayList<>();
     	for(Order order : orderLitst){
+    		System.err.println("获取的下时间------》》》》》"+order.getCreatetime());
     		Map<String,Object> map = new HashMap<>();
     		map.put("ordercode", order.getOrdercode());
     		map.put("totalPrice", order.getTotalprice());
     		map.put("orderType", order.getOrdertype());
     		map.put("qty", order.getQty());
-    		map.put("payTime", order.getPaytime());
+    		map.put("createTime", order.getCreatetime());
     		map.put("payStatus", order.getPaystatus());
     		map.put("orderStatus", order.getOrderstatus());
     		list.add(map);

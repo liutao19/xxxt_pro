@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.etherenum.IEthAccountDetailDao">
-	<resultMap id="BaseResultMap" type="com.dce.business.entity.etherenum.EthAccountDetailDo">
+	<resultMap id="BaseResultMap"
+		type="com.dce.business.entity.etherenum.EthAccountDetailDo">
 		<id column="id" jdbcType="BIGINT" property="id" />
 		<result column="userId" jdbcType="INTEGER" property="userId" />
 		<result column="serialNo" jdbcType="VARCHAR" property="serialNo" />
@@ -11,30 +12,47 @@
 		<result column="amount" jdbcType="VARCHAR" property="amount" />
 		<result column="gas" jdbcType="VARCHAR" property="gas" />
 		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, userId, serialNo, ethAccount, ethAccountType, transType, amount, gas, createTime
+		id, userId, serialNo, ethAccount, ethAccountType,
+		transType, amount, gas, createTime, remark
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_ethereum_account_detail
 		where id = #{id,jdbcType=BIGINT}
 	</select>
+	<select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from ct_ethereum_account_detail
+		where userId = #{userId,jdbcType=INTEGER}
+	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ct_ethereum_account_detail
+		delete from
+		ct_ethereum_account_detail
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
-	<insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
+	<insert id="insert" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
 		useGeneratedKeys="true">
-		insert into ct_ethereum_account_detail (userId, serialNo, ethAccount,
-		ethAccountType, transType, amount,
-		gas, createTime)
-		values (#{userId,jdbcType=INTEGER}, #{serialNo,jdbcType=VARCHAR}, #{ethAccount,jdbcType=VARCHAR},
-		#{ethAccountType,jdbcType=INTEGER}, #{transType,jdbcType=INTEGER}, #{amount,jdbcType=VARCHAR},
-		#{gas,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+		insert into ct_ethereum_account_detail (userId,
+		serialNo, ethAccount,
+		ethAccountType, transType, amount, remark
+		gas,
+		createTime)
+		values (#{userId,jdbcType=INTEGER},
+		#{serialNo,jdbcType=VARCHAR}, #{ethAccount,jdbcType=VARCHAR},
+		#{ethAccountType,jdbcType=INTEGER}, #{transType,jdbcType=INTEGER},
+		#{amount,jdbcType=VARCHAR},
+		#{gas,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP}), #{remark,jdbcType=VARCHAR}
 	</insert>
-	<insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
+	<insert id="insertSelective" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
 		useGeneratedKeys="true">
 		insert into ct_ethereum_account_detail
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -62,6 +80,9 @@
 			<if test="createTime != null">
 				createTime,
 			</if>
+			<if test="remark != remark">
+				remark,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="userId != null">
@@ -88,9 +109,13 @@
 			<if test="createTime != null">
 				#{createTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
 		</trim>
 	</insert>
-	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo">
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo">
 		update ct_ethereum_account_detail
 		<set>
 			<if test="userId != null">
@@ -117,19 +142,30 @@
 			<if test="createTime != null">
 				createTime = #{createTime,jdbcType=TIMESTAMP},
 			</if>
+			<if test="remark != remark">
+				remark,
+			</if>
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo">
+	<update id="updateByPrimaryKey"
+		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo">
 		update ct_ethereum_account_detail
-		set userId = #{userId,jdbcType=INTEGER},
+		set userId =
+		#{userId,jdbcType=INTEGER},
 		serialNo = #{serialNo,jdbcType=VARCHAR},
 		ethAccount = #{ethAccount,jdbcType=VARCHAR},
-		ethAccountType = #{ethAccountType,jdbcType=INTEGER},
-		transType = #{transType,jdbcType=INTEGER},
+		ethAccountType =
+		#{ethAccountType,jdbcType=INTEGER},
+		transType =
+		#{transType,jdbcType=INTEGER},
 		amount = #{amount,jdbcType=VARCHAR},
-		gas = #{gas,jdbcType=VARCHAR},
-		createTime = #{createTime,jdbcType=TIMESTAMP}
+		gas
+		= #{gas,jdbcType=VARCHAR},
+		createTime =
+		#{createTime,jdbcType=TIMESTAMP},
+		remark 
+		= #{remark,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 </mapper>

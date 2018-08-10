@@ -5,23 +5,33 @@ import java.util.Date;
 public class EthAccountDetailDo {
     private Long id;
 
-    private Integer userId;
+    private Integer userId; //用户id
 
-    private String serialNo;
+    private String serialNo; //交易流水号
 
-    private String ethAccount;
+    private String ethAccount; 
 
-    private Integer ethAccountType;
+    private Integer ethAccountType; //账户类型：默认0个人账户、1平台账户
 
-    private Integer transType;
+    private Integer transType; //交易类型1转入2转出
 
-    private String amount;
+    private String amount; //交易金额
 
-    private String gas;
+    private String gas; //交易手续费
 
-    private Date createTime;
+    private Date createTime; //交易时间
+    
+    private String remark; //备注
 
-    public Long getId() {
+    public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public Long getId() {
         return id;
     }
 

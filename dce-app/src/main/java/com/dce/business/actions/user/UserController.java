@@ -271,7 +271,7 @@ public class UserController extends BaseController {
      * 个人中心查询个人信息
      * @return  
      */
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public Result<?> getUser() {
         Integer userId = getUserId();
 
@@ -283,7 +283,7 @@ public class UserController extends BaseController {
         Map<String, Object> map = new HashMap<>();
         map.put("trueName", userDo.getTrueName()); //姓名
         map.put("mobile", userDo.getMobile()); //手机号码
-        map.put("email", userDo.getEmail());
+        map.put("email", userDo.getEmail()); // 邮箱
         map.put("idnumber", userDo.getIdnumber());
         map.put("banktype", userDo.getBanktype());
         map.put("bankUserName", userDo.getBankUserName());

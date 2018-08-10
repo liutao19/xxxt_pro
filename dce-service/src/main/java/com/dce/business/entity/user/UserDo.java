@@ -53,7 +53,7 @@ public class UserDo {
 	// 注册时间
 	private Long regTime;
 
-	// 会员禁用
+	// 会员禁用，
 	private Byte status;
 	
 
@@ -241,8 +241,19 @@ public class UserDo {
 	 */
 	private String tranDirect;
 
-	// 是否已激活（状态）
+	// 用户是否已激活（状态），
 	private Integer isActivated; 
+	
+	// 用户所属区域
+	private String district;
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
 
 	public int getCertification() {
 		return certification;

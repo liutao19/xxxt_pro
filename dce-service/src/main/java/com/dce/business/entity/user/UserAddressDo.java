@@ -18,6 +18,18 @@ public class UserAddressDo {
     // 收货电话
     private String userphone;
 
+    // 收货人所在的：省-市-区
+    private String address;
+    
+    // 收货地址详情
+    private String addressDetails;
+
+    // 邮政编码
+    private String postcode;
+    
+    // 备注
+    private String remark;
+    
     private String usertel;
 
     private Integer areaid1;
@@ -28,24 +40,21 @@ public class UserAddressDo {
 
     private Integer communityid;
 
-    // 收货地址
-    private String address;
-
-    // 邮政编码
-    private String postcode;
-    
-    // 备注
-    private String remark;
-
     private Byte isdefault;
 
     private Byte addressflag;
 
     private String createtime;
 
-    
-    
-    public Integer getAddressid() {
+    public String getAddressDetails() {
+		return addressDetails;
+	}
+
+	public void setAddressDetails(String addressDetails) {
+		this.addressDetails = addressDetails;
+	}
+
+	public Integer getAddressid() {
         return addressid;
     }
 

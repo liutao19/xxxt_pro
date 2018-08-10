@@ -33,6 +33,17 @@ public class BaseAction {
     public static final String EXECUTE_SUCCESS = "1";
     public static final String EXECUTE_FAILURE = "0";
     /*liminglong add date:2015-05-08 */
+	
+	/**
+	 * 将前台传递过来的日期格式的字符串，自动转化为Date类型
+	 * 
+	 * @param binder
+	 */
+	@InitBinder
+	public void initBinder(ServletRequestDataBinder binder) {
+		binder.registerCustomEditor(Date.class, new SpringDateConvert());
+	}
+	
 
     public String getBaseBath() {
         String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();

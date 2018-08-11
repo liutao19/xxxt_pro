@@ -1,5 +1,7 @@
 package com.dce.business.actions.user;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
-import com.dce.business.dao.user.IUserAddressDao;
 import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.service.user.UserAdressService;
 
@@ -26,6 +27,7 @@ public class UserAddressController extends BaseController {
 
 	/**
 	 * 添加收货地址
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
@@ -36,7 +38,7 @@ public class UserAddressController extends BaseController {
 		String address = getString("address");
 		String addressDetails = getString("addressDetails");
 		Integer userId = getUserId();
-		
+
 		Assert.hasText(username, "收货人不能为空");
 		Assert.hasText(userphone, "收货人电话不能为空");
 		Assert.hasText(address, "收货地址区域不能为空");
@@ -49,25 +51,31 @@ public class UserAddressController extends BaseController {
 		addressadd.setUserphone(userphone);
 		addressadd.setAddress(address);
 		addressadd.setAddressDetails(addressDetails);
-		
+
 		// id为空是新记录 新增， 非空是已经存在的记录调用修改
-		if(StringUtils.isNotBlank(addressId)){
-			 addressadd.setAddressid(Integer.parseInt(addressId));
-			 addressService.updateByPrimaryKeySelective(addressadd);
-		 }else{
-			 addressService.insertSelective(addressadd);
-		 }
+		if (StringUtils.isNotBlank(addressId)) {
+			addressadd.setAddressid(Integer.parseInt(addressId));
+			addressService.updateByPrimaryKeySelective(addressadd);
+		} else {
+			addressService.insertSelective(addressadd);
+		}
 		return Result.successResult("地址修改成功");
 	}
-	
+
 	/**
 	 * 添加收货地址
+	 * 
 	 * @return
 	 */
-//	@RequestMapping(value = "/listAddress", method = { RequestMethod.POST })
-//	public Result<?> listAddress() {
-//		
-//		String 		
-//	}
-	
+	@RequestMapping(value = "/listAddress", method = { RequestMethod.POST })
+	public Result<?> listAddress() {
+		// 获取当前用户的id
+		Integer userId = getUserId();
+		
+		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
+		Result ret = Result.successResult("查看收货地址");
+		ret.setData(addressList);
+		return ret;
+	}
+
 }

@@ -16,46 +16,133 @@
 		<result column="isDefault" jdbcType="TINYINT" property="isdefault" />
 		<result column="addressFlag" jdbcType="TINYINT" property="addressflag" />
 		<result column="createTime" jdbcType="VARCHAR" property="createtime" />
+		<result column="addressDetails" jdbcType="VARCHAR" property="addressDetails" />
+		<result column="remark" jdbcType="VARCHAR" property="remark" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		addressId, userId, userName, userPhone, userTel, areaId1, areaId2, areaId3, communityId,
-		address, postCode, isDefault, addressFlag, createTime
+		addressId, userId, userName, userPhone, userTel, areaId1,
+		areaId2, areaId3, communityId, address, postCode, isDefault,
+		addressFlag, createTime, remark, addressDetails
 	</sql>
-	
+
+
+	<!-- 添加收货地址 -->
+	<insert id="selectByPrimaryKeyAdd" keyColumn="addressId" keyProperty="addressid"
+		parameterType="com.dce.business.entity.user.UserAddressDo"
+		useGeneratedKeys="true">
+		insert into ct_user_address
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				userId,
+			</if>
+			<if test="username != null">
+				userName,
+			</if>
+			<if test="userphone != null">
+				userPhone,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="addressDetails != null">
+				addressDetails,
+			</if>
+			postCode, remark
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userid != null">
+				#{userid,jdbcType=INTEGER},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="userphone != null">
+				#{userphone,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="addressDetails != null">
+				#{addressDetails,jdbcType=VARCHAR},
+			</if>
+			#{postCode,jdbcType=INTEGER},
+			#{remark,jdbcType=INTEGER}
+		</trim>
+	</insert>
+
+	<!-- 修改收货地址 -->
+	<update id="selectByPrimaryKeyUpdate" parameterType="com.dce.business.entity.user.UserAddressDo">
+		update ct_user_address
+		<set>
+			<if test="userid != null">
+				userId = #{userid,jdbcType=INTEGER},
+			</if>
+			<if test="username != null">
+				userName = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="userphone != null">
+				userPhone = #{userphone,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="addressDetails != null">
+				addressDetails = #{addressDetails,jdbcType=INTEGER},
+			</if>
+			<if test="postCode != null">
+				postCode = #{postCode,jdbcType=INTEGER},
+			</if><if test="remark != null">
+				remark = #{remark,jdbcType=INTEGER}
+			</if>
+		</set>
+		where addressId = #{addressid,jdbcType=INTEGER}
+	</update>
+
 	<!-- 根据主键查询收获人信息 -->
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_user_address
 		where addressId = #{addressId,jdbcType=INTEGER}
 	</select>
-	
+
 	<!-- 获取当前用户的所有收获地址 -->
-	<select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	<select id="selectByUserId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List"></include>
 		from ct_user_address
 		where userId = #{userId,jdbcType=INTEGER}
 	</select>
-	
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from ct_user_address
+		delete from
+		ct_user_address
 		where addressId = #{addressid,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert" keyColumn="addressId" keyProperty="addressid" parameterType="com.dce.business.entity.user.UserAddressDo"
+	<insert id="insert" keyColumn="addressId" keyProperty="addressid"
+		parameterType="com.dce.business.entity.user.UserAddressDo"
 		useGeneratedKeys="true">
-		insert into ct_user_address (userId, userName, userPhone,
+		insert into ct_user_address (userId, userName,
+		userPhone,
 		userTel, areaId1, areaId2,
 		areaId3, communityId, address,
 		postCode, isDefault, addressFlag,
 		createTime)
-		values (#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{userphone,jdbcType=VARCHAR},
-		#{usertel,jdbcType=VARCHAR}, #{areaid1,jdbcType=INTEGER}, #{areaid2,jdbcType=INTEGER},
-		#{areaid3,jdbcType=INTEGER}, #{communityid,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR},
-		#{postcode,jdbcType=CHAR}, #{isdefault,jdbcType=TINYINT}, #{addressflag,jdbcType=TINYINT},
+		values
+		(#{userid,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR},
+		#{userphone,jdbcType=VARCHAR},
+		#{usertel,jdbcType=VARCHAR},
+		#{areaid1,jdbcType=INTEGER}, #{areaid2,jdbcType=INTEGER},
+		#{areaid3,jdbcType=INTEGER}, #{communityid,jdbcType=INTEGER},
+		#{address,jdbcType=VARCHAR},
+		#{postcode,jdbcType=CHAR},
+		#{isdefault,jdbcType=TINYINT}, #{addressflag,jdbcType=TINYINT},
 		#{createtime,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" keyColumn="addressId" keyProperty="addressid" parameterType="com.dce.business.entity.user.UserAddressDo"
+	<insert id="insertSelective" keyColumn="addressId" keyProperty="addressid"
+		parameterType="com.dce.business.entity.user.UserAddressDo"
 		useGeneratedKeys="true">
 		insert into ct_user_address
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -187,20 +274,28 @@
 		where addressId = #{addressid,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserAddressDo">
-		update ct_user_address
+		update
+		ct_user_address
 		set userId = #{userid,jdbcType=INTEGER},
-		userName = #{username,jdbcType=VARCHAR},
-		userPhone = #{userphone,jdbcType=VARCHAR},
+		userName =
+		#{username,jdbcType=VARCHAR},
+		userPhone =
+		#{userphone,jdbcType=VARCHAR},
 		userTel = #{usertel,jdbcType=VARCHAR},
 		areaId1 = #{areaid1,jdbcType=INTEGER},
-		areaId2 = #{areaid2,jdbcType=INTEGER},
+		areaId2 =
+		#{areaid2,jdbcType=INTEGER},
 		areaId3 = #{areaid3,jdbcType=INTEGER},
 		communityId = #{communityid,jdbcType=INTEGER},
-		address = #{address,jdbcType=VARCHAR},
+		address =
+		#{address,jdbcType=VARCHAR},
 		postCode = #{postcode,jdbcType=CHAR},
 		isDefault = #{isdefault,jdbcType=TINYINT},
-		addressFlag = #{addressflag,jdbcType=TINYINT},
-		createTime = #{createtime,jdbcType=VARCHAR}
-		where addressId = #{addressid,jdbcType=INTEGER}
+		addressFlag =
+		#{addressflag,jdbcType=TINYINT},
+		createTime =
+		#{createtime,jdbcType=VARCHAR}
+		where addressId =
+		#{addressid,jdbcType=INTEGER}
 	</update>
 </mapper>

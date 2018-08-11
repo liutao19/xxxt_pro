@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.user.IUserDao">
-	<resultMap id="BaseResultMap" type="com.dce.business.entity.user.UserDo">
+	<resultMap id="BaseResultMap" type="com.dce.business.entity.user.UserDtranDirecto">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="user_name" jdbcType="VARCHAR" property="userName" />
 		<result column="true_name" jdbcType="VARCHAR" property="trueName" />
@@ -45,7 +45,8 @@
 		<result column="yf_money" jdbcType="DECIMAL" property="yfMoney" />
 		<result column="fd_money" jdbcType="DECIMAL" property="fdMoney" />
 		<result column="total_performance" jdbcType="DECIMAL" property="totalPerformance" />
-		<result column="touched_performance" jdbcType="DECIMAL" property="touchedPerformance" />
+		<result column="touched_performance" jdbcType="DECIMAL"
+			property="touchedPerformance" />
 		<result column="activation_time" jdbcType="BIGINT" property="activationTime" />
 		<result column="user_qq" jdbcType="INTEGER" property="userQq" />
 		<result column="user_wechat" jdbcType="VARCHAR" property="userWechat" />
@@ -93,105 +94,177 @@
 		<result column="baodan_amount" jdbcType="DECIMAL" property="baodan_amount" />
 		<result column="undo_opts" jdbcType="VARCHAR" property="undoOpts" />
 		<result column="tran_direct" jdbcType="VARCHAR" property="tranDirect" />
+		<result column="identity" jdbcType="VARCHAR" property="identity" />
+		<result column="isActivated" jdbcType="INTEGER" property="isActivated" />
+		<result column="certification" jdbcType="INTEGER" property="certification" />
+		<result column="district" jdbcType="VARCHAR" property="district" />
 	</resultMap>
-	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.dce.business.entity.user.UserDo">
-		<result column="touch_distance" jdbcType="LONGVARCHAR" property="touchDistance" />
+	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+		type="com.dce.business.entity.user.UserDo">
+		<result column="touch_distance" jdbcType="LONGVARCHAR"
+			property="touchDistance" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		u.id, u.user_name, u.true_name, u.email, u.mobile, u.user_password, u.two_password, u.user_face,
-		u.balance_integral, u.sex, u.login_times, u.last_login_time, u.last_login_ip, u.reg_ip, u.reg_time,
-		u.status, u.balance_bonus, u.balance_repeat, u.balance_cash, u.balance_dongjie, u.balance_shopping,
-		u.forzen_shopping, u.total_bonus, u.total_repeat, u.total_cash, u.total_integral, u.total_shopping,
-		u.refereeid, u.parentid, u.referee_number, u.referee_status, u.son_number, u.is_server_center,
-		u.my_server_center, u.userScore, u.user_type, u.user_group, u.user_level, u.user_post, u.reg_money,
-		u.yf_money, u.fd_money, u.total_performance,u.touched_performance, u.activation_time, u.user_qq, u.user_wechat,
-		u.openid, u.register, u.express_password, u.total_dividends, u.dividends_days, u.country, u.province,
-		u.city, u.darea, u.balance_et, u.idnumber, u.banktype, u.bank_user_name, u.banknumber, u.bank_content,
-		u.question1, u.question2, u.question3, u.answer1, u.answer2, u.answer3, u.groupid, u.ticket, u.balance_gouwu,
-		u.qrcode_status, u.bonus_time, u.is_empty, u.balance_heart, u.kuo_level, u.backfill_status, u.backfill_money,
-		u.backfill_sheng, u.guadan_num, u.allStatic, u.dis, u.release_time, u.isShop, u.isImport, u.pos,
-		u.isOut,u.baodan_amount,u.undo_opts,u.tran_direct
+		u.id, u.user_name, u.true_name, u.email, u.mobile,
+		u.user_password, u.two_password, u.user_face,
+		u.balance_integral,
+		u.sex, u.login_times, u.last_login_time, u.last_login_ip, u.reg_ip,
+		u.reg_time,
+		u.status, u.balance_bonus, u.balance_repeat,
+		u.balance_cash, u.balance_dongjie, u.balance_shopping,
+		u.forzen_shopping, u.total_bonus, u.total_repeat, u.total_cash,
+		u.total_integral, u.total_shopping,
+		u.refereeid, u.parentid,
+		u.referee_number, u.referee_status, u.son_number, u.is_server_center,
+		u.my_server_center, u.userScore, u.user_type, u.user_group,
+		u.user_level, u.user_post, u.reg_money,
+		u.yf_money, u.fd_money,
+		u.total_performance,u.touched_performance, u.activation_time,
+		u.user_qq, u.user_wechat,
+		u.openid, u.register, u.express_password,
+		u.total_dividends, u.dividends_days, u.country, u.province,
+		u.city,
+		u.darea, u.balance_et, u.idnumber, u.banktype, u.bank_user_name,
+		u.banknumber, u.bank_content,
+		u.question1, u.question2, u.question3,
+		u.answer1, u.answer2, u.answer3, u.groupid, u.ticket, u.balance_gouwu,
+		u.qrcode_status, u.bonus_time, u.is_empty, u.balance_heart,
+		u.kuo_level, u.backfill_status, u.backfill_money,
+		u.backfill_sheng,
+		u.guadan_num, u.allStatic, u.dis, u.release_time, u.isShop,
+		u.isImport, u.pos,
+		u.isOut,u.baodan_amount,u.undo_opts,u.tran_direct,
+		identity,isActivated,certification,district
 	</sql>
 	<sql id="Blob_Column_List">
 		u.touch_distance
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="ResultMapWithBLOBs">
 		select
 		<include refid="Base_Column_List" />
 		,
 		<include refid="Blob_Column_List" />
-		from ct_user u 
+		from ct_user u
 		where u.id = #{id,jdbcType=INTEGER}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from ct_user
+		delete from
+		ct_user
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.user.UserDo"
-		useGeneratedKeys="true">
+	<insert id="insert" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">
 		insert into ct_user (user_name, true_name, email,
-		mobile, user_password, two_password,
+		mobile,
+		user_password, two_password,
 		user_face, balance_integral, sex,
 		login_times, last_login_time, last_login_ip,
 		reg_ip, reg_time, status,
 		balance_bonus, balance_repeat, balance_cash,
-		balance_dongjie, balance_shopping, forzen_shopping,
-		total_bonus, total_repeat, total_cash,
+		balance_dongjie,
+		balance_shopping, forzen_shopping,
+		total_bonus, total_repeat,
+		total_cash,
 		total_integral, total_shopping, refereeid,
-		parentid, referee_number, referee_status,
-		son_number, is_server_center, my_server_center,
+		parentid,
+		referee_number, referee_status,
+		son_number, is_server_center,
+		my_server_center,
 		userScore, user_type, user_group,
-		user_level, user_post, reg_money,
-		yf_money, fd_money, total_performance,touched_performance,
-		activation_time, user_qq, user_wechat,
+		user_level,
+		user_post, reg_money,
+		yf_money, fd_money,
+		total_performance,touched_performance,
+		activation_time, user_qq,
+		user_wechat,
 		openid, register, express_password,
-		total_dividends, dividends_days, country,
+		total_dividends,
+		dividends_days, country,
 		province, city, darea,
-		balance_et, idnumber, banktype,
+		balance_et, idnumber,
+		banktype,
 		bank_user_name, banknumber, bank_content,
-		question1, question2, question3,
+		question1,
+		question2, question3,
 		answer1, answer2, answer3,
-		groupid, ticket, balance_gouwu,
+		groupid, ticket,
+		balance_gouwu,
 		qrcode_status, bonus_time, is_empty,
-		balance_heart, kuo_level, backfill_status,
+		balance_heart,
+		kuo_level, backfill_status,
 		backfill_money, backfill_sheng, guadan_num,
 		allStatic, dis, release_time,
 		isShop, isImport, pos,
-		isOut, touch_distance,baodan_amount,undo_opts,tran_direct)
-		values (#{userName,jdbcType=VARCHAR}, #{trueName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
-		#{mobile,jdbcType=CHAR}, #{userPassword,jdbcType=VARCHAR}, #{twoPassword,jdbcType=VARCHAR},
-		#{userFace,jdbcType=INTEGER}, #{balanceIntegral,jdbcType=DECIMAL}, #{sex,jdbcType=CHAR},
-		#{loginTimes,jdbcType=BIGINT}, #{lastLoginTime,jdbcType=BIGINT}, #{lastLoginIp,jdbcType=VARCHAR},
-		#{regIp,jdbcType=VARCHAR}, #{regTime,jdbcType=BIGINT}, #{status,jdbcType=TINYINT},
-		#{balanceBonus,jdbcType=DECIMAL}, #{balanceRepeat,jdbcType=DECIMAL}, #{balanceCash,jdbcType=DECIMAL},
-		#{balanceDongjie,jdbcType=DECIMAL}, #{balanceShopping,jdbcType=DECIMAL}, #{forzenShopping,jdbcType=DECIMAL},
-		#{totalBonus,jdbcType=DECIMAL}, #{totalRepeat,jdbcType=DECIMAL}, #{totalCash,jdbcType=DECIMAL},
-		#{totalIntegral,jdbcType=DECIMAL}, #{totalShopping,jdbcType=DECIMAL}, #{refereeid,jdbcType=INTEGER},
-		#{parentid,jdbcType=INTEGER}, #{refereeNumber,jdbcType=INTEGER}, #{refereeStatus,jdbcType=TINYINT},
-		#{sonNumber,jdbcType=INTEGER}, #{isServerCenter,jdbcType=TINYINT}, #{myServerCenter,jdbcType=INTEGER},
-		#{userscore,jdbcType=INTEGER}, #{userType,jdbcType=TINYINT}, #{userGroup,jdbcType=TINYINT},
-		#{userLevel,jdbcType=TINYINT}, #{userPost,jdbcType=TINYINT}, #{regMoney,jdbcType=DECIMAL},
-		#{yfMoney,jdbcType=DECIMAL}, #{fdMoney,jdbcType=DECIMAL}, #{totalPerformance,jdbcType=DECIMAL}, #{touchedPerformance,jdbcType=DECIMAL},
-		#{activationTime,jdbcType=BIGINT}, #{userQq,jdbcType=INTEGER}, #{userWechat,jdbcType=VARCHAR},
-		#{openid,jdbcType=VARCHAR}, #{register,jdbcType=VARCHAR}, #{expressPassword,jdbcType=VARCHAR},
-		#{totalDividends,jdbcType=DECIMAL}, #{dividendsDays,jdbcType=INTEGER}, #{country,jdbcType=INTEGER},
-		#{province,jdbcType=INTEGER}, #{city,jdbcType=INTEGER}, #{darea,jdbcType=INTEGER},
-		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=CHAR}, #{banktype,jdbcType=TINYINT},
-		#{bankUserName,jdbcType=VARCHAR}, #{banknumber,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
-		#{question1,jdbcType=VARCHAR}, #{question2,jdbcType=VARCHAR}, #{question3,jdbcType=VARCHAR},
-		#{answer1,jdbcType=VARCHAR}, #{answer2,jdbcType=VARCHAR}, #{answer3,jdbcType=VARCHAR},
-		#{groupid,jdbcType=INTEGER}, #{ticket,jdbcType=VARCHAR}, #{balanceGouwu,jdbcType=DECIMAL},
-		#{qrcodeStatus,jdbcType=TINYINT}, #{bonusTime,jdbcType=BIGINT}, #{isEmpty,jdbcType=TINYINT},
-		#{balanceHeart,jdbcType=DECIMAL}, #{kuoLevel,jdbcType=INTEGER}, #{backfillStatus,jdbcType=TINYINT},
-		#{backfillMoney,jdbcType=DECIMAL}, #{backfillSheng,jdbcType=DECIMAL}, #{guadanNum,jdbcType=INTEGER},
-		#{allstatic,jdbcType=DECIMAL}, #{dis,jdbcType=INTEGER}, #{releaseTime,jdbcType=BIGINT},
-		#{isshop,jdbcType=TINYINT}, #{isimport,jdbcType=TINYINT}, #{pos,jdbcType=TINYINT},
-		#{isout,jdbcType=TINYINT}, #{touchDistance,jdbcType=LONGVARCHAR}
-		,#{baodan_amount,jdbcType=DECIMAL},#{undoOpts,jdbcType=VARCHAR},#{tranDirect,jdbcType=VARCHAR})
-		
+		isOut,touch_distance,baodan_amount,undo_opts,tran_direct,
+		identity,isActivated,
+		certification,district)
+		values
+		(#{userName,jdbcType=VARCHAR}, #{trueName,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},
+		#{mobile,jdbcType=CHAR},
+		#{userPassword,jdbcType=VARCHAR}, #{twoPassword,jdbcType=VARCHAR},
+		#{userFace,jdbcType=INTEGER}, #{balanceIntegral,jdbcType=DECIMAL},
+		#{sex,jdbcType=CHAR},
+		#{loginTimes,jdbcType=BIGINT},
+		#{lastLoginTime,jdbcType=BIGINT}, #{lastLoginIp,jdbcType=VARCHAR},
+		#{regIp,jdbcType=VARCHAR}, #{regTime,jdbcType=BIGINT},
+		#{status,jdbcType=TINYINT},
+		#{balanceBonus,jdbcType=DECIMAL},
+		#{balanceRepeat,jdbcType=DECIMAL}, #{balanceCash,jdbcType=DECIMAL},
+		#{balanceDongjie,jdbcType=DECIMAL},
+		#{balanceShopping,jdbcType=DECIMAL},
+		#{forzenShopping,jdbcType=DECIMAL},
+		#{totalBonus,jdbcType=DECIMAL},
+		#{totalRepeat,jdbcType=DECIMAL}, #{totalCash,jdbcType=DECIMAL},
+		#{totalIntegral,jdbcType=DECIMAL}, #{totalShopping,jdbcType=DECIMAL},
+		#{refereeid,jdbcType=INTEGER},
+		#{parentid,jdbcType=INTEGER},
+		#{refereeNumber,jdbcType=INTEGER}, #{refereeStatus,jdbcType=TINYINT},
+		#{sonNumber,jdbcType=INTEGER}, #{isServerCenter,jdbcType=TINYINT},
+		#{myServerCenter,jdbcType=INTEGER},
+		#{userscore,jdbcType=INTEGER},
+		#{userType,jdbcType=TINYINT}, #{userGroup,jdbcType=TINYINT},
+		#{userLevel,jdbcType=TINYINT}, #{userPost,jdbcType=TINYINT},
+		#{regMoney,jdbcType=DECIMAL},
+		#{yfMoney,jdbcType=DECIMAL},
+		#{fdMoney,jdbcType=DECIMAL}, #{totalPerformance,jdbcType=DECIMAL},
+		#{touchedPerformance,jdbcType=DECIMAL},
+		#{activationTime,jdbcType=BIGINT}, #{userQq,jdbcType=INTEGER},
+		#{userWechat,jdbcType=VARCHAR},
+		#{openid,jdbcType=VARCHAR},
+		#{register,jdbcType=VARCHAR}, #{expressPassword,jdbcType=VARCHAR},
+		#{totalDividends,jdbcType=DECIMAL}, #{dividendsDays,jdbcType=INTEGER},
+		#{country,jdbcType=INTEGER},
+		#{province,jdbcType=INTEGER},
+		#{city,jdbcType=INTEGER}, #{darea,jdbcType=INTEGER},
+		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=CHAR},
+		#{banktype,jdbcType=TINYINT},
+		#{bankUserName,jdbcType=VARCHAR},
+		#{banknumber,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
+		#{question1,jdbcType=VARCHAR}, #{question2,jdbcType=VARCHAR},
+		#{question3,jdbcType=VARCHAR},
+		#{answer1,jdbcType=VARCHAR},
+		#{answer2,jdbcType=VARCHAR}, #{answer3,jdbcType=VARCHAR},
+		#{groupid,jdbcType=INTEGER}, #{ticket,jdbcType=VARCHAR},
+		#{balanceGouwu,jdbcType=DECIMAL},
+		#{qrcodeStatus,jdbcType=TINYINT},
+		#{bonusTime,jdbcType=BIGINT}, #{isEmpty,jdbcType=TINYINT},
+		#{balanceHeart,jdbcType=DECIMAL}, #{kuoLevel,jdbcType=INTEGER},
+		#{backfillStatus,jdbcType=TINYINT},
+		#{backfillMoney,jdbcType=DECIMAL},
+		#{backfillSheng,jdbcType=DECIMAL}, #{guadanNum,jdbcType=INTEGER},
+		#{allstatic,jdbcType=DECIMAL}, #{dis,jdbcType=INTEGER},
+		#{releaseTime,jdbcType=BIGINT},
+		#{isshop,jdbcType=TINYINT},
+		#{isimport,jdbcType=TINYINT}, #{pos,jdbcType=TINYINT},
+		#{isout,jdbcType=TINYINT}, #{touchDistance,jdbcType=LONGVARCHAR},
+		#{baodan_amount,jdbcType=DECIMAL},#{undoOpts,jdbcType=VARCHAR},#{tranDirect,jdbcType=VARCHAR},
+		#{identity,jdbcType=VARCHAR},#{isActivated,jdbcType=INTEGER},
+		#{certification,jdbcType=INTEGER},#{district,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.user.UserDo"
-		useGeneratedKeys="true">
+	<insert id="insertSelective" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">
 		insert into ct_user
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="userName != null">
@@ -321,8 +394,8 @@
 				total_performance,
 			</if>
 			<if test="touchedPerformance != null">
-                touched_performance,
-            </if>
+				touched_performance,
+			</if>
 			<if test="activationTime != null">
 				activation_time,
 			</if>
@@ -464,6 +537,19 @@
 			<if test="tranDirect != null">
 				tran_direct,
 			</if>
+			<if test="identity != null">
+				identity,
+			</if>
+			<if test="isActivated != null">
+				isActivated,
+			</if>
+			<if test="certification != null">
+				certification,
+			</if>
+			<if test="district != null">
+				district
+			</if>
+
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="userName != null">
@@ -593,8 +679,8 @@
 				#{totalPerformance,jdbcType=DECIMAL},
 			</if>
 			<if test="touchedPerformance != null">
-                #{touchedPerformance,jdbcType=DECIMAL},
-            </if>
+				#{touchedPerformance,jdbcType=DECIMAL},
+			</if>
 			<if test="activationTime != null">
 				#{activationTime,jdbcType=BIGINT},
 			</if>
@@ -736,6 +822,18 @@
 			<if test="tranDirect != null">
 				#{tranDirect,jdbcType=VARCHAR},
 			</if>
+			<if test="identity != null">
+				#{identity,jdbcType=VARCHAR},
+			</if>
+			<if test="isActivated != null">
+				#{isActivated,jdbcType=INTEGER},
+			</if>
+			<if test="certification != null">
+				#{certification,jdbcType=INTEGER},
+			</if>
+			<if test="district != null">
+				#{district,jdbcType=VARCHAR}
+			</if>
 		</trim>
 	</insert>
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserDo">
@@ -868,8 +966,9 @@
 				total_performance = #{totalPerformance,jdbcType=DECIMAL},
 			</if>
 			<if test="touchedPerformance != null">
-                touched_performance = #{touchedPerformance,jdbcType=DECIMAL},
-            </if>
+				touched_performance =
+				#{touchedPerformance,jdbcType=DECIMAL},
+			</if>
 			<if test="activationTime != null">
 				activation_time = #{activationTime,jdbcType=BIGINT},
 			</if>
@@ -1011,308 +1110,477 @@
 			<if test="tranDirect != null">
 				tran_direct = #{tranDirect,jdbcType=DECIMAL},
 			</if>
+			<if test="identity != null">
+				identity = #{identity,jdbcType=VARCHAR},
+			</if>
 			<if test="isActivated != null">
-				isActivated = #{isActivated},
+				isActivated = #{isActivated,jdbcType=INTEGER},
+			</if>
+			<if test="certification != null">
+				certification = #{certification,jdbcType=INTEGER},
+			</if>
+			<if test="district != null">
+				district = #{district,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dce.business.entity.user.UserDo">
-		update ct_user
+		update
+		ct_user
 		set user_name = #{userName,jdbcType=VARCHAR},
-		true_name = #{trueName,jdbcType=VARCHAR},
+		true_name =
+		#{trueName,jdbcType=VARCHAR},
 		email = #{email,jdbcType=VARCHAR},
-		mobile = #{mobile,jdbcType=CHAR},
-		user_password = #{userPassword,jdbcType=VARCHAR},
-		two_password = #{twoPassword,jdbcType=VARCHAR},
-		user_face = #{userFace,jdbcType=INTEGER},
-		balance_integral = #{balanceIntegral,jdbcType=DECIMAL},
+		mobile
+		= #{mobile,jdbcType=CHAR},
+		user_password =
+		#{userPassword,jdbcType=VARCHAR},
+		two_password =
+		#{twoPassword,jdbcType=VARCHAR},
+		user_face =
+		#{userFace,jdbcType=INTEGER},
+		balance_integral =
+		#{balanceIntegral,jdbcType=DECIMAL},
 		sex = #{sex,jdbcType=CHAR},
 		login_times = #{loginTimes,jdbcType=BIGINT},
-		last_login_time = #{lastLoginTime,jdbcType=BIGINT},
-		last_login_ip = #{lastLoginIp,jdbcType=VARCHAR},
+		last_login_time =
+		#{lastLoginTime,jdbcType=BIGINT},
+		last_login_ip =
+		#{lastLoginIp,jdbcType=VARCHAR},
 		reg_ip = #{regIp,jdbcType=VARCHAR},
 		reg_time = #{regTime,jdbcType=BIGINT},
-		status = #{status,jdbcType=TINYINT},
-		balance_bonus = #{balanceBonus,jdbcType=DECIMAL},
-		balance_repeat = #{balanceRepeat,jdbcType=DECIMAL},
-		balance_cash = #{balanceCash,jdbcType=DECIMAL},
-		balance_dongjie = #{balanceDongjie,jdbcType=DECIMAL},
-		balance_shopping = #{balanceShopping,jdbcType=DECIMAL},
-		forzen_shopping = #{forzenShopping,jdbcType=DECIMAL},
-		total_bonus = #{totalBonus,jdbcType=DECIMAL},
-		total_repeat = #{totalRepeat,jdbcType=DECIMAL},
-		total_cash = #{totalCash,jdbcType=DECIMAL},
-		total_integral = #{totalIntegral,jdbcType=DECIMAL},
-		total_shopping = #{totalShopping,jdbcType=DECIMAL},
-		refereeid = #{refereeid,jdbcType=INTEGER},
+		status =
+		#{status,jdbcType=TINYINT},
+		balance_bonus =
+		#{balanceBonus,jdbcType=DECIMAL},
+		balance_repeat =
+		#{balanceRepeat,jdbcType=DECIMAL},
+		balance_cash =
+		#{balanceCash,jdbcType=DECIMAL},
+		balance_dongjie =
+		#{balanceDongjie,jdbcType=DECIMAL},
+		balance_shopping =
+		#{balanceShopping,jdbcType=DECIMAL},
+		forzen_shopping =
+		#{forzenShopping,jdbcType=DECIMAL},
+		total_bonus =
+		#{totalBonus,jdbcType=DECIMAL},
+		total_repeat =
+		#{totalRepeat,jdbcType=DECIMAL},
+		total_cash =
+		#{totalCash,jdbcType=DECIMAL},
+		total_integral =
+		#{totalIntegral,jdbcType=DECIMAL},
+		total_shopping =
+		#{totalShopping,jdbcType=DECIMAL},
+		refereeid =
+		#{refereeid,jdbcType=INTEGER},
 		parentid = #{parentid,jdbcType=INTEGER},
 		referee_number = #{refereeNumber,jdbcType=INTEGER},
-		referee_status = #{refereeStatus,jdbcType=TINYINT},
-		son_number = #{sonNumber,jdbcType=INTEGER},
-		is_server_center = #{isServerCenter,jdbcType=TINYINT},
-		my_server_center = #{myServerCenter,jdbcType=INTEGER},
-		userScore = #{userscore,jdbcType=INTEGER},
-		user_type = #{userType,jdbcType=TINYINT},
-		user_group = #{userGroup,jdbcType=TINYINT},
-		user_level = #{userLevel,jdbcType=TINYINT},
-		user_post = #{userPost,jdbcType=TINYINT},
+		referee_status =
+		#{refereeStatus,jdbcType=TINYINT},
+		son_number =
+		#{sonNumber,jdbcType=INTEGER},
+		is_server_center =
+		#{isServerCenter,jdbcType=TINYINT},
+		my_server_center =
+		#{myServerCenter,jdbcType=INTEGER},
+		userScore =
+		#{userscore,jdbcType=INTEGER},
+		user_type =
+		#{userType,jdbcType=TINYINT},
+		user_group =
+		#{userGroup,jdbcType=TINYINT},
+		user_level =
+		#{userLevel,jdbcType=TINYINT},
+		user_post =
+		#{userPost,jdbcType=TINYINT},
 		reg_money = #{regMoney,jdbcType=DECIMAL},
 		yf_money = #{yfMoney,jdbcType=DECIMAL},
-		fd_money = #{fdMoney,jdbcType=DECIMAL},
-		total_performance = #{totalPerformance,jdbcType=DECIMAL},
-		touched_performance = #{touchedPerformance,jdbcType=DECIMAL},
-		activation_time = #{activationTime,jdbcType=BIGINT},
-		user_qq = #{userQq,jdbcType=INTEGER},
-		user_wechat = #{userWechat,jdbcType=VARCHAR},
+		fd_money =
+		#{fdMoney,jdbcType=DECIMAL},
+		total_performance =
+		#{totalPerformance,jdbcType=DECIMAL},
+		touched_performance =
+		#{touchedPerformance,jdbcType=DECIMAL},
+		activation_time =
+		#{activationTime,jdbcType=BIGINT},
+		user_qq =
+		#{userQq,jdbcType=INTEGER},
+		user_wechat =
+		#{userWechat,jdbcType=VARCHAR},
 		openid = #{openid,jdbcType=VARCHAR},
 		register = #{register,jdbcType=VARCHAR},
-		express_password = #{expressPassword,jdbcType=VARCHAR},
-		total_dividends = #{totalDividends,jdbcType=DECIMAL},
-		dividends_days = #{dividendsDays,jdbcType=INTEGER},
-		country = #{country,jdbcType=INTEGER},
+		express_password =
+		#{expressPassword,jdbcType=VARCHAR},
+		total_dividends =
+		#{totalDividends,jdbcType=DECIMAL},
+		dividends_days =
+		#{dividendsDays,jdbcType=INTEGER},
+		country =
+		#{country,jdbcType=INTEGER},
 		province = #{province,jdbcType=INTEGER},
 		city = #{city,jdbcType=INTEGER},
 		darea = #{darea,jdbcType=INTEGER},
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
-		idnumber = #{idnumber,jdbcType=CHAR},
+		idnumber =
+		#{idnumber,jdbcType=CHAR},
 		banktype = #{banktype,jdbcType=TINYINT},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
-		banknumber = #{banknumber,jdbcType=VARCHAR},
-		bank_content = #{bankContent,jdbcType=VARCHAR},
-		question1 = #{question1,jdbcType=VARCHAR},
-		question2 = #{question2,jdbcType=VARCHAR},
-		question3 = #{question3,jdbcType=VARCHAR},
+		banknumber =
+		#{banknumber,jdbcType=VARCHAR},
+		bank_content =
+		#{bankContent,jdbcType=VARCHAR},
+		question1 =
+		#{question1,jdbcType=VARCHAR},
+		question2 =
+		#{question2,jdbcType=VARCHAR},
+		question3 =
+		#{question3,jdbcType=VARCHAR},
 		answer1 = #{answer1,jdbcType=VARCHAR},
 		answer2 = #{answer2,jdbcType=VARCHAR},
-		answer3 = #{answer3,jdbcType=VARCHAR},
+		answer3 =
+		#{answer3,jdbcType=VARCHAR},
 		groupid = #{groupid,jdbcType=INTEGER},
 		ticket = #{ticket,jdbcType=VARCHAR},
-		balance_gouwu = #{balanceGouwu,jdbcType=DECIMAL},
-		qrcode_status = #{qrcodeStatus,jdbcType=TINYINT},
-		bonus_time = #{bonusTime,jdbcType=BIGINT},
+		balance_gouwu =
+		#{balanceGouwu,jdbcType=DECIMAL},
+		qrcode_status =
+		#{qrcodeStatus,jdbcType=TINYINT},
+		bonus_time =
+		#{bonusTime,jdbcType=BIGINT},
 		is_empty = #{isEmpty,jdbcType=TINYINT},
 		balance_heart = #{balanceHeart,jdbcType=DECIMAL},
-		kuo_level = #{kuoLevel,jdbcType=INTEGER},
-		backfill_status = #{backfillStatus,jdbcType=TINYINT},
-		backfill_money = #{backfillMoney,jdbcType=DECIMAL},
-		backfill_sheng = #{backfillSheng,jdbcType=DECIMAL},
-		guadan_num = #{guadanNum,jdbcType=INTEGER},
-		allStatic = #{allstatic,jdbcType=DECIMAL},
+		kuo_level =
+		#{kuoLevel,jdbcType=INTEGER},
+		backfill_status =
+		#{backfillStatus,jdbcType=TINYINT},
+		backfill_money =
+		#{backfillMoney,jdbcType=DECIMAL},
+		backfill_sheng =
+		#{backfillSheng,jdbcType=DECIMAL},
+		guadan_num =
+		#{guadanNum,jdbcType=INTEGER},
+		allStatic =
+		#{allstatic,jdbcType=DECIMAL},
 		dis = #{dis,jdbcType=INTEGER},
 		release_time = #{releaseTime,jdbcType=BIGINT},
-		isShop = #{isshop,jdbcType=TINYINT},
+		isShop =
+		#{isshop,jdbcType=TINYINT},
 		isImport = #{isimport,jdbcType=TINYINT},
 		pos = #{pos,jdbcType=TINYINT},
 		isOut = #{isout,jdbcType=TINYINT},
 		baodan_amount = #{baodan_amount,jdbcType=DECIMAL},
-		touch_distance = #{touchDistance,jdbcType=LONGVARCHAR}
+		touch_distance
+		=#{touchDistance,jdbcType=LONGVARCHAR},
+		identity =
+		#{identity,jdbcType=VARCHAR},
+		isActivated =
+		#{isActivated,jdbcType=INTEGER},
+		certification =
+		#{certification,jdbcType=INTEGER},
+		district =
+		#{district,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
-		set user_name = #{userName,jdbcType=VARCHAR},
-		true_name = #{trueName,jdbcType=VARCHAR},
+		set
+		user_name = #{userName,jdbcType=VARCHAR},
+		true_name =
+		#{trueName,jdbcType=VARCHAR},
 		email = #{email,jdbcType=VARCHAR},
-		mobile = #{mobile,jdbcType=CHAR},
-		user_password = #{userPassword,jdbcType=VARCHAR},
-		two_password = #{twoPassword,jdbcType=VARCHAR},
-		user_face = #{userFace,jdbcType=INTEGER},
-		balance_integral = #{balanceIntegral,jdbcType=DECIMAL},
+		mobile
+		= #{mobile,jdbcType=CHAR},
+		user_password =
+		#{userPassword,jdbcType=VARCHAR},
+		two_password =
+		#{twoPassword,jdbcType=VARCHAR},
+		user_face =
+		#{userFace,jdbcType=INTEGER},
+		balance_integral =
+		#{balanceIntegral,jdbcType=DECIMAL},
 		sex = #{sex,jdbcType=CHAR},
 		login_times = #{loginTimes,jdbcType=BIGINT},
-		last_login_time = #{lastLoginTime,jdbcType=BIGINT},
-		last_login_ip = #{lastLoginIp,jdbcType=VARCHAR},
+		last_login_time =
+		#{lastLoginTime,jdbcType=BIGINT},
+		last_login_ip =
+		#{lastLoginIp,jdbcType=VARCHAR},
 		reg_ip = #{regIp,jdbcType=VARCHAR},
 		reg_time = #{regTime,jdbcType=BIGINT},
-		status = #{status,jdbcType=TINYINT},
-		balance_bonus = #{balanceBonus,jdbcType=DECIMAL},
-		balance_repeat = #{balanceRepeat,jdbcType=DECIMAL},
-		balance_cash = #{balanceCash,jdbcType=DECIMAL},
-		balance_dongjie = #{balanceDongjie,jdbcType=DECIMAL},
-		balance_shopping = #{balanceShopping,jdbcType=DECIMAL},
-		forzen_shopping = #{forzenShopping,jdbcType=DECIMAL},
-		total_bonus = #{totalBonus,jdbcType=DECIMAL},
-		total_repeat = #{totalRepeat,jdbcType=DECIMAL},
-		total_cash = #{totalCash,jdbcType=DECIMAL},
-		total_integral = #{totalIntegral,jdbcType=DECIMAL},
-		total_shopping = #{totalShopping,jdbcType=DECIMAL},
-		refereeid = #{refereeid,jdbcType=INTEGER},
+		status =
+		#{status,jdbcType=TINYINT},
+		balance_bonus =
+		#{balanceBonus,jdbcType=DECIMAL},
+		balance_repeat =
+		#{balanceRepeat,jdbcType=DECIMAL},
+		balance_cash =
+		#{balanceCash,jdbcType=DECIMAL},
+		balance_dongjie =
+		#{balanceDongjie,jdbcType=DECIMAL},
+		balance_shopping =
+		#{balanceShopping,jdbcType=DECIMAL},
+		forzen_shopping =
+		#{forzenShopping,jdbcType=DECIMAL},
+		total_bonus =
+		#{totalBonus,jdbcType=DECIMAL},
+		total_repeat =
+		#{totalRepeat,jdbcType=DECIMAL},
+		total_cash =
+		#{totalCash,jdbcType=DECIMAL},
+		total_integral =
+		#{totalIntegral,jdbcType=DECIMAL},
+		total_shopping =
+		#{totalShopping,jdbcType=DECIMAL},
+		refereeid =
+		#{refereeid,jdbcType=INTEGER},
 		parentid = #{parentid,jdbcType=INTEGER},
 		referee_number = #{refereeNumber,jdbcType=INTEGER},
-		referee_status = #{refereeStatus,jdbcType=TINYINT},
-		son_number = #{sonNumber,jdbcType=INTEGER},
-		is_server_center = #{isServerCenter,jdbcType=TINYINT},
-		my_server_center = #{myServerCenter,jdbcType=INTEGER},
-		userScore = #{userscore,jdbcType=INTEGER},
-		user_type = #{userType,jdbcType=TINYINT},
-		user_group = #{userGroup,jdbcType=TINYINT},
-		user_level = #{userLevel,jdbcType=TINYINT},
-		user_post = #{userPost,jdbcType=TINYINT},
+		referee_status =
+		#{refereeStatus,jdbcType=TINYINT},
+		son_number =
+		#{sonNumber,jdbcType=INTEGER},
+		is_server_center =
+		#{isServerCenter,jdbcType=TINYINT},
+		my_server_center =
+		#{myServerCenter,jdbcType=INTEGER},
+		userScore =
+		#{userscore,jdbcType=INTEGER},
+		user_type =
+		#{userType,jdbcType=TINYINT},
+		user_group =
+		#{userGroup,jdbcType=TINYINT},
+		user_level =
+		#{userLevel,jdbcType=TINYINT},
+		user_post =
+		#{userPost,jdbcType=TINYINT},
 		reg_money = #{regMoney,jdbcType=DECIMAL},
 		yf_money = #{yfMoney,jdbcType=DECIMAL},
-		fd_money = #{fdMoney,jdbcType=DECIMAL},
-		total_performance = #{totalPerformance,jdbcType=DECIMAL},
-		touched_performance = #{touchedPerformance,jdbcType=DECIMAL},
-		activation_time = #{activationTime,jdbcType=BIGINT},
-		user_qq = #{userQq,jdbcType=INTEGER},
-		user_wechat = #{userWechat,jdbcType=VARCHAR},
+		fd_money =
+		#{fdMoney,jdbcType=DECIMAL},
+		total_performance =
+		#{totalPerformance,jdbcType=DECIMAL},
+		touched_performance =
+		#{touchedPerformance,jdbcType=DECIMAL},
+		activation_time =
+		#{activationTime,jdbcType=BIGINT},
+		user_qq =
+		#{userQq,jdbcType=INTEGER},
+		user_wechat =
+		#{userWechat,jdbcType=VARCHAR},
 		openid = #{openid,jdbcType=VARCHAR},
 		register = #{register,jdbcType=VARCHAR},
-		express_password = #{expressPassword,jdbcType=VARCHAR},
-		total_dividends = #{totalDividends,jdbcType=DECIMAL},
-		dividends_days = #{dividendsDays,jdbcType=INTEGER},
-		country = #{country,jdbcType=INTEGER},
+		express_password =
+		#{expressPassword,jdbcType=VARCHAR},
+		total_dividends =
+		#{totalDividends,jdbcType=DECIMAL},
+		dividends_days =
+		#{dividendsDays,jdbcType=INTEGER},
+		country =
+		#{country,jdbcType=INTEGER},
 		province = #{province,jdbcType=INTEGER},
 		city = #{city,jdbcType=INTEGER},
 		darea = #{darea,jdbcType=INTEGER},
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
-		idnumber = #{idnumber,jdbcType=CHAR},
+		idnumber =
+		#{idnumber,jdbcType=CHAR},
 		banktype = #{banktype,jdbcType=TINYINT},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
-		banknumber = #{banknumber,jdbcType=VARCHAR},
-		bank_content = #{bankContent,jdbcType=VARCHAR},
-		question1 = #{question1,jdbcType=VARCHAR},
-		question2 = #{question2,jdbcType=VARCHAR},
-		question3 = #{question3,jdbcType=VARCHAR},
+		banknumber =
+		#{banknumber,jdbcType=VARCHAR},
+		bank_content =
+		#{bankContent,jdbcType=VARCHAR},
+		question1 =
+		#{question1,jdbcType=VARCHAR},
+		question2 =
+		#{question2,jdbcType=VARCHAR},
+		question3 =
+		#{question3,jdbcType=VARCHAR},
 		answer1 = #{answer1,jdbcType=VARCHAR},
 		answer2 = #{answer2,jdbcType=VARCHAR},
-		answer3 = #{answer3,jdbcType=VARCHAR},
+		answer3 =
+		#{answer3,jdbcType=VARCHAR},
 		groupid = #{groupid,jdbcType=INTEGER},
 		ticket = #{ticket,jdbcType=VARCHAR},
-		balance_gouwu = #{balanceGouwu,jdbcType=DECIMAL},
-		qrcode_status = #{qrcodeStatus,jdbcType=TINYINT},
-		bonus_time = #{bonusTime,jdbcType=BIGINT},
+		balance_gouwu =
+		#{balanceGouwu,jdbcType=DECIMAL},
+		qrcode_status =
+		#{qrcodeStatus,jdbcType=TINYINT},
+		bonus_time =
+		#{bonusTime,jdbcType=BIGINT},
 		is_empty = #{isEmpty,jdbcType=TINYINT},
 		balance_heart = #{balanceHeart,jdbcType=DECIMAL},
-		kuo_level = #{kuoLevel,jdbcType=INTEGER},
-		backfill_status = #{backfillStatus,jdbcType=TINYINT},
-		backfill_money = #{backfillMoney,jdbcType=DECIMAL},
-		backfill_sheng = #{backfillSheng,jdbcType=DECIMAL},
-		guadan_num = #{guadanNum,jdbcType=INTEGER},
-		allStatic = #{allstatic,jdbcType=DECIMAL},
+		kuo_level =
+		#{kuoLevel,jdbcType=INTEGER},
+		backfill_status =
+		#{backfillStatus,jdbcType=TINYINT},
+		backfill_money =
+		#{backfillMoney,jdbcType=DECIMAL},
+		backfill_sheng =
+		#{backfillSheng,jdbcType=DECIMAL},
+		guadan_num =
+		#{guadanNum,jdbcType=INTEGER},
+		allStatic =
+		#{allstatic,jdbcType=DECIMAL},
 		dis = #{dis,jdbcType=INTEGER},
 		release_time = #{releaseTime,jdbcType=BIGINT},
-		isShop = #{isshop,jdbcType=TINYINT},
+		isShop =
+		#{isshop,jdbcType=TINYINT},
 		isImport = #{isimport,jdbcType=TINYINT},
 		pos = #{pos,jdbcType=TINYINT},
 		isOut = #{isout,jdbcType=TINYINT},
 		baodan_amount = #{baodan_amount,jdbcType=DECIMAL},
-		undo_opts = #{undoOpts,jdbcType=VARCHAR},
-		tran_direct = #{tranDirect,jdbcType=VARCHAR}
+		undo_opts =
+		#{undoOpts,jdbcType=VARCHAR},
+		tran_direct =
+		#{tranDirect,jdbcType=VARCHAR},
+		identity =
+		#{identity,jdbcType=VARCHAR},
+		isActivated =
+		#{isActivated,jdbcType=INTEGER},
+		certification =
+		#{certification,jdbcType=INTEGER},
+		district =
+		#{district,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=INTEGER}
+		<!-- where id = #{id,jdbcType=INTEGER} -->
 	</update>
-	
+
 	<!-- 自定义查询 -->
 	<select id="selectUser" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from ct_user u
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userName != null">  
-               AND u.user_name = #{userName}
-           </if>
-           <if test="parentid != null">  
-               AND u.parentid = #{parentid}
-           </if>
-        </trim> 
-    </select>
-    
-    <select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
-        select id, user_name
-        from ct_user
-        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-           <if test="userName != null">  
-               AND user_name like concat('', #{userName}, '%') 
-           </if>
-        </trim> 
-        limit 10
-    </select>
-    
-    <update id="updateStatic" parameterType="java.util.Map">
-        update ct_user set allStatic = allStatic+#{staticAmount},release_time=unix_timestamp(now()) where id=#{userId}
-    </update>
-    
-    <update id="updateTouched" parameterType="java.util.Map">
-        update ct_user set touched_performance = touched_performance+#{touchedAmount} where id=#{userId}
-    </update>
-    
-    <update id="updatePerformance" parameterType="java.util.Map">
-        update ct_user set total_performance = total_performance+#{performance} where id=#{userId}
-    </update>
-    
-    <update id="addRefereeNumber" parameterType="java.lang.Integer">
-        update ct_user set referee_number = referee_number+1 where id=#{id}
-    </update>
-    
-    <update id="addSonNumber" parameterType="java.lang.Integer">
-        update ct_user set son_number = son_number+1 where id=#{id}
-    </update>
-    
-    <select id="selectPage" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select u.*, c.account  as ethAccount
-        from ct_user u
-        left join ct_ethereum_account c on u.id = c.userId
+		select
+		<include refid="Base_Column_List" />
+		from ct_user u
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userName != null">
+				AND u.user_name = #{userName}
+			</if>
+			<if test="parentid != null">
+				AND u.parentid = #{parentid}
+			</if>
+		</trim>
+	</select>
+	<!-- identity VARCHAR isActivated INT certification INT district VARCHAR -->
+	<select id="list" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select id, user_name
+		from ct_user
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userName != null">
+				AND user_name like concat('', #{userName}, '%')
+			</if>
+		</trim>
+		limit 10
+	</select>
+
+	<update id="updateStatic" parameterType="java.util.Map">
+		update ct_user set
+		allStatic =
+		allStatic+#{staticAmount},release_time=unix_timestamp(now()) where
+		id=#{userId}
+	</update>
+
+	<update id="updateTouched" parameterType="java.util.Map">
+		update ct_user set
+		touched_performance =
+		touched_performance+#{touchedAmount} where
+		id=#{userId}
+	</update>
+
+	<update id="updatePerformance" parameterType="java.util.Map">
+		update ct_user set
+		total_performance = total_performance+#{performance}
+		where id=#{userId}
+	</update>
+
+	<update id="addRefereeNumber" parameterType="java.lang.Integer">
+		update ct_user set
+		referee_number = referee_number+1 where id=#{id}
+	</update>
+
+	<update id="addSonNumber" parameterType="java.lang.Integer">
+		update ct_user set
+		son_number = son_number+1 where id=#{id}
+	</update>
+
+	<select id="selectPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select u.*, c.account as ethAccount
+		from ct_user u
+		left join
+		ct_ethereum_account c on u.id = c.userId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userName != null">
 				AND u.user_name like concat('', #{userName}, '%')
 			</if>
 			<if test="trueName != null">
-                AND u.true_name like concat('', #{trueName}, '%')
-            </if>
-            <if test="mobile != null">
-                AND u.mobile like concat('', #{mobile}, '%')
-            </if>
-            <if test="keyword != null">
-                AND (u.mobile like concat('', #{keyword}, '%') or u.true_name like concat('', #{keyword}, '%') or u.user_name like concat('', #{keyword}, '%'))
-            </if>
+				AND u.true_name like concat('', #{trueName}, '%')
+			</if>
+			<if test="mobile != null">
+				AND u.mobile like concat('', #{mobile}, '%')
+			</if>
+			<if test="keyword != null">
+				AND (u.mobile like concat('', #{keyword}, '%') or
+				u.true_name like
+				concat('', #{keyword}, '%') or u.user_name like
+				concat('',
+				#{keyword}, '%'))
+			</if>
 		</trim>
 		<if test="offset != null">
-		  limit #{offset},10
+			limit #{offset},10
 		</if>
 	</select>
-	
-	<select id="selectByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+	<select id="selectByPage" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
 		SELECT u.*,u1.user_name AS refereeUserName
-		FROM ct_user u LEFT JOIN  ct_user u1 ON u.refereeid = u1.id
+		FROM ct_user u LEFT JOIN
+		ct_user u1 ON u.refereeid = u1.id
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userName != null">
 				AND u.user_name like concat('', #{userName}, '%')
 			</if>
 			<if test="trueName != null">
-                AND u.true_name like concat('', #{trueName}, '%')
-            </if>
-            <if test="mobile != null">
-                AND u.mobile like concat('', #{mobile}, '%')
-            </if>
-            <if test="startDate != null">
-                AND <![CDATA[ u.reg_time >= #{startDate} ]]>
-            </if>
-            <if test="endDate != null">
-                AND <![CDATA[ u.reg_time <= #{endDate} ]]>
-            </if>
+				AND u.true_name like concat('', #{trueName}, '%')
+			</if>
+			<if test="mobile != null">
+				AND u.mobile like concat('', #{mobile}, '%')
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[ u.reg_time >= #{startDate} ]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[ u.reg_time <= #{endDate} ]]>
+			</if>
 		</trim>
 	</select>
-	<select id="selectEthAccountByPage" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select u.*, c.account  as ethAccount
-        from ct_user u
-        left join ct_ethereum_account c on u.id = c.userId
+	<select id="selectEthAccountByPage" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select u.*, c.account as ethAccount
+		from ct_user u
+		left join
+		ct_ethereum_account c on u.id = c.userId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userName != null">
 				AND u.user_name like concat('', #{userName}, '%')
 			</if>
 			<if test="trueName != null">
-                AND u.true_name like concat('', #{trueName}, '%')
-            </if>
-            <if test="mobile != null">
-                AND u.mobile like concat('', #{mobile}, '%')
-            </if>
-            <if test="keyword != null">
-                AND (u.mobile like concat('', #{keyword}, '%') or u.true_name like concat('', #{keyword}, '%') or u.user_name like concat('', #{keyword}, '%'))
-            </if>
+				AND u.true_name like concat('', #{trueName}, '%')
+			</if>
+			<if test="mobile != null">
+				AND u.mobile like concat('', #{mobile}, '%')
+			</if>
+			<if test="keyword != null">
+				AND (u.mobile like concat('', #{keyword}, '%') or
+				u.true_name like
+				concat('', #{keyword}, '%') or u.user_name like
+				concat('',
+				#{keyword}, '%'))
+			</if>
 		</trim>
 	</select>
-	<select id="selectBaoDanAmount" parameterType="java.util.Map" resultType="Long">
+	<select id="selectBaoDanAmount" parameterType="java.util.Map"
+		resultType="Long">
 		SELECT sum(u.baodan_amount) as amount
 		FROM ct_user u
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
@@ -1320,18 +1588,18 @@
 				AND u.user_name like concat('', #{userName}, '%')
 			</if>
 			<if test="trueName != null">
-                AND u.true_name like concat('', #{trueName}, '%')
-            </if>
-            <if test="mobile != null">
-                AND u.mobile like concat('', #{mobile}, '%')
-            </if>
-            <if test="startDate != null">
-                AND <![CDATA[ u.reg_time >= #{startDate} ]]>
-            </if>
-            <if test="endDate != null">
-                AND <![CDATA[ u.reg_time <= #{endDate} ]]>
-            </if>
+				AND u.true_name like concat('', #{trueName}, '%')
+			</if>
+			<if test="mobile != null">
+				AND u.mobile like concat('', #{mobile}, '%')
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[ u.reg_time >= #{startDate} ]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[ u.reg_time <= #{endDate} ]]>
+			</if>
 		</trim>
 	</select>
-	
+
 </mapper>

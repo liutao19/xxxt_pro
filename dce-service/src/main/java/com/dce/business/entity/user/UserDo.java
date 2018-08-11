@@ -56,7 +56,6 @@ public class UserDo {
 	// 会员禁用，
 	private Byte status;
 	
-
 	private BigDecimal balanceBonus;
 
 	private BigDecimal balanceRepeat;

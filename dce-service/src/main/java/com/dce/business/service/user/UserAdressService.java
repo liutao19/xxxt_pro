@@ -12,4 +12,10 @@ public interface UserAdressService {
 	// 获取当前用户所有的地址
 	List<UserAddressDo> selectByUserId(Integer userId);
 
+	// 添加收货地址
+	UserAddressDo selectByPrimaryKeyAdd(UserAddressDo addaddress);
+	
+	// 修改收货地址
+	UserAddressDo selectByPrimaryKeyUpdate(UserAddressDo updateaddress);
+	
 }

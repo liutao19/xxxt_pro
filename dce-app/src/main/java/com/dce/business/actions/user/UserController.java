@@ -28,425 +28,437 @@ import com.dce.business.common.result.Result;
 import com.dce.business.common.token.TokenUtil;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.NumberUtil;
+import com.dce.business.dao.user.IUserAddressDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.message.NewsDo;
+import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IReleaseService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.message.INewsService;
 import com.dce.business.service.user.IUserService;
+import com.dce.business.service.user.UserAdressService;
 
-/** 
+/**
  * 账户处理器，注册、登录等
+ * 
  * @author parudy
- * @date 2018年3月24日 
+ * @date 2018年3月24日
  * @version v1.0
  */
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
-    private final static Logger logger = Logger.getLogger(UserController.class);
+	private final static Logger logger = Logger.getLogger(UserController.class);
 
-    @Resource
-    private IUserService userService;
-    @Resource
-    private IAccountService accountService;
-//    @Resource
-//    private IReleaseService staticAwardService;
-    @Resource
-    private INewsService  newsService;
-    @Resource
-    private ILoanDictService loanDictService;
+	@Resource
+	private IUserService userService;
+	@Resource
+	private IAccountService accountService;
+	@Resource
+	private INewsService newsService;
+	@Resource
+	private ILoanDictService loanDictService;
+	@Resource
+	private UserAdressService addressService;
+	// @Resource
+	// private IReleaseService staticAwardService;
 
-    /** 
-     * 用户注册
-     * @param userDo
-     * @param bindingResult
-     * @return  
-     */
-    @RequestMapping(value = "/reg", method = RequestMethod.POST)
-    public Result<?> reg(@Valid UserDo userDo, BindingResult bindingResult) {
-        logger.info("用户注册");
+	/**
+	 * 用户注册
+	 * 
+	 * @param userDo
+	 * @param bindingResult
+	 * @return
+	 */
+	@RequestMapping(value = "/reg", method = RequestMethod.POST)
+	public Result<?> reg(@Valid UserDo userDo, BindingResult bindingResult) {
+		logger.info("用户注册");
 
-        //参数校验
-        if (bindingResult.hasErrors()) {
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            logger.info("用户注册，参数校验错误：" + JSON.toJSONString(errors));
-            return Result.failureResult(errors.get(0).getDefaultMessage());
-        }
-        
-/*        // 去掉手机号中的所有空格
-        if (StringUtils.isNotBlank(userDo.getMobile())) {
-            userDo.setMobile(userDo.getMobile().replaceAll(" ", "")); //去掉所有空格
-        }
-        
-        // 去掉身份号中的所有空格       
-        if (StringUtils.isNotBlank(userDo.getIdnumber())) {
-        	String idnumber =  userDo.getIdnumber().replaceAll(" ","");
-        	userDo.setIdnumber(idnumber);
-        }
-        // 去掉银行卡中的所有空格
-        if (StringUtils.isNotBlank(userDo.getBankContent())) {
-        	String bankContent =  userDo.getBankContent().replaceAll(" ","");
-        	userDo.setBankContent(bankContent);
-        }*/
-        
-        
-        Result<?> result = userService.reg(userDo);
+		// 参数校验
+		if (bindingResult.hasErrors()) {
+			List<ObjectError> errors = bindingResult.getAllErrors();
+			logger.info("用户注册，参数校验错误：" + JSON.toJSONString(errors));
+			return Result.failureResult(errors.get(0).getDefaultMessage());
+		}
 
-        logger.info("用户注册结果:" + JSON.toJSONString(result));
-        return result;
-    }
+		/*
+		 * // 去掉手机号中的所有空格 if (StringUtils.isNotBlank(userDo.getMobile())) {
+		 * userDo.setMobile(userDo.getMobile().replaceAll(" ", "")); //去掉所有空格 }
+		 * 
+		 * // 去掉身份号中的所有空格 if (StringUtils.isNotBlank(userDo.getIdnumber())) {
+		 * String idnumber = userDo.getIdnumber().replaceAll(" ","");
+		 * userDo.setIdnumber(idnumber); } // 去掉银行卡中的所有空格 if
+		 * (StringUtils.isNotBlank(userDo.getBankContent())) { String
+		 * bankContent = userDo.getBankContent().replaceAll(" ","");
+		 * userDo.setBankContent(bankContent); }
+		 */
 
-    /**
-     * 登录 
-     * @param request
-     * @param response
-     * @return  
-     */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public Result<?> login() {
-        //String mobile = getString("mobile");
-        String userName = getString("userName");
-        String password = getString("password");
+		Result<?> result = userService.reg(userDo);
 
-        Assert.hasText(userName, "请输入用户名");
-        Assert.hasText(password, "请输入密码");
-       
-        
-        userName = userName.trim();
-        password = password.trim();
-        
-        password = DataEncrypt.encrypt(password);
-        
-        logger.info("用户登录, userName:" + userName + "; password:" + password);
-        UserDo userDo = userService.getUser(userName);
-        Assert.notNull(userDo, "用户不存在");
+		logger.info("用户注册结果:" + JSON.toJSONString(result));
+		return result;
+	}
 
-        
-        if (!userName.equals(userDo.getUserName()) || !password.equals(userDo.getUserPassword())) {
-            return Result.failureResult("用户名或者密码不正确");
-        }
+	/**
+	 * 登录
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public Result<?> login() {
+		// String mobile = getString("mobile");
+		String userName = getString("userName");
+		String password = getString("password");
 
-        if (userDo.getStatus().intValue() != 0) {
-            return Result.failureResult("当前用户已被锁定,不允许登录!");
-        }
-        String token = TokenUtil.createToken(userDo.getId());
-        Map<String, Object> map = new HashMap<>();
-        map.put("token", token);
-        map.put("userId", userDo.getId());
-        return Result.successResult("登录成功", map);
-    }
+		Assert.hasText(userName, "请输入用户名");
+		Assert.hasText(password, "请输入密码");
 
-    /**
-     * 注销
-     * @param request
-     * @param response
-     * @return  
-     */
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public Result<?> logout() {
-        Integer userId = getUserId();
+		userName = userName.trim();
+		password = password.trim();
 
-        logger.info("用户注销, userId:" + userId);
+		password = DataEncrypt.encrypt(password);
 
-        TokenUtil.deleteToken(userId);
+		logger.info("用户登录, userName:" + userName + "; password:" + password);
+		UserDo userDo = userService.getUser(userName);
+		Assert.notNull(userDo, "用户不存在");
 
-        return Result.successResult("注销成功");
-    }
+		if (!userName.equals(userDo.getUserName()) || !password.equals(userDo.getUserPassword())) {
+			return Result.failureResult("用户名或者密码不正确");
+		}
 
-    /** 
-     * 模糊搜索用户列表
-     * @return  
-     */
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public Result<?> list() {
-        String userName = getString("userName");
-        String type = getString("type"); //查询类型，type=1表示推荐人、type=2表示接点人
-        logger.info("模糊查询, userName:" + userName + "; type:" + type);
+		if (userDo.getStatus().intValue() != 0) {
+			return Result.failureResult("当前用户已被锁定,不允许登录!");
+		}
+		String token = TokenUtil.createToken(userDo.getId());
+		Map<String, Object> map = new HashMap<>();
+		map.put("token", token);
+		map.put("userId", userDo.getId());
+		return Result.successResult("登录成功", map);
+	}
 
-        Assert.hasText(userName, "请输入用户名");
+	/**
+	 * 注销
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	public Result<?> logout() {
+		Integer userId = getUserId();
 
-        List<UserDo> list = userService.list(userName);
+		logger.info("用户注销, userId:" + userId);
 
-        return Result.successResult("查询成功", list);
-    }
+		TokenUtil.deleteToken(userId);
 
-    /** 
-     * 首页，查询用户基本信息
-     * @return  
-     */
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public Result<?> getUserInfo() {
-        Integer userId = getUserId();
+		return Result.successResult("注销成功");
+	}
 
-        logger.info("查询用户基本信息，userId:" + userId);
+	/**
+	 * 模糊搜索用户列表
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	public Result<?> list() {
+		String userName = getString("userName");
+		String type = getString("type"); // 查询类型，type=1表示推荐人、type=2表示接点人
+		logger.info("模糊查询, userName:" + userName + "; type:" + type);
 
-        //用户信息
-        UserDo userDo = userService.getUser(userId);
-        UserDo newUserDo = new UserDo();
-        newUserDo.setId(userDo.getId());
-        newUserDo.setUserName(userDo.getUserName());
-        newUserDo.setTrueName(userDo.getTrueName());
-        newUserDo.setUserLevel(userDo.getUserLevel());
-        newUserDo.setReleaseTime(userDo.getReleaseTime()); //释放时间
-        newUserDo.setUserFace(userDo.getUserFace());
-        newUserDo.setRefereeNumber(userDo.getRefereeNumber());
-        newUserDo.setUserLevelName(userDo.getUserLevel() + "");
-        //用户等级
-        List<LoanDictDtlDo> leves = loanDictService.queryDictDtlListByDictCode(DictCode.BaoDanFei.getCode());
-        if (!CollectionUtils.isEmpty(leves)) {
-            for (LoanDictDtlDo dtl : leves) {
-                if (dtl.getCode().equals(userDo.getUserLevel() + "")) {
-                    newUserDo.setUserLevelName(dtl.getName());
-                    break;
-                }
-            }
-        }
-        //推荐人
-        if (userDo.getRefereeid() != null) {
-            UserDo referee = userService.getUser(userDo.getRefereeid());
-            if (referee != null) {
-                newUserDo.setRefereeUserName(referee.getUserName());
-            }
-        }
+		Assert.hasText(userName, "请输入用户名");
 
-        //接点人
-        if (userDo.getParentid() != null) {
-            UserDo parent = userService.getUser(userDo.getParentid());
-            if (parent != null) {
-                newUserDo.setParentUserName(parent.getUserName());
-            }
-        }
+		List<UserDo> list = userService.list(userName);
 
-        //财务信息
-        Map<String, Object> accountInfo = new HashMap<>();
-        accountInfo.put("amount",NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.current))); //现持仓
-        accountInfo.put("originalAmount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original))); //原始仓
-        accountInfo.put("pointAmount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.point))); //美元点
-        accountInfo.put("frozenDeposit", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked))); //锁仓
+		return Result.successResult("查询成功", list);
+	}
 
-        BigDecimal _point = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original));
-        BigDecimal _locked = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked));
+	/**
+	 * 首页，查询用户基本信息
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "", method = RequestMethod.POST)
+	public Result<?> getUserInfo() {
+		Integer userId = getUserId();
 
-        Map<String, Object> topInfoMap = new HashMap<>();
-        topInfoMap.put("decCount", "DEC/9901A");
-        topInfoMap.put("total", _point.add(_locked));
-        topInfoMap.put("canUse", _point);
-        topInfoMap.put("apply", _locked);
+		logger.info("查询用户基本信息，userId:" + userId);
 
-        //DCE最新消息
-        NewsDo message = newsService.selectLatestNews();
-        if (message != null) {
-            topInfoMap.put("dceMsg", message.getTitle());
-        } else {
+		// 用户信息
+		UserDo userDo = userService.getUser(userId);
+		UserDo newUserDo = new UserDo();
+		newUserDo.setId(userDo.getId());
+		newUserDo.setUserName(userDo.getUserName());
+		newUserDo.setTrueName(userDo.getTrueName());
+		newUserDo.setUserLevel(userDo.getUserLevel());
+		newUserDo.setReleaseTime(userDo.getReleaseTime()); // 释放时间
+		newUserDo.setUserFace(userDo.getUserFace());
+		newUserDo.setRefereeNumber(userDo.getRefereeNumber());
+		newUserDo.setUserLevelName(userDo.getUserLevel() + "");
+		// 用户等级
+		List<LoanDictDtlDo> leves = loanDictService.queryDictDtlListByDictCode(DictCode.BaoDanFei.getCode());
+		if (!CollectionUtils.isEmpty(leves)) {
+			for (LoanDictDtlDo dtl : leves) {
+				if (dtl.getCode().equals(userDo.getUserLevel() + "")) {
+					newUserDo.setUserLevelName(dtl.getName());
+					break;
+				}
+			}
+		}
+		// 推荐人
+		if (userDo.getRefereeid() != null) {
+			UserDo referee = userService.getUser(userDo.getRefereeid());
+			if (referee != null) {
+				newUserDo.setRefereeUserName(referee.getUserName());
+			}
+		}
 
-            topInfoMap.put("dceMsg", "");
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("userInfo", newUserDo);
-        map.put("userAccountDo", accountInfo);
-        map.put("topInfo", topInfoMap);
-        return Result.successResult("查询成功", map);
-    }
+		// 接点人
+		if (userDo.getParentid() != null) {
+			UserDo parent = userService.getUser(userDo.getParentid());
+			if (parent != null) {
+				newUserDo.setParentUserName(parent.getUserName());
+			}
+		}
 
-    /** 
-     * 查询账户余额
-     * @param userId
-     * @param accountType
-     * @return  
-     */
-    private BigDecimal getAccountAmount(Integer userId, AccountType accountType) {
-        UserAccountDo userAccountDo = accountService.getUserAccount(userId, accountType);
-        if (userAccountDo != null && userAccountDo.getAmount() != null) {
-            return userAccountDo.getAmount();
-        }
+		// 财务信息
+		Map<String, Object> accountInfo = new HashMap<>();
+		accountInfo.put("amount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.current))); // 现持仓
+		accountInfo.put("originalAmount",
+				NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original))); // 原始仓
+		accountInfo.put("pointAmount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.point))); // 美元点
+		accountInfo.put("frozenDeposit", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked))); // 锁仓
 
-        return BigDecimal.ZERO;
-    }
+		BigDecimal _point = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original));
+		BigDecimal _locked = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked));
 
-    /** 
-     * 个人中心查询个人信息
-     * @return  
-     */
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public Result<?> getUser() {
-        Integer userId = getUserId();
+		Map<String, Object> topInfoMap = new HashMap<>();
+		topInfoMap.put("decCount", "DEC/9901A");
+		topInfoMap.put("total", _point.add(_locked));
+		topInfoMap.put("canUse", _point);
+		topInfoMap.put("apply", _locked);
 
-        logger.info("查询用户基本信息，userId:" + userId);
+		// DCE最新消息
+		NewsDo message = newsService.selectLatestNews();
+		if (message != null) {
+			topInfoMap.put("dceMsg", message.getTitle());
+		} else {
 
-        //用户信息
-        UserDo userDo = userService.getUser(userId);
+			topInfoMap.put("dceMsg", "");
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("userInfo", newUserDo);
+		map.put("userAccountDo", accountInfo);
+		map.put("topInfo", topInfoMap);
+		return Result.successResult("查询成功", map);
+	}
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("trueName", userDo.getTrueName()); //姓名
-        map.put("mobile", userDo.getMobile()); //手机号码
-        map.put("email", userDo.getEmail()); // 邮箱
-        map.put("idnumber", userDo.getIdnumber());
-        map.put("banktype", userDo.getBanktype());
-        map.put("bankUserName", userDo.getBankUserName());
-        map.put("banknumber", userDo.getBanknumber());
-        map.put("bankContent", userDo.getBankContent());
-        return Result.successResult("查询成功", map);
-    }
+	/**
+	 * 查询账户余额
+	 * 
+	 * @param userId
+	 * @param accountType
+	 * @return
+	 */
+	private BigDecimal getAccountAmount(Integer userId, AccountType accountType) {
+		UserAccountDo userAccountDo = accountService.getUserAccount(userId, accountType);
+		if (userAccountDo != null && userAccountDo.getAmount() != null) {
+			return userAccountDo.getAmount();
+		}
 
-    /** 
-     * 修改用户信息
-     * @return  
-     */
-    @RequestMapping(value = "/info", method = RequestMethod.POST)
-    public Result<?> updateUser() {
-    	try{
-	        Integer userId = getUserId();
-	        String trueName = getString("trueName");
-	        String mobile = getString("mobile");
-	        String email = getString("email");
-	        String idnumber = getString("idnumber");
-	        String banktype = getString("banktype");
-	        String bankUserName = getString("bankUserName");
-	        
-	        String banknumber = getString("banknumber");
-	        String bankContent = getString("bankContent");
-	
-	        String userPassword = getString("userPassword");
-	        String twoPassword = getString("twoPassword");
-	
-	        logger.info("修改用户信息，userId:" + userId);
-	
-	        Assert.hasText(trueName, "姓名不能为空");
-	        Assert.hasText(mobile, "手机号码不能为空");
-	        //        Assert.hasText(email, "邮箱不能为空");
-	        //	      Assert.hasText(idnumber, "身份证不能为空");
-	        //        Assert.hasText(banktype, "银行不能为空");
-	        //        Assert.hasText(bankUserName, "开户名不能为空");
-	        //        Assert.hasText(banknumber, "银行卡号不能为空");
-	        //        Assert.hasText(bankContent, "支行不能为空");
-	
-	        //用户信息
-	        UserDo userDo = new UserDo();
-	        userDo.setId(userId);
-	        userDo.setTrueName(trueName);
-	        if(StringUtils.isNotBlank(mobile)){
-	        	mobile = mobile.replaceAll(" ","");
-	        	userDo.setMobile(mobile);
-	        }
-	        
-	        userDo.setEmail(email);
-	        if (StringUtils.isNotBlank(idnumber)) {
-	        	idnumber =  idnumber.replaceAll(" ","");
-	        	userDo.setIdnumber(idnumber);
-	        }
-	
-	        if (StringUtils.isNotBlank(banktype)) {
-	            userDo.setBanktype(Byte.parseByte(banktype));
-	        }
-	        userDo.setBankUserName(bankUserName);
-	        
-	        if (StringUtils.isNotBlank(banknumber)) {
-	        	
-	        	banknumber =  banknumber.replaceAll(" ","");
-	        	userDo.setBanknumber(banknumber);
-	        }
-	        userDo.setBankContent(bankContent);
-	        if (StringUtils.isNotBlank(userPassword)) {
-	            userPassword = DataEncrypt.encrypt(userPassword);
-	            userDo.setUserPassword(userPassword);
-	        }
-	        if (StringUtils.isNotBlank(twoPassword)) {
-	            twoPassword = DataEncrypt.encrypt(twoPassword);
-	            userDo.setTwoPassword(twoPassword);
-	        }
-	        
-	        UserDo user = userService.getUser(userDo.getId());
-	        if(StringUtils.isNotBlank(user.getMobile())){ //如果用户手机号非空不允许修改
-	        	userDo.setMobile(null);
-	        }
+		return BigDecimal.ZERO;
+	}
 
-        	return userService.update(userDo);
-        }catch(Exception e){
-        	return Result.failureResult("用户信息修改失败");
-        }
-    }
-    
-    
-    
-    /** 
-     * 用户信息认证
-     * @return  
-     */
-    @RequestMapping(value = "/Authentication", method = RequestMethod.POST)
-    public Result<?> Authentication() {
-    	try{
-	        Integer userId = getUserId();
-	        String trueName = getString("trueName");
-	        String mobile = getString("mobile");
-	        String idnumber = getString("idnumber");
-	        String sex=getString("sex");
+	/**
+	 * 个人中心查询个人信息
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
+	public Result<?> getUser() {
+		Integer userId = getUserId();
 
-	        logger.info("用户信息，userId:" + userId);
-	
-	        Assert.hasText(trueName, "姓名不能为空");
-	        Assert.hasText(mobile, "手机号码不能为空");
-	        Assert.hasText(idnumber, "身份证不能为空");
-	        Assert.hasText(sex,"性别不能为空");
-	        //用户信息
-	        UserDo userDo = new UserDo();
-	        userDo.setId(userId);
-	        userDo.setTrueName(trueName);
-	        userDo.setIdnumber(idnumber);
-	        userDo.setSex(sex);
-	       
-        	return userService.Authentication(userDo);
-        	
-        	
-        }catch(Exception e){
-        	return Result.failureResult("用户信息认证失败");
-        }
-    }
+		logger.info("查询用户基本信息，userId:" + userId);
 
-    @RequestMapping(value="toLevel",method = {RequestMethod.GET,RequestMethod.POST})
-    public ModelAndView tosetLevel(){
-    	ModelAndView mv = new ModelAndView("jjzd/set_user_level");
-    	List<LoanDictDtlDo> KHJB = loanDictService.queryDictDtlListByDictCode(DictCode.KHJB.getCode());
-    	mv.addObject("KHJB", KHJB);
-    	return mv;
-    }
-    /**
-     * 空单激活
-     * @return
-     */
-	@RequestMapping(value = "/setUserLevel", method = {RequestMethod.GET,RequestMethod.POST})
-	public Result<?> setUserLevel(){
+		// 用户信息
+		UserDo userDo = userService.getUser(userId);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("trueName", userDo.getTrueName()); // 姓名
+		map.put("mobile", userDo.getMobile()); // 手机号码
+		map.put("userLevel", userDo.getUserLevel()); // 用户等级
+		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
+		map.put("uaerName", userDo.getUserName()); // 用户用户名
+		map.put("sex", userDo.getSex()); // 用户性别
+		map.put("refereeid", userDo.getRefereeid()); // 用户推荐人
+		map.put("banktype", userDo.getBanktype()); //
+		map.put("bankUserName", userDo.getBankUserName());
+		map.put("banknumber", userDo.getBanknumber());
+		map.put("bankContent", userDo.getBankContent());
+
+		// map.put("email", userDo.getEmail()); // 邮箱
+		return Result.successResult("查询成功", map);
+	}
+
+	/**
+	 * 修改用户信息
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/alterInfo", method = RequestMethod.POST)
+	public Result<?> updateUser() {
+		try {
+			Integer userId = getUserId();
+			String trueName = getString("trueName");
+			String mobile = getString("mobile");
+			String email = getString("email");
+			String idnumber = getString("idnumber");
+			String banktype = getString("banktype");
+			String bankUserName = getString("bankUserName");
+
+			String banknumber = getString("banknumber");
+			String bankContent = getString("bankContent");
+
+			String userPassword = getString("userPassword");
+			String twoPassword = getString("twoPassword");
+
+			logger.info("修改用户信息，userId:" + userId);
+
+			Assert.hasText(trueName, "姓名不能为空");
+			Assert.hasText(mobile, "手机号码不能为空");
+			// Assert.hasText(email, "邮箱不能为空");
+			// Assert.hasText(idnumber, "身份证不能为空");
+			// Assert.hasText(banktype, "银行不能为空");
+			// Assert.hasText(bankUserName, "开户名不能为空");
+			// Assert.hasText(banknumber, "银行卡号不能为空");
+			// Assert.hasText(bankContent, "支行不能为空");
+
+			// 用户信息
+			UserDo userDo = new UserDo();
+			userDo.setId(userId);
+			userDo.setTrueName(trueName);
+			if (StringUtils.isNotBlank(mobile)) {
+				mobile = mobile.replaceAll(" ", "");
+				userDo.setMobile(mobile);
+			}
+
+			userDo.setEmail(email);
+			if (StringUtils.isNotBlank(idnumber)) {
+				idnumber = idnumber.replaceAll(" ", "");
+				userDo.setIdnumber(idnumber);
+			}
+
+			if (StringUtils.isNotBlank(banktype)) {
+				userDo.setBanktype(Byte.parseByte(banktype));
+			}
+			userDo.setBankUserName(bankUserName);
+
+			if (StringUtils.isNotBlank(banknumber)) {
+
+				banknumber = banknumber.replaceAll(" ", "");
+				userDo.setBanknumber(banknumber);
+			}
+			userDo.setBankContent(bankContent);
+			if (StringUtils.isNotBlank(userPassword)) {
+				userPassword = DataEncrypt.encrypt(userPassword);
+				userDo.setUserPassword(userPassword);
+			}
+			if (StringUtils.isNotBlank(twoPassword)) {
+				twoPassword = DataEncrypt.encrypt(twoPassword);
+				userDo.setTwoPassword(twoPassword);
+			}
+
+			UserDo user = userService.getUser(userDo.getId());
+			if (StringUtils.isNotBlank(user.getMobile())) { // 如果用户手机号非空不允许修改
+				userDo.setMobile(null);
+			}
+
+			return userService.update(userDo);
+		} catch (Exception e) {
+			return Result.failureResult("用户信息修改失败");
+		}
+	}
+
+	/**
+	 * 用户信息认证
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
+	public Result<?> Authentication() {
+		try {
+			Integer userId = getUserId();
+			String trueName = getString("trueName");
+			String mobile = getString("mobile");
+			String idnumber = getString("idnumber");
+			String sex = getString("sex");
+
+			logger.info("用户信息，userId:" + userId);
+
+			Assert.hasText(trueName, "姓名不能为空");
+			Assert.hasText(mobile, "手机号码不能为空");
+			Assert.hasText(idnumber, "身份证不能为空");
+			Assert.hasText(sex, "性别不能为空");
+			// 用户信息
+			UserDo userDo = new UserDo();
+			userDo.setId(userId);
+			userDo.setTrueName(trueName);
+			userDo.setIdnumber(idnumber);
+			userDo.setSex(sex);
+
+			return userService.Authentication(userDo);
+
+		} catch (Exception e) {
+			return Result.failureResult("用户信息认证失败");
+		}
+	}
+
+	@RequestMapping(value = "toLevel", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView tosetLevel() {
+		ModelAndView mv = new ModelAndView("jjzd/set_user_level");
+		List<LoanDictDtlDo> KHJB = loanDictService.queryDictDtlListByDictCode(DictCode.KHJB.getCode());
+		mv.addObject("KHJB", KHJB);
+		return mv;
+	}
+
+	/**
+	 * 空单激活
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/setUserLevel", method = { RequestMethod.GET, RequestMethod.POST })
+	public Result<?> setUserLevel() {
 		String userCode = getString("userCode");
 		String userLevel = getString("userLevel");
 		logger.info("修改用户等级:userCode=" + userCode + ",userLevel=" + userLevel);
-		if(StringUtils.isBlank(userCode)){
+		if (StringUtils.isBlank(userCode)) {
 			return Result.failureResult("请输入用户编码!");
 		}
-		if(StringUtils.isBlank(userLevel)){
+		if (StringUtils.isBlank(userLevel)) {
 			return Result.failureResult("请选择用户级别");
 		}
-		try{
+		try {
 			Result<?> result = userService.setUserLevel(userCode.trim(), userLevel.trim());
 			logger.info("修改用户等级结果:" + JSON.toJSONString(result));
 			return result;
-		}catch(BusinessException e){
-			logger.info("修改报错BusinessException:",e);
+		} catch (BusinessException e) {
+			logger.info("修改报错BusinessException:", e);
 			return Result.failureResult(e.getMessage());
-		}catch(Exception e){
-			logger.info("修改报错Exception:",e);
+		} catch (Exception e) {
+			logger.info("修改报错Exception:", e);
 			return Result.failureResult("修改失败!");
 		}
 	}
-	
-	
-	@RequestMapping(value="listTotal",method = {RequestMethod.GET,RequestMethod.POST})
-    public ModelAndView listTotal(){
-    	ModelAndView mv = new ModelAndView("listTotal");
-    	List<LoanDictDtlDo> KHJB = loanDictService.queryDictDtlListByDictCode(DictCode.KHJB.getCode());
-    	mv.addObject("KHJB", KHJB);
-    	return mv;
-    }
+
+	@RequestMapping(value = "listTotal", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView listTotal() {
+		ModelAndView mv = new ModelAndView("listTotal");
+		List<LoanDictDtlDo> KHJB = loanDictService.queryDictDtlListByDictCode(DictCode.KHJB.getCode());
+		mv.addObject("KHJB", KHJB);
+		return mv;
+	}
 }

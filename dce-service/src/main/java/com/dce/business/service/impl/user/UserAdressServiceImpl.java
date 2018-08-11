@@ -34,4 +34,22 @@ public class UserAdressServiceImpl implements UserAdressService {
 		return userAdressDao.selectByUserId(userId);
 	}
 
+	/**
+	 * 添加收货地址
+	 */
+	@Override
+	public UserAddressDo selectByPrimaryKeyAdd(UserAddressDo addaddress) {
+
+		return userAdressDao.selectByPrimaryKeyAdd(addaddress);
+	}
+
+	/**
+	 * 修改收货地址
+	 */
+	@Override
+	public UserAddressDo selectByPrimaryKeyUpdate(UserAddressDo updateaddress) {
+
+		return userAdressDao.selectByPrimaryKeyUpdate(updateaddress);
+	}
+
 }

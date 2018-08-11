@@ -17,7 +17,7 @@ public interface IOrderDao {
 
     int updateByPrimaryKeySelective(OrderDo record);
 
-    int updateByPrimaryKey(OrderDo record);
+   // int updateByPrimaryKey(OrderDo record);
     
     List<OrderDo> selectOrder(Map<String, Object> paraMap);
     
@@ -41,4 +41,9 @@ public interface IOrderDao {
     //生成一个订单
     int insertSelective(Order order);
     
+    //根据主键id查询订单
+    Order selectByPrimaryKey(long orderId); 
+    
+    //用户支付，更新订单状态
+    int updateByPrimaryKey(Order order);
 }

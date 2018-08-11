@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
@@ -18,6 +19,8 @@ import com.dce.business.service.accountRecord.AccountRecordService;
  * @author Administrator
  *
  */
+@RestController
+@RequestMapping("accountRecord")
 public class AccountRecordController extends BaseController {
 
 	private final static Logger logger = Logger.getLogger(AccountController.class);
@@ -46,7 +49,9 @@ public class AccountRecordController extends BaseController {
 	 * @return
 	 */
 	public int insertTransactionRecord(EthAccountDetailDo ethAccountDetailDo){
-		logger.info("插入交易记录的实体："+ethAccountDetailDo);
-		return accountRecord.insert(ethAccountDetailDo);
+		EthAccountDetailDo eth=new EthAccountDetailDo();
+		eth=ethAccountDetailDo;
+		logger.info("插入交易记录的实体："+eth);
+		return accountRecord.insert(eth);
 	}
 }

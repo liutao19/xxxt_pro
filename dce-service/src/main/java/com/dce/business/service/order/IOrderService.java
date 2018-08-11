@@ -17,6 +17,8 @@ public interface IOrderService {
     //生成一个订单
     int insertOrder(Order order);
     
+    //根据主键id查询订单
+    Order selectByPrimaryKey(long orderId);
     
     
     /** 
@@ -55,7 +57,7 @@ public interface IOrderService {
     
     List<OrderDo> selectOrder(Map<String, Object> params);
     
-    int updateOrder(OrderDo orderDo);
+    int updateOrder(Order order);
     
     /**
      * 挂单

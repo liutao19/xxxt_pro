@@ -25,6 +25,17 @@ public final class DateUtil {
         return YYYY_MM_DD.format(date);
     }
     
+    /**
+     * 时间转换为yyyy-MM-dd  hh:mm:ss格式的字符串 
+     * @return
+     */
+    public static String dateformat(Date date){
+    	if(null == date){
+    		return "";
+    	}
+    	return YYYY_MM_DD_MM_HH_SS.format(date);
+    }
+    
     public static String klineDate(Date date,KLineTypeEnum kLineType){
     	if (KLineTypeEnum.KLINE_TYPE_HOUR.equals(kLineType)) {
             return YYYY_MM_DD_HH.format(date);

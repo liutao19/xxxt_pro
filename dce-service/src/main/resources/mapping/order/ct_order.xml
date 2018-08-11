@@ -50,16 +50,13 @@
 		createTime desc
 	</select>
 
-	<!-- 获取用户地址 -->
-	<select id="selectAdress"></select>
-
 	<insert id="insert" parameterType="com.dce.business.entity.order.Order">
 		insert into ct_order (orderId,
 		orderCode, userId,
 		qty, totalPrice, recAddress,
 		createTime, orderStatus,
 		payStatus,
-		payTime, orderType, matchOrderId,
+		orderType, matchOrderId,
 		salqty, accountType,
 		goodsId,
 		price, addressId, remark
@@ -69,10 +66,10 @@
 		#{userid,jdbcType=INTEGER},
 		#{qty,jdbcType=DECIMAL}, #{totalprice,jdbcType=DECIMAL},
 		#{recaddress,jdbcType=VARCHAR},
-		#{createtime,jdbcType=TIMESTAMP},
-		#{orderstatus,jdbcType=INTEGER},
-		#{paystatus,jdbcType=INTEGER},
-		#{paytime,jdbcType=TIMESTAMP}, #{ordertype,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{orderStatus,jdbcType=INTEGER},
+		#{payStatus,jdbcType=INTEGER},
+		#{ordertype,jdbcType=INTEGER},
 		#{matchorderid,jdbcType=BIGINT},
 		#{salqty,jdbcType=DECIMAL},
 		#{accounttype,jdbcType=VARCHAR},

@@ -1,6 +1,5 @@
 package com.dce.business.entity.etherenum;
 
-import java.util.Date;
 
 public class EthAccountDetailDo {
     private Long id;
@@ -19,7 +18,7 @@ public class EthAccountDetailDo {
 
     private String gas; //交易手续费
 
-    private Date createTime; //交易时间
+    private String createTime; //交易时间
     
     private String remark; //备注
 
@@ -95,11 +94,11 @@ public class EthAccountDetailDo {
         this.gas = gas;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 }

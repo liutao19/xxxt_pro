@@ -36,12 +36,13 @@
 		ct_ethereum_account_detail
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
+	
 	<insert id="insert" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
 		useGeneratedKeys="true">
 		insert into ct_ethereum_account_detail (userId,
 		serialNo, ethAccount,
-		ethAccountType, transType, amount, remark
+		ethAccountType, transType, amount, remark,
 		gas,
 		createTime)
 		values (#{userId,jdbcType=INTEGER},
@@ -51,6 +52,7 @@
 		#{gas,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP}), #{remark,jdbcType=VARCHAR}
 	</insert>
+	
 	<insert id="insertSelective" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.etherenum.EthAccountDetailDo"
 		useGeneratedKeys="true">

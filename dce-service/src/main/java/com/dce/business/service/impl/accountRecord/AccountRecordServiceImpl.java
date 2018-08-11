@@ -2,20 +2,20 @@ package com.dce.business.service.impl.accountRecord;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dce.business.common.util.AccountCodeutil;
-import com.dce.business.dao.etherenum.IEthAccountDetailDao;
+import com.dce.business.dao.etherenum.EthAccountDetailDoMapper;
 import com.dce.business.entity.etherenum.EthAccountDetailDo;
+import com.dce.business.entity.etherenum.EthAccountDetailDoExample;
 import com.dce.business.service.accountRecord.AccountRecordService;
 
 @Service("accountRecordService")
 public class AccountRecordServiceImpl implements AccountRecordService {
 	
-	@Resource
-	private IEthAccountDetailDao ethAccountDetailDao;
+	@Autowired
+	private EthAccountDetailDoMapper ethAccountDetailDao;
 
 	//插入交易流水
 	public int insert(EthAccountDetailDo ethAccountDetailDo) {
@@ -24,10 +24,10 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 		if(ethAccountDetailDo != null){
 			System.out.println("liu======"+ethAccountDetailDo.getAmount());
 			// 账户类型0-个人账户；1-平台账户
-			ethAccountDetailDo.setEthAccountType(0); 
+			ethAccountDetailDo.setEthaccounttype(0);
 			//设置交易流水号
-			ethAccountDetailDo.setSerialNo(AccountCodeutil.getAccountCode()); 
-			System.out.println("getCode"+ethAccountDetailDo.getSerialNo());
+			ethAccountDetailDo.setSerialno(AccountCodeutil.getAccountCode()); 
+			System.out.println("getCode"+ethAccountDetailDo.getSerialno());
 			s=ethAccountDetailDao.insert(ethAccountDetailDo);
 			System.err.println("插入结果-------》》》》》》"+s);
 		}
@@ -38,7 +38,9 @@ public class AccountRecordServiceImpl implements AccountRecordService {
 	@Override
 	public List<EthAccountDetailDo> selectByUserId(Integer userId) {
 		
-		return ethAccountDetailDao.selectByUserId(userId);
+		EthAccountDetailDoExample example= new EthAccountDetailDoExample();
+		example.createCriteria().andUseridEqualTo(userId);
+		return ethAccountDetailDao.selectByExample(example);
 	}
 
 }

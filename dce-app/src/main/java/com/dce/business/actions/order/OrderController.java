@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.util.Assert;
@@ -187,10 +188,10 @@ public class OrderController extends BaseController {
 
 		// 记录到交易流水表中
 		EthAccountDetailDo ethAccountDetailDo = new EthAccountDetailDo();
-		ethAccountDetailDo.setUserId(order.getUserid()); // 用户id
-		ethAccountDetailDo.setTransType(2); // 交易类型1--转入；2--转出
+		ethAccountDetailDo.setUserid(order.getUserid()); // 用户id
+		ethAccountDetailDo.setTranstype(2); // 交易类型1--转入；2--转出
 		ethAccountDetailDo.setAmount(order.getTotalprice().toString()); // 交易金额
-		ethAccountDetailDo.setCreateTime(order.getPaytime()); // 交易发生时间
+		ethAccountDetailDo.setCreatetime(new Date()); // 交易发生时间
 		ethAccountDetailDo.setRemark("购买商品"); // 备注
 		
 		AccountRecordService accountRecord = new AccountRecordServiceImpl();

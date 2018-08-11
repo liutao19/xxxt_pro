@@ -95,7 +95,15 @@ public class UserController extends BaseController {
 		 * bankContent = userDo.getBankContent().replaceAll(" ","");
 		 * userDo.setBankContent(bankContent); }
 		 */
-
+		String refMobile = this.getString("refereeUserMobile");
+		Map<String, Object> params = new HashMap<String,Object>();
+		params.put("mobile", refMobile);
+		List<UserDo> refLst = userService.selectUser(params);
+		if(refLst == null || refLst.size()<1){
+			throw new BusinessException("无效的推荐人");
+		}
+		userDo.setRefereeid(refLst.get(0).getId());
+		userDo.setParentid(refLst.get(0).getId());
 		Result<?> result = userService.reg(userDo);
 
 		logger.info("用户注册结果:" + JSON.toJSONString(result));
@@ -188,7 +196,7 @@ public class UserController extends BaseController {
 	}
 
 	/**
-	 * 修改用户名
+	 * 修改登录密码
 	 * 
 	 * @return
 	 */
@@ -197,29 +205,41 @@ public class UserController extends BaseController {
 		try {
 			Integer userId = getUserId();
 			String password = getString("Password");
-
 			logger.info("修改用户登录密码，userId:" + userId);
-
-			Assert.hasText(password, "密码不能为空");
-
 			// 用户信息
 			UserDo userDo = new UserDo();
 			userDo.setId(userId);
-
 			// 登录密码加密
 			if (StringUtils.isNotBlank(password)) {
 				password = DataEncrypt.encrypt(password);
 				// userDo.setTwoPassword(password);
 			}
-			// UserDo user = userService.getUser(userDo.getId());
-			// if (StringUtils.isNotBlank(user.getMobile())) { // 如果用户手机号非空不允许修改
-			// userDo.setMobile(null);
-			// }
-
 			return userService.update(userDo);
 		} catch (Exception e) {
 			return Result.failureResult("用户密码修改失败");
 		}
+	}
+
+	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
+	public Result<?> addAddress() {
+		String addressId = getString("addressId");
+		String addressDetails = getString("addressDetails");
+		Integer userId = getUserId();
+		Assert.hasText(addressDetails, "收货地址详情不能为空");
+
+		// 收货地址对像
+		UserAddressDo addressadd = new UserAddressDo();
+		addressadd.setUserid(userId);
+		addressadd.setAddressDetails(addressDetails);
+
+		// id为空是新记录 新增， 非空是已经存在的记录调用修改
+		if (StringUtils.isNotBlank(addressId)) {
+			addressadd.setAddressid(Integer.parseInt(addressId));
+			addressService.updateByPrimaryKeySelective(addressadd);
+		} else {
+			addressService.insertSelective(addressadd);
+		}
+		return Result.successResult("地址修改成功");
 	}
 
 	/**

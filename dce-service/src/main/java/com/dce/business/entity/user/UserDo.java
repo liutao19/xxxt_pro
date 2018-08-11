@@ -84,6 +84,8 @@ public class UserDo {
 	// 接点人id
 	private Integer parentid;
 	
+	
+	
 	// 认证状态
 	private int certification ;
 
@@ -94,6 +96,10 @@ public class UserDo {
 	// @NotBlank(message = "推荐人不能为空")
 	private String refereeUserName; 
 
+	
+	//推荐人用户名
+	private String refereeUserMobile; 
+		
 	//接点人用户名
 	//@NotBlank(message = "接点人不能为空")
 	private String parentUserName;
@@ -1057,4 +1063,13 @@ public class UserDo {
 
 		return false;
 	}
+
+	public String getRefereeUserMobile() {
+		return refereeUserMobile;
+	}
+
+	public void setRefereeUserMobile(String refereeUserMobile) {
+		this.refereeUserMobile = refereeUserMobile;
+	}
+	
 }

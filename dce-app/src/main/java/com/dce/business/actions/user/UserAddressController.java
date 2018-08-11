@@ -26,7 +26,7 @@ public class UserAddressController extends BaseController {
 	private UserAdressService addressService;
 
 	/**
-	 * 添加收货地址
+	 * 添加,修改收货地址
 	 * 
 	 * @return
 	 */

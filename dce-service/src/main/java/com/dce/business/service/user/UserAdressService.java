@@ -18,4 +18,9 @@ public interface UserAdressService {
 	// 修改收货地址
 	UserAddressDo selectByPrimaryKeyUpdate(UserAddressDo updateaddress);
 	
+	// 按主键选择更新收货地址
+	int updateByPrimaryKeySelective(UserAddressDo record);
+	
+	// 插人收货地址
+	int insertSelective(UserAddressDo record);
 }

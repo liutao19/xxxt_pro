@@ -32,7 +32,7 @@ public class UserDo {
 	@NotBlank(message = "登录密码不能为空")
 	private String userPassword;
 
-	@NotBlank(message = "安全密码不能为空")
+	@NotBlank(message = "支付密码不能为空")
 	private String twoPassword;
 
 	private Integer userFace;

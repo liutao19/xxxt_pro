@@ -60,7 +60,7 @@ public class OrderController extends BaseController {
 
 	@Resource
 	private AccountRecordService accountRecordService;
-	
+
 	@Resource
 	private ICTGoodsService ctGoodsService;
 
@@ -88,7 +88,7 @@ public class OrderController extends BaseController {
 	public Result<?> getUserAdress() {
 		// 获取当前用户的id
 		Integer userId = getUserId();
-		//获取当前用户的所有地址
+		// 获取当前用户的所有地址
 		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
 
 		return Result.successResult("获取用户地址成功", addressList);
@@ -101,6 +101,9 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
 	public Result<?> insertOrder(HttpServletRequest request) {
+		
+		String json = getString("");
+		
 		// 获取用户id
 		Integer userId = getUserId();
 
@@ -108,24 +111,19 @@ public class OrderController extends BaseController {
 		String orderCode = OrderCodeUtil.genOrderCode(userId);
 		logger.info("产生的订单编号------》》》》》" + orderCode);
 
-		// 获取前台传过来的订单信息
-		String addressId = getString("addressId") == null ? "" : getString("addressId");
-		String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
-		String remark = getString("remark") == null ? "" : getString("remark");
-
 		// 根据地址id查询出收货人信息，返回页面
 		UserAddressDo userAddress = new UserAddressDo();
-		userAddress = addressService.selectByPrimaryKey(Integer.valueOf(addressId));
+		//userAddress = addressService.selectByPrimaryKey(Integer.valueOf(addressId));
 
 		String receiver = userAddress.getUsername();
-		String telPhone = userAddress.getAddress();
+		String telPhone = userAddress.getUserphone();
 		String address = userAddress.getAddress();
 
 		System.out.println("获取的收货人的信息-----》》》》receiver：" + receiver + "telPhone：" + telPhone + "address：" + address);
 
 		// 获取商品信息
 		String goods1 = request.getParameter("cart");
-		System.out.println("goods信息：" + goods1);
+		System.err.println("goods信息：" + goods1);
 
 		// 根据商品id查询出商品，获取单价
 		long l = Long.parseLong("269");
@@ -148,11 +146,10 @@ public class OrderController extends BaseController {
 		order.setTotalprice(totalPrice);
 		Date date = new Date();
 		order.setCreatetime(DateUtil.dateformat(date));// 获取当前系统时间
-		order.setOrdertype(Integer.valueOf(orderPayType));
-		order.setAddressid(Integer.valueOf(addressId));
+		//order.setOrdertype(Integer.valueOf(orderPayType));
+		//order.setAddressid(Integer.valueOf(addressId));
 		order.setOrderstatus(0); // 未发货状态
 		order.setPaystatus(0); // 未支付状态
-		order.setRemark(remark);
 		orderService.insertOrder(order);
 
 		// 封装返回APP页面的数据
@@ -171,21 +168,26 @@ public class OrderController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value="/pay", method = RequestMethod.POST)
+	@RequestMapping(value = "/pay", method = RequestMethod.POST)
 	public Result<?> orderPay() {
-		//假设订单id
+
+		// 获取前台传过来的订单信息
+		String addressId = getString("addressId") == null ? "" : getString("addressId");
+		String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
+
+		// 假设订单id
 		long orderId = new Long(1);
 		// 先查询出订单详情
 		Order order = orderService.selectByPrimaryKey(orderId);
-		System.err.println("和擦讯出来的订单------------》》》》》"+order);
-		
+		System.err.println("和擦讯出来的订单------------》》》》》" + order);
+
 		// 假设支付方式为微信
 		order.setOrdertype(1); // 支付方式：1为微信、2为支付宝
 		order.setPaystatus(1); // 付款状态为已支付
 		Date date = new Date();
-		order.setPaytime(DateUtil.dateformat(date)); //获取当前系统时间
+		order.setPaytime(DateUtil.dateformat(date)); // 获取当前系统时间
 		// 更新订单状态
-		//orderService.updateOrder(order);
+		// orderService.updateOrder(order);
 
 		// 记录到交易流水表中
 		EthAccountDetailDo ethAccountDetailDo = new EthAccountDetailDo();
@@ -194,12 +196,12 @@ public class OrderController extends BaseController {
 		ethAccountDetailDo.setAmount(order.getTotalprice().toString()); // 交易金额
 		ethAccountDetailDo.setCreatetime(new Date()); // 交易发生时间
 		ethAccountDetailDo.setRemark("购买商品"); // 备注
-		
+
 		accountRecordService.insert(ethAccountDetailDo);
 
 		return Result.successResult("测试", ethAccountDetailDo);
 	}
-	
+
 	/**
 	 * 用户订单列表显示
 	 * 

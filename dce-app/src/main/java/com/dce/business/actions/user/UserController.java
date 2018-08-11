@@ -167,7 +167,6 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
 	public Result<?> getUser() {
 		Integer userId = getUserId();
-
 		logger.info("查询用户基本信息，userId:" + userId);
 
 		// 用户信息
@@ -178,7 +177,6 @@ public class UserController extends BaseController {
 		map.put("mobile", userDo.getMobile()); // 手机号码
 		map.put("userLevel", userDo.getUserLevel()); // 用户等级
 		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
-		map.put("uaerName", userDo.getUserName()); // 用户用户名
 		map.put("sex", userDo.getSex()); // 用户性别
 		map.put("refereeid", userDo.getRefereeid()); // 用户推荐人
 		// map.put("banktype", userDo.getBanktype()); //

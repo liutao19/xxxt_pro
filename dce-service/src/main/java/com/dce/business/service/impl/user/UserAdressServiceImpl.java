@@ -52,4 +52,16 @@ public class UserAdressServiceImpl implements UserAdressService {
 		return userAdressDao.selectByPrimaryKeyUpdate(updateaddress);
 	}
 
+	@Override
+	public int updateByPrimaryKeySelective(UserAddressDo record) {
+		
+		return userAdressDao.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public int insertSelective(UserAddressDo record) {
+		
+		return userAdressDao.insertSelective(record);
+	}
+
 }

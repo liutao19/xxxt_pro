@@ -259,6 +259,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  
+  <select id="selectByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		select 
+  <include refid="Base_Column_List" />
+    from ct_apply_travel
+   where userid = #{userid,jdbcType=INTEGER}
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     <!--
       WARNING - @mbg.generated

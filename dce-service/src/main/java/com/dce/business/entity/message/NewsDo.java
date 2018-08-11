@@ -13,7 +13,7 @@ public class NewsDo {
 	  private Integer topNews ;//是否置顶（0是/1否）
 	  private String remark ;//备注
 	  private Integer status ;//状态
-	  private Date creatDate  ;//创建时间
+	  private Date createDate  ;//创建时间
 	  private String creatName ;//创建人
 	  private Date updateDate  ;//更新时间
 	  private String updateName ;//更新人
@@ -65,11 +65,11 @@ public class NewsDo {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	public Date getCreatDate() {
-		return creatDate;
+	public Date getCreateDate() {
+		return createDate;
 	}
-	public void setCreatDate(Date creatDate) {
-		this.creatDate = creatDate;
+	public void setCreateDate(Date creatDate) {
+		this.createDate = creatDate;
 	}
 	public String getCreatName() {
 		return creatName;

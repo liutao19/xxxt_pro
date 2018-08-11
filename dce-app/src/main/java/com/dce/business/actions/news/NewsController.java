@@ -64,8 +64,12 @@ public class NewsController extends BaseController {
             for (NewsDo message : newsList) {
 
                 Map<String, Object> map = new HashMap<>();
+                map.put("id", message.getId());
                 map.put("title", message.getTitle());
                 map.put("content", message.getContent());
+                map.put("create_date", message.getCreateDate());
+                map.put("image", message.getImage());
+                map.put("top_notice", message.getTopNews());
                 result.add(map);
             }
         }

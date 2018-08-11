@@ -18,7 +18,7 @@ import com.dce.business.entity.notice.NoticeDo;
 import com.dce.business.service.message.INoticeService;
 
 /**
- * 公告列表
+ * 公告
  * 
  * @author NI
  *
@@ -45,8 +45,12 @@ public class NoticeController {
             for (NoticeDo message : noticeList) {
 
                 Map<String, Object> map = new HashMap<>();
+                map.put("id", message.getId());
                 map.put("title", message.getTitle());
                 map.put("content", message.getContent());
+                map.put("create_date", message.getCreateDate());
+                map.put("image", message.getImage());
+                map.put("top_notice", message.getTopNotice());
                 result.add(map);
             }
         }

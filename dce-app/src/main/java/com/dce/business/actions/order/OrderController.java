@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.util.Assert;
@@ -48,7 +47,6 @@ import com.dce.business.service.accountRecord.AccountRecordService;
 import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.goods.ICTGoodsService;
-import com.dce.business.service.impl.accountRecord.AccountRecordServiceImpl;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.UserAdressService;
 
@@ -60,6 +58,9 @@ public class OrderController extends BaseController {
 	@Resource
 	private IOrderService orderService;
 
+	@Resource
+	private AccountRecordService accountRecordService;
+	
 	@Resource
 	private ICTGoodsService ctGoodsService;
 
@@ -194,8 +195,7 @@ public class OrderController extends BaseController {
 		ethAccountDetailDo.setCreatetime(new Date()); // 交易发生时间
 		ethAccountDetailDo.setRemark("购买商品"); // 备注
 		
-		AccountRecordService accountRecord = new AccountRecordServiceImpl();
-		accountRecord.insert(ethAccountDetailDo);
+		accountRecordService.insert(ethAccountDetailDo);
 
 		return Result.successResult("测试", ethAccountDetailDo);
 	}

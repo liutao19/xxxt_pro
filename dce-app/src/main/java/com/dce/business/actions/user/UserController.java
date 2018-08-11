@@ -160,6 +160,71 @@ public class UserController extends BaseController {
 	}
 
 	/**
+	 * 个人中心查询个人信息
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
+	public Result<?> getUser() {
+		Integer userId = getUserId();
+
+		logger.info("查询用户基本信息，userId:" + userId);
+
+		// 用户信息
+		UserDo userDo = userService.getUser(userId);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("trueName", userDo.getTrueName()); // 姓名
+		map.put("mobile", userDo.getMobile()); // 手机号码
+		map.put("userLevel", userDo.getUserLevel()); // 用户等级
+		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
+		map.put("uaerName", userDo.getUserName()); // 用户用户名
+		map.put("sex", userDo.getSex()); // 用户性别
+		map.put("refereeid", userDo.getRefereeid()); // 用户推荐人
+		// map.put("banktype", userDo.getBanktype()); //
+		// map.put("bankUserName", userDo.getBankUserName());
+		// map.put("banknumber", userDo.getBanknumber());
+		// map.put("bankContent", userDo.getBankContent());
+		// map.put("email", userDo.getEmail()); // 邮箱
+		return Result.successResult("查询成功", map);
+	}
+
+	/**
+	 * 修改用户名
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/alterpas", method = RequestMethod.POST)
+	public Result<?> updateUser() {
+		try {
+			Integer userId = getUserId();
+			String password = getString("Password");
+
+			logger.info("修改用户登录密码，userId:" + userId);
+
+			Assert.hasText(password, "密码不能为空");
+
+			// 用户信息
+			UserDo userDo = new UserDo();
+			userDo.setId(userId);
+
+			// 登录密码加密
+			if (StringUtils.isNotBlank(password)) {
+				password = DataEncrypt.encrypt(password);
+				// userDo.setTwoPassword(password);
+			}
+			// UserDo user = userService.getUser(userDo.getId());
+			// if (StringUtils.isNotBlank(user.getMobile())) { // 如果用户手机号非空不允许修改
+			// userDo.setMobile(null);
+			// }
+
+			return userService.update(userDo);
+		} catch (Exception e) {
+			return Result.failureResult("用户密码修改失败");
+		}
+	}
+
+	/**
 	 * 模糊搜索用户列表
 	 * 
 	 * @return
@@ -271,116 +336,6 @@ public class UserController extends BaseController {
 		}
 
 		return BigDecimal.ZERO;
-	}
-
-	/**
-	 * 个人中心查询个人信息
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
-	public Result<?> getUser() {
-		Integer userId = getUserId();
-
-		logger.info("查询用户基本信息，userId:" + userId);
-
-		// 用户信息
-		UserDo userDo = userService.getUser(userId);
-
-		Map<String, Object> map = new HashMap<>();
-		map.put("trueName", userDo.getTrueName()); // 姓名
-		map.put("mobile", userDo.getMobile()); // 手机号码
-		map.put("userLevel", userDo.getUserLevel()); // 用户等级
-		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
-		map.put("uaerName", userDo.getUserName()); // 用户用户名
-		map.put("sex", userDo.getSex()); // 用户性别
-		map.put("refereeid", userDo.getRefereeid()); // 用户推荐人
-		map.put("banktype", userDo.getBanktype()); //
-		map.put("bankUserName", userDo.getBankUserName());
-		map.put("banknumber", userDo.getBanknumber());
-		map.put("bankContent", userDo.getBankContent());
-
-		// map.put("email", userDo.getEmail()); // 邮箱
-		return Result.successResult("查询成功", map);
-	}
-
-	/**
-	 * 修改用户信息
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/alterInfo", method = RequestMethod.POST)
-	public Result<?> updateUser() {
-		try {
-			Integer userId = getUserId();
-			String trueName = getString("trueName");
-			String mobile = getString("mobile");
-			String email = getString("email");
-			String idnumber = getString("idnumber");
-			String banktype = getString("banktype");
-			String bankUserName = getString("bankUserName");
-
-			String banknumber = getString("banknumber");
-			String bankContent = getString("bankContent");
-
-			String userPassword = getString("userPassword");
-			String twoPassword = getString("twoPassword");
-
-			logger.info("修改用户信息，userId:" + userId);
-
-			Assert.hasText(trueName, "姓名不能为空");
-			Assert.hasText(mobile, "手机号码不能为空");
-			// Assert.hasText(email, "邮箱不能为空");
-			// Assert.hasText(idnumber, "身份证不能为空");
-			// Assert.hasText(banktype, "银行不能为空");
-			// Assert.hasText(bankUserName, "开户名不能为空");
-			// Assert.hasText(banknumber, "银行卡号不能为空");
-			// Assert.hasText(bankContent, "支行不能为空");
-
-			// 用户信息
-			UserDo userDo = new UserDo();
-			userDo.setId(userId);
-			userDo.setTrueName(trueName);
-			if (StringUtils.isNotBlank(mobile)) {
-				mobile = mobile.replaceAll(" ", "");
-				userDo.setMobile(mobile);
-			}
-
-			userDo.setEmail(email);
-			if (StringUtils.isNotBlank(idnumber)) {
-				idnumber = idnumber.replaceAll(" ", "");
-				userDo.setIdnumber(idnumber);
-			}
-
-			if (StringUtils.isNotBlank(banktype)) {
-				userDo.setBanktype(Byte.parseByte(banktype));
-			}
-			userDo.setBankUserName(bankUserName);
-
-			if (StringUtils.isNotBlank(banknumber)) {
-
-				banknumber = banknumber.replaceAll(" ", "");
-				userDo.setBanknumber(banknumber);
-			}
-			userDo.setBankContent(bankContent);
-			if (StringUtils.isNotBlank(userPassword)) {
-				userPassword = DataEncrypt.encrypt(userPassword);
-				userDo.setUserPassword(userPassword);
-			}
-			if (StringUtils.isNotBlank(twoPassword)) {
-				twoPassword = DataEncrypt.encrypt(twoPassword);
-				userDo.setTwoPassword(twoPassword);
-			}
-
-			UserDo user = userService.getUser(userDo.getId());
-			if (StringUtils.isNotBlank(user.getMobile())) { // 如果用户手机号非空不允许修改
-				userDo.setMobile(null);
-			}
-
-			return userService.update(userDo);
-		} catch (Exception e) {
-			return Result.failureResult("用户信息修改失败");
-		}
 	}
 
 	/**

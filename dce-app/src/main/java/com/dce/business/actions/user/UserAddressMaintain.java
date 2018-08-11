@@ -24,6 +24,10 @@ public class UserAddressMaintain extends BaseController {
 	@Resource
 	private UserAdressService addressService;
 
+	/**
+	 * 添加收货地址
+	 * @return
+	 */
 	@RequestMapping(value = "/addaddress", method = { RequestMethod.POST })
 	public Result<?> addaddress() {
 		String addressId = getString("addressId");
@@ -56,40 +60,41 @@ public class UserAddressMaintain extends BaseController {
 		return null; 
 	}
 
-	/**
-	 * 修改收货地址
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/updateaddress", method = { RequestMethod.POST })
-	public Result<?> updateaddress() {
-		String addressId = getString("addressId");
-		String username = getString("username");
-		String userphone = getString("userphone");
-		String address = getString("address");
-		String addressDetails = getString("addressDetails");
-		String postcode = getString("postcode");
-		String remark = getString("remark");
-		Integer userId = getUserId();
-		
-		Assert.hasText(username, "收货人不能为空");
-		Assert.hasText(userphone, "收货人电话不能为空");
-		Assert.hasText(address, "收货地址区域不能为空");
-		Assert.hasText(addressDetails, "收货地址详情不能为空");
-
-		// 收货地址对像
-		UserAddressDo addressadd = new UserAddressDo();
-		addressadd.setUserid(userId);
-		addressadd.setUsername(username);
-		addressadd.setUserphone(userphone);
-		addressadd.setAddress(address);
-		addressadd.setAddressDetails(addressDetails);
-		addressadd.setPostcode(postcode);
-		addressadd.setRemark(remark);
-		// ???
-		 if(StringUtils.isNotBlank(addressId)){
-		 addressadd.setAddressid(Integer.parseInt(addressId));
-		 }
-		return null; // addressService.save(addressDo)
-	}
+	// /**
+	// * 修改收货地址
+	// *
+	// * @return
+	// */
+	// @RequestMapping(value = "/updateaddress", method = { RequestMethod.POST
+	// })
+	// public Result<?> updateaddress() {
+	// String addressId = getString("addressId");
+	// String username = getString("username");
+	// String userphone = getString("userphone");
+	// String address = getString("address");
+	// String addressDetails = getString("addressDetails");
+	// String postcode = getString("postcode");
+	// String remark = getString("remark");
+	// Integer userId = getUserId();
+	//
+	// Assert.hasText(username, "收货人不能为空");
+	// Assert.hasText(userphone, "收货人电话不能为空");
+	// Assert.hasText(address, "收货地址区域不能为空");
+	// Assert.hasText(addressDetails, "收货地址详情不能为空");
+	//
+	// // 收货地址对像
+	// UserAddressDo addressadd = new UserAddressDo();
+	// addressadd.setUserid(userId);
+	// addressadd.setUsername(username);
+	// addressadd.setUserphone(userphone);
+	// addressadd.setAddress(address);
+	// addressadd.setAddressDetails(addressDetails);
+	// addressadd.setPostcode(postcode);
+	// addressadd.setRemark(remark);
+	// // ???
+	// if(StringUtils.isNotBlank(addressId)){
+	// addressadd.setAddressid(Integer.parseInt(addressId));
+	// }
+	// return null; // addressService.save(addressDo)
+	// }
 }

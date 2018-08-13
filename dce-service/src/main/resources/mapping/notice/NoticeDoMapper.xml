@@ -151,9 +151,8 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
+      order by create_date desc
+   
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     <!--
@@ -493,4 +492,50 @@
       update_name = #{updateName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM t_ys_notice
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND id like #{id}
+			</if>
+			<if test="noticeType != null">  
+				AND notice_type like #{noticeType}
+			</if>
+			<if test="title != null">  
+				AND title like #{title}
+			</if>
+			<if test="image != null">  
+				AND image like #{image}
+			</if>
+			<if test="content != null">  
+				AND content like #{content}
+			</if>
+			<if test="author != null">  
+				AND author like #{author}
+			</if>
+			<if test="topNotice != null">  
+				AND top_notice like #{topNotice}
+			</if>
+			<if test="remark != null">  
+				AND remark like #{remark}
+			</if>
+			<if test="status != null">  
+				AND status like #{status}
+			</if>
+			<if test="createDate != null">  
+				AND create_date like #{createDate}
+			</if>
+			<if test="createName != null">  
+				AND create_name like #{createName}
+			</if>
+			<if test="updateDate != null">  
+				AND update_date like #{updateDate}
+			</if>
+			<if test="updateName != null">  
+				AND update_name like #{updateName}
+			</if>
+         </trim> 
+
+	</select>
 </mapper>

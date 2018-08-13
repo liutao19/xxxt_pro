@@ -108,6 +108,7 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 			return Result.failureResult("购买订单保存失败");
 		}
 
+		
 		CTGoodsDo _goods = new CTGoodsDo();
 		_goods.setGoodsId(goods.getGoodsId());
 		_goods.setBookQuantity(order.getQty().longValue());

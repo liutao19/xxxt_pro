@@ -20,6 +20,11 @@ public interface IUserAccountDao {
 
     int updateByPrimaryKey(UserAccountDo record);
 
+    /**
+     * 查询用户余额
+     * @param params
+     * @return
+     */
     List<UserAccountDo> selectAccount(Map<String, Object> params);
 
     int updateUserAmountById(UserAccountDo bizUserAccountDo);

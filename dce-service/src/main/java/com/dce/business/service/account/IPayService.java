@@ -30,7 +30,7 @@ public interface IPayService {
 	 * @param qty
 	 * @return  
 	 */
-	Result<?> withdraw(Integer userId, String password,String type,BigDecimal qty);
+	Result<?> withdraw(Integer userId, String password,String type,BigDecimal qty,String bank_no);
 	
 	 /**
      * 钱包金额转出

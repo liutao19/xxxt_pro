@@ -89,9 +89,9 @@ public class UserServiceImpl implements IUserService {
     	userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid
      
     	UserDo ref = null;
-    	if(StringUtils.isNotBlank(userDo.getRefereeMobile())){
+    	if(StringUtils.isNotBlank(userDo.getRefereeUserMobile())){
 	        Map<String, Object> params = new HashMap<String,Object>();
-	        params.put("mobile", userDo.getRefereeMobile());
+	        params.put("mobile", userDo.getRefereeUserMobile());
 			List<UserDo> refUserLst = this.selectUser(params );
 	        if(refUserLst == null || refUserLst.size()<1){
 	            return Result.failureResult("推荐人不存在");

@@ -11,4 +11,16 @@ public interface INewsDao {
 	
 	NewsDo selectByPrimaryKey(Integer id);
 	
+	/**
+	 * 更新
+	 */
+	public int  updateYsNewsById(NewsDo newYsNewsDo);
+	
+	/**
+	 * 新增
+	 */
+	public int addYsNews(NewsDo newYsNewsDo);
+
+	List<NewsDo> queryListPage(Map<String, Object> param);
+	
 }

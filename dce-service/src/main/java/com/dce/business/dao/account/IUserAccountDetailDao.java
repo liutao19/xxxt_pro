@@ -25,6 +25,13 @@ public interface IUserAccountDetailDao {
      *根据条件查询列表
      */
     public List<UserAccountDetailDo> selectUserAccountDetail(Map<String, Object> parameterMap);
+    
+    /**
+     * 根据用户id查询当前用户的流水
+     * @param userId
+     * @return
+     */
+    public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId);
 
     /**
      * 更新

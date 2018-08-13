@@ -13,7 +13,7 @@ public interface IOrderDao {
 
     int insertSelective(OrderDo record);
 
-    OrderDo selectByPrimaryKey(Long orderId);
+    Order selectByPrimaryKey(Integer orderId);
 
     int updateByPrimaryKeySelective(OrderDo record);
 
@@ -46,4 +46,20 @@ public interface IOrderDao {
     
     //用户支付，更新订单状态
     int updateByPrimaryKey(Order order);
+    
+<<<<<<< HEAD
+    //根据订单编号查询订单
+    Order selectByOrderCode(String orderCode);
+    
+    //根据订单编号更新订单
+    int updateByOrderCodeSelective(Order order);
+    
+    //一对多联表查询订单
+    List<Order> selectByUesrIdOneToMany(Integer userId);
+    
+
+=======
+    // 查询总业绩
+ 	Map<String, Object> selectSum(Map<String, Object> paraMap);
+>>>>>>> 45960a0a501f4195d14c9c88ba6ff524a88f51b2
 }

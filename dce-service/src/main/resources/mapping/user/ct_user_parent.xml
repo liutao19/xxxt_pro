@@ -246,6 +246,19 @@
     <select id="selectPosition" parameterType="java.util.Map" resultType="java.lang.Integer">
         select count(0) from ct_user_parent where parentid=#{parentid} and distance=#{distance}
     </select>
+    
+    <!-- 团队成员详情 -->
+	<select id="TeamDetails" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		SELECT id,user_name,true_name,refereeid ,user_level,mobile
+		from ct_user
+		where 1=1
+		<if test="userId!=null">
+			and refereeid=#{userId}
+		</if>
+		
+	</select>
+    
     <!-- 左右业绩 -->
     <select id="selectPerformance" parameterType="java.util.Map" resultType="java.util.Map">
         SELECT  u.`total_performance`, a.lr_district, u.id as userid

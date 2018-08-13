@@ -114,4 +114,55 @@ public class GoodsController extends BaseController {
 		}
 	}
 	
+
+	@RequestMapping(value = "/address", method = {RequestMethod.POST})
+	public Result<?> address(){
+		
+		String address = getString("address");
+		String receiveName = getString("receiveName");
+		String receivePhone = getString("receivePhone");
+		String addressId = getString("addressId");
+		Assert.hasText(address, "收货地址不能为空");
+		Assert.hasText(receiveName, "收货人不能为空");
+		Assert.hasText(receivePhone, "收货人电话不能为空");
+		
+		Integer userId = getUserId();
+		
+		CTUserAddressDo addressDo = new CTUserAddressDo();
+		addressDo.setAddress(address);
+		addressDo.setUserName(receiveName);
+		addressDo.setUserPhone(receivePhone);
+		addressDo.setUserTel(receivePhone);
+		addressDo.setUserId(userId);
+		if(StringUtils.isNotBlank(addressId)){
+			addressDo.setAddressId(Integer.parseInt(addressId));
+		}
+		return ctUserAddressService.save(addressDo);
+	}
+	
+	@RequestMapping(value = "/address", method = { RequestMethod.GET })
+	public Result<?> getAddress() {
+
+		Integer userId = getUserId();
+
+		CTUserAddressDo addressDo = ctUserAddressService.getAddress(userId);
+		return Result.successResult("查询成功", addressDo);
+	}
+	
+	@RequestMapping(value = "/product/buy", method = {RequestMethod.POST})
+	public Result<?> buy(){
+		
+		String productId = getString("productId");
+		String addressId = getString("addressId");
+		String qty = getString("qty");
+		
+		logger.info("购买商品: 商品id=" + productId + ",购买数量=" + qty + ",addressId=" + addressId);
+		
+		OrderDo order = new OrderDo();
+		order.setGoodsId(Long.parseLong(productId));
+		order.setQty(new BigDecimal(qty));
+		order.setUserId(getUserId());
+		
+		return ctGoodsService.buyGoods(order,StringUtils.isBlank(addressId)?null:Integer.parseInt(addressId));
+	}
 }

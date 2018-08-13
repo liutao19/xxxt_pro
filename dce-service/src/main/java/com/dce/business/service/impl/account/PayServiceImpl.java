@@ -114,17 +114,19 @@ public class PayServiceImpl implements IPayService {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> withdraw(Integer userId, String password,String type, BigDecimal qty) {
+	public Result<?> withdraw(Integer userId, String password,String type, BigDecimal qty,String bank_no) {
 
-		//判断系统设置是否可交易
+		/*//判断系统设置是否可交易
 		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 		if (ct == null || ct.getIs_tbstatus() == null || 0 == ct.getIs_tbstatus().intValue()) {
 			logger.info("提币状态设置关闭,当前不允许提币....");
 			return Result.failureResult("当前系统不允许提币!");
-		}
+		}*/
 
 		//1、校验用户金额是否足够
 		UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);
+		
+		System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
@@ -157,20 +159,6 @@ public class PayServiceImpl implements IPayService {
 			return Result.failureResult("请先获取以太坊地址再提现");
 		}
 
-		/*//判断开户是否已有24小时
-		if (ethereumAccountDo.getCreatetime() != null) {
-			Date date = DateUtil.getDate(ethereumAccountDo.getCreatetime(), 1);
-			if (date.after(new Date())) {
-				return Result.failureResult("获取以太坊地址24小时以后才可以提现");
-			}
-		}
-
-		//3、扣减美元点账户
-		UserAccountDo updateAccount = new UserAccountDo();
-		updateAccount.setAccountType(AccountType.wallet_cash.getAccountType());
-		updateAccount.setAmount(qty.negate());
-		updateAccount.setUserId(userId);
-		accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_WITHDRAW);*/
 
 		//写提现表
 		WithdrawalsDo record = new WithdrawalsDo();
@@ -178,6 +166,8 @@ public class PayServiceImpl implements IPayService {
 		record.setProcessStatus("1");
 		record.setAmount(qty);
 		record.setWithdrawDate((new Date()).getTime() / 1000);
+		record.setType(type);
+		record.setBankNo(bank_no);
 		withdrawDao.insertSelective(record);
 
 		return Result.successResult("提现申请成功");

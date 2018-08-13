@@ -84,7 +84,6 @@ public class UserController extends BaseController {
 			return Result.failureResult(errors.get(0).getDefaultMessage());
 		}
 
-		
 		// 去掉手机号中的所有空格 
 		if (StringUtils.isNotBlank(userDo.getMobile())) {
 			userDo.setMobile(userDo.getMobile().replaceAll(" ", "")); //去掉所有空格 
@@ -193,7 +192,7 @@ public class UserController extends BaseController {
 	}
 
 	/**
-	 * 修改用户名
+	 * 修改登录密码
 	 * 
 	 * @return
 	 */
@@ -202,29 +201,41 @@ public class UserController extends BaseController {
 		try {
 			Integer userId = getUserId();
 			String password = getString("Password");
-
 			logger.info("修改用户登录密码，userId:" + userId);
-
-			Assert.hasText(password, "密码不能为空");
-
 			// 用户信息
 			UserDo userDo = new UserDo();
 			userDo.setId(userId);
-
 			// 登录密码加密
 			if (StringUtils.isNotBlank(password)) {
 				password = DataEncrypt.encrypt(password);
 				// userDo.setTwoPassword(password);
 			}
-			// UserDo user = userService.getUser(userDo.getId());
-			// if (StringUtils.isNotBlank(user.getMobile())) { // 如果用户手机号非空不允许修改
-			// userDo.setMobile(null);
-			// }
-
 			return userService.update(userDo);
 		} catch (Exception e) {
 			return Result.failureResult("用户密码修改失败");
 		}
+	}
+
+	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
+	public Result<?> addAddress() {
+		String addressId = getString("addressId");
+		String addressDetails = getString("addressDetails");
+		Integer userId = getUserId();
+		Assert.hasText(addressDetails, "收货地址详情不能为空");
+
+		// 收货地址对像
+		UserAddressDo addressadd = new UserAddressDo();
+		addressadd.setUserid(userId);
+		addressadd.setAddressDetails(addressDetails);
+
+		// id为空是新记录 新增， 非空是已经存在的记录调用修改
+		if (StringUtils.isNotBlank(addressId)) {
+			addressadd.setAddressid(Integer.parseInt(addressId));
+			addressService.updateByPrimaryKeySelective(addressadd);
+		} else {
+			addressService.insertSelective(addressadd);
+		}
+		return Result.successResult("地址修改成功");
 	}
 
 	/**
@@ -338,40 +349,49 @@ public class UserController extends BaseController {
 		return BigDecimal.ZERO;
 	}
 
-	/**
-	 * 用户信息认证
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
-	public Result<?> Authentication() {
-		try {
-			Integer userId = getUserId();
-			String trueName = getString("trueName");
-			String mobile = getString("mobile");
-			String idnumber = getString("idnumber");
-			String sex = getString("sex");
+	  /** 
+     * 用户信息认证
+     * @return  
+     */
+    @RequestMapping(value = "/Authentication", method = RequestMethod.POST)
+    public Result<?> Authentication() {
+    	try{
+	        Integer userId = getUserId();
+	        String trueName = getString("trueName");
+	        String mobile = getString("mobile");
+	        String idnumber = getString("idnumber");
+	        String sex=getString("sex");
+	        String banknumber=getString("banknumber");//卡号
+	        String banktype=getString("banktype");//开卡行
+	        
+	        System.err.println("shuju----"+trueName);
 
-			logger.info("用户信息，userId:" + userId);
-
-			Assert.hasText(trueName, "姓名不能为空");
-			Assert.hasText(mobile, "手机号码不能为空");
-			Assert.hasText(idnumber, "身份证不能为空");
-			Assert.hasText(sex, "性别不能为空");
-			// 用户信息
-			UserDo userDo = new UserDo();
-			userDo.setId(userId);
-			userDo.setTrueName(trueName);
-			userDo.setIdnumber(idnumber);
-			userDo.setSex(sex);
-
-			return userService.Authentication(userDo);
-
-		} catch (Exception e) {
-			return Result.failureResult("用户信息认证失败");
-		}
-	}
-
+	        logger.info("用户信息，userId:" + userId);
+	
+	        Assert.hasText(trueName, "姓名不能为空");
+	        Assert.hasText(mobile, "手机号码不能为空");
+	        Assert.hasText(idnumber, "身份证不能为空");
+	        Assert.hasText(sex,"性别不能为空");
+	        Assert.hasText(banktype,"开卡行不能为空");
+	        Assert.hasText(banknumber,"卡号不能为空");
+	        //用户信息
+	        UserDo userDo = new UserDo();
+	        userDo.setId(userId);
+	        userDo.setTrueName(trueName);
+	        userDo.setIdnumber(idnumber);
+	        userDo.setSex(sex);
+	        userDo.setBanknumber(banknumber);
+	        userDo.setBanktype(banktype);
+	        
+	        System.out.println("用户信息----------》》》"+userDo);
+	       
+        	return userService.Authentication(userDo);
+        	
+        	
+        }catch(Exception e){
+        	return Result.failureResult("用户信息认证失败");
+        }
+    }
 	@RequestMapping(value = "toLevel", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView tosetLevel() {
 		ModelAndView mv = new ModelAndView("jjzd/set_user_level");

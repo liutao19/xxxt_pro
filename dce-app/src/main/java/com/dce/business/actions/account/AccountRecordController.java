@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
-import com.dce.business.entity.etherenum.EthAccountDetailDo;
-import com.dce.business.service.accountRecord.AccountRecordService;
+import com.dce.business.entity.account.UserAccountDetailDo;
+import com.dce.business.service.account.IAccountService;
 
 /**
  * 交易流水控制类
@@ -26,32 +26,21 @@ public class AccountRecordController extends BaseController {
 	private final static Logger logger = Logger.getLogger(AccountController.class);
 	
 	@Resource
-	private AccountRecordService accountRecord;
+	private IAccountService accountService;
 	
 	/**
 	 * 获取用户交易流水记录
 	 * @return
 	 */
-	@RequestMapping(value = "/selectAccountRecord", method=RequestMethod.POST)
+	@RequestMapping(value = "/selectAccountRecord", method=RequestMethod.GET)
 	public Result<?> selectAccountRecord(){
 		
 		Integer userId = getUserId();
 		logger.info("获取当前用户的id："+userId);
-		
-		List<EthAccountDetailDo> list = accountRecord.selectByUserId(userId);
+		List<UserAccountDetailDo> list = accountService.selectUserAccountDetailByUserId(userId);
 		
 		return Result.successResult("获取交易流水记录成功", list);
 	}
 	
-	/**
-	 * 公用的交易流水记录
-	 * @param ethAccountDetailDo
-	 * @return
-	 */
-	public int insertTransactionRecord(EthAccountDetailDo ethAccountDetailDo){
-		EthAccountDetailDo eth=new EthAccountDetailDo();
-		eth=ethAccountDetailDo;
-		logger.info("插入交易记录的实体："+eth);
-		return accountRecord.insert(eth);
-	}
+	
 }

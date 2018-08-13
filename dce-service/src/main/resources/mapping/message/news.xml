@@ -41,4 +41,119 @@
 		FROM
 		    t_ys_news
     </select>
+    
+    
+	<update id="updateYsNewsById" parameterType="com.dce.business.entity.message.NewsDo">
+		UPDATE t_ys_news 
+		<trim prefix="SET" suffixOverrides=","> 
+		<if test="title != null">  
+				title = #{title},
+		</if>				
+		<if test="image != null">  
+				image = #{image},
+		</if>				
+		<if test="content != null">  
+				content = #{content},
+		</if>				
+		<if test="author != null">  
+				author = #{author},
+		</if>				
+		<if test="topNews != null">  
+				top_news = #{topNews},
+		</if>				
+		<if test="remark != null">  
+				remark = #{remark},
+		</if>				
+		<if test="status != null">  
+				status = #{status},
+		</if>				
+		<if test="createDate != null">  
+				create_date = #{createDate},
+		</if>				
+		<if test="createName != null">  
+				create_name = #{createName},
+		</if>				
+		<if test="updateDate != null">  
+				update_date = #{updateDate},
+		</if>				
+		<if test="updateName != null">  
+				update_name = #{updateName},
+		</if>				
+		</trim>
+		WHERE id = #{id} 
+	</update>	
+	
+	<insert id="addYsNews" parameterType="com.dce.business.entity.message.NewsDo" keyProperty="id"
+		useGeneratedKeys="true" >
+		INSERT INTO t_ys_news(		title
+		,image
+		,content
+		,author
+		,top_news
+		,remark
+		,status
+		,create_date
+		,create_name
+		,update_date
+		,update_name
+)
+		     VALUES (		#{title}
+		,#{image}
+		,#{content}
+		,#{author}
+		,#{topNews}
+		,#{remark}
+		,#{status}
+		,#{createDate}
+		,#{createName}
+		,#{updateDate}
+		,#{updateName}
+)
+	</insert>
+	
+	
+	<select id="queryListPage" parameterType="Map" resultType="com.dce.business.entity.message.NewsDo">
+		SELECT * 
+		  FROM t_ys_news
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND id = #{id}
+			</if>
+			<if test="title != null">  
+				AND title = #{title}
+			</if>
+			<if test="image != null">  
+				AND image = #{image}
+			</if>
+			<if test="content != null">  
+				AND content = #{content}
+			</if>
+			<if test="author != null">  
+				AND author = #{author}
+			</if>
+			<if test="topNews != null">  
+				AND top_news = #{topNews}
+			</if>
+			<if test="remark != null">  
+				AND remark = #{remark}
+			</if>
+			<if test="status != null">  
+				AND status = #{status}
+			</if>
+			<if test="createDate != null">  
+				AND create_date = #{createDate}
+			</if>
+			<if test="createName != null">  
+				AND create_name = #{createName}
+			</if>
+			<if test="updateDate != null">  
+				AND update_date = #{updateDate}
+			</if>
+			<if test="updateName != null">  
+				AND update_name = #{updateName}
+			</if>
+         </trim> 
+
+	</select>
+	
 </mapper>

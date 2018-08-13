@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.dce.business.dao.award.AwardConfigDao;
@@ -119,19 +120,53 @@ public class AwardConfigServiceImpl implements AwardConfigService{
 		return awardConfigDao.selectAward();
 	}
 
+	/**
+	 * 用户升级方法
+	 */
 	@Override
-	public boolean userUpgrade(Integer userid, int count) {
+	public int userUpgrade(Integer userid, int count) {
 		// 获取购买者的信息
 		UserDo	user=userService.getUser(userid);
-		
-		switch(count){
+		//获取用户等级
+		int userLevel=user.getUserLevel();
+		switch(userLevel){
+		case 0:
+			if(count>=1&&5>count){
+				//普通用户升级为会员
+			}else if(count>=5&&50>count){
+				//普通用户升级为vip
+				
+			}else if(count>=50){
+				//普通用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+			}
+			break;
+		case 1:
+			if(count>=5&&50>count){
+				//会员用户升级为vip
+				
+			}else if(count>=50){
+				//会员用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+			}
+		case 2:
+			if(count>=50){
+				//vip用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+			}
 		
 		}
 		
 		
 		
 		
-		return false;
+		return 0;
+	}
+
+	/**
+	 * 用户升级为股东方法
+	 */
+	@Override
+	public int upgradePartner(Integer userid) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

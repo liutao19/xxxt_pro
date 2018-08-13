@@ -1,37 +1,25 @@
 package com.dce.business.actions.order;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.enums.IncomeType;
-import com.dce.business.common.enums.PayStatus;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
-import com.dce.business.common.util.CellFormatter;
 import com.dce.business.common.util.DateUtil;
-import com.dce.business.common.util.ExeclTools;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.entity.account.UserAccountDetailDo;
@@ -220,236 +208,5 @@ public class OrderController extends BaseController {
 		return (List<OrderDetail>) JSONArray.parse(goods);
 	}
 
-	/**
-	 * 后台查询：交易流水 所有订单列表
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/selectOrderForReport", method = { RequestMethod.POST, RequestMethod.GET })
-	public ModelAndView selectOrderForReport() {
-
-		ModelAndView mav = new ModelAndView("listOrder");
-
-		String type = getString("type"); // 类型：0-全部；1-待交易；2-交易中；3--已完成
-		String orderType = getString("orderType"); // 类型
-		String userName = getString("userName");
-		String startDate = getString("startDate");
-		String endDate = getString("endDate");
-		String page = getString("p");
-
-		Map<String, Object> params = new HashMap<>();
-
-		if (StringUtils.isBlank(page)) {
-			page = "1";
-		}
-
-		int rows = 10;
-		int offset = (Integer.parseInt(page) - 1) * rows;
-		params.put("offset", offset);
-		params.put("rows", rows);
-
-		if ("1".equals(type)) {
-			params.put("payStatus", PayStatus.paying.getCode());
-		} else if ("3".equals(type)) {
-			params.put("payStatus", PayStatus.payed.getCode());
-		}
-		params.put("orderType", orderType);
-
-		if (StringUtils.isNotBlank(userName)) {
-			params.put("userName", userName);
-		}
-		if (StringUtils.isNotBlank(startDate)) {
-			params.put("startDate", startDate);
-		}
-		if (StringUtils.isNotBlank(endDate)) {
-			params.put("endDate", endDate);
-		}
-
-		List<Map<String, Object>> orderList = orderService.selectOrderForReport(params);
-
-		int total = orderService.selectOrderForReportCount(params);
-
-		Integer totalPage = total / rows;
-		if (total % rows != 0) {
-			totalPage++;
-		}
-
-		Integer currentPage = 1;
-		if (StringUtils.isNotBlank(page)) {
-			currentPage = Integer.valueOf(page);
-		}
-
-		Integer startPage = getStartPage(currentPage);
-
-		mav.addObject("orderList", orderList);
-		mav.addObject("currentPage", currentPage);
-		mav.addObject("startPage", startPage);
-		mav.addObject("endPage", getEndPage(startPage, totalPage));
-		mav.addObject("totalPage", totalPage);
-		mav.addObject("userName", userName);
-		mav.addObject("startDate", startDate);
-		mav.addObject("endDate", endDate);
-
-		return mav;
-
-	}
-
-	private List<Map<String, Object>> doQuery() {
-		String type = getString("type"); // 类型：0-全部；1-待交易；2-交易中；3--已完成
-		String orderType = getString("orderType"); // 类型
-		String userName = getString("userName");
-		String startDate = getString("startDate");
-		String endDate = getString("endDate");
-
-		Map<String, Object> params = new HashMap<>();
-		if ("1".equals(type)) {
-			params.put("payStatus", PayStatus.paying.getCode());
-		} else if ("3".equals(type)) {
-			params.put("payStatus", PayStatus.payed.getCode());
-		}
-		params.put("orderType", orderType);
-
-		if (StringUtils.isNotBlank(userName)) {
-			params.put("userName", userName);
-		}
-		if (StringUtils.isNotBlank(startDate)) {
-			params.put("startDate", startDate);
-		}
-		if (StringUtils.isNotBlank(endDate)) {
-			params.put("endDate", endDate);
-		}
-
-		List<Map<String, Object>> orderList = orderService.selectOrderForReport(params);
-		return orderList;
-	}
-
-	private Integer getStartPage(Integer currentPage) {
-		Integer startPage = 1;
-		if (currentPage > 5) {
-			startPage = currentPage - 5;
-		}
-
-		return startPage;
-	}
-
-	private Integer getEndPage(Integer startPage, Integer totalPage) {
-		Integer endPage = startPage + 10;
-		if (endPage > totalPage) {
-			endPage = totalPage;
-		}
-
-		return endPage;
-	}
-
-	/**
-	 * 导出用户数据
-	 */
-	@RequestMapping("/export")
-	public void export(HttpServletResponse response) throws IOException {
-
-		try {
-			Long time = System.currentTimeMillis();
-
-			List<Map<String, Object>> orderList = doQuery();
-
-			String excelHead = "数据导出";
-			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
-			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "单号", "客户名", "客户级别", "总量", "单价", "总价", "交易类型", "成交时间", "状态" };
-			excelheaderList.add(0, excelheader);
-
-			String[] excelData = { "orderCode", "user_name", "user_level", "qty", "price", "totalPrice", "orderType",
-					"payTime", "payStatus" };
-			Map<String, CellFormatter> cellFormatterMap = new HashMap<String, CellFormatter>();
-			cellFormatterMap.put("orderType", new CellFormatter() {
-				public String formatterValue(Object input) {
-					if (null == input) {
-						return "";
-					}
-					if (StringUtils.isBlank(String.valueOf(input))) {
-						return "";
-					}
-					String ret = "";
-					switch (String.valueOf(input)) {
-					case "1":
-						ret = "买单";
-						break;
-					case "2":
-						ret = "卖单";
-						break;
-					case "3":
-						ret = "商城消费";
-						break;
-					default:
-						break;
-					}
-					return ret;
-				}
-			});
-			cellFormatterMap.put("payTime", new CellFormatter() {
-				public String formatterValue(Object input) {
-					if (null == input) {
-						return "";
-					}
-
-					if (input instanceof String) {
-						return (String) input;
-					}
-					if (input instanceof Date) {
-						return DateUtil.YYYY_MM_DD_HH.format(input);
-					}
-
-					Date d = null;
-
-					if (input instanceof Long) {
-						d = new Date((Long) (input));
-					}
-					if (input instanceof Integer) {
-						d = new Date((Integer) (input));
-					}
-					if (d == null) {
-						return "";
-					}
-					return DateUtil.YYYY_MM_DD_HH.format(d);
-				}
-			});
-			cellFormatterMap.put("payStatus", new CellFormatter() {
-				public String formatterValue(Object input) {
-					if (null == input) {
-						return "";
-					}
-					if (StringUtils.isBlank(String.valueOf(input))) {
-						return "";
-					}
-					String ret = "待交易";
-					switch (String.valueOf(input)) {
-					case "3":
-						ret = "交易完成";
-						break;
-					default:
-						break;
-					}
-					return ret;
-				}
-			});
-			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, orderList,
-					cellFormatterMap);
-			response.setContentType("application/vnd.ms-excel;charset=utf-8");
-			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-			wb.write(response.getOutputStream());
-			time = System.currentTimeMillis() - time;
-			logger.info("导出用户数据，导出耗时(ms)：" + time);
-		} catch (Exception e) {
-			response.setContentType("text/html;charset=utf-8");
-			response.getWriter().println("下载失败");
-			logger.error("导出用户数据，Excel下载失败", e);
-			logger.error("导出用户数据异常", e);
-			throw new BusinessException("系统繁忙，请稍后再试");
-		} finally {
-			response.flushBuffer();
-		}
-
-	}
-
+	
 }

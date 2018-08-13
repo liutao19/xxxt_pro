@@ -120,7 +120,7 @@ public class AccountController extends BaseController {
 		Integer userId = getUserId();
 		logger.info("账户基本信息, userId:" + userId);
 
-		UserAccountDo account = accountService.selectUserAccount(userId, AccountType.point.name());
+		UserAccountDo account = accountService.selectUserAccount(userId, AccountType.wallet_money.name());
 		Map<String, Object> map = new HashMap<>();
 		if (account != null && account.getAmount() != null) {
 
@@ -130,7 +130,7 @@ public class AccountController extends BaseController {
 			map.put("pointAmount", "0.0"); //美元点余额
 		}
 
-		UserAccountDo current = accountService.selectUserAccount(userId, AccountType.current.name());
+		UserAccountDo current = accountService.selectUserAccount(userId, AccountType.wallet_travel.name());
 
 		if (current != null && current.getAmount() != null) {
 

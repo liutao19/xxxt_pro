@@ -124,7 +124,7 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		//1、校验用户金额是否足够
-		UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_cash);
+		UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
@@ -364,16 +364,16 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		//现金券钱包不做限制
-		if (!AccountType.wallet_cash.getAccountType().equals(accountType)) {
+		if (!AccountType.wallet_money.getAccountType().equals(accountType)) {
 			if (!transOutDailyService.tryTransOut(userId, accountType, qty)) {
 				return Result.failureResult("转出超出限制");
 			}
 		}
 
 		try {
-			AccountType toAccountType = AccountType.wallet_score; //转入钱包，默认是积分钱包
-			if (AccountType.wallet_cash.getAccountType().equals(accountType)) {
-				toAccountType = AccountType.wallet_cash; //如果是现金券钱包，默认转到现金券钱包
+			AccountType toAccountType = AccountType.wallet_money; //转入钱包，默认是积分钱包
+			if (AccountType.wallet_money.getAccountType().equals(accountType)) {
+				toAccountType = AccountType.wallet_money; //如果是现金券钱包，默认转到现金券钱包
 			}
 			accountService.convertBetweenAccount(userId, receiverUser.getId(), qty, accountType, toAccountType.getAccountType(),
 					IncomeType.TYPE_POINT_OUT, IncomeType.TYPE_POINT_IN);
@@ -389,7 +389,7 @@ public class PayServiceImpl implements IPayService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> buyGoods(Integer userId, BigDecimal totalPrice) {
 		UserAccountDo updateAccount = new UserAccountDo();
-		updateAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+		updateAccount.setAccountType(AccountType.wallet_money.getAccountType());
 		updateAccount.setAmount(totalPrice.negate());
 		updateAccount.setUserId(userId);
 		accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_GOODS_BUY);

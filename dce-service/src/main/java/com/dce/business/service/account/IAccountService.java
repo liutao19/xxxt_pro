@@ -108,7 +108,7 @@ public interface IAccountService {
      * @param params
      * @return
      */
-    public PageDo<Map<String,Object>> selectAccountInfoByPage(PageDo<Map<String,Object>> page,Map<String,Object> params);
+    public PageDo<Map<String,Object>> selectAccountInfomByPage(PageDo<Map<String,Object>> page,Map<String,Object> params);
     
     List<UserAccountDo> sumAccount();
     

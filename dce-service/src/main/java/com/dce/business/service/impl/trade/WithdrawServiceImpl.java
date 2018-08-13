@@ -84,7 +84,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
         } else if ("3".equals(auditResult)) {
             // 返还美元点
             UserAccountDo updateAccount = new UserAccountDo();
-            updateAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+            updateAccount.setAccountType(AccountType.wallet_money.getAccountType());
             updateAccount.setAmount(withdrawDo.getAmount());
             updateAccount.setUserId(withdrawDo.getUserid());
             accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_BACK_WITHDRAW);

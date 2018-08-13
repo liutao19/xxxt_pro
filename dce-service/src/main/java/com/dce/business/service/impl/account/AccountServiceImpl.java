@@ -345,7 +345,7 @@ public class AccountServiceImpl implements IAccountService {
 //        BigDecimal targetAmt = dceAmt.multiply(decp);
 //        targetAmt = targetAmt.divide(new BigDecimal(1), 6, RoundingMode.HALF_UP);
 		
-		convertBetweenAccount(userId, targetUserId, amt,amt, AccountType.wallet_cash.name(), AccountType.wallet_cash.name(), IncomeType.TYPE_PAY_QRCODE, IncomeType.TYPE_PAY_QRCODE );
+		convertBetweenAccount(userId, targetUserId, amt,amt, AccountType.wallet_money.name(), AccountType.wallet_money.name(), IncomeType.TYPE_PAY_QRCODE, IncomeType.TYPE_PAY_QRCODE );
 		
 		return result;
 	}
@@ -418,7 +418,7 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public PageDo<Map<String, Object>> selectAccountInfoByPage(
+	public PageDo<Map<String, Object>> selectAccountInfomByPage(
 			PageDo<Map<String, Object>> page, Map<String, Object> params) {
 		
 		if(params == null){
@@ -426,7 +426,7 @@ public class AccountServiceImpl implements IAccountService {
 		}
         params.put(Constants.MYBATIS_PAGE, page);
         
-        List<Map<String,Object>> list = userAccountDao.selectAccountInfoByPage(params);
+        List<Map<String,Object>> list = userAccountDao.selectAccountInfomByPage(params);
         page.setModelList(list);
 		return page;
 	}

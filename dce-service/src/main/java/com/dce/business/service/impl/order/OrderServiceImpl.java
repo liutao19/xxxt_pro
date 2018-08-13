@@ -169,7 +169,7 @@ public class OrderServiceImpl implements IOrderService {
 		BigDecimal needpoint = (BigDecimal) bfResult.getData();
 		/** 更新两个用户之间的美元点账户余额 **/
 		accountService.convertBetweenAccount(userId, matchOrder.getUserId(), needpoint,
-				AccountType.wallet_cash.getAccountType(), AccountType.wallet_cash.getAccountType(),
+				AccountType.wallet_money.getAccountType(), AccountType.wallet_money.getAccountType(),
 				IncomeType.TYPE_PURCHASE, IncomeType.TYPE_SELL);
 
 		// 需要扣减卖家手续费，美元点
@@ -182,7 +182,7 @@ public class OrderServiceImpl implements IOrderService {
 
 			UserAccountDo feeAccount = new UserAccountDo();
 			feeAccount.setUserId(matchOrder.getUserId());
-			feeAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+			feeAccount.setAccountType(AccountType.wallet_money.getAccountType());
 			feeAccount.setAmount(fee.negate());
 			accountService.updateUserAmountById(feeAccount, IncomeType.TYPE_TRADE_FEE);
 		}
@@ -253,7 +253,7 @@ public class OrderServiceImpl implements IOrderService {
 		BigDecimal needpoint = (BigDecimal) bfResult.getData();
 		/** 更新两个用户之间的美元点账户余额 **/
 		accountService.convertBetweenAccount(matchOrder.getUserId(), userId, qty.negate(), needpoint,
-				matchOrder.getAccountType(), AccountType.wallet_cash.getAccountType(), IncomeType.TYPE_SELL,
+				matchOrder.getAccountType(), AccountType.wallet_money.getAccountType(), IncomeType.TYPE_SELL,
 				IncomeType.TYPE_PURCHASE);
 		/** 更新当前卖出DEC用户的现持仓额度 -= qty **/
 		UserAccountDo _currentAcc = new UserAccountDo();
@@ -349,7 +349,7 @@ public class OrderServiceImpl implements IOrderService {
 	private Result<?> guadanBuy(OrderDo orderDo) {
 		// 判断当前用户现持仓是否有足够的DEC
 		UserAccountDo currentAcc = accountService.selectUserAccount(orderDo.getUserId(),
-				AccountType.wallet_cash.getAccountType());
+				AccountType.wallet_money.getAccountType());
 
 		BigDecimal needpoint = orderDo.getQty().multiply(orderDo.getPrice()).setScale(6, RoundingMode.HALF_UP);
 		if (currentAcc == null || currentAcc.getAmount() == null || currentAcc.getAmount().compareTo(needpoint) < 0) {
@@ -359,7 +359,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 从美元点减 qty的额度用于挂单
 		UserAccountDo _acct = new UserAccountDo();
-		_acct.setAccountType(AccountType.wallet_cash.getAccountType());
+		_acct.setAccountType(AccountType.wallet_money.getAccountType());
 		_acct.setAmount(needpoint.negate());
 		_acct.setUserId(orderDo.getUserId());
 		accountService.updateUserAmountById(_acct, IncomeType.TYPE_GD_BUY);
@@ -437,7 +437,7 @@ public class OrderServiceImpl implements IOrderService {
 		} else if (order.getOrderType().intValue() == OrderType.GD_BUY.getOrderType()) {
 			logger.info("退回挂单中买单美元到用户美元点.....");
 			UserAccountDo currentAcc = new UserAccountDo();
-			currentAcc.setAccountType(AccountType.wallet_cash.getAccountType());
+			currentAcc.setAccountType(AccountType.wallet_money.getAccountType());
 			currentAcc.setAmount(order.getTotalPrice());
 			currentAcc.setUserId(order.getUserId());
 			accountService.updateUserAmountById(currentAcc, IncomeType.TYPE_CANCEL_BUY);
@@ -509,8 +509,10 @@ public class OrderServiceImpl implements IOrderService {
 	 * 生成一个订单
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public int insertOrder(Order order) {
-
+		//订单明细表插入数据
+		
 		return orderDao.insertSelective(order);
 	}
 

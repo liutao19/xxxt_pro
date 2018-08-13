@@ -50,7 +50,7 @@ public interface IUserAccountDao {
 	 * @param prarams
 	 * @return
 	 */
-	List<Map<String,Object>> selectAccountInfoByPage(Map<String,Object> prarams);
+	List<Map<String,Object>> selectAccountInfomByPage(Map<String,Object> prarams);
 
 	List<UserAccountDo> sumAccount(Map<String,Object> emptyMap);
 }

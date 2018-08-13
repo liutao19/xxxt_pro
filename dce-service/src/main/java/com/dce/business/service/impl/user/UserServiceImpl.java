@@ -11,11 +11,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import com.dce.business.common.enums.AccountType;
@@ -60,8 +62,6 @@ public class UserServiceImpl implements IUserService {
     private ITouchBonusRecordDao touchBonusRecordDao;
     @Resource
 	private IPerformanceDailyService performanceDailyService;
-//    @Resource
-//    private IBaodanService baodanService;
     
     @Override
     public UserDo getUser(String userName) {
@@ -87,37 +87,27 @@ public class UserServiceImpl implements IUserService {
     	// 判断注册用户名是否为空
     	userDo.setUserName(userDo.getUserName().trim());    	
     	userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid
-    	//userDo.setRefereeUserName(userDo.getRefereeUserName().trim());
      
-       /* UserDo ref = getUser(userDo.getRefereeUserName());
-        if(ref == null){
-            return Result.failureResult("推荐人不存在");
-        }*/
+    	UserDo ref = null;
+    	if(StringUtils.isNotBlank(userDo.getRefereeMobile())){
+	        Map<String, Object> params = new HashMap<String,Object>();
+	        params.put("mobile", userDo.getRefereeMobile());
+			List<UserDo> refUserLst = this.selectUser(params );
+	        if(refUserLst == null || refUserLst.size()<1){
+	            return Result.failureResult("推荐人不存在");
+	        }
+	        ref = refUserLst.get(0);
+    	}
      
         UserDo oldUser = getUser(userDo.getUserName());
         if (oldUser != null) {
             return Result.failureResult("用户已存在");
         }
         
-        
-        /*UserDo par = getUser(userDo.getParentUserName());
-        if(par == null){
-            return Result.failureResult("接点人不存在!");
+        if(ref != null){
+	        userDo.setRefereeid(ref.getId());
+	        userDo.setParentid(ref.getId());
         }
-        
-        //判断所在位置是否已经有用户
-        Map<String, Object> params = new HashMap<>();
-        params.put("parentid", par.getId());
-        params.put("distance", 1);
-        params.put("lrDistrict", userDo.getPos());
-        List<UserParentDo> list = userParentDao.select(params);
-        if (!CollectionUtils.isEmpty(list)) {
-            return Result.failureResult("接点人左（右）区已有用户，请重新选择!");
-        }*/
-        
-        String twoPassword = userDo.getTwoPassword(); //加密前交易密码，用来以太坊开户
-      /*  userDo.setRefereeid(ref.getId());
-        userDo.setParentid(par.getId());*/
         userDo.setRegTime(new Date().getTime());
         userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); //密码加密处理
         userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
@@ -125,26 +115,24 @@ public class UserServiceImpl implements IUserService {
         //用户注册
         int result = userDao.insertSelective(userDo);
 
-       /* //维护父节点关系
-        maintainUserParent(userDo.getId(), par.getId(), userDo.getPos());
+        //维护父节点关系
+        maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
 
         //维护推荐人关系
         maintainUserReferee(userDo.getId(), ref.getId());
-*/        
-       /* //维护賬戶
+       
+        //维护賬戶
         maintainUserAccount(userDo.getId());
-        
-        //以太坊开户
-        ethereumService.creatAccount(userDo.getId(), twoPassword);*/
         
         return result > 0?Result.successResult("注册成功!"):Result.failureResult("注册失败");
     }
     
 	//维护賬戶
 	private void maintainUserAccount(Integer userId) {
-		String[] accountTypes = new String[] { AccountType.wallet_original.name(), AccountType.wallet_original_release.name(),
-				AccountType.wallet_bonus.name(), AccountType.wallet_interest.name(),
-				AccountType.wallet_release_release.name(), AccountType.wallet_cash.name(), AccountType.wallet_score.name() };
+		String[] accountTypes = new String[] { AccountType.wallet_money.name(), 
+											   AccountType.wallet_active.name(),
+											   AccountType.wallet_goods.name(), 
+											   AccountType.wallet_travel.name() };
 
 		for (String accountType : accountTypes) {
 			UserAccountDo record = new UserAccountDo();
@@ -661,6 +649,12 @@ public class UserServiceImpl implements IUserService {
 		// TODO Auto-generated method stub
 		
 		return userParentDao.select(params);
+	}
+	
+	public static void main(String[] args) {
+		DataEncrypt data=new DataEncrypt();
+		System.out.println(data.encrypt("123456"));
+
 	}
 
 }

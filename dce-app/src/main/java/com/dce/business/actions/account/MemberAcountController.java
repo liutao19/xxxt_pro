@@ -3,6 +3,7 @@ package com.dce.business.actions.account;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,66 @@ public class MemberAcountController extends BaseController {
 	
 	@Resource
 	private IUserParentService userParentService;
+	
+
+	
+	
+	/**
+	 * 团队成员详情
+	 * @return
+	 */
+	@RequestMapping(value="/teamDetails",method=RequestMethod.POST)
+	public Result<Map<String, Object>> teamDetails(){
+		
+		int userId=getUserId();
+		String user_level=getString("user_level");
+		
+		Assert.hasText("userId","用户id不能为空");
+				
+		Map<String,Object> params = new HashMap<String,Object>();
+		
+		params.put("userId", userId);
+		params.put("level", user_level);		
+		
+		logger.info("用户id----->>"+userId);
+		
+		List<Map<String, Object>> list=userParentService.TeamDetails(params);
+		
+		Map<String, Object> map1=new HashMap<>();
+		
+		List<Object> listone =new ArrayList<>();
+		 System.out.println("团员--------》》"+list);
+		 
+		 for(int j=0;j<=4;j++){
+			 Map<String,Object> map =new HashMap<String,Object>();
+				List<Map<String, Object>> maplist =new ArrayList<>();
+				
+				map.put("user_level", j);
+					
+		for(int i=0;i<list.size();i++){
+			
+				if(list.get(i).get("user_level").equals(j)){
+					maplist.add(list.get(i));
+				}
+				System.out.println("级别-------》》》"+list);
+			}
+		map.put("user", maplist);
+		listone.add(map);
+		
+		
+		}
+		    map1.put("tuanduilist",listone);
+			map1.put("totalYJ",orderService.selectSum(params).get("Totalperformance"));
+		return Result.successResult("查询成功",map1);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping(value = "/recharge", method = RequestMethod.POST)
 	public Result<?> recharge() {

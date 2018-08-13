@@ -87,4 +87,8 @@ public interface IOrderService {
      * @return
      */
     Long selectGuadanAmount(Map<String, Object> paraMap);
+    
+    // 查询总业绩
+ 	Map<String, Object> selectSum(Map<String, Object> paraMap);
+    
 }

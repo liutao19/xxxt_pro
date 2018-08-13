@@ -20,5 +20,11 @@ public class UserParentServiceImpl implements IUserParentService {
 	public List<UserParentDo> select(Map<String, Object> param) {
 		return userParentDao.select(param);
 	}
+	
+	@Override
+	public List<Map<String, Object>> TeamDetails(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return userParentDao.TeamDetails(params);
+	}
 
 }

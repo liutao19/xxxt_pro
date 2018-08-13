@@ -46,4 +46,7 @@ public interface IOrderDao {
     
     //用户支付，更新订单状态
     int updateByPrimaryKey(Order order);
+    
+    // 查询总业绩
+ 	Map<String, Object> selectSum(Map<String, Object> paraMap);
 }

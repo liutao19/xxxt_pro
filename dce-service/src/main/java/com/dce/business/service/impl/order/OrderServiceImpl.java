@@ -533,5 +533,13 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateByPrimaryKey(order);
 	}
+	/**
+	 * 查询总业绩
+	 */
+	@Override
+	public Map<String, Object> selectSum(Map<String, Object> paraMap) {
+		// TODO Auto-generated method stub
+		return orderDao.selectSum(paraMap);
+	}
 
 }

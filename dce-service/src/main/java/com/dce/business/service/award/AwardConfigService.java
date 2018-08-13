@@ -55,4 +55,10 @@ public interface AwardConfigService {
     boolean updateByPrimaryKey(AwardConfig record);
 
 
+    /**
+     * 用户升级方法
+     * 
+     */
+    
+    boolean userUpgrade(Integer userid,int count);
 }

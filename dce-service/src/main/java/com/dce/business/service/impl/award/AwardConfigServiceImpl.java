@@ -10,13 +10,16 @@ import org.springframework.stereotype.Service;
 
 import com.dce.business.dao.award.AwardConfigDao;
 import com.dce.business.entity.award.AwardConfig;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.award.AwardConfigService;
+import com.dce.business.service.user.IUserService;
 
 @Service("awardConfigService")
 public class AwardConfigServiceImpl implements AwardConfigService{
 
 	
 	private final static Logger logger = LoggerFactory.getLogger(AwardConfigServiceImpl.class);
+	private IUserService  userService;
 
 	@Resource
     private AwardConfigDao awardConfigDao;
@@ -114,6 +117,21 @@ public class AwardConfigServiceImpl implements AwardConfigService{
 		// TODO Auto-generated method stub
 		
 		return awardConfigDao.selectAward();
+	}
+
+	@Override
+	public boolean userUpgrade(Integer userid, int count) {
+		// 获取购买者的信息
+		UserDo	user=userService.getUser(userid);
+		
+		switch(count){
+		
+		}
+		
+		
+		
+		
+		return false;
 	}
 
 }

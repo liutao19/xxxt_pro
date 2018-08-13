@@ -28,13 +28,9 @@ public class FeedBackController extends BaseController {
 		
 		FeedBackDo feedback = new FeedBackDo();
 		
-		//获取用户id
-    	Integer userId = getUserId();
-    	
     	//获取前台传过来的反馈信息
     	String feedBackContent = getString("feedBackContent") == null ? "" : getString("feedBackContent");
     	
-    	feedback.setUserid(userId);
     	feedback.setFeedbackcontent(feedBackContent);
     	
     	Result<?> result = feedBackService.feedBack(feedback);

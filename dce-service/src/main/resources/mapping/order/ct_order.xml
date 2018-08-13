@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.order.IOrderDao">
 	<resultMap id="BaseResultMap" type="com.dce.business.entity.order.Order">
-		<id column="orderId" jdbcType="BIGINT" property="orderid" />
+		<id column="orderId" jdbcType="INTEGER" property="orderid" />
 		<result column="orderCode" jdbcType="VARCHAR" property="ordercode" />
 		<result column="userId" jdbcType="INTEGER" property="userid" />
-		<result column="qty" jdbcType="DECIMAL" property="qty" />
+		<result column="qty" jdbcType="INTEGER" property="qty" />
 		<result column="totalPrice" jdbcType="DECIMAL" property="totalprice" />
 		<result column="recAddress" jdbcType="VARCHAR" property="recaddress" />
 		<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
@@ -19,24 +19,33 @@
 		<result column="goodsId" jdbcType="BIGINT" property="goodsid" />
 		<result column="price" jdbcType="DECIMAL" property="price" />
 		<result column="addressId" jdbcType="INTEGER" property="addressid" />
-		<result column="remark" jdbcType="VARCHAR" property="remark" />
+		<result column="alipayStatus" jdbcType="INTEGER" property="alipayStatus" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
 		orderId, orderCode, userId, qty, totalPrice, recAddress,
 		date_format(createTime,'%Y-%m-%d %H:%i:%s'), orderStatus,
-		payStatus, date_format(payTime,'%Y-%m-%d %H:%i:%s'), orderType, matchOrderId,
+		payStatus,
+		date_format(payTime,'%Y-%m-%d %H:%i:%s'), orderType, matchOrderId,
 		salqty, accountType, goodsId,
 		price,
-		addressId, remark
+		addressId, alipayStatus
 	</sql>
 
-	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_order
 		where orderId = #{orderId,jdbcType=BIGINT}
+	</select>
+
+	<select id="selectByOrderCode" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from ct_order
+		where orderCode = #{orderCode,jdbcType=VARCHAR}
 	</select>
 
 	<!-- 获取当前用户所有的订单 -->
@@ -50,6 +59,45 @@
 		createTime desc
 	</select>
 
+	<!-- 获取当前用户所有的订单，一对多查询 -->
+	<select id="selectByUesrIdOneToMany" parameterType="java.lang.Integer"
+		resultMap="orderMapper">
+		select
+		a.orderId, a.orderCode, a.userId, a.qty, a.totalPrice,
+		date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime, a.orderStatus,
+		a.payStatus,
+		date_format(a.payTime,'%Y-%m-%d %H:%i:%s') paytime, a.orderType,
+		addressId, alipayStatus, b.orderDetailId, b.orderId, b.goods_id, b.qty, b.price, b.remark
+		from ct_order a, ct_orderdetail b
+		where
+		a.userId = #{userId,jdbcType=INTEGER} and a.orderId=b.orderId
+		order by
+		a.createTime desc
+	</select>
+	<resultMap type="Order" id="orderMapper">
+		<id column="orderId" jdbcType="INTEGER" property="orderid" />
+		<result column="orderCode" jdbcType="VARCHAR" property="ordercode" />
+		<result column="userId" jdbcType="INTEGER" property="userid" />
+		<result column="qty" jdbcType="INTEGER" property="qty" />
+		<result column="totalPrice" jdbcType="DECIMAL" property="totalprice" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+		<result column="orderStatus" jdbcType="INTEGER" property="orderstatus" />
+		<result column="payStatus" jdbcType="INTEGER" property="paystatus" />
+		<result column="payTime" jdbcType="TIMESTAMP" property="paytime" />
+		<result column="orderType" jdbcType="INTEGER" property="ordertype" />
+		<result column="addressId" jdbcType="INTEGER" property="addressid" />
+		<result column="alipayStatus" jdbcType="INTEGER" property="alipayStatus" />
+		<collection property="orderDetailList"
+			ofType="com.dce.business.entity.order.OrderDetail">
+			<id column="orderdetailid" jdbcType="INTEGER" property="orderdetailid"></id>
+			<result column="orderid" jdbcType="INTEGER" property="orderid" />
+			<result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+			<result column="qty" jdbcType="INTEGER" property="qty" />
+			<result column="price" jdbcType="DOUBLE" property="price" />
+			<result column="remark" jdbcType="VARCHAR" property="remark" />
+		</collection>
+	</resultMap>
+
 	<insert id="insert" parameterType="com.dce.business.entity.order.Order">
 		insert into ct_order (orderId,
 		orderCode, userId,
@@ -59,7 +107,8 @@
 		orderType, matchOrderId,
 		salqty, accountType,
 		goodsId,
-		price, addressId, remark
+		price,
+		addressId, alipayStatus
 		)
 		values (#{orderid,jdbcType=BIGINT},
 		#{ordercode,jdbcType=VARCHAR},
@@ -74,8 +123,9 @@
 		#{salqty,jdbcType=DECIMAL},
 		#{accounttype,jdbcType=VARCHAR},
 		#{goodsid,jdbcType=BIGINT},
-		#{price,jdbcType=DECIMAL}, #{addressid,jdbcType=INTEGER},
-		#{remark,jdbcType=VARCHAR}
+		#{price,jdbcType=DECIMAL},
+		#{addressid,jdbcType=INTEGER},
+		#{alipayStatus,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -113,8 +163,8 @@
 			<if test="addressid != null">
 				addressId,
 			</if>
-			<if test="remark != null">
-				remark,
+			<if test="alipayStatus != null">
+				alipayStatus,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -148,12 +198,12 @@
 			<if test="addressid != null">
 				#{addressid,jdbcType=INTEGER},
 			</if>
-			<if test="remark != null">
-				#{remark,jdbcType=VARCHAR},
+			<if test="alipayStatus != null">
+				#{alipayStatus,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
-	
+
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		<set>
@@ -205,11 +255,69 @@
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
 			</if>
-			<if test="remark != null">
-				remark = #{remark,jdbcType=VARCHAR},
+			<if test="alipayStatus != null">
+				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
 			</if>
 		</set>
 		where orderId = #{orderid,jdbcType=BIGINT}
+	</update>
+
+	<update id="updateByOrderCodeSelective" parameterType="com.dce.business.entity.order.Order">
+		update ct_order
+		<set>
+			<if test="ordercode != null">
+				orderCode = #{ordercode,jdbcType=VARCHAR},
+			</if>
+			<if test="userid != null">
+				userId = #{userid,jdbcType=INTEGER},
+			</if>
+			<if test="qty != null">
+				qty = #{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="totalprice != null">
+				totalPrice = #{totalprice,jdbcType=DECIMAL},
+			</if>
+			<if test="recaddress != null">
+				recAddress = #{recaddress,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				createTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderstatus != null">
+				orderStatus = #{orderstatus,jdbcType=INTEGER},
+			</if>
+			<if test="paystatus != null">
+				payStatus = #{paystatus,jdbcType=INTEGER},
+			</if>
+			<if test="paytime != null">
+				payTime = #{paytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="ordertype != null">
+				orderType = #{ordertype,jdbcType=INTEGER},
+			</if>
+			<if test="matchorderid != null">
+				matchOrderId = #{matchorderid,jdbcType=BIGINT},
+			</if>
+			<if test="salqty != null">
+				salqty = #{salqty,jdbcType=DECIMAL},
+			</if>
+			<if test="accounttype != null">
+				accountType = #{accounttype,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsid != null">
+				goodsId = #{goodsid,jdbcType=BIGINT},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="addressid != null">
+				addressId = #{addressid,jdbcType=INTEGER},
+			</if>
+			<if test="alipayStatus != null">
+				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where orderCode = #{orderCode,jdbcType=INTEGER}
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.Order">
@@ -238,9 +346,10 @@
 		#{goodsid,jdbcType=BIGINT},
 		price = #{price,jdbcType=DECIMAL},
 		addressId = #{addressid,jdbcType=INTEGER},
-		remark =
-		#{remark,jdbcType=VARCHAR}
-		where orderId = #{orderid,jdbcType=BIGINT}
+		alipayStatus =
+		#{alipayStatus,jdbcType=VARCHAR}
+		where orderId =
+		#{orderid,jdbcType=BIGINT}
 	</update>
 
 	<!-- 自定义查询 -->

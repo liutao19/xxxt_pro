@@ -69,9 +69,9 @@ public class MemberAcountController extends BaseController {
 		orderDo.setOrderStatus(1); // 有效
 		orderDo.setPayStatus(0); // 未成交
 		orderDo.setCreateTime(new Date());
-		Long orderId = orderService.addOrder(orderDo);
+		//Long orderId = orderService.addOrder(orderDo);
 
-		return Result.successResult("充值成功", orderId);
+		return Result.successResult("充值成功", 2);
 	}
 
 	/**

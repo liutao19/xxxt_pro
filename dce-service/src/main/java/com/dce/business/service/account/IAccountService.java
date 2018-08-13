@@ -14,79 +14,102 @@ import com.dce.business.entity.user.UserDo;
 
 public interface IAccountService {
 
-    /** 
-     * 新建账户
-     * @param userAccountDo
-     * @return  
-     */
-    boolean createAccount(UserAccountDo userAccountDo);
+	/**
+	 * 根据用户id查询当前用户的流水
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId);
 
-    /**
-     * 查询用户账户信息 
-     * @param userId
-     * @param accountType
-     * @return  
-     */
-    UserAccountDo getUserAccount(Integer userId, AccountType accountType);
+	/**
+	 * 新建账户
+	 * 
+	 * @param userAccountDo
+	 * @return
+	 */
+	boolean createAccount(UserAccountDo userAccountDo);
 
-    UserAccountDo selectUserAccount(Integer userId, String accountType);
-    
-    /**
-     * 查询用户账户
-     * @param
-     * @return
-     */
-    List<UserAccountDo> selectUserAccount(Map<String, Object> params);
+	/**
+	 * 查询用户账户信息
+	 * 
+	 * @param userId
+	 * @param accountType
+	 * @return
+	 */
+	UserAccountDo getUserAccount(Integer userId, AccountType accountType);
 
-    int updateUserAmountById(UserAccountDo userAccountDo, IncomeType type);
+	UserAccountDo selectUserAccount(Integer userId, String accountType);
 
-    void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal amount, String fromAccount, String toAccount,
-            IncomeType sourceMsg, IncomeType targetMsg);
+	/**
+	 * 查询用户账户
+	 * 
+	 * @param
+	 * @return
+	 */
+	List<UserAccountDo> selectUserAccount(Map<String, Object> params);
 
-    /**
-     * 两个账户之间金额转换
-     * @param sourceUserId 转出用户id
-     * @param targetUserId 转入用户id
-     * @param sourceAmount 转出金额
-     * @param targetAmount 转入金额
-     * @param fromAccount 转出账户类型
-     * @param toAccount 转入账户类型
-     * @param sourceMsg 转出备注
-     * @param targetMsg 注入备注
-     */
-    void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal sourceAmount, BigDecimal targetAmount, String fromAccount, String toAccount,
-            IncomeType sourceMsg, IncomeType targetMsg);
+	int updateUserAmountById(UserAccountDo userAccountDo, IncomeType type);
 
-    List<UserAccountDetailDo> selectUserAccountDetail(Map<String, Object> params);
+	void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal amount, String fromAccount,
+			String toAccount, IncomeType sourceMsg, IncomeType targetMsg);
 
-    /**
-     * 初始化账户
-     * @param userId
-     * @param type
-     * @return
-     */
-    Result<?> currentInit(Integer userId,AccountType type);
+	/**
+	 * 两个账户之间金额转换
+	 * 
+	 * @param sourceUserId
+	 *            转出用户id
+	 * @param targetUserId
+	 *            转入用户id
+	 * @param sourceAmount
+	 *            转出金额
+	 * @param targetAmount
+	 *            转入金额
+	 * @param fromAccount
+	 *            转出账户类型
+	 * @param toAccount
+	 *            转入账户类型
+	 * @param sourceMsg
+	 *            转出备注
+	 * @param targetMsg
+	 *            注入备注
+	 */
+	void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal sourceAmount,
+			BigDecimal targetAmount, String fromAccount, String toAccount, IncomeType sourceMsg, IncomeType targetMsg);
 
-    /**
-     * 我的收款码
-     * @param userId
-     * @return
-     */
+	List<UserAccountDetailDo> selectUserAccountDetail(Map<String, Object> params);
+
+	/**
+	 * 初始化账户
+	 * 
+	 * @param userId
+	 * @param type
+	 * @return
+	 */
+	Result<?> currentInit(Integer userId, AccountType type);
+
+	/**
+	 * 我的收款码
+	 * 
+	 * @param userId
+	 * @return
+	 */
 	String getMyQRCode(Integer userId);
 
 	/**
 	 * 扫描支付
+	 * 
 	 * @param userId
 	 * @param qrCode
 	 * @param amount
 	 * @param pwd
 	 * @return
 	 */
-	Result<?> payByQRCode(Integer userId, String qrCode, String amount,
-			String pwd);
+	Result<?> payByQRCode(Integer userId, String qrCode, String amount, String pwd);
 
 	/**
 	 * 根据收款码获取收款人信息
+	 * 
 	 * @param qrcode
 	 * @return
 	 */
@@ -94,6 +117,7 @@ public interface IAccountService {
 
 	/**
 	 * 发送
+	 * 
 	 * @param userId
 	 * @param qrCode
 	 * @param amount
@@ -101,22 +125,26 @@ public interface IAccountService {
 	 * @return
 	 */
 	Result<?> send(Integer userId, String receiveAddress, String amount, String pwd);
-	
+
 	/**
-     * 分页分组查询用户账户信息
-     * @param page
-     * @param params
-     * @return
-     */
-    public PageDo<Map<String,Object>> selectAccountInfoByPage(PageDo<Map<String,Object>> page,Map<String,Object> params);
-    
-    List<UserAccountDo> sumAccount();
-    
-    /**
-     * 分页查询用户账户详细信息
-     * @param parameterMap
-     * @return
-     */
-    public PageDo<UserAccountDetailDo> selectUserAccountDetailByPage(PageDo<UserAccountDetailDo> page, Map<String, Object> parameterMap);
+	 * 分页分组查询用户账户信息
+	 * 
+	 * @param page
+	 * @param params
+	 * @return
+	 */
+	public PageDo<Map<String, Object>> selectAccountInfoByPage(PageDo<Map<String, Object>> page,
+			Map<String, Object> params);
+
+	List<UserAccountDo> sumAccount();
+
+	/**
+	 * 分页查询用户账户详细信息
+	 * 
+	 * @param parameterMap
+	 * @return
+	 */
+	public PageDo<UserAccountDetailDo> selectUserAccountDetailByPage(PageDo<UserAccountDetailDo> page,
+			Map<String, Object> parameterMap);
 
 }

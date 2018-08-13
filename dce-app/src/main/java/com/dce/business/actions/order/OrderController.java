@@ -2,7 +2,6 @@ package com.dce.business.actions.order;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,29 +18,26 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
-import com.dce.business.common.enums.OrderStatus;
+import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.enums.PayStatus;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.CellFormatter;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.util.ExeclTools;
-import com.dce.business.common.util.NumberUtil;
 import com.dce.business.common.util.OrderCodeUtil;
-import com.dce.business.entity.bonus.BonusLogDo;
-import com.dce.business.entity.etherenum.EthAccountDetailDo;
+import com.dce.business.dao.account.IUserAccountDetailDao;
+import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
-import com.dce.business.entity.order.OrderDo;
-import com.dce.business.entity.user.UserAddressDo;
+import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.accountRecord.AccountRecordService;
@@ -57,150 +54,22 @@ public class OrderController extends BaseController {
 
 	@Resource
 	private IOrderService orderService;
-
 	@Resource
 	private AccountRecordService accountRecordService;
-
 	@Resource
 	private ICTGoodsService ctGoodsService;
-
 	@Resource
 	private UserAdressService addressService;
-
 	@Resource
 	private IAccountService accountService;
-
 	@Resource
 	private IBaodanService baodanService;
-
 	@Resource
 	private IBonusLogService bonusServiceLog;
-
 	@Resource(name = "awardServiceAsync")
 	private IAwardService awardService;
-
-	/**
-	 * 查询出当前用户所有的地址
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/showAdress", method = RequestMethod.POST)
-	public Result<?> getUserAdress() {
-		// 获取当前用户的id
-		Integer userId = getUserId();
-		// 获取当前用户的所有地址
-		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
-
-		return Result.successResult("获取用户地址成功", addressList);
-	}
-
-	/**
-	 * 确认订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
-	public Result<?> insertOrder(HttpServletRequest request) {
-		
-		String json = getString("");
-		
-		// 获取用户id
-		Integer userId = getUserId();
-
-		// 产生订单编号
-		String orderCode = OrderCodeUtil.genOrderCode(userId);
-		logger.info("产生的订单编号------》》》》》" + orderCode);
-
-		// 根据地址id查询出收货人信息，返回页面
-		UserAddressDo userAddress = new UserAddressDo();
-		//userAddress = addressService.selectByPrimaryKey(Integer.valueOf(addressId));
-
-		String receiver = userAddress.getUsername();
-		String telPhone = userAddress.getUserphone();
-		String address = userAddress.getAddress();
-
-		System.out.println("获取的收货人的信息-----》》》》receiver：" + receiver + "telPhone：" + telPhone + "address：" + address);
-
-		// 获取商品信息
-		String goods1 = request.getParameter("cart");
-		System.err.println("goods信息：" + goods1);
-
-		// 根据商品id查询出商品，获取单价
-		long l = Long.parseLong("269");
-		CTGoodsDo goods = ctGoodsService.selectById(l);
-		BigDecimal price = goods.getShopPrice();
-
-		// 计算总价，假设商品1的数量为10
-		String num = "10";
-		BigDecimal quantity = new BigDecimal(num);
-		BigDecimal totalPrice = price.multiply(quantity);
-
-		// 假设页面商品总数量为30
-		BigDecimal qty = new BigDecimal(30);
-
-		// 添加订单
-		Order order = new Order();
-		order.setUserid(userId);
-		order.setOrdercode(orderCode);
-		order.setQty(qty);
-		order.setTotalprice(totalPrice);
-		Date date = new Date();
-		order.setCreatetime(DateUtil.dateformat(date));// 获取当前系统时间
-		//order.setOrdertype(Integer.valueOf(orderPayType));
-		//order.setAddressid(Integer.valueOf(addressId));
-		order.setOrderstatus(0); // 未发货状态
-		order.setPaystatus(0); // 未支付状态
-		orderService.insertOrder(order);
-
-		// 封装返回APP页面的数据
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("qty", qty);
-		map.put("totalPrice", totalPrice);
-		map.put("receiver", receiver);
-		map.put("address", address);
-		map.put("telPhone", telPhone);
-
-		return Result.successResult("下单成功，返回商品清单", map);
-	}
-
-	/**
-	 * 用户支付
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/pay", method = RequestMethod.POST)
-	public Result<?> orderPay() {
-
-		// 获取前台传过来的订单信息
-		String addressId = getString("addressId") == null ? "" : getString("addressId");
-		String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
-
-		// 假设订单id
-		long orderId = new Long(1);
-		// 先查询出订单详情
-		Order order = orderService.selectByPrimaryKey(orderId);
-		System.err.println("和擦讯出来的订单------------》》》》》" + order);
-
-		// 假设支付方式为微信
-		order.setOrdertype(1); // 支付方式：1为微信、2为支付宝
-		order.setPaystatus(1); // 付款状态为已支付
-		Date date = new Date();
-		order.setPaytime(DateUtil.dateformat(date)); // 获取当前系统时间
-		// 更新订单状态
-		// orderService.updateOrder(order);
-
-		// 记录到交易流水表中
-		EthAccountDetailDo ethAccountDetailDo = new EthAccountDetailDo();
-		ethAccountDetailDo.setUserid(order.getUserid()); // 用户id
-		ethAccountDetailDo.setTranstype(2); // 交易类型1--转入；2--转出
-		ethAccountDetailDo.setAmount(order.getTotalprice().toString()); // 交易金额
-		ethAccountDetailDo.setCreatetime(new Date()); // 交易发生时间
-		ethAccountDetailDo.setRemark("购买商品"); // 备注
-
-		accountRecordService.insert(ethAccountDetailDo);
-
-		return Result.successResult("测试", ethAccountDetailDo);
-	}
+	@Resource
+    private IUserAccountDetailDao userAccountDetailDao;
 
 	/**
 	 * 用户订单列表显示
@@ -210,163 +79,145 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
 	public Result<?> getOrder() {
 		Integer userId = getUserId();
-		logger.info("获取用户id:" + userId);
-		List<Order> orderLitst = orderService.selectByUesrId(userId);
-		List<Map<String, Object>> list = new ArrayList<>();
-		for (Order order : orderLitst) {
-			System.err.println("获取的下时间------》》》》》" + order.getCreatetime());
-			Map<String, Object> map = new HashMap<>();
-			map.put("ordercode", order.getOrdercode());
-			map.put("totalPrice", order.getTotalprice());
-			map.put("orderType", order.getOrdertype());
-			map.put("qty", order.getQty());
-			map.put("createTime", order.getCreatetime());
-			map.put("payStatus", order.getPaystatus());
-			map.put("orderStatus", order.getOrderstatus());
-			list.add(map);
-		}
-		return Result.successResult("获取订单成功", list);
-	}
-
-	/**
-	 * 重新计算奖金
-	 * 
-	 * @return
-	 * 
-	 */
-	@RequestMapping(value = "/redoAwardForError", method = RequestMethod.POST)
-	public Result<?> redoAwardForError() {
-		String redoId = getString("redoId");
-		if (StringUtils.isBlank(redoId)) {
-			return Result.failureResult("无效参数");
-		}
-		BonusLogDo bonusLog = bonusServiceLog.selectBonusLogById(Integer.valueOf(redoId));
-		awardService.calAward(bonusLog.getUserId(), bonusLog.getAmount(), bonusLog.getUserLevel());
-		bonusServiceLog.updateRedoStatusById(Integer.valueOf(redoId));
-		return Result.successResult("提交成功");
-	}
-
-	/**
-	 * 挂单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/guadan", method = RequestMethod.POST)
-	public Result<?> guadan() {
-		Integer userId = getUserId();
-		String price = getString("price");
-		String qty = getString("qty");
-		String orderType = getString("orderType");// 1--买入；2--卖出
-		String accountType = getString("accountType"); // 账户类型
-		logger.info("用户挂单, userId:" + userId + "; price:" + price + "; qty:" + qty + "; orderType:" + orderType);
-		if (StringUtils.isBlank(price)) {
-			logger.error("买入价格不能为空");
-			Assert.hasText(price, "挂单价格不能为空");
-			return Result.failureResult("买入价格不能为空");
-		}
-
-		if (StringUtils.isBlank(qty)) {
-			logger.error("买入数量不能为空");
-			Assert.hasText(qty, "买入数量不能为空");
-			return Result.failureResult("买入数量不能为空");
-		} else {
-			BigDecimal sal_qty = new BigDecimal(qty);
-			if (sal_qty.compareTo(BigDecimal.ZERO) <= 0) {
-				return Result.failureResult("买入数量不能小于0个");
+		
+		List<Order> orderLitst = orderService.selectByUesrIdOneToMany(userId);
+		logger.info("获取当前用户的所有订单:" + orderLitst);
+		
+		//设置商品名称
+		for(Order order : orderLitst){
+			if(order.getOrderDetailLst() != null){
+				for(OrderDetail orderDetail : order.getOrderDetailLst()){
+					long id =Long.valueOf(orderDetail.getGoodsId());
+					logger.info("获取订单里面的商品id："+orderDetail.getGoodsId());
+					
+					CTGoodsDo goods = ctGoodsService.selectById(id);
+					logger.info("商品名称："+goods.getTitle());
+					
+					orderDetail.setGoodsName(goods.getTitle());
+				}
 			}
 		}
-
-		Assert.notNull(accountType, "钱包类型不能为空");
-
-		if (StringUtils.isBlank(orderType)) {
-			logger.error("挂单类型不能为空");
-			Assert.hasText(orderType, "挂单类型不能为空");
-			return Result.failureResult("挂单类型不能为空");
-		}
-
-		try {
-			OrderDo orderDo = new OrderDo();
-			orderDo.setOrderCode(OrderCodeUtil.genOrderCode(userId));
-			orderDo.setOrderType(Integer.valueOf(orderType));
-			orderDo.setUserId(userId);
-			orderDo.setPrice(new BigDecimal(price));
-			orderDo.setQty(new BigDecimal(qty));
-			orderDo.setTotalPrice(orderDo.getQty().multiply(orderDo.getPrice()).setScale(6, RoundingMode.HALF_UP));
-			orderDo.setOrderStatus(OrderStatus.effective.getCode()); // 有效
-			orderDo.setPayStatus(PayStatus.paying.getCode()); // 未成交
-			orderDo.setCreateTime(new Date());
-			orderDo.setAccountType(accountType);
-			return orderService.guadan(orderDo);
-		} catch (Exception e) {
-			logger.error("挂单报错:", e);
-			return Result.failureResult("挂单报错!");
-		}
+		
+		return Result.successResult("获取订单成功", orderLitst);
 	}
 
 	/**
-	 * 买入、卖出
+	 * 用户选择商品，添加订单和订单明细，计算奖励，并返回商品清单
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/matchOrder", method = RequestMethod.POST)
-	public Result<?> matchOrder() {
-		Integer userId = getUserId();
-		String orderId = getString("orderId"); // 订单id
-		String qty = getString("qty");
-		try {
-			Assert.notNull(orderId, "请选择要交易的订单");
-			Assert.hasText(qty, "请输入要买入的金额");
+	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
+	public Result<?> insertOrder(HttpServletRequest request) {
 
-			Result<?> result = orderService.matchOrder(userId, Long.parseLong(orderId), new BigDecimal(qty));
-			logger.info("买入卖出挂单结果:" + JSON.toJSONString(result));
+		// 获取商品信息
+		String goods = request.getParameter("cart");
+		logger.info("用户选择的goods信息：" + goods);
 
-			return result;
+		// 将前台传过来的JSON数据解析为list集合
+		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
 
-		} catch (Exception e) {
-			logger.error("买卖单报错!", e);
-			return Result.failureResult("买卖单报错");
-		}
+		// 保存订单和订单明显
+		Order order = saveOrder(chooseGoodsLst);
+		return Result.successResult("返回商品清单", order);
+
 	}
 
 	/**
-	 * 我的订单列表
+	 * 保存订单和订单明细
+	 * 
+	 * @param chooseGoodsLst
+	 */
+	private Order saveOrder(List<OrderDetail> chooseGoodsLst) {
+
+		// 获取用户id
+		Integer userId = this.getUserId();
+
+		// 产生订单编号
+		String orderCode = OrderCodeUtil.genOrderCode(userId);
+		logger.info("产生的订单编号------》》》》》" + orderCode);
+
+		Integer quantity = 0; // 商品总数量
+		BigDecimal totalprice = new BigDecimal(0); //商品总价格
+		for (OrderDetail orderDetail : chooseGoodsLst) { // 循环遍历出商品信息，计算商品总价格和商品总数量
+			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId())); 
+			orderDetail.setGoodsName(goods.getTitle()); //获取商品名称
+			quantity += orderDetail.getQty();
+			totalprice = totalprice.multiply(BigDecimal.valueOf(orderDetail.getPrice()));
+		}
+
+		// 添加订单
+		Order order = new Order();
+		order.setUserid(userId);
+		order.setOrdercode(orderCode); //订单号
+		Date date = new Date();
+		order.setCreatetime(DateUtil.dateformat(date));//订单创建时间
+		order.setOrderstatus(0); // 未发货状态
+		order.setPaystatus(0); // 未支付状态
+		order.setQty(quantity); //商品总数量
+		order.setTotalprice(totalprice); //商品总价格
+		order.setOrderDetailList(chooseGoodsLst); //订单明细
+		
+		return orderService.buyOrder(order);
+	}
+
+	/**
+	 * 支付成功
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public Result<?> list() {
-		Integer userId = getUserId();
-		String type = getString("type"); // 类型：0-全部；1-待交易；2-交易中；3--已完成
+	@RequestMapping(value = "/pay", method = RequestMethod.POST)
+	public Result<?> orderPay() {
 
-		Assert.hasText(type, "查询订单列表类型不能为空");
+		// 获取前台传过来的订单信息
+		String orderCode = getString("orderCode") == "" ? null : getString("orderCode");
+		String addressId = getString("addressId") == "" ? null : getString("addressId");
+		String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("userId", userId);
-		if ("1".equals(type)) {
-			params.put("payStatus", PayStatus.paying.getCode());
-			params.put("orderStatus", "1"); // 有效订单
-		} else if ("3".equals(type)) {
-			params.put("payStatus", PayStatus.payed.getCode());
-			params.put("orderStatus", "1"); // 有效订单
+		
+		// 根据订单编号查询出订单
+		Order order = orderService.selectByOrderCode(orderCode);
+		logger.info("根据订单编号查询出的订单："+orderCode);
+		order.setOrdertype(Integer.valueOf(orderPayType)); // 支付方式
+		order.setPaystatus(1); // 付款状态为已支付
+		order.setAlipayStatus(1); // 支付成功
+		order.setAddressid(Integer.valueOf(addressId));
+		Date date = new Date();
+		order.setPaytime(DateUtil.dateformat(date)); // 支付时间
+		
+		// 更新订单状态
+		orderService.updateByOrderCodeSelective(order);
+
+		// 记录到交易流水表中
+		UserAccountDetailDo userAccountDetail = new UserAccountDetailDo();
+		userAccountDetail.setUserId(order.getUserid());
+		userAccountDetail.setAmount(order.getTotalprice());
+		userAccountDetail.setMoreOrLess("减少"); // 增加减少
+		userAccountDetail.setIncomeType(902); // 商城消费
+		userAccountDetail.setCreateTime(new Date());
+		userAccountDetail.setRemark(IncomeType.TYPE_GOODS_BUY.getRemark());
+		String seqId = UUID.randomUUID().toString();
+		userAccountDetail.setSeqId(seqId);
+		userAccountDetailDao.addUserAccountDetail(userAccountDetail);
+		
+		return Result.successResult("测试", null);
+	}
+
+	/**
+	 * json 转OrderDetail对象 
+	 * json 格式 
+	 * [
+	 * 	{ "goodsId": "0001", "qty": "20", "price":"597" }, 
+	 * 	{ "goodsId": "0002", "qty": "10", "price": "637" } 
+	 * ]
+	 * 
+	 * @param goods
+	 * @return
+	 */
+	private List<OrderDetail> convertGoodsFromJson(String goods) {
+		if (StringUtils.isBlank(goods)) {
+			throw new BusinessException("请选择商品");
 		}
-
-		List<OrderDo> orderList = orderService.selectOrder(params);
-		List<Map<String, Object>> list = new ArrayList<>();
-		for (OrderDo order : orderList) {
-			Map<String, Object> map = new HashMap<>();
-			map.put("orderId", order.getOrderId()); // 订单id
-			map.put("qty", order.getQty()); // 数量
-			map.put("price", order.getPrice()); // 单价
-			map.put("totalPrice", order.getTotalPrice()); // 总额
-			map.put("orderStatus", order.getOrderStatus()); // 0-无效；1有效
-			map.put("date", DateUtil.dateToString(order.getCreateTime())); // 挂单时间
-			map.put("orderType", order.getOrderType()); // 订单类型
-			map.put("payStatus", order.getPayStatus()); // 支付状态 0 待付 1 已支付
-			map.put("accountType", order.getAccountType()); // 账户类型
-
-			list.add(map);
-		}
-		return Result.successResult("成功", list);
+		return (List<OrderDetail>) JSONArray.parse(goods);
 	}
 
 	/**
@@ -488,117 +339,6 @@ public class OrderController extends BaseController {
 		}
 
 		return endPage;
-	}
-
-	/**
-	 * 挂单列表
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/guadanList", method = { RequestMethod.GET, RequestMethod.POST })
-	public Result<?> guadanList() {
-		Map<String, Object> params = new HashMap<>();
-		params.put("payStatus", "0"); // 查询待交易的订单
-		params.put("orderStatus", "1"); // 过滤撤销了，无效的订单
-
-		List<OrderDo> orderList = orderService.selectOrder(params);
-		List<Map<String, Object>> list = new ArrayList<>();
-		for (OrderDo order : orderList) {
-			if (order.getOrderType().intValue() == 3) { // 过滤商城订单
-				continue;
-			}
-			Map<String, Object> map = new HashMap<>();
-			map.put("orderId", order.getOrderId()); // 订单id
-			map.put("qty", NumberUtil.formatterBigDecimal(order.getRemainQty())); // 剩余交易数量
-			map.put("price", NumberUtil.formatterBigDecimal(order.getPrice())); // 单价
-			map.put("amount", NumberUtil.formatterBigDecimal(order.getTotalPrice())); // 总额
-			map.put("date", DateUtil.dateToString(order.getCreateTime())); // 挂单时间
-			map.put("orderType", order.getOrderType()); // 订单类型
-			map.put("accountType", order.getAccountType()); // 账户类型
-			list.add(map);
-		}
-		return Result.successResult("成功", list);
-	}
-
-	/**
-	 * cancel撤销订单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/cancel", method = RequestMethod.POST)
-	public Result<?> cancel() {
-
-		String orderId = getString("orderId");
-		if (StringUtils.isBlank(orderId)) {
-			return Result.failureResult("请选择要撤销的订单");
-		}
-
-		Integer userId = getUserId();
-
-		Result<?> result = orderService.cancel(Long.parseLong(orderId), userId);
-		logger.info("订单撤销结果:" + JSON.toJSON(result));
-		return result;
-	}
-
-	/**
-	 * 报单
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "/baodan", method = RequestMethod.POST)
-	public Result<?> baodan() {
-		String scoreAmountStr = getString("scoreAmount"); // 积分
-		String cashAmountStr = getString("cashAmount"); // 现金
-		String userLevelStr = getString("userLevel");
-
-		Integer userId = getUserId();
-		logger.info("用户报单， userid:" + userId);
-		logger.info("scoreAmount=" + scoreAmountStr);
-		logger.info("cashAmount=" + cashAmountStr);
-		logger.info("userLevel:" + userLevelStr);
-
-		Assert.hasText(cashAmountStr, "请输入报单金额!");
-		Assert.hasText(userLevelStr, "请选择报单级别！");
-
-		BigDecimal cashAmount = BigDecimal.ZERO;
-		BigDecimal scoreAmount = BigDecimal.ZERO;
-		Integer userLevel = 0;
-		try {
-			cashAmount = new BigDecimal(cashAmountStr);
-
-			// 可能全部现金报单
-			if (StringUtils.isNotBlank(scoreAmountStr)) {
-				scoreAmount = new BigDecimal(scoreAmountStr);
-			}
-
-			if (cashAmount.compareTo(BigDecimal.ZERO) <= 0) {
-				return Result.failureResult("报单金额必须大于0!");
-			}
-		} catch (Exception e) {
-			logger.error("报单出错：", e);
-			return Result.failureResult("请输入正确的报单金额!");
-		}
-
-		try {
-			userLevel = Integer.valueOf(userLevelStr);
-			if (userLevel <= 0) {
-				return Result.failureResult("请选择报单级别");
-			}
-		} catch (Exception e) {
-			logger.error("报单出错：", e);
-			return Result.failureResult("请选择报单级别");
-		}
-
-		try {
-			baodanService.baodan(userId, cashAmount, scoreAmount, userLevel);
-			return Result.successResult("报单成功!");
-		} catch (IllegalArgumentException | BusinessException e) {
-			logger.error("报单出错:", e);
-			return Result.failureResult(e.getMessage());
-		} catch (Exception e) {
-			logger.error("报单出错:", e);
-			return Result.failureResult("系统繁忙，请稍后再试");
-		}
 	}
 
 	/**

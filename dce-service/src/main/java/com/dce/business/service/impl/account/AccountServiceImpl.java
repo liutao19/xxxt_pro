@@ -450,4 +450,10 @@ public class AccountServiceImpl implements IAccountService {
 		return page;
 	}
 
+	@Override
+	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId) {
+		
+		return userAccountDetailDao.selectUserAccountDetailByUserId(userId);
+	}
+
 }

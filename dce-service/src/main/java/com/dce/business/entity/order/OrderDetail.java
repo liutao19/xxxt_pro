@@ -2,17 +2,35 @@ package com.dce.business.entity.order;
 
 public class OrderDetail {
 
-	private Integer orderdetailid; //订单明细表主键
+	private Integer orderdetailid; // 订单明细表，主键
 
-	private Integer orderid; //订单表id
+	private Integer orderid; // 订单表id
 
-	private Integer goodsid; //商品id
- 
-	private Integer quantity; //商品数量
+	private Integer goodsId; // 商品id
 
-	private Double price; //商品单价
+	private Integer qty; // 商品数量
 
-	private String remark; //备注
+	private Double price; // 商品单价
+
+	private String goodsName; // 商品名称
+
+	private String remark; // 备注
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getGoodsName() {
+		return goodsName;
+	}
+
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
+	}
 
 	public Integer getOrderdetailid() {
 		return orderdetailid;
@@ -30,20 +48,20 @@ public class OrderDetail {
 		this.orderid = orderid;
 	}
 
-	public Integer getGoodsid() {
-		return goodsid;
+	public Integer getGoodsId() {
+		return goodsId;
 	}
 
-	public void setGoodsid(Integer goodsid) {
-		this.goodsid = goodsid;
+	public void setGoodsId(Integer goodsId) {
+		this.goodsId = goodsId;
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getQty() {
+		return qty;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	public void setQty(Integer qty) {
+		this.qty = qty;
 	}
 
 	public Double getPrice() {
@@ -54,11 +72,10 @@ public class OrderDetail {
 		this.price = price;
 	}
 
-	public String getRemark() {
-		return remark;
+	@Override
+	public String toString() {
+		return "OrderDetail [orderdetailid=" + orderdetailid + ", orderid=" + orderid + ", goodsId=" + goodsId
+				+ ", qty=" + qty + ", price=" + price + ", goodsName=" + goodsName + ", remark=" + remark + "]";
 	}
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 }

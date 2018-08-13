@@ -30,17 +30,17 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"title",title:"编码",width:180,align:"center"},
-								{field:"image",title:"编码",width:180,align:"center"},
-								{field:"content",title:"编码",width:180,align:"center"},
-								{field:"author",title:"编码",width:180,align:"center"},
-								{field:"topNews",title:"编码",width:180,align:"center"},
-								{field:"remark",title:"编码",width:180,align:"center"},
-								{field:"status",title:"编码",width:180,align:"center"},
-								{field:"createDate",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"createName",title:"编码",width:180,align:"center"},
-								{field:"updateDate",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"updateName",title:"编码",width:180,align:"center"},
+								{field:"title",title:"标题",width:180,align:"center"},
+								{field:"image",title:"图片",width:180,align:"center"},
+								{field:"content",title:"内容",width:180,align:"center"},
+								{field:"author",title:"作者",width:180,align:"center"},
+								{field:"topNews",title:"置顶新闻",width:180,align:"center"},
+								{field:"remark",title:"备注",width:180,align:"center"},
+								{field:"status",title:"状态",width:180,align:"center"},
+								{field:"createDate",title:"创建日期",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"createName",title:"创建人",width:180,align:"center"},
+								{field:"updateDate",title:"修改日期",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"updateName",title:"修改人",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>';

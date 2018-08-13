@@ -39,13 +39,15 @@ public class WithDrawController extends BaseController {
         String password = getString("password");
         String qty = getString("qty");
         String type=getString("type");
+        String bank_no=getString("bank_no"); //账号
 
         Assert.hasText(password, "提现密码不能为空");
         Assert.hasText(qty, "提现数量不能为空");
         Assert.hasText(type,"提现方式不能为空");
+        Assert.hasText(bank_no,"账号不能为空");
         logger.info("用户提现, userId:" + userId + "; qty:" + qty+"type:"+type);
 
-        return payService.withdraw(getUserId(), password,type, new BigDecimal(qty));
+        return payService.withdraw(getUserId(), password,type, new BigDecimal(qty),bank_no);
     }
 
     

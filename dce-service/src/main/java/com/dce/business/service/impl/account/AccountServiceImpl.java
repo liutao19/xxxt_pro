@@ -98,8 +98,11 @@ public class AccountServiceImpl implements IAccountService {
     public UserAccountDo getUserAccount(Integer userId, AccountType accountType) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("accountType", accountType.getAccountType());
+       // params.put("accountType", accountType.getAccountType());
         List<UserAccountDo> list = userAccountDao.selectAccount(params);
+        
+      //  System.err.println("用户-----》》》"+list+"---yonghu id----->>"+userId);
+        
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }

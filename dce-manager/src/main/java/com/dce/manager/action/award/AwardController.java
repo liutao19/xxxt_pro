@@ -1,4 +1,4 @@
-package com.dce.manager.action.goods;
+package com.dce.manager.action.award;
 
 
 import java.util.ArrayList;
@@ -14,23 +14,25 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.entity.award.AwardConfig;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.award.AwardConfigService;
 import com.dce.business.service.award.AwardLaterService;
+import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
 
 
 @RestController
 @RequestMapping("/award")
-public class AwardController  extends BaseAction{
+public class AwardController  extends BaseAction{/*
 	
 	@Resource
 	private AwardConfigService awardConfigService;
 	
-	/*@Resource
-	private AwardService awardway;*/
+	@Resource
+	private AwardService awardway;
 	
-	/*@Resource
-	private IUserService iuser;*/
+	@Resource
+	private IUserService userService;
 	
 	@Resource
 	private AwardLaterService awardLaterService;
@@ -140,11 +142,17 @@ public class AwardController  extends BaseAction{
 	public void addAward(){
 		int count=Integer.parseInt(getString("count"));
 		String id=getString("userId");
-		Integer userID= Integer.parseInt(id);
-		
-	    //这个是判断用户是否有推荐人，现在方法还没有写好，假设为有
-		//判断推荐人是否是会员以上的级别，一样，现在假设是
-		if(true&&true){
+		Integer userId= Integer.parseInt(id);
+		//获取用户信息
+		UserDo userdo=userService.getUser(userId);
+		//获取推荐人信息
+		UserDo  userReferrer=userService.getUser(userdo.getRefereeid());
+		//获取用户等级
+		int memberUser=userdo.getUserLevel();
+		//获取推荐人等级
+		int memberReferrer=userReferrer.getUserLevel();
+		//判断用户是否有推荐人，没有推荐人为false,和推荐人等级，为普通用户为false
+		if(userdo.getRefereeid()!=null&&memberReferrer!=0){
 			
 			
 			
@@ -181,11 +189,27 @@ public class AwardController  extends BaseAction{
 	}
 	
 	//判断用户推荐奖金多少,第一个参数奖励人的等级，购买的数量
-	public boolean  bonus(int userid,int count){
-		//判断用户是否是会员
-		if(userid==1){
+	public boolean  bonus(UserDo userdo,int count,UserDo referrerdao){
+		//判断推荐人是否是会员
+		if(referrerdao.getUserLevel()==1){
 			//查询会员是否享用过，调用查询奖励记录来判断
-			if(awardLaterService.selectByPrimaryKey(userid)==null){
+			if(awardLaterService.selectByPrimaryKey(referrerdao.getId())==null){
+				
+			}
+		}else{
+			
+			//判断用户等级,是否是会员
+			if(referrerdao.getUserLevel()==1){
+				if(count>=5){
+					//写会员升级vip  分销会员的奖励，还要判断数量是否大于5，5盒按分销会员奖励，其他的按300每盒处理
+					count=count-5;
+				}
+				
+				
+			}else{
+				//不是会员，则按每盒300奖励
+				
+				
 				
 			}
 		}
@@ -197,4 +221,4 @@ public class AwardController  extends BaseAction{
 	}
 	
 
-}
+*/}

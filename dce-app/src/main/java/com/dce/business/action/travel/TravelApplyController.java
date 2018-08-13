@@ -28,13 +28,16 @@ import com.dce.business.service.travel.ITravelPathService;
 public class TravelApplyController extends BaseController {
 	private final static Logger logger = Logger.getLogger(TravelApplyController.class);
 
+	//旅游申请
 	@Resource
 	private ITravelApplyService travelApplyService;
 	
+	//查看活动
 	@Resource
 	private ICheckTravelService checkTravelService;
 	
 	
+	//旅游路线
 	@Resource
 	private ITravelPathService travelPathService;
 
@@ -62,13 +65,13 @@ public class TravelApplyController extends BaseController {
     	String people = getString("people") == null ? "" : getString("people");
     	
     	travel.setUserid(userId);
-    	travel.setSex(Integer.parseInt(sex));
+    	travel.setSex(Integer.parseInt(sex));//性别(0/1 男/女)
     	travel.setNation(nation);
     	travel.setIdentity(identity);
     	travel.setPhone(phone);
     	travel.setAddress(address);
     	travel.setPathid(Integer.parseInt(pathid));
-    	travel.setIsbeen(Integer.parseInt(isBenn));
+    	travel.setIsbeen(Integer.parseInt(isBenn)); //是否去过该路线 0是/1否
     	travel.setPeople(Integer.parseInt(people));
     	
     	
@@ -99,7 +102,7 @@ public class TravelApplyController extends BaseController {
                 String lineName = (travelPathService.selectByPrimaryKey(pathid)).getLinename();
                 map.put("lineName", lineName);
                 map.put("createTime", message.getCreatetime());
-                map.put("state", message.getState());
+                map.put("state", message.getState()); //状态 (已开发0/马上推出1/正在开发2)
                 result.add(map);
             }
         }

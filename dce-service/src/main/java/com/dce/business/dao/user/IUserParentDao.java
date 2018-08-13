@@ -23,6 +23,13 @@ public interface IUserParentDao {
     
     
     List<Map<String,Object>> selectMyGroup(Map<String,Object> params);
+    
+    /**
+     * 团队成员详情（分级别）
+     * @param params
+     * @return
+     */
+    List<Map<String,Object>> TeamDetails(Map<String,Object> params);
    
     /*
      * 查询团队成员

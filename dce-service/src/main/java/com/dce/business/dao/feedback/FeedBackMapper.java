@@ -3,6 +3,8 @@ package com.dce.business.dao.feedback;
 import com.dce.business.entity.feedback.FeedBackDo;
 import com.dce.business.entity.feedback.FeedBackExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface FeedBackMapper {
@@ -93,4 +95,8 @@ public interface FeedBackMapper {
      * @mbg.generated Tue Aug 07 14:20:15 CST 2018
      */
     int updateByPrimaryKey(FeedBackDo record);
+
+	List<FeedBackDo> selectFeedBack(Map parameterMap);
+
+	List<FeedBackDo> queryListPage(Map<String, Object> param);
 }

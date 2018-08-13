@@ -12,6 +12,7 @@ public interface ICTGoodsService {
 
 	public List<CTGoodsDo> selectByPage(int pageNum,int pageCount);
 	
+	
 	public CTGoodsDo selectById(Long id);
 	
 	//选择性添加商品

@@ -51,4 +51,5 @@ public interface AwardConfigDao {
      * @return
      */
     int updateByPrimaryKey(AwardConfig record);
+    
 }

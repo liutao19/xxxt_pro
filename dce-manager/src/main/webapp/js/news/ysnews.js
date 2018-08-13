@@ -2,14 +2,15 @@
 $(function(){
 /*#############################################search form begin#################################*/	
 		
-	$("#searchgoodsForm #searchButton").on("click",function(){
-		$("#tt_Goods").datagrid('load',{
-			'searchStr': $("#searchgoodsForm #searchStr").val()		
+	$("#searchysNewsForm #searchButton").on("click",function(){
+		$("#tt_YsNews").datagrid('load',{
+			'searchStr': $("#searchysNewsForm #searchStr").val(),
+			'searchCodeStr':$("#searchysNewsForm #searchCodeStr").val()		
 		});
 	});
 	
-	$("#searchgoodsForm #resetButton").on("click",function(){
-		$("#searchgoodsForm").form('reset');
+	$("#searchysNewsForm #resetButton").on("click",function(){
+		$("#searchysNewsForm").form('reset');
 	});
 	
 /*#############################################search form end#################################*/		
@@ -20,7 +21,7 @@ $(function(){
 					{
 						iconCls:"icon-edit",
 						text:"新增",
-						handler:to_addgoods
+						handler:to_addysNews
 					}
 	          	];
 	
@@ -29,17 +30,20 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"title",title:"商品名称",width:180,align:"center"},
-								{field:"shopPrice",title:"价格",width:180,align:"center"},
-								{field:"goodsUnit",title:"单位",width:180,align:"center"},
-								{field:"goodsDesc",title:"内容",width:180,align:"center"},
-								{field:"goodsImg",title:"商品图片地址",width:180,align:"center"},
-								{field:"status",title:"商品上架的状态",width:180,align:"center"},
-								{field:"saleTime",title:"商品上架时间",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"createTime",title:"商品创建时间",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"title",title:"标题",width:180,align:"center"},
+								{field:"image",title:"图片",width:180,align:"center"},
+								{field:"content",title:"内容",width:180,align:"center"},
+								{field:"author",title:"作者",width:180,align:"center"},
+								{field:"topNews",title:"置顶新闻",width:180,align:"center"},
+								{field:"remark",title:"备注",width:180,align:"center"},
+								{field:"status",title:"状态",width:180,align:"center"},
+								{field:"createDate",title:"创建日期",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"createName",title:"创建人",width:180,align:"center"},
+								{field:"updateDate",title:"修改日期",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"updateName",title:"修改人",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editgoods(\''+row.goodsId+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -47,9 +51,9 @@ $(function(){
 	 	];
 /*######################grid columns end##############################*/
 	
-	$("#tt_Goods").datagrid({
-		url:httpUrl+"/goods/listGoods.html?&rand=" + Math.random(),
-		height:$("#body").height()-$('#search_areaGoods').height()-10,
+	$("#tt_YsNews").datagrid({
+		url:httpUrl+"/ysnews/listYsNews.html?&rand=" + Math.random(),
+		height:$("#body").height()-$('#search_areaYsNews').height()-10,
 		width:$("#body").width(),
 		rownumbers:true,
 		fitColumns:true,
@@ -74,7 +78,8 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchgoodsForm #searchStr").val()
+			'searchStr': $("#searchysNewsForm #searchStr").val(),
+			'searchCodeStr':$("#searchysNewsForm #searchCodeStr").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -92,17 +97,17 @@ $(function(){
  * 新增
  * @param id
  */
-function to_addgoods(){
-	to_editgoods('');
+function to_addysNews(){
+	to_editysNews('');
 }
 /**
  * 编辑
  * @param id
  */
-function to_editgoods(id){
+function to_editysNews(id){
 	
-	var url = httpUrl+"/goods/addGoods.html?&rand=" + Math.random()+"&id="+id;
-	$('#editGoodsDiv').dialog({
+	var url = httpUrl+"/ysnews/addYsNews.html?&rand=" + Math.random()+"&id="+id;
+	$('#editYsNewsDiv').dialog({
 		title: "新增",
 		width: 760,
 		height: 500,
@@ -114,31 +119,31 @@ function to_editgoods(id){
 		toolbar:[
 				{
 					iconCls:"icon-save",text:"保存",
-					handler:save_Goods
+					handler:save_YsNews
 				},
 				{
 					iconCls:"icon-no",text:"关闭",
 					handler:function(){
-						$("#editGoodsDiv").dialog("close");
+						$("#editYsNewsDiv").dialog("close");
 				}
 		}]
 	});
 }
 
-function save_Goods(){
-	var formdata = $("#editGoodsForm").serialize();
+function save_YsNews(){
+	var formdata = $("#editYsNewsForm").serialize();
 	console.info("formdata");
 	console.info(formdata);
-	var  url =httpUrl+"/goods/saveGoods.html?&rand=" + Math.random();
+	var  url =httpUrl+"/ysnews/saveYsNews.html?&rand=" + Math.random();
 	 $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 data:$("#editGoodsForm").serialize(),
+		 data:$("#editYsNewsForm").serialize(),
 		 success: function(data){ 
 			 if(data.code ==="0"){
-				 $("#editGoodsDiv").dialog("close");
-				 $('tt_Goods').datagrid('reload');
+				 $("#editYsNewsDiv").dialog("close");
+				 $('tt_YsNews').datagrid('reload');
 				 $.messager.alert("提示","操作成功","info");
 			 }else{
 				 $.messager.alert("提示","操作失败","error");
@@ -150,7 +155,7 @@ function save_Goods(){
 
 function reloadDataGrid()
 {
-	$("tt_Goods").datagrid("reload");
+	$("tt_YsNews").datagrid("reload");
 }
 
 
@@ -164,11 +169,11 @@ window.onresize = function(){
 };
 //改变表格和查询表单宽高
 function domresize(){
-	$('tt_Goods').datagrid('resize',{  
-		height:$("#body").height()-$('#search_areaGoods').height()-5,
+	$('tt_YsNews').datagrid('resize',{  
+		height:$("#body").height()-$('#search_areaYsNews').height()-5,
 		width:$("#body").width()
 	});
-	$('#search_areaGoods').panel('resize',{
+	$('#search_areaYsNews').panel('resize',{
 		width:$("#body").width()
 	});
 	$('#detailLoanDiv').dialog('resize',{  

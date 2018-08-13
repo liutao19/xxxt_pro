@@ -42,7 +42,7 @@ import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.accountRecord.AccountRecordService;
 import com.dce.business.service.award.IAwardService;
-import com.dce.business.service.bonus.IBonusLogService;
+import com.dce.business.service.award.IBonusLogService;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.UserAdressService;

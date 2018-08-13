@@ -2,14 +2,15 @@
 $(function(){
 /*#############################################search form begin#################################*/	
 		
-	$("#searchgoodsForm #searchButton").on("click",function(){
-		$("#tt_Goods").datagrid('load',{
-			'searchStr': $("#searchgoodsForm #searchStr").val()		
+	$("#searchysNoticeForm #searchButton").on("click",function(){
+		$("#tt_YsNotice").datagrid('load',{
+			'searchStr': $("#searchysNoticeForm #searchStr").val(),
+			'searchCodeStr':$("#searchysNoticeForm #searchCodeStr").val()		
 		});
 	});
 	
-	$("#searchgoodsForm #resetButton").on("click",function(){
-		$("#searchgoodsForm").form('reset');
+	$("#searchysNoticeForm #resetButton").on("click",function(){
+		$("#searchysNoticeForm").form('reset');
 	});
 	
 /*#############################################search form end#################################*/		
@@ -20,7 +21,7 @@ $(function(){
 					{
 						iconCls:"icon-edit",
 						text:"新增",
-						handler:to_addgoods
+						handler:to_addysNotice
 					}
 	          	];
 	
@@ -29,17 +30,21 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"title",title:"商品名称",width:180,align:"center"},
-								{field:"shopPrice",title:"价格",width:180,align:"center"},
-								{field:"goodsUnit",title:"单位",width:180,align:"center"},
-								{field:"goodsDesc",title:"内容",width:180,align:"center"},
-								{field:"goodsImg",title:"商品图片地址",width:180,align:"center"},
-								{field:"status",title:"商品上架的状态",width:180,align:"center"},
-								{field:"saleTime",title:"商品上架时间",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"createTime",title:"商品创建时间",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"noticeType",title:"编码",width:180,align:"center"},
+								{field:"title",title:"编码",width:180,align:"center"},
+								{field:"image",title:"编码",width:180,align:"center"},
+								{field:"content",title:"编码",width:180,align:"center"},
+								{field:"author",title:"编码",width:180,align:"center"},
+								{field:"topNotice",title:"编码",width:180,align:"center"},
+								{field:"remark",title:"编码",width:180,align:"center"},
+								{field:"status",title:"编码",width:180,align:"center"},
+								{field:"createDate",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"createName",title:"编码",width:180,align:"center"},
+								{field:"updateDate",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"updateName",title:"编码",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editgoods(\''+row.goodsId+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNotice(\''+row.id+'\');">编辑</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -47,9 +52,9 @@ $(function(){
 	 	];
 /*######################grid columns end##############################*/
 	
-	$("#tt_Goods").datagrid({
-		url:httpUrl+"/goods/listGoods.html?&rand=" + Math.random(),
-		height:$("#body").height()-$('#search_areaGoods').height()-10,
+	$("#tt_YsNotice").datagrid({
+		url:httpUrl+"/ysnotice/listYsNotice.html?&rand=" + Math.random(),
+		height:$("#body").height()-$('#search_areaYsNotice').height()-10,
 		width:$("#body").width(),
 		rownumbers:true,
 		fitColumns:true,
@@ -74,7 +79,8 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchgoodsForm #searchStr").val()
+			'searchStr': $("#searchysNoticeForm #searchStr").val(),
+			'searchCodeStr':$("#searchysNoticeForm #searchCodeStr").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -92,17 +98,17 @@ $(function(){
  * 新增
  * @param id
  */
-function to_addgoods(){
-	to_editgoods('');
+function to_addysNotice(){
+	to_editysNotice('');
 }
 /**
  * 编辑
  * @param id
  */
-function to_editgoods(id){
+function to_editysNotice(id){
 	
-	var url = httpUrl+"/goods/addGoods.html?&rand=" + Math.random()+"&id="+id;
-	$('#editGoodsDiv').dialog({
+	var url = httpUrl+"/ysnotice/addYsNotice.html?&rand=" + Math.random()+"&id="+id;
+	$('#editYsNoticeDiv').dialog({
 		title: "新增",
 		width: 760,
 		height: 500,
@@ -114,31 +120,31 @@ function to_editgoods(id){
 		toolbar:[
 				{
 					iconCls:"icon-save",text:"保存",
-					handler:save_Goods
+					handler:save_YsNotice
 				},
 				{
 					iconCls:"icon-no",text:"关闭",
 					handler:function(){
-						$("#editGoodsDiv").dialog("close");
+						$("#editYsNoticeDiv").dialog("close");
 				}
 		}]
 	});
 }
 
-function save_Goods(){
-	var formdata = $("#editGoodsForm").serialize();
+function save_YsNotice(){
+	var formdata = $("#editYsNoticeForm").serialize();
 	console.info("formdata");
 	console.info(formdata);
-	var  url =httpUrl+"/goods/saveGoods.html?&rand=" + Math.random();
+	var  url =httpUrl+"/ysnotice/saveYsNotice.html?&rand=" + Math.random();
 	 $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 data:$("#editGoodsForm").serialize(),
+		 data:$("#editYsNoticeForm").serialize(),
 		 success: function(data){ 
 			 if(data.code ==="0"){
-				 $("#editGoodsDiv").dialog("close");
-				 $('tt_Goods').datagrid('reload');
+				 $("#editYsNoticeDiv").dialog("close");
+				 $('tt_YsNotice').datagrid('reload');
 				 $.messager.alert("提示","操作成功","info");
 			 }else{
 				 $.messager.alert("提示","操作失败","error");
@@ -150,7 +156,7 @@ function save_Goods(){
 
 function reloadDataGrid()
 {
-	$("tt_Goods").datagrid("reload");
+	$("tt_YsNotice").datagrid("reload");
 }
 
 
@@ -164,11 +170,11 @@ window.onresize = function(){
 };
 //改变表格和查询表单宽高
 function domresize(){
-	$('tt_Goods').datagrid('resize',{  
-		height:$("#body").height()-$('#search_areaGoods').height()-5,
+	$('tt_YsNotice').datagrid('resize',{  
+		height:$("#body").height()-$('#search_areaYsNotice').height()-5,
 		width:$("#body").width()
 	});
-	$('#search_areaGoods').panel('resize',{
+	$('#search_areaYsNotice').panel('resize',{
 		width:$("#body").width()
 	});
 	$('#detailLoanDiv').dialog('resize',{  

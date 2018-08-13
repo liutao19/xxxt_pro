@@ -167,10 +167,12 @@ public class UserDo {
 	// 身份证照片url
 	private String identity;
 	
-	private Byte banktype;
+	//开卡行
+	private String banktype;
 
 	private String bankUserName;
 
+	//卡号
 	private String banknumber;
 
 	private String bankContent;
@@ -748,11 +750,13 @@ public class UserDo {
 		this.idnumber = idnumber;
 	}
 
-	public Byte getBanktype() {
+	
+
+	public String getBanktype() {
 		return banktype;
 	}
 
-	public void setBanktype(Byte banktype) {
+	public void setBanktype(String banktype) {
 		this.banktype = banktype;
 	}
 

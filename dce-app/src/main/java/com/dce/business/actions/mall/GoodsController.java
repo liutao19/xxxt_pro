@@ -50,7 +50,7 @@ public class GoodsController extends BaseController {
 		 }
 		 
 		 if(StringUtils.isBlank(rows)){  //如果为空  默认显示10条
-			 rows = "10";
+			 rows = "50";
 		 }
 		 
 		 Map<String,Object> maps=new HashMap();
@@ -114,13 +114,14 @@ public class GoodsController extends BaseController {
 		}
 	}
 	
+
 	@RequestMapping(value = "/address", method = {RequestMethod.POST})
 	public Result<?> address(){
 		
-		String addressId = getString("addressId");
-		String receivePhone = getString("receivePhone");
 		String address = getString("address");
 		String receiveName = getString("receiveName");
+		String receivePhone = getString("receivePhone");
+		String addressId = getString("addressId");
 		Assert.hasText(address, "收货地址不能为空");
 		Assert.hasText(receiveName, "收货人不能为空");
 		Assert.hasText(receivePhone, "收货人电话不能为空");
@@ -128,12 +129,11 @@ public class GoodsController extends BaseController {
 		Integer userId = getUserId();
 		
 		CTUserAddressDo addressDo = new CTUserAddressDo();
-		addressDo.setUserId(userId);
 		addressDo.setAddress(address);
 		addressDo.setUserName(receiveName);
 		addressDo.setUserPhone(receivePhone);
 		addressDo.setUserTel(receivePhone);
-		
+		addressDo.setUserId(userId);
 		if(StringUtils.isNotBlank(addressId)){
 			addressDo.setAddressId(Integer.parseInt(addressId));
 		}

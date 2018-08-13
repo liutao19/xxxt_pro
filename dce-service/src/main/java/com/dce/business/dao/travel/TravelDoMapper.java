@@ -3,6 +3,8 @@ package com.dce.business.dao.travel;
 import com.dce.business.entity.travel.TravelDo;
 import com.dce.business.entity.travel.TravelDoExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface TravelDoMapper {
@@ -95,4 +97,8 @@ public interface TravelDoMapper {
      * @mbg.generated Thu Aug 09 21:14:24 CST 2018
      */
     int updateByPrimaryKey(TravelDo record);
+
+	List<TravelDo> queryListPage(Map<String, Object> param);
+
+	List<TravelDo> selectApplyTravel(Map parameterMap);
 }

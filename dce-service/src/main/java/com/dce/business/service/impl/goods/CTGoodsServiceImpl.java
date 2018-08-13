@@ -102,12 +102,15 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		order.setPrice(goods.getShopPrice());
 		order.setTotalPrice(order.getQty().multiply(order.getPrice()).setScale(6, RoundingMode.HALF_UP));
 		order.setPayTime(new Date());
+		/*
 		int flag = orderDao.insertSelective(order);
 
 		if (flag < 1) {
 			return Result.failureResult("购买订单保存失败");
 		}
+		*/
 
+		
 		CTGoodsDo _goods = new CTGoodsDo();
 		_goods.setGoodsId(goods.getGoodsId());
 		_goods.setBookQuantity(order.getQty().longValue());

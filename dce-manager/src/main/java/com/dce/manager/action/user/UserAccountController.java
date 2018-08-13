@@ -60,8 +60,11 @@ public class UserAccountController extends BaseAction {
 				params.put("userName", userName);
 			}
 			
-			PageDo<Map<String,Object>> accoutList = accountService.selectAccountInfoByPage(page, params);
-			//当前合计
+			PageDo<Map<String,Object>> accoutList = accountService.selectAccountInfomByPage(page, params);
+			if(accoutList != null && !CollectionUtils.isEmpty(accoutList.getModelList())){
+				Map<String,Object> total = new HashMap<String,Object>();
+			}
+			/*//当前合计
 			if(accoutList != null && !CollectionUtils.isEmpty(accoutList.getModelList())){
 				Map<String,Object> total = new HashMap<String,Object>();
 				total.put("userName", "本页合计:");
@@ -72,7 +75,7 @@ public class UserAccountController extends BaseAction {
 				BigDecimal wallet_release_release = BigDecimal.ZERO;
 				BigDecimal wallet_score = BigDecimal.ZERO;
 				BigDecimal wallet_cash = BigDecimal.ZERO;
-				
+				String wallet_original=null;
 				for(Map<String,Object> temp : accoutList.getModelList()){
 					wallet_original = wallet_original.add((BigDecimal) temp.get("wallet_original"));
 					wallet_original_release = wallet_original_release.add((BigDecimal) temp.get("wallet_original_release"));
@@ -81,6 +84,7 @@ public class UserAccountController extends BaseAction {
 					wallet_release_release = wallet_release_release.add((BigDecimal) temp.get("wallet_release_release"));
 					wallet_score = wallet_score.add((BigDecimal) temp.get("wallet_score"));
 					wallet_cash = wallet_cash.add((BigDecimal) temp.get("wallet_cash"));
+					wallet_original=temp);
 				}
 				total.put("wallet_original", wallet_original);
 				total.put("wallet_original_release", wallet_original_release);
@@ -105,7 +109,7 @@ public class UserAccountController extends BaseAction {
 					}
 				}
 				accoutList.getModelList().add(sum);
-			}
+			}*/
 			
 			pagination = PageDoUtil.getPageValue(pagination, accoutList);
 			outPrint(response, JSON.toJSONString(pagination));

@@ -6,24 +6,21 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.dce.business.entity.order.Order;
-import com.dce.business.entity.order.OrderDo;
 
 public interface IOrderDao {
     int deleteByPrimaryKey(Long orderId);
 
-    int insertSelective(OrderDo record);
+    Order selectByPrimaryKey(Integer orderId);
 
-    OrderDo selectByPrimaryKey(Long orderId);
+    int updateByPrimaryKeySelective(Order record);
 
-    int updateByPrimaryKeySelective(OrderDo record);
-
-   // int updateByPrimaryKey(OrderDo record);
+   // int updateByPrimaryKey(Order record);
     
-    List<OrderDo> selectOrder(Map<String, Object> paraMap);
+    List<Order> selectOrder(Map<String, Object> paraMap);
     
     void updateOrderStatusByOldStatus(Map<String, Object> paraMap);
     
-    int updateMatchOrder(OrderDo order);
+    int updateMatchOrder(Order order);
     
     Map<String,Object> getBaseInfo(@Param("queryTime")String queryTime);
     
@@ -46,4 +43,17 @@ public interface IOrderDao {
     
     //用户支付，更新订单状态
     int updateByPrimaryKey(Order order);
+    
+    //根据订单编号查询订单
+    Order selectByOrderCode(String orderCode);
+    
+    //根据订单编号更新订单
+    int updateByOrderCodeSelective(Order order);
+    
+    //一对多联表查询订单
+    List<Order> selectByUesrIdOneToMany(Integer userId);
+    
+    // 查询总业绩
+ 	Map<String, Object> selectSum(Map<String, Object> paraMap);
+
 }

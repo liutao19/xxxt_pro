@@ -59,16 +59,16 @@ public class JobController {
 	@Scheduled(cron = "0 0 2 * * *")
 	public void release() {
 		//1、原始仓钱包释放，按照原来金额的百分之四
-		awardJobService.calRelease();
+		//awardJobService.calRelease();
 
 		//2、日息钱包
-		awardJobService.calRelease(AccountType.wallet_interest, AccountType.wallet_original_release);
+		//awardJobService.calRelease(AccountType.wallet_interest, AccountType.wallet_original_release);
 
 		//3、奖金钱包
-		awardJobService.calRelease(AccountType.wallet_bonus, AccountType.wallet_original_release);
+		//awardJobService.calRelease(AccountType.wallet_bonus, AccountType.wallet_original_release);
 
 		//4、二次释放
-		awardJobService.calRelease(AccountType.wallet_original_release, AccountType.wallet_release_release);
+		//awardJobService.calRelease(AccountType.wallet_original_release, AccountType.wallet_release_release);
 	}
 
 	/**   

@@ -6,6 +6,20 @@ import com.dce.business.entity.user.UserAddressDo;
 
 public interface UserAdressService {
 
+	/**
+	 * 按删除收货地址
+	 * @param addressid
+	 * @return
+	 */
+	boolean deleteByPrimaryKeyBoo(Integer addressid);
+	
+	/**
+	 * 按主键删除收货地址
+	 * @param addressid
+	 * @return
+	 */
+	int deleteByPrimaryKeyInt(Integer addressid);
+	
 	// 根据主键获取用户地址信息
 	UserAddressDo selectByPrimaryKey(Integer addressid);
 
@@ -23,4 +37,5 @@ public interface UserAdressService {
 	
 	// 插人收货地址
 	int insertSelective(UserAddressDo record);
+
 }

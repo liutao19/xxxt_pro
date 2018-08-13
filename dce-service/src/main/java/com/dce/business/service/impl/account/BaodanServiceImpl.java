@@ -102,8 +102,8 @@ public class BaodanServiceImpl implements IBaodanService {
 		}
 
 		try {
-			checkAccountAmount(userId, AccountType.wallet_cash, cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN));
-			checkAccountAmount(userId, AccountType.wallet_score, scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN));
+			checkAccountAmount(userId, AccountType.wallet_money, cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN));
+			checkAccountAmount(userId, AccountType.wallet_money, scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN));
 
 			//更新账户
 			updateAccountAmount(userId, cashAmount.multiply(cashToIBAC).setScale(2, RoundingMode.HALF_DOWN), scoreAmount.multiply(scoreToIBAC).setScale(2, RoundingMode.HALF_DOWN), baodanFei);
@@ -154,7 +154,7 @@ public class BaodanServiceImpl implements IBaodanService {
 		UserAccountDo cashAccount = new UserAccountDo();
 		cashAccount.setUserId(userId);
 		cashAccount.setAmount(cashAmount.negate());
-		cashAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+		cashAccount.setAccountType(AccountType.wallet_money.getAccountType());
 		cashAccount.setSeqId(seqId);
 		accountService.updateUserAmountById(cashAccount, IncomeType.TYPE_AWARD_BAODAN);
 
@@ -162,7 +162,7 @@ public class BaodanServiceImpl implements IBaodanService {
 		UserAccountDo scoreAccount = new UserAccountDo();
 		scoreAccount.setUserId(userId);
 		scoreAccount.setAmount(scoreAmount.negate());
-		scoreAccount.setAccountType(AccountType.wallet_score.getAccountType());
+		scoreAccount.setAccountType(AccountType.wallet_money.getAccountType());
 		scoreAccount.setSeqId(seqId);
 		accountService.updateUserAmountById(scoreAccount, IncomeType.TYPE_AWARD_BAODAN);
 
@@ -170,7 +170,7 @@ public class BaodanServiceImpl implements IBaodanService {
 		UserAccountDo originalAccount = new UserAccountDo();
 		originalAccount.setUserId(userId);
 		originalAccount.setAmount(baodanFei);
-		originalAccount.setAccountType(AccountType.wallet_original.getAccountType());
+		originalAccount.setAccountType(AccountType.wallet_money.getAccountType());
 		originalAccount.setSeqId(seqId);
 		accountService.updateUserAmountById(originalAccount, IncomeType.TYPE_AWARD_BAODAN);
 	}

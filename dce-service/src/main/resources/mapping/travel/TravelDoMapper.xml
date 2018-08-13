@@ -402,4 +402,95 @@
       state = #{state,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  
+  
+	<select id="selectApplyTravel" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_apply_travel
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND id = #{id}
+			</if>
+			<if test="userid != null">  
+				AND userid = #{userid}
+			</if>
+			<if test="sex != null">  
+				AND sex = #{sex}
+			</if>
+			<if test="nation != null">  
+				AND nation = #{nation}
+			</if>
+			<if test="identity != null">  
+				AND identity = #{identity}
+			</if>
+			<if test="phone != null">  
+				AND phone = #{phone}
+			</if>
+			<if test="address != null">  
+				AND address = #{address}
+			</if>
+			<if test="isbeen != null">  
+				AND isbeen = #{isbeen}
+			</if>
+			<if test="people != null">  
+				AND people = #{people}
+			</if>
+			<if test="pathid != null">  
+				AND pathid = #{pathid}
+			</if>
+			<if test="createtime != null">  
+				AND createtime = #{createtime}
+			</if>
+			<if test="state != null">  
+				AND state = #{state}
+			</if>
+         </trim> 
+
+	</select>
+	
+	
+	<select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_apply_travel
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND id = #{id}
+			</if>
+			<if test="userid != null">  
+				AND userid = #{userid}
+			</if>
+			<if test="sex != null">  
+				AND sex = #{sex}
+			</if>
+			<if test="nation != null">  
+				AND nation = #{nation}
+			</if>
+			<if test="identity != null">  
+				AND identity = #{identity}
+			</if>
+			<if test="phone != null">  
+				AND phone = #{phone}
+			</if>
+			<if test="address != null">  
+				AND address = #{address}
+			</if>
+			<if test="isbeen != null">  
+				AND isbeen = #{isbeen}
+			</if>
+			<if test="people != null">  
+				AND people = #{people}
+			</if>
+			<if test="pathid != null">  
+				AND pathid = #{pathid}
+			</if>
+			<if test="createtime != null">  
+				AND createtime = #{createtime}
+			</if>
+			<if test="state != null">  
+				AND state = #{state}
+			</if>
+         </trim> 
+
+	</select>
 </mapper>

@@ -41,7 +41,7 @@ public class TravelPathController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", message.getPathid());
                 map.put("lineName", message.getLinename());
-                map.put("state", message.getState());
+                map.put("state", message.getState());  //状态 (已开发0/马上推出1/正在开发2)
                 map.put("remake", message.getRemake());
                 result.add(map);
             }

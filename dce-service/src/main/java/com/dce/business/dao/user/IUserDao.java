@@ -14,7 +14,25 @@ public interface IUserDao {
 
     UserDo selectByPrimaryKey(Integer id);
 
+    /**
+     * 用户个人信息修改
+     * @param record
+     * @return
+     */
     int updateByPrimaryKeySelective(UserDo record);
+    
+    /**
+     * 登录密码
+     * @param record
+     * @return
+     */
+    int updateByPrimaryKeyPayPass(UserDo record);
+    /**
+     * 支付密码
+     * @param record
+     * @return
+     */
+    int updateByPrimaryKeyLogPass(UserDo record);
 
     int updateByPrimaryKeyWithBLOBs(UserDo record);
 

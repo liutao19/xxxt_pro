@@ -69,7 +69,19 @@ public interface IUserService {
      */
     Result<?> update(UserDo userDo);
     
+    /**
+     * 用户登录密码修改
+     * @param userDo
+     * @return
+     */
+    Result<?> updLogPass(UserDo userDo);
     
+    /**
+     * 用户支付密码修改
+     * @param userDo
+     * @return
+     */
+    Result<?> updPayPass(UserDo userDo);
     
     /**
      * 用户信息认证

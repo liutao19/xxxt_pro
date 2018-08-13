@@ -315,4 +315,46 @@
       managerId = #{managerid,jdbcType=INTEGER}
     where feedbackid = #{feedbackid,jdbcType=INTEGER}
   </update>
+  
+  
+  <select id="selectFeedBack" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_user_feedback
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="feedbackid != null">  
+				AND feedbackid = #{feedbackid}
+			</if>
+			<if test="userid != null">  
+				AND userid = #{userid}
+			</if>
+			<if test="feedbackcontent != null">  
+				AND feedbackcontent = #{feedbackcontent}
+			</if>
+			<if test="createtime != null">  
+				AND createtime = #{createtime}
+			</if>
+         </trim> 
+
+	</select>
+	
+	<select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_user_feedback
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="feedbackid != null">  
+				AND feedbackid = #{feedbackid}
+			</if>
+			<if test="userid != null">  
+				AND userid = #{userid}
+			</if>
+			<if test="feedbackcontent != null">  
+				AND feedbackcontent = #{feedbackcontent}
+			</if>
+			<if test="createtime != null">  
+				AND createtime = #{createtime}
+			</if>
+         </trim> 
+
+	</select>
+	
 </mapper>

@@ -67,7 +67,7 @@ public class EthereumJobServiceImpl implements IEthereumJobService {
 				//如果是充值，成功以后增加美元点账户
 				if (1 == transInfo.getType()) {
 					UserAccountDo updateAccount = new UserAccountDo();
-					updateAccount.setAccountType(AccountType.wallet_cash.getAccountType());
+					updateAccount.setAccountType(AccountType.wallet_money.getAccountType());
 					updateAccount.setAmount(new BigDecimal(transInfo.getPointamount()));
 					updateAccount.setUserId(transInfo.getUserid());
 					accountService.updateUserAmountById(updateAccount, IncomeType.TYPE_RECHARGE);

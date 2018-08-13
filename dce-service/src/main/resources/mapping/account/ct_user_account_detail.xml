@@ -22,6 +22,10 @@
 		SELECT * 
 		  FROM ct_user_account_detail WHERE id = #{id}
 	</select>
+	
+	<select id="selectUserAccountDetailByUserId" parameterType="Integer" resultMap="userAccountDetailResultMap">
+		select * from ct_user_account_detail where userId=#{userId}
+	</select>
 
 	<select id="selectUserAccountDetail" parameterType="Map" resultMap="userAccountDetailResultMap">
 		SELECT d.*,  u.user_name as userName,  d.relevantUser as transactionObject

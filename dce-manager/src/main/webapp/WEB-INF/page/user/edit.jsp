@@ -33,7 +33,7 @@
 			<td><input id="edit_user_login_password" class="easyui-validatebox" type="text" name="trueName"  value="${user.userPassword }" style="height:30px;"/></td>
 		</tr>
 		<tr>
-			<td>二级密码:</td>
+			<td>支付密码:</td>
 			<td><input id="edit_user_seconde_password" class="easyui-validatebox" type="text" name="trueName"  value="${user.twoPassword }" style="height:30px;"/></td>
 		</tr>
 		<tr>

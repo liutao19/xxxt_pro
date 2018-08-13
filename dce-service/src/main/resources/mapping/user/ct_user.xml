@@ -61,7 +61,7 @@
 		<result column="darea" jdbcType="INTEGER" property="darea" />
 		<result column="balance_et" jdbcType="DECIMAL" property="balanceEt" />
 		<result column="idnumber" jdbcType="CHAR" property="idnumber" />
-		<result column="banktype" jdbcType="TINYINT" property="banktype" />
+		<result column="banktype" jdbcType="VARCHAR" property="banktype" />
 		<result column="bank_user_name" jdbcType="VARCHAR" property="bankUserName" />
 		<result column="banknumber" jdbcType="VARCHAR" property="banknumber" />
 		<result column="bank_content" jdbcType="VARCHAR" property="bankContent" />
@@ -239,7 +239,7 @@
 		#{province,jdbcType=INTEGER},
 		#{city,jdbcType=INTEGER}, #{darea,jdbcType=INTEGER},
 		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=CHAR},
-		#{banktype,jdbcType=TINYINT},
+		#{banktype,jdbcType=VARCHAR},
 		#{bankUserName,jdbcType=VARCHAR},
 		#{banknumber,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
 		#{question1,jdbcType=VARCHAR}, #{question2,jdbcType=VARCHAR},
@@ -724,7 +724,7 @@
 				#{idnumber,jdbcType=CHAR},
 			</if>
 			<if test="banktype != null">
-				#{banktype,jdbcType=TINYINT},
+				#{banktype,jdbcType=VARCHAR},
 			</if>
 			<if test="bankUserName != null">
 				#{bankUserName,jdbcType=VARCHAR},
@@ -1012,7 +1012,7 @@
 				idnumber = #{idnumber,jdbcType=CHAR},
 			</if>
 			<if test="banktype != null">
-				banktype = #{banktype,jdbcType=TINYINT},
+				banktype = #{banktype,jdbcType=VARCHAR},
 			</if>
 			<if test="bankUserName != null">
 				bank_user_name = #{bankUserName,jdbcType=VARCHAR},
@@ -1226,7 +1226,7 @@
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
 		idnumber =
 		#{idnumber,jdbcType=CHAR},
-		banktype = #{banktype,jdbcType=TINYINT},
+		banktype = #{banktype,jdbcType=VARCHAR},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
 		banknumber =
 		#{banknumber,jdbcType=VARCHAR},
@@ -1385,7 +1385,7 @@
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
 		idnumber =
 		#{idnumber,jdbcType=CHAR},
-		banktype = #{banktype,jdbcType=TINYINT},
+		banktype = #{banktype,jdbcType=VARCHAR},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
 		banknumber =
 		#{banknumber,jdbcType=VARCHAR},
@@ -1602,4 +1602,24 @@
 		</trim>
 	</select>
 
+	<!-- 更改支付密码 -->
+	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
+		update ct_user
+		<set>
+			<if test="twoPassword">
+				two_password = #{twoPassword,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 更改登录密码 -->
+	<update id="updateByPrimaryKeyLogPass" parameterType="com.dce.business.entity.user.UserDo">
+		update ct_user
+		<set>
+			<if test="userPassword">
+				user_password = #{userPassword,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
 </mapper>

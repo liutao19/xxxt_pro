@@ -35,7 +35,7 @@
 		incomeAmount, consumeAmount, withdrawTotalDeposit,
 		updateTime)
 		values (#{userId,jdbcType=INTEGER}, #{accountType,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
-		 #{totalConsumeAmount,jdbcType=DECIMAL}, #{totalInocmeAmount,jdbcType=DECIMAL},
+		#{totalConsumeAmount,jdbcType=DECIMAL}, #{totalInocmeAmount,jdbcType=DECIMAL},
 		#{incomeAmount,jdbcType=DECIMAL}, #{consumeAmount,jdbcType=DECIMAL}, #{withdrawTotalDeposit,jdbcType=VARCHAR},
 		#{updateTime,jdbcType=TIMESTAMP})
 	</insert>
@@ -249,7 +249,22 @@
 		GROUP BY a.userId
 		
 	</select>
-	
+	<select id="selectAccountInfomByPage" parameterType="Map" resultType="Map">
+		SELECT CONCAT(b.user_name,'[',b.true_name,']') AS userName, a.userId,
+		a.amount,a.updateTime	
+		FROM ct_user_account a LEFT JOIN ct_user b on a.userId=b.id
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="userName != null">
+				AND (b.user_name = #{userName} OR b.true_name=#{userName})
+			</if>
+			<if test="trueName != null">
+				AND b.true_name = #{trueName}
+			</if>
+			    AND accountType='wallet_original'
+		</trim>
+		 GROUP BY a.userId 
+		
+	</select>
 	<select id="sumAccount" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT  SUM(amount) AS amount, accountType FROM ct_user_account	GROUP BY accountType
 		

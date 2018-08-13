@@ -20,6 +20,11 @@ public interface IUserAccountDao {
 
     int updateByPrimaryKey(UserAccountDo record);
 
+    /**
+     * 查询用户余额
+     * @param params
+     * @return
+     */
     List<UserAccountDo> selectAccount(Map<String, Object> params);
 
     int updateUserAmountById(UserAccountDo bizUserAccountDo);
@@ -50,7 +55,7 @@ public interface IUserAccountDao {
 	 * @param prarams
 	 * @return
 	 */
-	List<Map<String,Object>> selectAccountInfoByPage(Map<String,Object> prarams);
+	List<Map<String,Object>> selectAccountInfomByPage(Map<String,Object> prarams);
 
 	List<UserAccountDo> sumAccount(Map<String,Object> emptyMap);
 }

@@ -17,17 +17,17 @@
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
 					<input type="hidden" id="goodsId" name="goodsId" value="${goods.goodsId}"/>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">goodsSn</label>
 						</td>	
 						<td>
 								<input type="text" id="goodsSn" name="goodsSn" value="${goods.goodsSn}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					<tr>	
 						<td align="right">
-							<label for="name">title</label>
+							<label for="name">商品名称：</label>
 						</td>	
 						<td>
 								<input type="text" id="title" name="title" value="${goods.title}"/>												
@@ -35,13 +35,13 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">goodsImg</label>
+							<label for="name">商品图片地址：</label>
 						</td>	
 						<td>
 								<input type="text" id="goodsImg" name="goodsImg" value="${goods.goodsImg}"/>												
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">goodsThums</label>
 						</td>	
@@ -72,16 +72,16 @@
 						<td>
 								<input type="text" id="marketPrice" name="marketPrice" value="${goods.marketPrice}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					<tr>	
 						<td align="right">
-							<label for="name">shopPrice</label>
+							<label for="name">商品价格：</label>
 						</td>	
 						<td>
 								<input type="text" id="shopPrice" name="shopPrice" value="${goods.shopPrice}"/>												
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">goodsStock</label>
 						</td>	
@@ -240,16 +240,16 @@
 						<td>
 								<input type="text" id="shopCatId2" name="shopCatId2" value="${goods.shopCatId2}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					<tr>	
 						<td align="right">
-							<label for="name">goodsDesc</label>
+							<label for="name">商品内容：</label>
 						</td>	
 						<td>
 								<input type="text" id="goodsDesc" name="goodsDesc" value="${goods.goodsDesc}"/>												
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">isShopRecomm</label>
 						</td>	
@@ -280,17 +280,17 @@
 						<td>
 								<input type="text" id="isInnerRecomm" name="isInnerRecomm" value="${goods.isInnerRecomm}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					<tr>	
 						<td align="right">
-							<label for="name">status</label>
-						</td>	
+							<label for="name">商品上架状态·：</label>
+						</td>	·
 						<td>
 								<input type="text" id="status" name="status" value="${goods.status}"/>												
 						</td>						   
 					</tr>
 					
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">attrCatId</label>
 						</td>	
@@ -321,7 +321,7 @@
 						<td>
 								<input type="text" id="statusRemarks" name="statusRemarks" value="${goods.statusRemarks}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 		
 			</table>	   
 		</div>	

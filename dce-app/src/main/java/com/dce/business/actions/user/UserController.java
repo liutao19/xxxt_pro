@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 package com.dce.business.actions.user;
 
 import java.math.BigDecimal;
@@ -380,7 +379,7 @@ public class UserController extends BaseController {
 	        userDo.setId(userId);
 	        userDo.setTrueName(trueName);
 	        userDo.setIdnumber(idnumber);
-	        userDo.setSex(sex);
+	        userDo.setSex(Integer.parseInt(sex));
 	        userDo.setBanknumber(banknumber);
 	        userDo.setBanktype(banktype);
 	        
@@ -438,7 +437,7 @@ public class UserController extends BaseController {
 		return mv;
 	}
 }
-=======
+/*=======
 package com.dce.business.actions.user;
 
 import java.math.BigDecimal;
@@ -482,13 +481,13 @@ import com.dce.business.service.message.INewsService;
 import com.dce.business.service.user.IUserService;
 import com.dce.business.service.user.UserAdressService;
 
-/**
+*//**
  * 账户处理器，注册、登录等
  * 
  * @author parudy
  * @date 2018年3月24日
  * @version v1.0
- */
+ *//*
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
@@ -507,13 +506,13 @@ public class UserController extends BaseController {
 	// @Resource
 	// private IReleaseService staticAwardService;
 
-	/**
+	*//**
 	 * 用户注册
 	 * 
 	 * @param userDo
 	 * @param bindingResult
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	public Result<?> reg(@Valid UserDo userDo, BindingResult bindingResult) {
 		logger.info("用户注册");
@@ -556,13 +555,13 @@ public class UserController extends BaseController {
 		return result;
 	}
 
-	/**
+	*//**
 	 * 登录
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public Result<?> login() {
 		// String mobile = getString("mobile");
@@ -595,13 +594,13 @@ public class UserController extends BaseController {
 		return Result.successResult("登录成功", map);
 	}
 
-	/**
+	*//**
 	 * 注销
 	 * 
 	 * @param request
 	 * @param response
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public Result<?> logout() {
 		Integer userId = getUserId();
@@ -613,11 +612,11 @@ public class UserController extends BaseController {
 		return Result.successResult("注销成功");
 	}
 
-	/**
+	*//**
 	 * 查询用户等级
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/inqLevel", method = RequestMethod.GET)
 	public Result<?> inqLevel() {
 		Integer userId = getUserId();
@@ -629,11 +628,11 @@ public class UserController extends BaseController {
 		return Result.successResult("查询用户等级成功", map);
 	}
 
-	/**
+	*//**
 	 * 查询用户名
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/inqName", method = RequestMethod.GET)
 	public Result<?> inqName() {
 		Integer userId = getUserId();
@@ -645,11 +644,11 @@ public class UserController extends BaseController {
 		return Result.successResult("查询用户名成功", map);
 	}
 
-	/**
+	*//**
 	 * 个人中心查询个人信息
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
 	public Result<?> getUser() {
 		Integer userId = getUserId();
@@ -673,11 +672,11 @@ public class UserController extends BaseController {
 		return Result.successResult("查询成功", map);
 	}
 
-	/**
+	*//**
 	 * 修改登录密码
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/updLogPass", method = RequestMethod.POST)
 	public Result<?> updLogPass() {
 		try {
@@ -699,11 +698,11 @@ public class UserController extends BaseController {
 		}
 	}
 
-	/**
+	*//**
 	 * 修改支付密码
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/updPayPass", method = RequestMethod.POST)
 	public Result<?> updPayPass() {
 		try {
@@ -725,11 +724,11 @@ public class UserController extends BaseController {
 		}
 	}
 
-	/**
+	*//**
 	 * 模糊搜索用户列表
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public Result<?> list() {
 		String userName = getString("userName");
@@ -743,11 +742,11 @@ public class UserController extends BaseController {
 		return Result.successResult("查询成功", list);
 	}
 
-	/**
+	*//**
 	 * 首页，查询用户基本信息
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public Result<?> getUserInfo() {
 		Integer userId = getUserId();
@@ -823,13 +822,13 @@ public class UserController extends BaseController {
 		return Result.successResult("查询成功", map);
 	}
 
-	/**
+	*//**
 	 * 查询账户余额
 	 * 
 	 * @param userId
 	 * @param accountType
 	 * @return
-	 */
+	 *//*
 	private BigDecimal getAccountAmount(Integer userId, AccountType accountType) {
 		UserAccountDo userAccountDo = accountService.getUserAccount(userId, accountType);
 		if (userAccountDo != null && userAccountDo.getAmount() != null) {
@@ -839,11 +838,11 @@ public class UserController extends BaseController {
 		return BigDecimal.ZERO;
 	}
 
-	/**
+	*//**
 	 * 用户信息认证
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
 	public Result<?> Authentication() {
 		try {
@@ -881,11 +880,11 @@ public class UserController extends BaseController {
 		return mv;
 	}
 
-	/**
+	*//**
 	 * 空单激活
 	 * 
 	 * @return
-	 */
+	 *//*
 	@RequestMapping(value = "/setUserLevel", method = { RequestMethod.GET, RequestMethod.POST })
 	public Result<?> setUserLevel() {
 		String userCode = getString("userCode");
@@ -918,4 +917,4 @@ public class UserController extends BaseController {
 		return mv;
 	}
 }
->>>>>>> Stashed changes
+*/

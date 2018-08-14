@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.dce.business.entity.order.Order;
-import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.PageDo;
 
 public interface IOrderService {
@@ -29,9 +28,7 @@ public interface IOrderService {
 
 	Integer addOrder(Order order);
 
-	Order getOrder(Integer orderId);
-
-	List<OrderDo> selectOrder(Map<String, Object> params);
+	List<Order> selectOrder(Map<String, Object> params);
 
 	int updateOrder(Order order);
 
@@ -50,12 +47,6 @@ public interface IOrderService {
     
     //根据主键id查询订单
     Order selectByPrimaryKey(long orderId);
-    
-    /** 
-     * 添加订单
-     * @param orderDo  
-     */
-    Long addOrder(OrderDo orderDo);
 
     // 查询总业绩
  	Map<String, Object> selectSum(Map<String, Object> paraMap);

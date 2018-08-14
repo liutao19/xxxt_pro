@@ -50,6 +50,7 @@ public class OrderController extends BaseController {
 	private IAccountService accountService;
 	@Resource
 	private IBonusLogService bonusServiceLog;
+
 	@Resource
     private IUserAccountDetailDao userAccountDetailDao;
 

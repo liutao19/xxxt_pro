@@ -68,22 +68,22 @@ public class OrderSendoutServiceImpl implements IOrderSendoutService {
 		return oreersendoutserice.addOrderSendout(newOrderSendoutDo);
 	}
 
-	// /**
-	// * 分页查询
-	// *
-	// * @param param
-	// * @param page
-	// * @return
-	// */
-	// public PageDo<OrderSendoutDo> getOrderSendoutPage(Map<String, Object>
-	// param, PageDo<OrderSendoutDo> page) {
-	// logger.info("----getOrderSendoutPage----" + param);
-	// param.put(Constants.MYBATIS_PAGE, page);
-	// List<OrderSendoutDo> list = oreersendoutserice.queryListPage(param);
-	// page.setModelList(list);
-	// return page;
-	// }
-
+/*	*//**
+	* 分页查询
+	*
+	* @param param
+	* @param page
+	* @return
+	*//*
+	public PageDo<OrderSendoutDo> getOrderSendoutPage(Map<String, Object>
+	param, PageDo<OrderSendoutDo> page) {
+	logger.info("----getOrderSendoutPage----" + param);
+	param.put(Constants.MYBATIS_PAGE, page);
+	List<OrderSendoutDo> list = oreersendoutserice.queryListPage(param);
+	page.setModelList(list);
+	return page;
+	}
+*/
 	/**
 	 * 删除
 	 */
@@ -92,6 +92,12 @@ public class OrderSendoutServiceImpl implements IOrderSendoutService {
 	public int deleteById(Long id) {
 		logger.debug("deleteByIdOrderSendout:" + id);
 		return oreersendoutserice.deleteById(id);
+	}
+
+	@Override
+	public PageDo<OrderSendoutDo> getOrderSendoutPage(Map<String, Object> param, PageDo<OrderSendoutDo> page) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

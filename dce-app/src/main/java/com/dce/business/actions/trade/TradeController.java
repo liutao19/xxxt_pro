@@ -22,7 +22,7 @@ import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.CtCurrencyDo;
-import com.dce.business.entity.order.OrderDo;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ICtCurrencyService;
@@ -62,7 +62,7 @@ public class TradeController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("payStatus", 1); //已成交
-        List<OrderDo> list = orderService.selectOrder(params);
+        List<Order> list = orderService.selectOrder(params);
 
         return Result.successResult("查询成功", convertTradeInfo(list));
     }
@@ -255,14 +255,14 @@ public class TradeController extends BaseController {
     }
     
     
-    private List<Map<String, Object>> convertTradeInfo(List<OrderDo> list) {
+    private List<Map<String, Object>> convertTradeInfo(List<Order> list) {
         List<Map<String, Object>> result = new ArrayList<>();
-        for (OrderDo orderDo : list) {
+        for (Order orderDo : list) {
             Map<String, Object> map = new HashMap<>();
-            map.put("time", DateUtil.dateToString(orderDo.getCreateTime()));
+            map.put("time", orderDo.getCreatetime());
             map.put("price", orderDo.getPrice()); //单价
             map.put("num", orderDo.getQty()); //成交量
-            map.put("totalmoney", orderDo.getTotalPrice()); //总金额
+            map.put("totalmoney", orderDo.getTotalprice()); //总金额
             result.add(map);
         }
 

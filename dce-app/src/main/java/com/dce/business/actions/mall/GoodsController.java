@@ -1,6 +1,5 @@
 package com.dce.business.actions.mall;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.goods.CTUserAddressDo;
-import com.dce.business.entity.order.OrderDo;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.goods.ICTUserAddressService;
 
@@ -53,7 +51,7 @@ public class GoodsController extends BaseController {
 			 rows = "50";
 		 }
 		 
-		 Map<String,Object> maps=new HashMap();
+		 Map<String,Object> maps=new HashMap<String, Object>();
 		 maps.put("pageNum", pageNum);
 		 maps.put("rows", rows);
 		// List<CTGoodsDo> resultList = ctGoodsService.selectByPage(Integer.parseInt(pageNum), Integer.parseInt(rows));
@@ -149,7 +147,7 @@ public class GoodsController extends BaseController {
 		return Result.successResult("查询成功", addressDo);
 	}
 	
-	@RequestMapping(value = "/product/buy", method = {RequestMethod.POST})
+/*	@RequestMapping(value = "/product/buy", method = {RequestMethod.POST})
 	public Result<?> buy(){
 		
 		String productId = getString("productId");
@@ -164,5 +162,5 @@ public class GoodsController extends BaseController {
 		order.setUserId(getUserId());
 		
 		return ctGoodsService.buyGoods(order,StringUtils.isBlank(addressId)?null:Integer.parseInt(addressId));
-	}
+	}*/
 }

@@ -50,12 +50,12 @@ public class OrderController extends BaseController {
 	private UserAdressService addressService;
 	@Resource
 	private IAccountService accountService;
-	@Resource
+	/*@Resource
 	private IBaodanService baodanService;
 	@Resource
 	private IBonusLogService bonusServiceLog;
 	@Resource(name = "awardServiceAsync")
-	private IAwardService awardService;
+	private IAwardService awardService;*/
 	@Resource
     private IUserAccountDetailDao userAccountDetailDao;
 

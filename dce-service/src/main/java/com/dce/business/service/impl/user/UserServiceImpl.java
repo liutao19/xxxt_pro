@@ -62,7 +62,7 @@ public class UserServiceImpl implements IUserService {
 	private ITouchBonusRecordDao touchBonusRecordDao;
 	@Resource
 	private IPerformanceDailyService performanceDailyService;
-<<<<<<< Updated upstream
+
     
     @Override
     public UserDo getUser(String userName) {
@@ -77,10 +77,10 @@ public class UserServiceImpl implements IUserService {
         return list.get(0);
     }
 
-    @Override
+   /* @Override
     public UserDo getUser(Integer userId) {
         return userDao.selectByPrimaryKey(userId);
-    }
+    }*/
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -133,12 +133,12 @@ public class UserServiceImpl implements IUserService {
 		String[] accountTypes = new String[] { AccountType.wallet_money.name(), 
 											   AccountType.wallet_active.name(),
 											   AccountType.wallet_goods.name(), 
-											   AccountType.wallet_travel.name() };
-=======
+											   AccountType.wallet_travel.name()};
+		}
 	// @Resource
 	// private IBaodanService baodanService;
 
-	@Override
+	/*@Override
 	public UserDo getUser(String userName) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("userName", userName);
@@ -149,14 +149,14 @@ public class UserServiceImpl implements IUserService {
 		}
 
 		return list.get(0);
-	}
+	}*/
 
 	@Override
 	public UserDo getUser(Integer userId) {
 		return userDao.selectByPrimaryKey(userId);
 	}
 
-	@Override
+	/*@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> reg(UserDo userDo) {
 		// 判断注册用户名是否为空
@@ -164,17 +164,17 @@ public class UserServiceImpl implements IUserService {
 		userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid
 		// userDo.setRefereeUserName(userDo.getRefereeUserName().trim());
 
-		/*
+		
 		 * UserDo ref = getUser(userDo.getRefereeUserName()); if(ref == null){
 		 * return Result.failureResult("推荐人不存在"); }
-		 */
+		 
 
 		UserDo oldUser = getUser(userDo.getUserName());
 		if (oldUser != null) {
 			return Result.failureResult("用户已存在");
 		}
 
-		/*
+		
 		 * UserDo par = getUser(userDo.getParentUserName()); if(par == null){
 		 * return Result.failureResult("接点人不存在!"); }
 		 * 
@@ -183,12 +183,12 @@ public class UserServiceImpl implements IUserService {
 		 * params.put("lrDistrict", userDo.getPos()); List<UserParentDo> list =
 		 * userParentDao.select(params); if (!CollectionUtils.isEmpty(list)) {
 		 * return Result.failureResult("接点人左（右）区已有用户，请重新选择!"); }
-		 */
+		 
 
 		String twoPassword = userDo.getTwoPassword(); // 加密前交易密码，用来以太坊开户
-		/*
+		
 		 * userDo.setRefereeid(ref.getId()); userDo.setParentid(par.getId());
-		 */
+		 
 		userDo.setRegTime(new Date().getTime());
 		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码与支付密码加密处理
 		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
@@ -196,28 +196,27 @@ public class UserServiceImpl implements IUserService {
 		// 用户注册
 		int result = userDao.insertSelective(userDo);
 
-		/*
+		
 		 * //维护父节点关系 maintainUserParent(userDo.getId(), par.getId(),
 		 * userDo.getPos());
 		 * 
 		 * //维护推荐人关系 maintainUserReferee(userDo.getId(), ref.getId());
-		 */
-		/*
+		 
+		
 		 * //维护賬戶 maintainUserAccount(userDo.getId());
 		 * 
 		 * //以太坊开户 ethereumService.creatAccount(userDo.getId(), twoPassword);
-		 */
+		 
 
 		return result > 0 ? Result.successResult("注册成功!") : Result.failureResult("注册失败");
-	}
+	}*/
 
-	// 维护賬戶
+	/*// 维护賬戶
 	private void maintainUserAccount(Integer userId) {
 		String[] accountTypes = new String[] { AccountType.wallet_original.name(),
 				AccountType.wallet_original_release.name(), AccountType.wallet_bonus.name(),
 				AccountType.wallet_interest.name(), AccountType.wallet_release_release.name(),
 				AccountType.wallet_cash.name(), AccountType.wallet_score.name() };
->>>>>>> Stashed changes
 
 		for (String accountType : accountTypes) {
 			UserAccountDo record = new UserAccountDo();
@@ -228,7 +227,7 @@ public class UserServiceImpl implements IUserService {
 			userAccountDao.insert(record);
 		}
 	}
-
+*/
 	/**
 	 * 维护父节点关系表
 	 * 

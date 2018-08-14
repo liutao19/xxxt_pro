@@ -1,15 +1,8 @@
 package com.dce.business.actions.job;
 
-import javax.annotation.Resource;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dce.business.common.enums.AccountType;
-import com.dce.business.service.award.IAwardJobService;
-import com.dce.business.service.award.IAwardService;
-import com.dce.business.service.third.IEthereumJobService;
 
 /** 
  * 定时任务
@@ -21,19 +14,17 @@ import com.dce.business.service.third.IEthereumJobService;
 @RequestMapping("/job")
 public class JobController {
 
-	@Resource
-	private IAwardJobService awardJobService;
-	@Resource
-	private IEthereumJobService ethereumJobService;
+//	@Resource
+//	private IAwardJobService awardJobService;
+//	@Resource
+//	private IEthereumJobService ethereumJobService;
 
-	@Resource(name = "zhiTuiAwardService")
-	private IAwardService zhiTuiAwardService;
 
 	@RequestMapping("/interest")
 	public void jobInterest() {
 		//awardJobService.calInterest();
 		//zhiTuiAwardService.calAward(9, new BigDecimal("10000"), null);
-		awardJobService.calShared();
+		//awardJobService.calShared();
 		//release();
 	}
 
@@ -42,7 +33,7 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void calInterest() {
-		awardJobService.calInterest();
+		//awardJobService.calInterest();
 	}
 
 	/**   
@@ -50,7 +41,7 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void comfirmEthTransResult() {
-		ethereumJobService.comfirmEthTransResult();
+		//ethereumJobService.comfirmEthTransResult();
 	}
 
 	/**   
@@ -76,6 +67,6 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0 1 * * *")
 	public void calShared() {
-		awardJobService.calShared();
+		//awardJobService.calShared();
 	}
 }

@@ -27,10 +27,8 @@ import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.service.account.IAccountService;
-import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.accountRecord.AccountRecordService;
-import com.dce.business.service.award.IAwardService;
-import com.dce.business.service.award.IBonusLogService;
+import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.UserAdressService;
@@ -51,11 +49,7 @@ public class OrderController extends BaseController {
 	@Resource
 	private IAccountService accountService;
 	@Resource
-	private IBaodanService baodanService;
-	@Resource
 	private IBonusLogService bonusServiceLog;
-	@Resource(name = "awardServiceAsync")
-	private IAwardService awardService;
 	@Resource
     private IUserAccountDetailDao userAccountDetailDao;
 

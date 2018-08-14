@@ -19,14 +19,6 @@
 					<input type="hidden" id="id" name="id" value="${ysnotice.id}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">noticeType</label>
-						</td>	
-						<td>
-								<input type="text" id="noticeType" name="noticeType" value="${ysnotice.noticeType}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
 							<label for="name">title</label>
 						</td>	
 						<td>

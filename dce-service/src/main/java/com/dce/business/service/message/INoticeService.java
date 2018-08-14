@@ -16,7 +16,7 @@ public interface INoticeService {
 	
 	public int updateNoticeById(NoticeDo noticedo);
 	
-	public int deleteNoticeById(Integer newsId);
+	public int deleteNoticeById(Integer noticeId);
 	
 	public PageDo<NoticeDo> getNoticePage(Map<String, Object> param, PageDo<NoticeDo> page);
 }

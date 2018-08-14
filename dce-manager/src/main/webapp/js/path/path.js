@@ -2,15 +2,15 @@
 $(function(){
 /*#############################################search form begin#################################*/	
 		
-	$("#searchuserFeedbackForm #searchButton").on("click",function(){
-		$("#tt_UserFeedback").datagrid('load',{
-			'searchStr': $("#searchuserFeedbackForm #searchStr").val(),
-			'searchCodeStr':$("#searchuserFeedbackForm #searchCodeStr").val()		
+	$("#searchpathForm #searchButton").on("click",function(){
+		$("#tt_Path").datagrid('load',{
+			'searchStr': $("#searchpathForm #searchStr").val(),
+			'searchCodeStr':$("#searchpathForm #searchCodeStr").val()		
 		});
 	});
 	
-	$("#searchuserFeedbackForm #resetButton").on("click",function(){
-		$("#searchuserFeedbackForm").form('reset');
+	$("#searchpathForm #resetButton").on("click",function(){
+		$("#searchpathForm").form('reset');
 	});
 	
 /*#############################################search form end#################################*/		
@@ -21,7 +21,7 @@ $(function(){
 					{
 						iconCls:"icon-edit",
 						text:"新增",
-						handler:to_adduserFeedback
+						handler:to_addpath
 					}
 	          	];
 	
@@ -29,13 +29,13 @@ $(function(){
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'feedbackid',title:'id',width:100,hidden:true},						
-								{field:"userid",title:"反馈人id",width:180,align:"center"},
-								{field:"feedbackcontent",title:"内容",width:180,align:"center"},
-								{field:"createtime",title:"反馈时间",width:180,align:"center",formatter:dateTimeFormatter},
+							{field:'id',title:'id',width:100,hidden:true},						
+								{field:"linename",title:"编码",width:180,align:"center"},
+								{field:"state",title:"编码",width:180,align:"center"},
+								{field:"remake",title:"编码",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_edituserFeedback(\''+row.feedbackid+'\');">编辑</a> <a href="javascript:void(0);" onclick="deleteFeedBack(\''+row.feedbackid+'\');">删除</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editpath(\''+row.id+'\');">编辑</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -43,9 +43,9 @@ $(function(){
 	 	];
 /*######################grid columns end##############################*/
 	
-	$("#tt_UserFeedback").datagrid({
-		url:httpUrl+"/userfeedback/listUserFeedback.html?&rand=" + Math.random(),
-		height:$("#body").height()-$('#search_areaUserFeedback').height()-10,
+	$("#tt_Path").datagrid({
+		url:httpUrl+"/path/listPath.html?&rand=" + Math.random(),
+		height:$("#body").height()-$('#search_areaPath').height()-10,
 		width:$("#body").width(),
 		rownumbers:true,
 		fitColumns:true,
@@ -70,8 +70,8 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchuserFeedbackForm #searchStr").val(),
-			'searchCodeStr':$("#searchuserFeedbackForm #searchCodeStr").val()
+			'searchStr': $("#searchpathForm #searchStr").val(),
+			'searchCodeStr':$("#searchpathForm #searchCodeStr").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -89,26 +89,26 @@ $(function(){
  * 新增
  * @param id
  */
-function to_adduserFeedback(){
-	to_edituserFeedback('');
+function to_addpath(){
+	to_editpath('');
 	$('#editUserFeedbackDiv').dialog({
 		title: "新增",
 	});
 }
 
 /**
- *删除
- *@param id 
+ * 删除
  */
-function deleteFeedBack(id){
+
+function deletePath(id){
 	if(!id){
 		$.messager.alert("消息","id不能为空");
 		return;
 	}
-	$.messager.confirm("消息","确认删除该反馈吗，删除后不可恢复",function(r){
+	$.messager.confirm("消息","确认删除该路线吗，删除后不可恢复",function(r){
 		if(r){
 			$.ajax({
-				url:httpUrl+"/userfeedback/deleteYsFeedBack.html?id="+id,
+				url:httpUrl+"/path/deletePath.html?id="+id,
 				type:"post",
 				data:{},
 				success:function(data){
@@ -124,15 +124,14 @@ function deleteFeedBack(id){
 	});
 }
 
-
 /**
  * 编辑
  * @param id
  */
-function to_edituserFeedback(id){
+function to_editpath(id){
 	
-	var url = httpUrl+"/userfeedback/addUserFeedback.html?&rand=" + Math.random()+"&id="+id;
-	$('#editUserFeedbackDiv').dialog({
+	var url = httpUrl+"/path/addPath.html?&rand=" + Math.random()+"&id="+id;
+	$('#editPathDiv').dialog({
 		title: "编辑",
 		width: 760,
 		height: 500,
@@ -144,31 +143,31 @@ function to_edituserFeedback(id){
 		toolbar:[
 				{
 					iconCls:"icon-save",text:"保存",
-					handler:save_UserFeedback
+					handler:save_Path
 				},
 				{
 					iconCls:"icon-no",text:"关闭",
 					handler:function(){
-						$("#editUserFeedbackDiv").dialog("close");
+						$("#editPathDiv").dialog("close");
 				}
 		}]
 	});
 }
 
-function save_UserFeedback(){
-	var formdata = $("#editUserFeedbackForm").serialize();
+function save_Path(){
+	var formdata = $("#editPathForm").serialize();
 	console.info("formdata");
 	console.info(formdata);
-	var  url =httpUrl+"/userfeedback/saveUserFeedback.html?&rand=" + Math.random();
+	var  url =httpUrl+"/path/savePath.html?&rand=" + Math.random();
 	 $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 data:$("#editUserFeedbackForm").serialize(),
+		 data:$("#editPathForm").serialize(),
 		 success: function(data){ 
 			 if(data.code ==="0"){
-				 $("#editUserFeedbackDiv").dialog("close");
-				 $('tt_UserFeedback').datagrid('reload');
+				 $("#editPathDiv").dialog("close");
+				 $('tt_Path').datagrid('reload');
 				 $.messager.alert("提示","操作成功","info");
 			 }else{
 				 $.messager.alert("提示","操作失败","error");
@@ -180,7 +179,7 @@ function save_UserFeedback(){
 
 function reloadDataGrid()
 {
-	$("tt_UserFeedback").datagrid("reload");
+	$("tt_Path").datagrid("reload");
 }
 
 
@@ -194,11 +193,11 @@ window.onresize = function(){
 };
 //改变表格和查询表单宽高
 function domresize(){
-	$('tt_UserFeedback').datagrid('resize',{  
-		height:$("#body").height()-$('#search_areaUserFeedback').height()-5,
+	$('tt_Path').datagrid('resize',{  
+		height:$("#body").height()-$('#search_areaPath').height()-5,
 		width:$("#body").width()
 	});
-	$('#search_areaUserFeedback').panel('resize',{
+	$('#search_areaPath').panel('resize',{
 		width:$("#body").width()
 	});
 	$('#detailLoanDiv').dialog('resize',{  

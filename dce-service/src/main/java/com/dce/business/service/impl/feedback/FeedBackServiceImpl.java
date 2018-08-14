@@ -81,6 +81,18 @@ public class FeedBackServiceImpl implements IFeedBackService {
         return page;
 	}
 
+	/**
+	 * 删除
+	 * @param feedBackId
+	 * @return
+	 */
+	@Override
+	public int deleteByPrimaryKey(Integer feedBackId){
+		// TODO Auto-generated method stub
+		logger.info("----deleteFeedBackByid----");
+		return feedBackDao.deleteByPrimaryKey(feedBackId);
+	}
+
 
 
 }

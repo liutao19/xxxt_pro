@@ -275,4 +275,24 @@
       remake = #{remake,jdbcType=VARCHAR}
     where pathid = #{pathid,jdbcType=INTEGER}
   </update>
+  
+  <select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_travel_path
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="pathid != null">  
+				AND pathid like #{pathid}
+			</if>
+			<if test="linename != null">  
+				AND linename like #{linename}
+			</if>
+			<if test="state != null">  
+				AND state like #{state}
+			</if>
+			<if test="remake != null">  
+				AND remake like #{remake}
+			</if>
+         </trim> 
+
+	</select>
 </mapper>

@@ -30,27 +30,41 @@ public class NoticeServiceImpl implements INoticeService {
 		return noticeDao.selectByExample(null);
 	}
 	
+	/**
+	 * 查询
+	 */
 	@Override
 	public NoticeDo selectNoticeById(Integer noticeId) {
 		return noticeDao.selectByPrimaryKey(noticeId);
 	}
-
+	
+	/**
+	 * 新增
+	 */
 	@Override
 	public int addNotice(NoticeDo noticedo) {
 		// TODO Auto-generated method stub
-		return 0;
+		logger.info("----addNotice----");
+		return noticeDao.insertSelective(noticedo);
 	}
 
+	/**
+	 * 更新
+	 */
 	@Override
 	public int updateNoticeById(NoticeDo noticedo) {
-		// TODO Auto-generated method stub
-		return 0;
+		logger.info("----updateNoticeByid----");
+		return noticeDao.updateByPrimaryKeySelective(noticedo);
 	}
 
+	/**
+	 * 删除
+	 */
 	@Override
-	public int deleteNoticeById(Integer newsId) {
+	public int deleteNoticeById(Integer noticeId) {
 		// TODO Auto-generated method stub
-		return 0;
+		logger.info("----deleteNoticeByid----");
+		return noticeDao.deleteByPrimaryKey(noticeId);
 	}
 
 	/**

@@ -32,6 +32,12 @@ public interface IFeedBackService {
 	 */
 	public int  updateUserFeedbackById(FeedBackDo newUserFeedbackDo);
 	
+	/**
+	 * 删除
+	 * @param newsId
+	 * @return
+	 */
+	public int deleteByPrimaryKey(Integer feedBackId);
 	
 	
 	/**
@@ -41,6 +47,8 @@ public interface IFeedBackService {
 	 * @return
 	 */
 	public PageDo<FeedBackDo> getUserFeedbackPage(Map<String, Object> param, PageDo<FeedBackDo> page);
+
+
 	
 	
 }

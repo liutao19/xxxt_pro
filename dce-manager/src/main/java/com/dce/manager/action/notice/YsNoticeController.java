@@ -32,6 +32,7 @@ import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.message.INoticeService;
 import com.dce.manager.action.BaseAction;
+import com.dce.manager.util.ResponseUtils;
 
 
 
@@ -90,7 +91,7 @@ public class YsNoticeController extends BaseAction{
 	
 	  
     /**
-     * 编辑页面
+     * 新增页面
      *
      * @return
      */
@@ -111,6 +112,26 @@ public class YsNoticeController extends BaseAction{
         }
 
     }
+    
+    /**
+     * 删除
+     */
+    @RequestMapping("/deleteYsNotice")
+    public void deleteYsNotice(String id,HttpServletRequest request,
+            HttpServletResponse response) {
+        logger.info("----deleteYsNotice----");
+         try{
+             if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
+                 ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+                 return;
+             }
+             int ret = noticeService.deleteNoticeById(Integer.valueOf(id));
+             ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+         }catch(Exception e){
+             logger.error("删除公告异常",e);
+             ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+         }
+     }
 
     /**
      * 保存更新
@@ -126,11 +147,9 @@ public class YsNoticeController extends BaseAction{
     							  HttpServletResponse response) {
         logger.info("----saveYsNotice------");
         try{
-            int id = noticeDo.getId();
-            Long userId = new Long(this.getUserId());
-            
+        	Integer id = noticeDo.getId();
             int i = 0;
-            if (id != 0) {
+            if (id != null && id.intValue()>0) {
                 i = noticeService.updateNoticeById(noticeDo);
             } else {
                 i = noticeService.addNotice(noticeDo);

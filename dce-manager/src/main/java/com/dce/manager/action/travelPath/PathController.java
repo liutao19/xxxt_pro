@@ -5,7 +5,7 @@
  */
 
 
-package com.dce.manager.action.feedback;
+package com.dce.manager.action.travelPath;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
-import com.dce.business.entity.feedback.FeedBackDo;
 import com.dce.business.entity.page.NewPagination;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
-import com.dce.business.service.feedback.IFeedBackService;
+import com.dce.business.entity.travel.TravelPathDo;
+import com.dce.business.service.travel.ITravelPathService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
 
@@ -42,11 +42,12 @@ import com.dce.manager.util.ResponseUtils;
  */
 
 @Controller
-@RequestMapping("/userfeedback")
-public class UserFeedbackController extends BaseAction{
+@RequestMapping("/path")
+public class PathController extends BaseAction{
+	//默认多列排序,example: username desc,createTime asc
+	//protected static final String DEFAULT_SORT_COLUMNS = null; 
 	@Resource
-	private IFeedBackService feedBackService;
-
+	private ITravelPathService travelPathService;
 	/**
      * 去列表页面
      * @param model
@@ -54,17 +55,17 @@ public class UserFeedbackController extends BaseAction{
      */
     @RequestMapping("/index")
     public String index(Model model){
-        return "feedback/listUserFeedback";
+        return "path/listPath";
     }
 	
-	@RequestMapping("/listUserFeedback")
-    public void listUserFeedback(NewPagination<FeedBackDo> pagination,
+	@RequestMapping("/listPath")
+    public void listPath(NewPagination<TravelPathDo> pagination,
     							  ModelMap model,
     							  HttpServletResponse response) {
 
-        logger.info("----listUserFeedback----");
+        logger.info("----listPath----");
         try{
-            PageDo<FeedBackDo> page = PageDoUtil.getPage(pagination);
+            PageDo<TravelPathDo> page = PageDoUtil.getPage(pagination);
             String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
             if(StringUtils.isNotBlank(companyName)){
@@ -76,7 +77,7 @@ public class UserFeedbackController extends BaseAction{
                 param.put("managerName", managerName);
                 model.addAttribute("searManagerName",managerName);
             }
-            page = feedBackService.getUserFeedbackPage(param, page);
+            page = travelPathService.getTravelPathPage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));
         }catch(Exception e){
@@ -87,77 +88,72 @@ public class UserFeedbackController extends BaseAction{
 	
 	
 	  
-	/**
+    /**
      * 编辑页面
      *
      * @return
      */
-    @RequestMapping("/addUserFeedback")
-    public String addUserFeedback(String id, ModelMap modelMap, HttpServletResponse response) {
-        logger.info("----addUserFeedback----");
+    @RequestMapping("/addPath")
+    public String addPath(String id, ModelMap modelMap, HttpServletResponse response) {
+        logger.info("----addPath----");
         try{
             if(StringUtils.isNotBlank(id)){
-                FeedBackDo userfeedbackDo = feedBackService.getById(Long.valueOf(id));
-                if(null != userfeedbackDo){
-                    modelMap.addAttribute("userfeedback", userfeedbackDo);
+                TravelPathDo TravelPathDo = travelPathService.selectByPrimaryKey(Integer.valueOf(id));
+                if(null != TravelPathDo){
+                    modelMap.addAttribute("path", TravelPathDo);
                 }
             }
-            return "feedback/addUserFeedback";
+            return "path/addPath";
         }catch(Exception e){
             logger.error("跳转到数据字典编辑页面异常",e);
             throw new BusinessException("系统繁忙，请稍后再试");
         }
 
     }
-    
-    
-    
+
     /**
      * 删除
      */
-    @RequestMapping("/deleteYsFeedBack")
+    @RequestMapping("/deletePath")
     public void deleteYsNotice(String id,HttpServletRequest request,
             HttpServletResponse response) {
-        logger.info("----deleteYsFeedBack----");
+        logger.info("----deletePath----");
          try{
              if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
                  ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
                  return;
              }
-             int ret = feedBackService.deleteByPrimaryKey(Integer.valueOf(id));
+             int ret = travelPathService.deletePathById(Integer.valueOf(id));
              ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
          }catch(Exception e){
-             logger.error("删除反馈异常",e);
+             logger.error("删除公告异常",e);
              ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
          }
      }
     
-
-   /**
+    
+    /**
      * 保存更新
      *
      * @return
      * @author: huangzlmf
      * @date: 2015年4月21日 12:49:05
-     ***/
-    @RequestMapping("/saveUserFeedback")
+     */
+    @RequestMapping("/savePath")
     @ResponseBody
-    public void saveUserFeedback(FeedBackDo userfeedbackDo, 
+    public void savePath(TravelPathDo TravelPathDo, 
     							  HttpServletRequest request, 
     							  HttpServletResponse response) {
-        logger.info("----saveUserFeedback------");
+        logger.info("----savePath------");
         try{
-        	Integer id = userfeedbackDo.getFeedbackid();
-            Integer userId = this.getUserId();
-            
+        	Integer id = TravelPathDo.getPathid();
+        	
             int i = 0;
             if (id != null && id.intValue()>0) {
-            	userfeedbackDo.setUserid(userId.intValue());
-            	userfeedbackDo.setReplytime(new Date());
-                i = feedBackService.updateUserFeedbackById(userfeedbackDo);
+                i = travelPathService.updatePathById(TravelPathDo);
             } else {
-            	i=1;
-                feedBackService.feedBack(userfeedbackDo);
+            	
+                i = travelPathService.addPath(TravelPathDo);
             }
 
             if (i <= 0) {
@@ -169,8 +165,10 @@ public class UserFeedbackController extends BaseAction{
             logger.error("保存更新失败",e);
             outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
         }
-        logger.info("----end saveUserFeedback--------");
+        logger.info("----end savePath--------");
     }
+    
+	
 	
 }
 

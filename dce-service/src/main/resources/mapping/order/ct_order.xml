@@ -64,13 +64,18 @@
 		resultMap="orderMapper">
 		select
 		a.orderId, a.orderCode, a.userId, a.qty, a.totalPrice,
-		date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime, a.orderStatus,
+		date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
+		a.orderStatus,
 		a.payStatus,
-		date_format(a.payTime,'%Y-%m-%d %H:%i:%s') paytime, a.orderType,
-		addressId, alipayStatus, b.orderDetailId, b.orderId, b.goods_id, b.qty, b.price, b.remark
-		from ct_order a, ct_orderdetail b
+		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
+		paytime, a.orderType,
+		addressId, alipayStatus, b.orderDetailId,
+		b.orderId, b.goods_id, b.qty, b.price, b.remark
+		from ct_order a,
+		ct_orderdetail b
 		where
-		a.userId = #{userId,jdbcType=INTEGER} and a.orderId=b.orderId
+		a.userId = #{userId,jdbcType=INTEGER} and
+		a.orderId=b.orderId
 		order by
 		a.createTime desc
 	</select>
@@ -455,7 +460,7 @@
 		WHERE orderId = #{orderId} and orderStatus = #{oldStatus}
 	</update>
 
-	<update id="updateMatchOrder" parameterType="com.dce.business.entity.order.OrderDo">
+	<update id="updateMatchOrder" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		<set>
 			<if test="payStatus != null">
@@ -484,9 +489,12 @@
 	</select>
 
 	<select id="selectOrderByPage" parameterType="Map" resultType="Map">
-		SELECT a.*,b.user_name,b.true_name,b.user_level
-		FROM ct_order a LEFT
-		JOIN ct_user b ON a.userid = b.id
+		SELECT a.*, b.true_name trueName,CONCAT(c.address,c.addressDetails)
+		address
+		FROM ct_order a
+		LEFT JOIN ct_user b ON a.userid = b.id
+		left join ct_user_address c on
+		c.addressId = a.addressId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userId != null">
 				AND a.userId = #{userId}
@@ -500,6 +508,9 @@
 			<if test="orderType != null">
 				AND a.orderType = #{orderType}
 			</if>
+			<if test="trueName != null">
+				AND b.true_name = #{trueName}
+			</if>
 			<if test="userName != null">
 				AND b.user_name = #{userName}
 			</if>
@@ -510,6 +521,7 @@
 				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 		</trim>
+		order by a.createTime desc
 	</select>
 	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
 		SELECT sum(qty) as qty
@@ -539,7 +551,7 @@
 			</if>
 		</trim>
 	</select>
-	
+
 	<!-- 查询总业绩 -->
 	<select id="selectSum" parameterType="Map" resultType="map">
 		SELECT SUM( totalPrice) as Totalperformance from ct_order where 1=1

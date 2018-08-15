@@ -3,10 +3,15 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchorderForm #searchButton").on("click",function(){
+		
+		var dataUrl = httpUrl+"/order/listOrder.html";
+		$("#tt_Order").datagrid('options').url = dataUrl;
 		$("#tt_Order").datagrid('load',{
-			'searchStr': $("#searchorderForm #searchStr").val(),
-			'searchCodeStr':$("#searchorderForm #searchCodeStr").val()		
+			'userName': $("#searchorderForm #userName").val(),
+			'startDate':$("#searchorderForm #startDate").datebox('getValue'),
+			'endDate':$("#searchorderForm #endDate").datebox('getValue'),
 		});
+		
 	});
 	
 	$("#searchorderForm #resetButton").on("click",function(){
@@ -17,42 +22,68 @@ $(function(){
 	
 /*##########################grid init begin####################################################*/
 /*##########################grid toolbar begin#################################################*/
-	var toolbar_tt = [
+	/*var toolbar_tt = [
 					{
 						iconCls:"icon-edit",
 						text:"新增",
 						handler:to_addorder
 					}
-	          	];
+	          	];*/
 	
 /*######################grid toolbar end##############################*/
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"orderCode",title:"编码",width:180,align:"center"},
-								{field:"userId",title:"编码",width:180,align:"center"},
-								{field:"qty",title:"编码",width:180,align:"center"},
-								{field:"totalPrice",title:"编码",width:180,align:"center"},
-								{field:"recAddress",title:"编码",width:180,align:"center"},
-								{field:"createTime",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"orderStatus",title:"编码",width:180,align:"center"},
-								{field:"payStatus",title:"编码",width:180,align:"center"},
-								{field:"payTime",title:"编码",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"orderType",title:"编码",width:180,align:"center"},
-								{field:"matchOrderId",title:"编码",width:180,align:"center"},
-								{field:"salqty",title:"编码",width:180,align:"center"},
-								{field:"accountType",title:"编码",width:180,align:"center"},
-								{field:"goodsId",title:"编码",width:180,align:"center"},
-								{field:"price",title:"编码",width:180,align:"center"},
-								{field:"addressId",title:"编码",width:180,align:"center"},
-								{field:"remark",title:"编码",width:180,align:"center"},
-					{field:"操作",title:"操作",width:80,align:"left",
+							{field:'orderid',title:'orderid',width:100,hidden:true},						
+								{field:"orderCode",title:"订单编号",width:180,align:"center"},
+								{field:"trueName",title:"客户姓名",width:180,align:"center"},
+								{field:"qty",title:"数量",width:180,align:"center"},
+								{field:"totalPrice",title:"总金额",width:180,align:"center"},
+								{field:"createTime",title:"创建时间",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"orderStatus",title:"订单状态",width:180,align:"center",
+									formatter:function(value,row,index){
+			 						if(value == "0"){
+			 							return "未发货";
+			 						}else if(value == "1"){
+			 							return "已发货";
+			 						}
+			 					}},
+								{field:"payStatus",title:"付款状态",width:180,align:"center",
+			 						formatter:function(value,row,index){
+			 						if(value == "0"){
+			 							return "待付";
+			 						}else if(value == "1"){
+			 							return "已付";
+			 						}
+			 					}},
+								{field:"payTime",title:"支付时间",width:180,align:"center",formatter:dateTimeFormatter},
+								{field:"orderType",title:"支付方式",width:180,align:"center",
+									formatter:function(value,row,index){
+				 						if(value == "1"){
+				 							return "微信";
+				 						}else if(value == "2"){
+				 							return "支付宝";
+				 						}else if(value == "3"){
+				 							return "其他";
+				 						}
+				 					}},
+								{field:"alipayStatus",title:"订单支付状态",width:180,align:"center",
+				 						formatter:function(value,row,index){
+					 						if(value == "0"){
+					 							return "支付失败";
+					 						}else if(value == "1"){
+					 							return "支付成功";
+					 						}else if(value == "2"){
+					 							return "未确定";
+					 						}
+					 					}},
+								{field:"address",title:"地址",width:180,align:"center"},
+					/*{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editorder(\''+row.id+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editorder(\''+row.orderid+'\');">编辑</a>';
 	 					  return str;
 	 					}
-	 				}	 				
+	 				}	*/ 				
 	 			]
 	 	];
 /*######################grid columns end##############################*/
@@ -80,12 +111,13 @@ $(function(){
 		showPageList:true,
 		pageSize:20,
 		pageList:[10,20,30],
-		idField:"id",
+		idField:"orderid",
 		columns:columns_tt,
-		toolbar:toolbar_tt,
+		/*toolbar:toolbar_tt,*/
 		queryParams:{
-			'searchStr': $("#searchorderForm #searchStr").val(),
-			'searchCodeStr':$("#searchorderForm #searchCodeStr").val()
+			'userName': $("#searchorderForm #userName").val(),
+			'startDate':$("#searchorderForm #startDate").val(),
+			'endDate':$("#searchorderForm #endDate").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -100,21 +132,14 @@ $(function(){
 
 
 /**
- * 新增
- * @param id
- */
-function to_addorder(){
-	to_edit('');
-}
-/**
  * 编辑
  * @param id
  */
 function to_editorder(id){
 	
-	var url = httpUrl+"/order/addOrder.html?&rand=" + Math.random()+"&id="+id;
+	var url = httpUrl+"/order/addOrder.html?&rand=" + Math.random()+"&orderid="+id;
 	$('#editOrderDiv').dialog({
-		title: "新增",
+		title: "修改",
 		width: 760,
 		height: 500,
 		closed: false,

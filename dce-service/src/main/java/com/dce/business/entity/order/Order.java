@@ -19,13 +19,25 @@ public class Order {
 
 	private String createtime; // 订单创建之间
 
-	private Integer orderstatus; // 订单状态（1已发货2未发货）
+	private Integer orderstatus; // 订单状态（1已发货0未发货）
 
-	private Integer paystatus; // 付款状态（1已付2待付）
+	private Integer paystatus; // 付款状态（1已付0待付）
 
 	private String paytime; // 支付时间
 
 	private Integer ordertype; // 订单支付方式（1微信2支付宝）
+
+	private Integer addressid; // 收获地址表id，从该表中获取收货人的信息
+
+	private Integer alipayStatus; // 支付状态：0支付失败1支付成功2未确定状态
+
+	private List<OrderDetail> orderDetailList; // 订单明细
+
+	private List<OrderDetail> awardDetailLst; // 订单优惠明细
+
+	private String trueName; // 客户姓名
+
+	private String address; // 收货地址
 
 	private Long matchorderid;
 
@@ -37,11 +49,21 @@ public class Order {
 
 	private Long price;
 
-	private Integer addressid; // 收获地址表id，从该表中获取收货人的信息
+	public String getAddress() {
+		return address;
+	}
 
-	private Integer alipayStatus; // 支付状态：0支付失败1支付成功2未确定状态
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-	private List<OrderDetail> orderDetailList; // 订单明细
+	public String getTrueName() {
+		return trueName;
+	}
+
+	public void setTrueName(String trueName) {
+		this.trueName = trueName;
+	}
 
 	public List<OrderDetail> getOrderDetailList() {
 		return orderDetailList;
@@ -50,8 +72,6 @@ public class Order {
 	public void setOrderDetailList(List<OrderDetail> orderDetailList) {
 		this.orderDetailList = orderDetailList;
 	}
-
-	private List<OrderDetail> awardDetailLst; // 订单优惠明细
 
 	public Integer getAlipayStatus() {
 		return alipayStatus;
@@ -200,7 +220,6 @@ public class Order {
 	public void setAddressid(Integer addressid) {
 		this.addressid = addressid;
 	}
-
 
 	public List<OrderDetail> getAwardDetailLst() {
 		return awardDetailLst;

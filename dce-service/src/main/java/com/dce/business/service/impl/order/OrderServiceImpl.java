@@ -54,6 +54,9 @@ public class OrderServiceImpl implements IOrderService {
 		return result;
 	}
 
+	/**
+	 * 后台分页查询
+	 */
 	@Override
 	public PageDo<Map<String, Object>> selectOrderByPage(PageDo<Map<String, Object>> page, Map<String, Object> params) {
 		if (params == null) {
@@ -62,7 +65,6 @@ public class OrderServiceImpl implements IOrderService {
 		params.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = orderDao.selectOrderByPage(params);
 		page.setModelList(list);
-		;
 		return page;
 	}
 

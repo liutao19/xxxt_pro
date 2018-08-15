@@ -33,7 +33,7 @@
   </select>
   
   <!-- 自定义多条件分页查询 -->
-  <select id="getAwardlistPage" parameterType="Map" resultMap="awardlistResultMap">
+  <select id="getAwardlistPage" parameterType="Map" resultMap="BaseResultMap">
 		SELECT * 
 		  FROM awardlist
 		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 

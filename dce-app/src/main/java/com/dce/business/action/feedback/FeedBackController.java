@@ -14,7 +14,7 @@ import com.dce.business.service.feedback.IFeedBackService;
 
 @RestController
 @RequestMapping("/feedBack")
-public class FeedBackController extends BaseController {/*
+public class FeedBackController extends BaseController {
 	
 	private final static Logger logger = Logger.getLogger(FeedBackController.class);
 
@@ -38,4 +38,4 @@ public class FeedBackController extends BaseController {/*
 		return result;
 	}
 
-*/}
+}

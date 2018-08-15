@@ -8,6 +8,7 @@
 package com.dce.manager.action.news;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -76,6 +77,8 @@ public class YsNewsController extends BaseAction{
                 model.addAttribute("searManagerName",managerName);
             }
             page = ysNewsService.getYsNewsPage(param, page);
+            List<NewsDo> list=page.getModelList();
+            
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));
         }catch(Exception e){
@@ -97,6 +100,7 @@ public class YsNewsController extends BaseAction{
         try{
             if(StringUtils.isNotBlank(id)){
                 NewsDo ysnewsDo = ysNewsService.selectNewsDetail(Integer.valueOf(id));
+                                
                 if(null != ysnewsDo){
                     modelMap.addAttribute("ysnews", ysnewsDo);
                 }

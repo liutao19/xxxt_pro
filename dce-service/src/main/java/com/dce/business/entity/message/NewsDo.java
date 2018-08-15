@@ -14,9 +14,18 @@ public class NewsDo {
 	  private String remark ;//备注
 	  private Integer status ;//状态
 	  private Date createDate  ;//创建时间
-	  private String creatName ;//创建人
+	  private String createName ;//创建人
 	  private Date updateDate  ;//更新时间
 	  private String updateName ;//更新人
+	  
+	  
+	  
+	public String getCreateName() {
+		return createName;
+	}
+	public void setCreateName(String createName) {
+		this.createName = createName;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -71,12 +80,7 @@ public class NewsDo {
 	public void setCreateDate(Date creatDate) {
 		this.createDate = creatDate;
 	}
-	public String getCreatName() {
-		return creatName;
-	}
-	public void setCreatName(String creatName) {
-		this.creatName = creatName;
-	}
+	
 	public Date getUpdateDate() {
 		return updateDate;
 	}

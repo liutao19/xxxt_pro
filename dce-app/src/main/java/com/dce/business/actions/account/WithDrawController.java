@@ -49,6 +49,7 @@ public class WithDrawController extends BaseController {
 
         return payService.withdraw(getUserId(), password,type, new BigDecimal(qty),bank_no);
     }
+    
 
     
     /**
@@ -61,6 +62,8 @@ public class WithDrawController extends BaseController {
     	Map<String, Object> map=new HashMap<String,Object>();
     	
     	map.put("userId", getString("userId"));
+    	
+    	System.out.println("list----->>"+withdrawService.getWithdrawRecords(map));
     	
     	return withdrawService.getWithdrawRecords(map);
     			

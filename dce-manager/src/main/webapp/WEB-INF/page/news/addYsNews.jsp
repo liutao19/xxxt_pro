@@ -81,7 +81,7 @@
 								<input type="text" 
 								id="createDate" 
 								name="createDate" 
-								value="<fmt:formatDate value="${ysnews.creteName}" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${ysnews.createDate}" pattern="yyyy-MM-dd"/>"
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   
@@ -103,7 +103,7 @@
 								<input type="text" 
 								id="updateDate" 
 								name="updateDate" 
-								value="<fmt:formatDate value="${ysnews.creteName}" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${ysnews.updateDate}" pattern="yyyy-MM-dd"/>"
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   

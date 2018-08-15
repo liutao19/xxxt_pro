@@ -8,13 +8,13 @@ package com.dce.business.common.enums;
  */
 public enum AccountType {
 	/**现金账户*/
-	wallet_money("wallet_original", "现金账户"),
+	wallet_money("wallet_money", "现金账户"),
 	/**旅游*/
-	wallet_travel("wallet_original_release", "旅游"),
+	wallet_travel("wallet_travel", "旅游"),
 	/**日息钱包*/
-	wallet_goods("wallet_interest", "赠送商品"),
+	wallet_goods("wallet_goods", "赠送商品"),
 	/**赠送活动：沙龙*/
-	wallet_active("wallet_interest", "赠送活动");
+	wallet_active("wallet_active", "赠送活动");
 
     private String accountType;
     private String remark;

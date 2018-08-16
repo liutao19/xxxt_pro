@@ -6,7 +6,7 @@
 		<result column="userId" jdbcType="INTEGER" property="userId" />
 		<result column="accountType" jdbcType="VARCHAR" property="accountType" />
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
-		<result column="totalConsumeAmount" jdbcType="DECIMAL" property="totalConsumeAmount" />
+		<result column="totalConsumeAmount" jdbcType="VARCHAR" property="totalConsumeAmount" />
 		<result column="totalInocmeAmount" jdbcType="DECIMAL" property="totalInocmeAmount" />
 		<result column="incomeAmount" jdbcType="DECIMAL" property="incomeAmount" />
 		<result column="consumeAmount" jdbcType="DECIMAL" property="consumeAmount" />
@@ -35,7 +35,7 @@
 		incomeAmount, consumeAmount, withdrawTotalDeposit,
 		updateTime)
 		values (#{userId,jdbcType=INTEGER}, #{accountType,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
-		 #{totalConsumeAmount,jdbcType=DECIMAL}, #{totalInocmeAmount,jdbcType=DECIMAL},
+		#{totalConsumeAmount,jdbcType=VARCHAR}, #{totalInocmeAmount,jdbcType=DECIMAL},
 		#{incomeAmount,jdbcType=DECIMAL}, #{consumeAmount,jdbcType=DECIMAL}, #{withdrawTotalDeposit,jdbcType=VARCHAR},
 		#{updateTime,jdbcType=TIMESTAMP})
 	</insert>
@@ -84,7 +84,7 @@
 			</if>
 			
 			<if test="totalConsumeAmount != null">
-				#{totalConsumeAmount,jdbcType=DECIMAL},
+				#{totalConsumeAmount,jdbcType=VARCHAR},
 			</if>
 			<if test="totalInocmeAmount != null">
 				#{totalInocmeAmount,jdbcType=DECIMAL},
@@ -117,7 +117,7 @@
 			</if>
 			
 			<if test="totalConsumeAmount != null">
-				totalConsumeAmount = #{totalConsumeAmount,jdbcType=DECIMAL},
+				totalConsumeAmount = #{totalConsumeAmount,jdbcType=VARCHAR},
 			</if>
 			<if test="totalInocmeAmount != null">
 				totalInocmeAmount = #{totalInocmeAmount,jdbcType=DECIMAL},
@@ -143,7 +143,7 @@
 		accountType = #{accountType,jdbcType=VARCHAR},
 		amount = #{amount,jdbcType=DECIMAL},		
 		totalConsumeAmount =
-		#{totalConsumeAmount,jdbcType=DECIMAL},
+		#{totalConsumeAmount,jdbcType=VARCHAR},
 		totalInocmeAmount = #{totalInocmeAmount,jdbcType=DECIMAL},
 		incomeAmount =
 		#{incomeAmount,jdbcType=DECIMAL},
@@ -249,7 +249,29 @@
 		GROUP BY a.userId
 		
 	</select>
-	
+	<select id="selectAccountInfomByPage" parameterType="Map" resultType="Map">
+		SELECT CONCAT(b.user_name,'[',b.true_name,']') AS userName, a.userId,
+		
+		MAX(CASE a.accountType WHEN 'wallet_money' THEN a.amount ELSE 0 END ) wallet_money,
+		
+		MAX(CASE a.accountType WHEN 'wallet_travel' THEN a.amount ELSE 0 END) wallet_travel ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_goods' THEN a.amount ELSE 0 END) wallet_goods ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_active' THEN a.amount ELSE 0 END) wallet_active
+				
+		FROM ct_user_account a LEFT JOIN ct_user b on a.userId=b.id
+		<trim prefix="WHERE" prefixOverrides="AND">
+			<if test="userName != null">
+				AND (b.user_name = #{userName} OR b.true_name=#{userName})
+			</if>
+			<if test="trueName != null">
+				AND b.true_name = #{trueName}
+			</if>
+		</trim>
+		GROUP BY a.userId 
+		
+	</select>
 	<select id="sumAccount" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT  SUM(amount) AS amount, accountType FROM ct_user_account	GROUP BY accountType
 		

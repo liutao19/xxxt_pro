@@ -32,7 +32,7 @@ public class UserAddressController extends BaseController {
 	 */
 	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
 	public Result<?> addAddress() {
-		String addressId = getString("addressId");
+		String addressId = getString("address");
 		String username = getString("username");
 		String userphone = getString("userphone");
 		String address = getString("address");
@@ -63,7 +63,7 @@ public class UserAddressController extends BaseController {
 	}
 
 	/**
-	 * 添加收货地址
+	 * 查看收货地址
 	 * 
 	 * @return
 	 */
@@ -71,11 +71,33 @@ public class UserAddressController extends BaseController {
 	public Result<?> listAddress() {
 		// 获取当前用户的id
 		Integer userId = getUserId();
-		
 		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
+
 		Result ret = Result.successResult("查看收货地址");
 		ret.setData(addressList);
+
+		// return Result.successResult("获取用户地址成功",addressList);
 		return ret;
 	}
 
+	/**
+	 * 按主键删除收货地址
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/delAddress1", method = { RequestMethod.POST })
+	public Result<?> detAddress() {
+
+		String addressid = getString("address");
+		// Integer detAddress = Integer.parseInt(addressid);
+		// 获取当前用户的id
+		Integer userId = getUserId();
+
+		UserAddressDo addressadd = new UserAddressDo();
+		if (StringUtils.isNotBlank(addressid)) {
+			addressadd.setAddressid(Integer.parseInt(addressid));
+			addressService.deleteByPrimaryKeyInt(Integer.parseInt(addressid));
+		}
+		return Result.successResult("删除地址成功");
+	}
 }

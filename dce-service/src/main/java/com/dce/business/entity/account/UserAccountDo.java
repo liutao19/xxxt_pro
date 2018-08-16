@@ -10,10 +10,10 @@ public class UserAccountDo {
 
     private String accountType;
 
+    //账户金额
     private BigDecimal amount;
-
-
-    private BigDecimal totalConsumeAmount;
+    //奖品
+    private String totalConsumeAmount;
 
     private BigDecimal totalInocmeAmount;
 
@@ -66,15 +66,17 @@ public class UserAccountDo {
         this.amount = amount;
     }
 
-    public BigDecimal getTotalConsumeAmount() {
-        return totalConsumeAmount;
-    }
+   
 
-    public void setTotalConsumeAmount(BigDecimal totalConsumeAmount) {
-        this.totalConsumeAmount = totalConsumeAmount;
-    }
+    public String getTotalConsumeAmount() {
+		return totalConsumeAmount;
+	}
 
-    public BigDecimal getTotalInocmeAmount() {
+	public void setTotalConsumeAmount(String totalConsumeAmount) {
+		this.totalConsumeAmount = totalConsumeAmount;
+	}
+
+	public BigDecimal getTotalInocmeAmount() {
         return totalInocmeAmount;
     }
 

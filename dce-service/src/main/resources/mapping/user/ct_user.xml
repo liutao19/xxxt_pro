@@ -61,7 +61,7 @@
 		<result column="darea" jdbcType="INTEGER" property="darea" />
 		<result column="balance_et" jdbcType="DECIMAL" property="balanceEt" />
 		<result column="idnumber" jdbcType="CHAR" property="idnumber" />
-		<result column="banktype" jdbcType="TINYINT" property="banktype" />
+		<result column="banktype" jdbcType="VARCHAR" property="banktype" />
 		<result column="bank_user_name" jdbcType="VARCHAR" property="bankUserName" />
 		<result column="banknumber" jdbcType="VARCHAR" property="banknumber" />
 		<result column="bank_content" jdbcType="VARCHAR" property="bankContent" />
@@ -239,7 +239,7 @@
 		#{province,jdbcType=INTEGER},
 		#{city,jdbcType=INTEGER}, #{darea,jdbcType=INTEGER},
 		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=CHAR},
-		#{banktype,jdbcType=TINYINT},
+		#{banktype,jdbcType=VARCHAR},
 		#{bankUserName,jdbcType=VARCHAR},
 		#{banknumber,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
 		#{question1,jdbcType=VARCHAR}, #{question2,jdbcType=VARCHAR},
@@ -724,7 +724,7 @@
 				#{idnumber,jdbcType=CHAR},
 			</if>
 			<if test="banktype != null">
-				#{banktype,jdbcType=TINYINT},
+				#{banktype,jdbcType=VARCHAR},
 			</if>
 			<if test="bankUserName != null">
 				#{bankUserName,jdbcType=VARCHAR},
@@ -1012,7 +1012,7 @@
 				idnumber = #{idnumber,jdbcType=CHAR},
 			</if>
 			<if test="banktype != null">
-				banktype = #{banktype,jdbcType=TINYINT},
+				banktype = #{banktype,jdbcType=VARCHAR},
 			</if>
 			<if test="bankUserName != null">
 				bank_user_name = #{bankUserName,jdbcType=VARCHAR},
@@ -1226,7 +1226,7 @@
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
 		idnumber =
 		#{idnumber,jdbcType=CHAR},
-		banktype = #{banktype,jdbcType=TINYINT},
+		banktype = #{banktype,jdbcType=VARCHAR},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
 		banknumber =
 		#{banknumber,jdbcType=VARCHAR},
@@ -1385,7 +1385,7 @@
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
 		idnumber =
 		#{idnumber,jdbcType=CHAR},
-		banktype = #{banktype,jdbcType=TINYINT},
+		banktype = #{banktype,jdbcType=VARCHAR},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
 		banknumber =
 		#{banknumber,jdbcType=VARCHAR},
@@ -1602,4 +1602,328 @@
 		</trim>
 	</select>
 
+	<!-- 更改支付密码 -->
+	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
+		update ct_user
+		<set>
+			<if test="twoPassword">
+				two_password = #{twoPassword,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 更改登录密码 -->
+	<update id="updateByPrimaryKeyLogPass" parameterType="com.dce.business.entity.user.UserDo">
+		update ct_user
+		<set>
+			<if test="userPassword">
+				user_password = #{userPassword,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 自定义多条件查询 -->
+	<select id="selectUserCondition" parameterType="Map" resultMap="BaseResultMap">
+		SELECT * 
+		  FROM ct_user
+		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+			<if test="id != null">  
+				AND id = #{id}
+			</if>
+			<if test="userName != null">  
+				AND user_name = #{userName}
+			</if>
+			<if test="trueName != null">  
+				AND true_name = #{trueName}
+			</if>
+			<if test="email != null">  
+				AND email = #{email}
+			</if>
+			<if test="mobile != null">  
+				AND mobile = #{mobile}
+			</if>
+			<if test="userPassword != null">  
+				AND user_password = #{userPassword}
+			</if>
+			<if test="twoPassword != null">  
+				AND two_password = #{twoPassword}
+			</if>
+			<if test="userFace != null">  
+				AND user_face = #{userFace}
+			</if>
+			<if test="balanceIntegral != null">  
+				AND balance_integral = #{balanceIntegral}
+			</if>
+			<if test="sex != null">  
+				AND sex = #{sex}
+			</if>
+			<if test="loginTimes != null">  
+				AND login_times = #{loginTimes}
+			</if>
+			<if test="lastLoginTime != null">  
+				AND last_login_time = #{lastLoginTime}
+			</if>
+			<if test="lastLoginIp != null">  
+				AND last_login_ip = #{lastLoginIp}
+			</if>
+			<if test="regIp != null">  
+				AND reg_ip = #{regIp}
+			</if>
+			<if test="regTime != null">  
+				AND reg_time = #{regTime}
+			</if>
+			<if test="status != null">  
+				AND status = #{status}
+			</if>
+			<if test="balanceBonus != null">  
+				AND balance_bonus = #{balanceBonus}
+			</if>
+			<if test="balanceRepeat != null">  
+				AND balance_repeat = #{balanceRepeat}
+			</if>
+			<if test="balanceCash != null">  
+				AND balance_cash = #{balanceCash}
+			</if>
+			<if test="balanceDongjie != null">  
+				AND balance_dongjie = #{balanceDongjie}
+			</if>
+			<if test="balanceShopping != null">  
+				AND balance_shopping = #{balanceShopping}
+			</if>
+			<if test="forzenShopping != null">  
+				AND forzen_shopping = #{forzenShopping}
+			</if>
+			<if test="totalBonus != null">  
+				AND total_bonus = #{totalBonus}
+			</if>
+			<if test="totalRepeat != null">  
+				AND total_repeat = #{totalRepeat}
+			</if>
+			<if test="totalCash != null">  
+				AND total_cash = #{totalCash}
+			</if>
+			<if test="totalIntegral != null">  
+				AND total_integral = #{totalIntegral}
+			</if>
+			<if test="totalShopping != null">  
+				AND total_shopping = #{totalShopping}
+			</if>
+			<if test="refereeid != null">  
+				AND refereeid = #{refereeid}
+			</if>
+			<if test="parentid != null">  
+				AND parentid = #{parentid}
+			</if>
+			<if test="refereeNumber != null">  
+				AND referee_number = #{refereeNumber}
+			</if>
+			<if test="refereeStatus != null">  
+				AND referee_status = #{refereeStatus}
+			</if>
+			<if test="sonNumber != null">  
+				AND son_number = #{sonNumber}
+			</if>
+			<if test="isServerCenter != null">  
+				AND is_server_center = #{isServerCenter}
+			</if>
+			<if test="myServerCenter != null">  
+				AND my_server_center = #{myServerCenter}
+			</if>
+			<if test="userScore != null">  
+				AND userScore = #{userScore}
+			</if>
+			<if test="userType != null">  
+				AND user_type = #{userType}
+			</if>
+			<if test="userGroup != null">  
+				AND user_group = #{userGroup}
+			</if>
+			<if test="userLevel != null">  
+				AND user_level = #{userLevel}
+			</if>
+			<if test="userPost != null">  
+				AND user_post = #{userPost}
+			</if>
+			<if test="regMoney != null">  
+				AND reg_money = #{regMoney}
+			</if>
+			<if test="yfMoney != null">  
+				AND yf_money = #{yfMoney}
+			</if>
+			<if test="fdMoney != null">  
+				AND fd_money = #{fdMoney}
+			</if>
+			<if test="totalPerformance != null">  
+				AND total_performance = #{totalPerformance}
+			</if>
+			<if test="activationTime != null">  
+				AND activation_time = #{activationTime}
+			</if>
+			<if test="userQq != null">  
+				AND user_qq = #{userQq}
+			</if>
+			<if test="userWechat != null">  
+				AND user_wechat = #{userWechat}
+			</if>
+			<if test="openid != null">  
+				AND openid = #{openid}
+			</if>
+			<if test="register != null">  
+				AND register = #{register}
+			</if>
+			<if test="expressPassword != null">  
+				AND express_password = #{expressPassword}
+			</if>
+			<if test="totalDividends != null">  
+				AND total_dividends = #{totalDividends}
+			</if>
+			<if test="dividendsDays != null">  
+				AND dividends_days = #{dividendsDays}
+			</if>
+			<if test="country != null">  
+				AND country = #{country}
+			</if>
+			<if test="province != null">  
+				AND province = #{province}
+			</if>
+			<if test="city != null">  
+				AND city = #{city}
+			</if>
+			<if test="darea != null">  
+				AND darea = #{darea}
+			</if>
+			<if test="balanceEt != null">  
+				AND balance_et = #{balanceEt}
+			</if>
+			<if test="idnumber != null">  
+				AND idnumber = #{idnumber}
+			</if>
+			<if test="banktype != null">  
+				AND banktype = #{banktype}
+			</if>
+			<if test="bankUserName != null">  
+				AND bank_user_name = #{bankUserName}
+			</if>
+			<if test="banknumber != null">  
+				AND banknumber = #{banknumber}
+			</if>
+			<if test="bankContent != null">  
+				AND bank_content = #{bankContent}
+			</if>
+			<if test="question1 != null">  
+				AND question1 = #{question1}
+			</if>
+			<if test="question2 != null">  
+				AND question2 = #{question2}
+			</if>
+			<if test="question3 != null">  
+				AND question3 = #{question3}
+			</if>
+			<if test="answer1 != null">  
+				AND answer1 = #{answer1}
+			</if>
+			<if test="answer2 != null">  
+				AND answer2 = #{answer2}
+			</if>
+			<if test="answer3 != null">  
+				AND answer3 = #{answer3}
+			</if>
+			<if test="groupid != null">  
+				AND groupid = #{groupid}
+			</if>
+			<if test="ticket != null">  
+				AND ticket = #{ticket}
+			</if>
+			<if test="balanceGouwu != null">  
+				AND balance_gouwu = #{balanceGouwu}
+			</if>
+			<if test="qrcodeStatus != null">  
+				AND qrcode_status = #{qrcodeStatus}
+			</if>
+			<if test="bonusTime != null">  
+				AND bonus_time = #{bonusTime}
+			</if>
+			<if test="isEmpty != null">  
+				AND is_empty = #{isEmpty}
+			</if>
+			<if test="balanceHeart != null">  
+				AND balance_heart = #{balanceHeart}
+			</if>
+			<if test="touchDistance != null">  
+				AND touch_distance = #{touchDistance}
+			</if>
+			<if test="kuoLevel != null">  
+				AND kuo_level = #{kuoLevel}
+			</if>
+			<if test="backfillStatus != null">  
+				AND backfill_status = #{backfillStatus}
+			</if>
+			<if test="backfillMoney != null">  
+				AND backfill_money = #{backfillMoney}
+			</if>
+			<if test="backfillSheng != null">  
+				AND backfill_sheng = #{backfillSheng}
+			</if>
+			<if test="guadanNum != null">  
+				AND guadan_num = #{guadanNum}
+			</if>
+			<if test="allStatic != null">  
+				AND allStatic = #{allStatic}
+			</if>
+			<if test="dis != null">  
+				AND dis = #{dis}
+			</if>
+			<if test="releaseTime != null">  
+				AND release_time = #{releaseTime}
+			</if>
+			<if test="isShop != null">  
+				AND isShop = #{isShop}
+			</if>
+			<if test="isImport != null">  
+				AND isImport = #{isImport}
+			</if>
+			<if test="pos != null">  
+				AND pos = #{pos}
+			</if>
+			<if test="isOut != null">  
+				AND isOut = #{isOut}
+			</if>
+			<if test="undoOpts != null">  
+				AND undo_opts = #{undoOpts}
+			</if>
+			<if test="tranDirect != null">  
+				AND tran_direct = #{tranDirect}
+			</if>
+			<if test="touchedPerformance != null">  
+				AND touched_performance = #{touchedPerformance}
+			</if>
+			<if test="baodanAmount != null">  
+				AND baodan_amount = #{baodanAmount}
+			</if>
+			<if test="rechargeAmount != null">  
+				AND rechargeAmount = #{rechargeAmount}
+			</if>
+			<if test="transAmount != null">  
+				AND transAmount = #{transAmount}
+			</if>
+			<if test="isLimitTrans != null">  
+				AND isLimitTrans = #{isLimitTrans}
+			</if>
+			<if test="isActivated != null">  
+				AND isActivated = #{isActivated}
+			</if>
+			<if test="identity != null">  
+				AND identity = #{identity}
+			</if>
+			<if test="certification != null">  
+				AND certification = #{certification}
+			</if>
+			<if test="district != null">  
+				AND district = #{district}
+			</if>
+         </trim> 
+	</select>
+	
+	
 </mapper>

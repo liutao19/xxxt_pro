@@ -26,7 +26,6 @@ import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.page.Pagination;
 import com.dce.business.entity.user.UserDo;
-import com.dce.business.service.account.IBaodanService;
 import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
 
@@ -37,9 +36,6 @@ public class UserController extends BaseAction{
 
 	@Autowired
 	private IUserService userService;
-	
-	@Autowired
-	private IBaodanService baodanService;
 	
 	@RequestMapping("/index")
 	public String index(){
@@ -290,7 +286,6 @@ public class UserController extends BaseAction{
 				flag = userService.update(user);
 			}else{
 				logger.info("非空单用户修改,只改变用户信息:userId=" + userId + ",userName=" + userName);
-				flag = baodanService.upgradeLevel(user, Integer.parseInt(userLevel));
 			}
 			logger.info("修改结果:" + JSON.toJSONString(flag));
 				

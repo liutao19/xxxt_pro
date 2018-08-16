@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.message.INewsDao">
-
+	 <resultMap  id="ysNewsResultMap" type="com.dce.business.entity.message.NewsDo">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="title" column="title"  jdbcType="INTEGER"/>
+		<result property="image" column="image"  jdbcType="VARCHAR"/>
+		<result property="content" column="content" jdbcType="VARCHAR"/>
+		<result property="author" column="author" jdbcType="VARCHAR"/>
+		<result property="topNews" column="top_news" jdbcType="INTEGER"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="status" column="status" jdbcType="INTEGER"/>
+		<result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+		<result property="createName" column="create_name" jdbcType="VARCHAR"/>
+		<result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+		<result property="updateName" column="update_name" jdbcType="VARCHAR"/>
+	</resultMap> 
 	
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="com.dce.business.entity.message.NewsDo">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ysNewsResultMap">
 		SELECT
 		    id,
 		    title,
@@ -24,7 +37,7 @@
 	
 	
 	<!-- 自定义查询 -->
-    <select id="select"  resultType="com.dce.business.entity.message.NewsDo">
+    <select id="select"  resultMap="ysNewsResultMap">
         SELECT
 		   id,
 		    title,
@@ -112,8 +125,20 @@
 	</insert>
 	
 	
-	<select id="queryListPage" parameterType="Map" resultType="com.dce.business.entity.message.NewsDo">
-		SELECT * 
+	<select id="queryListPage" parameterType="Map" resultMap="ysNewsResultMap">
+		SELECT
+		    id,
+		    title,
+		    image,
+		    content,
+		    author,
+		    top_news,
+		    remark,
+		    status,
+		    create_date,
+		    create_name,
+		    update_date,
+		    update_name
 		  FROM t_ys_news
 		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
 			<if test="id != null">  
@@ -153,6 +178,7 @@
 				AND update_name = #{updateName}
 			</if>
          </trim> 
+         
 
 	</select>
 	

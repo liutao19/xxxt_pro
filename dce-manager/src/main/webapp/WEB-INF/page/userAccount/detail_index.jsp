@@ -37,13 +37,10 @@
 					   	<td class="tdfont" colspan="2">账户类别:
 							 <select class="easyui-combobox" id="seacrchAccountType" name="seacrchAccountType" style="width:140px;">
 							 		<option value="">-选择账户类别-</option>
-							 		<option value="wallet_original">原始币钱包</option>
-							 		<option value="wallet_original_release">释放币钱包</option>
-							 		<option value="wallet_interest">日息币钱包</option>
-							 		<option value="wallet_bonus">奖金币钱包</option>
-							 		<option value="wallet_release_release">可提币钱包</option>
-							 		<option value="wallet_score">流通币钱包</option>
-							 		<option value="wallet_cash">现金币钱包</option>
+							 		<option value="wallet_money">账户余额 </option>
+							 		<option value="wallet_travel">奖励旅游 </option>
+							 		<option value="wallet_goods">奖励商品 </option>
+							 		<option value="wallet_active">奖励活动 </option>
 							 </select>
 					   	</td>
 					   	<td class="tdfont" colspan="2">流水类别:

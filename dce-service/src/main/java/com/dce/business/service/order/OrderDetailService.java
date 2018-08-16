@@ -1,6 +1,8 @@
 package com.dce.business.service.order;
 
-import com.dce.business.entity.goods.CTGoodsDo;
+import java.util.List;
+
+import com.dce.business.entity.order.OrderDetail;
 
 /**
  * 订单明细
@@ -9,6 +11,10 @@ import com.dce.business.entity.goods.CTGoodsDo;
  */
 public interface OrderDetailService {
 
-	//根据商品id查询出商品的价格
-	CTGoodsDo selectByGoodsId(Integer goodsId);
+	//插入订单明细
+	int insert(OrderDetail orderDetail);
+	
+	//批量插入订单明细
+	int insertOrderDetailByBatch(List<OrderDetail> orderDetailList);
+	
 }

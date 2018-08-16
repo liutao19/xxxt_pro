@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
-import com.dce.business.entity.notice.NoticeDo;
 import com.dce.business.entity.travel.TravelDo;
 import com.dce.business.service.travel.ICheckTravelService;
 import com.dce.business.service.travel.ITravelApplyService;

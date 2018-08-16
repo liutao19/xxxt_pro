@@ -15,13 +15,13 @@ public class UserAdressServiceImpl implements UserAdressService {
 
 	@Resource
 	private IUserAddressDao userAdressDao;
-	
+
 	/**
 	 * 根据id获取地址
 	 */
 	@Override
 	public UserAddressDo selectByPrimaryKey(Integer addressid) {
-		
+
 		return userAdressDao.selectByPrimaryKey(addressid);
 	}
 
@@ -52,16 +52,44 @@ public class UserAdressServiceImpl implements UserAdressService {
 		return userAdressDao.selectByPrimaryKeyUpdate(updateaddress);
 	}
 
+	/**
+	 * 修改收货地址
+	 */
 	@Override
 	public int updateByPrimaryKeySelective(UserAddressDo record) {
-		
+
 		return userAdressDao.updateByPrimaryKeySelective(record);
 	}
 
+	/**
+	 * 添加收货地址
+	 */
 	@Override
 	public int insertSelective(UserAddressDo record) {
-		
+
 		return userAdressDao.insertSelective(record);
+	}
+
+	/**
+	 * 删除收货地址
+	 * <== 费弃 ==>
+	 */
+	@Override
+	public boolean deleteByPrimaryKeyBoo(Integer addressid) {
+		boolean flag = false;
+		if(addressid !=null && addressid != 0){
+			flag = userAdressDao.deleteByPrimaryKey(addressid) > 0;
+		}
+		return false;
+	}
+
+	/**
+	 * 按主键删除收货地址
+	 */
+	@Override
+	public int deleteByPrimaryKeyInt(Integer addressid) {
+		
+		return userAdressDao.deleteByPrimaryKey(addressid);
 	}
 
 }

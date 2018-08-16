@@ -1,15 +1,8 @@
 package com.dce.business.actions.job;
 
-import javax.annotation.Resource;
-
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.dce.business.common.enums.AccountType;
-import com.dce.business.service.award.IAwardJobService;
-import com.dce.business.service.award.IAwardService;
-import com.dce.business.service.third.IEthereumJobService;
 
 /** 
  * 定时任务
@@ -21,19 +14,17 @@ import com.dce.business.service.third.IEthereumJobService;
 @RequestMapping("/job")
 public class JobController {
 
-	@Resource
-	private IAwardJobService awardJobService;
-	@Resource
-	private IEthereumJobService ethereumJobService;
+//	@Resource
+//	private IAwardJobService awardJobService;
+//	@Resource
+//	private IEthereumJobService ethereumJobService;
 
-	@Resource(name = "zhiTuiAwardService")
-	private IAwardService zhiTuiAwardService;
 
 	@RequestMapping("/interest")
 	public void jobInterest() {
 		//awardJobService.calInterest();
 		//zhiTuiAwardService.calAward(9, new BigDecimal("10000"), null);
-		awardJobService.calShared();
+		//awardJobService.calShared();
 		//release();
 	}
 
@@ -42,7 +33,7 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0 0 * * *")
 	public void calInterest() {
-		awardJobService.calInterest();
+		//awardJobService.calInterest();
 	}
 
 	/**   
@@ -50,7 +41,7 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0/1 * * * *")
 	public void comfirmEthTransResult() {
-		ethereumJobService.comfirmEthTransResult();
+		//ethereumJobService.comfirmEthTransResult();
 	}
 
 	/**   
@@ -59,16 +50,16 @@ public class JobController {
 	@Scheduled(cron = "0 0 2 * * *")
 	public void release() {
 		//1、原始仓钱包释放，按照原来金额的百分之四
-		awardJobService.calRelease();
+		//awardJobService.calRelease();
 
 		//2、日息钱包
-		awardJobService.calRelease(AccountType.wallet_interest, AccountType.wallet_original_release);
+		//awardJobService.calRelease(AccountType.wallet_interest, AccountType.wallet_original_release);
 
 		//3、奖金钱包
-		awardJobService.calRelease(AccountType.wallet_bonus, AccountType.wallet_original_release);
+		//awardJobService.calRelease(AccountType.wallet_bonus, AccountType.wallet_original_release);
 
 		//4、二次释放
-		awardJobService.calRelease(AccountType.wallet_original_release, AccountType.wallet_release_release);
+		//awardJobService.calRelease(AccountType.wallet_original_release, AccountType.wallet_release_release);
 	}
 
 	/**   
@@ -76,6 +67,6 @@ public class JobController {
 	 */
 	@Scheduled(cron = "0 0 1 * * *")
 	public void calShared() {
-		awardJobService.calShared();
+		//awardJobService.calShared();
 	}
 }

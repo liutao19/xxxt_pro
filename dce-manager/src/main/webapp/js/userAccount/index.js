@@ -35,15 +35,15 @@ $(function(){
 	var columns_tt = [
       			[
 	 			 	{field:'userId',title:'id',width:30,halign:"center", align:"left",checkbox:true},
-	 				{field:"userName",title:"用户名",width:180,align:"center"},
-	 				{field:"wallet_original",title:"原始币钱包",width:80,align:"center"},
-	 				{field:"wallet_original_release",title:"释放币钱包",width:80,align:"center"},
-	 				{field:"wallet_interest",title:"日息币钱包",width:80,align:"center"},
-	 				{field:"wallet_bonus",title:"奖金币钱包",width:80,align:"center"},
-	 				{field:"wallet_score",title:"流通币钱包",width:80,align:"center"},
+	 				{field:"userName",title:"用户名",width:30,align:"center"},
+	 				{field:"wallet_money",title:"账户余额",width:80,align:"center"},
+	 				{field:"wallet_travel",title:"奖励旅游",width:80,align:"center"},
+	 				{field:"wallet_goods",title:"奖励商品",width:80,align:"center"},
+	 				{field:"wallet_active",title:"奖励活动",width:80,align:"center"}
+	 				/*{field:"wallet_score",title:"流通币钱包",width:80,align:"center"},
 	 				{field:"wallet_cash",title:"现金币钱包",width:80,align:"center"},
 	 				{field:"wallet_release_release",title:"可提币钱包",width:80,align:"center"}
-	 				
+	 				 */		
 	 			]
 	 	];
 

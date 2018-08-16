@@ -10,6 +10,8 @@ public class WithdrawalsDo {
     private BigDecimal amount;
 
     private BigDecimal fackReceive;
+    
+    private String withdraw_status;
 
     private Long paymentDate;
 
@@ -35,7 +37,16 @@ public class WithdrawalsDo {
 
     private String remark;
 
-    public Integer getId() {
+    
+    public String getWithdraw_status() {
+		return withdraw_status;
+	}
+
+	public void setWithdraw_status(String withdraw_status) {
+		this.withdraw_status = withdraw_status;
+	}
+
+	public Integer getId() {
         return id;
     }
 

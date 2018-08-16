@@ -73,6 +73,7 @@ public class NewsServiceImpl implements INewsService {
 	public PageDo<NewsDo> getYsNewsPage(Map<String, Object> param, PageDo<NewsDo> page){
 		logger.info("----getYsNewsPage----"+param);
         param.put(Constants.MYBATIS_PAGE, page);
+        
         List<NewsDo> list =  newsDao.queryListPage(param);
         page.setModelList(list);
         return page;

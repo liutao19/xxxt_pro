@@ -15,6 +15,8 @@
 <script type="text/javascript" src="<c:url value='/js/order/index.js?v=${jsversion}'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/jquery.flexslider-min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/js/common/formatter.js?v=${jsversion}'/>"></script>
+
+
 <style type="text/css">
 .tdfont{
 	font-size: 12px;

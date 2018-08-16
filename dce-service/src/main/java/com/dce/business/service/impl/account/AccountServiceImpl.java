@@ -98,8 +98,11 @@ public class AccountServiceImpl implements IAccountService {
     public UserAccountDo getUserAccount(Integer userId, AccountType accountType) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
-        params.put("accountType", accountType.getAccountType());
+       // params.put("accountType", accountType.getAccountType());
         List<UserAccountDo> list = userAccountDao.selectAccount(params);
+        
+      //  System.err.println("用户-----》》》"+list+"---yonghu id----->>"+userId);
+        
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
@@ -345,7 +348,7 @@ public class AccountServiceImpl implements IAccountService {
 //        BigDecimal targetAmt = dceAmt.multiply(decp);
 //        targetAmt = targetAmt.divide(new BigDecimal(1), 6, RoundingMode.HALF_UP);
 		
-		convertBetweenAccount(userId, targetUserId, amt,amt, AccountType.wallet_cash.name(), AccountType.wallet_cash.name(), IncomeType.TYPE_PAY_QRCODE, IncomeType.TYPE_PAY_QRCODE );
+		convertBetweenAccount(userId, targetUserId, amt,amt, AccountType.wallet_money.name(), AccountType.wallet_money.name(), IncomeType.TYPE_PAY_QRCODE, IncomeType.TYPE_PAY_QRCODE );
 		
 		return result;
 	}
@@ -418,7 +421,7 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public PageDo<Map<String, Object>> selectAccountInfoByPage(
+	public PageDo<Map<String, Object>> selectAccountInfomByPage(
 			PageDo<Map<String, Object>> page, Map<String, Object> params) {
 		
 		if(params == null){
@@ -426,7 +429,7 @@ public class AccountServiceImpl implements IAccountService {
 		}
         params.put(Constants.MYBATIS_PAGE, page);
         
-        List<Map<String,Object>> list = userAccountDao.selectAccountInfoByPage(params);
+        List<Map<String,Object>> list = userAccountDao.selectAccountInfomByPage(params);
         page.setModelList(list);
 		return page;
 	}
@@ -448,6 +451,19 @@ public class AccountServiceImpl implements IAccountService {
         List<UserAccountDetailDo> list = userAccountDetailDao.selectUserAccountDetailByPage(params);
         page.setModelList(list);
 		return page;
+	}
+
+	@Override
+	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId) {
+		
+		return userAccountDetailDao.selectUserAccountDetailByUserId(userId);
+	}
+
+	@Override
+	public PageDo<Map<String, Object>> selectAccountInfoByPage(PageDo<Map<String, Object>> page,
+			Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

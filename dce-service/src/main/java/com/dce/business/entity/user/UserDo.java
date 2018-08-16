@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * 会员管理实体类
+ * 
  * @author XEY
  *
  */
@@ -16,11 +17,11 @@ public class UserDo {
 	private Integer id;
 
 	// 登录用户名或昵称
-	//@NotBlank(message = "验证编号不能为空")
+	// @NotBlank(message = "验证编号不能为空")
 	private String userName;
 
 	// 证件姓名
-	//@NotBlank(message = "姓名不能为空")
+	// @NotBlank(message = "姓名不能为空")
 	private String trueName;
 
 	private String email;
@@ -40,7 +41,7 @@ public class UserDo {
 	private BigDecimal balanceIntegral;
 
 	// 证件性别
-	private String sex;
+	private int sex;
 
 	private Long loginTimes;
 
@@ -55,7 +56,7 @@ public class UserDo {
 
 	// 会员禁用，
 	private Byte status;
-	
+
 	private BigDecimal balanceBonus;
 
 	private BigDecimal balanceRepeat;
@@ -77,31 +78,28 @@ public class UserDo {
 	private BigDecimal totalIntegral;
 
 	private BigDecimal totalShopping;
-	
+
 	// 用户推荐人
 	private Integer refereeid;
 
 	// 接点人id
 	private Integer parentid;
-	
-	
-	
-	// 认证状态
-	private int certification ;
 
-	 //报单金额
+	// 认证状态
+	private int certification;
+
+	// 报单金额
 	private BigDecimal baodan_amount;
 
-	//推荐人用户名
+	// 推荐人用户名
 	// @NotBlank(message = "推荐人不能为空")
-	private String refereeUserName; 
+	private String refereeUserName;
 
-	
-	//推荐人用户名
-	private String refereeUserMobile; 
-		
-	//接点人用户名
-	//@NotBlank(message = "接点人不能为空")
+	// 推荐人用户名
+	private String refereeUserMobile;
+
+	// 接点人用户名
+	// @NotBlank(message = "接点人不能为空")
 	private String parentUserName;
 
 	private Integer refereeNumber;
@@ -167,10 +165,12 @@ public class UserDo {
 	// 身份证照片url
 	private String identity;
 	
-	private Byte banktype;
+	//开卡行
+	private String banktype;
 
 	private String bankUserName;
 
+	//卡号
 	private String banknumber;
 
 	private String bankContent;
@@ -221,7 +221,7 @@ public class UserDo {
 
 	private Byte isimport;
 
-	//@NotNull(message = "请选择左右区")
+	// @NotNull(message = "请选择左右区")
 	private Byte pos;
 
 	private Byte isout;
@@ -230,25 +230,23 @@ public class UserDo {
 
 	private String userLevelName;
 
-	private BigDecimal ableTouchQty = BigDecimal.ZERO; //本次可量碰数量
+	private BigDecimal ableTouchQty = BigDecimal.ZERO; // 本次可量碰数量
 
-	private String ethAccount; //以太坊账户
+	private String ethAccount; // 以太坊账户
 
 	/**
-	 * 用户不允许的动作权限：具体看{@IncomeType}， 空值表示不限制
-	 * 存储以逗号分隔：601,702
+	 * 用户不允许的动作权限：具体看{@IncomeType}， 空值表示不限制 存储以逗号分隔：601,702
 	 */
 	private String undoOpts;
 
 	/**
-	 * 用户转让的方向:up,down
-	 * 存储以逗号分隔: up,down 空值不受限制
+	 * 用户转让的方向:up,down 存储以逗号分隔: up,down 空值不受限制
 	 */
 	private String tranDirect;
 
 	// 用户是否已激活（状态），
-	private Integer isActivated; 
-	
+	private Integer isActivated;
+
 	// 用户所属区域
 	private String district;
 
@@ -364,11 +362,11 @@ public class UserDo {
 		this.balanceIntegral = balanceIntegral;
 	}
 
-	public String getSex() {
+	public int getSex() {
 		return sex;
 	}
 
-	public void setSex(String sex) {
+	public void setSex(int sex) {
 		this.sex = sex;
 	}
 
@@ -748,11 +746,13 @@ public class UserDo {
 		this.idnumber = idnumber;
 	}
 
-	public Byte getBanktype() {
+	
+
+	public String getBanktype() {
 		return banktype;
 	}
 
-	public void setBanktype(Byte banktype) {
+	public void setBanktype(String banktype) {
 		this.banktype = banktype;
 	}
 
@@ -1053,8 +1053,9 @@ public class UserDo {
 	}
 
 	/**
-	 * 判断是否激活 
-	 * @return  
+	 * 判断是否激活
+	 * 
+	 * @return
 	 */
 	public boolean isActivated() {
 		if (userLevel != null && userLevel.intValue() > 0) {
@@ -1071,5 +1072,5 @@ public class UserDo {
 	public void setRefereeUserMobile(String refereeUserMobile) {
 		this.refereeUserMobile = refereeUserMobile;
 	}
-	
+
 }

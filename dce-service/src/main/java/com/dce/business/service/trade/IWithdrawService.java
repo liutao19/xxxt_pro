@@ -34,7 +34,7 @@ public interface IWithdrawService {
     PageDo<Map<String,Object>> selectWithDrawByPage(PageDo<Map<String,Object>> page,Map<String,Object> param);
     
     /**
-     * 体现金额统计
+     * 提现金额统计
      * @param param
      * @return
      */

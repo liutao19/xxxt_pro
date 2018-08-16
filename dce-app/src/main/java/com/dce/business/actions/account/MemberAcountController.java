@@ -74,16 +74,29 @@ public class MemberAcountController extends BaseController {
 		
 		List<Map<String, Object>> list=userParentService.TeamDetails(params);
 		
-		Map<String, Object> map1=new HashMap<>();
+		Map<String, Object> map1=new HashMap<String, Object>();
 		
 		List<Object> listone =new ArrayList<>();
 		 System.out.println("团员--------》》"+list);
-		 
+		 String level="";
+		 try {
 		 for(int j=0;j<=4;j++){
 			 Map<String,Object> map =new HashMap<String,Object>();
 				List<Map<String, Object>> maplist =new ArrayList<>();
 				
-				map.put("user_level", j);
+				if(j==0){
+					level="普通用户";	
+				}else if(j==1){
+					level="会员";
+				}else if(j==2){
+					level="vip";
+				}else if(j==3){
+					level="城市合伙人";
+				}else if(j==4){
+					level="股东";
+				}
+				
+				map.put("user_level", level);
 					
 		for(int i=0;i<list.size();i++){
 			
@@ -98,16 +111,24 @@ public class MemberAcountController extends BaseController {
 		
 		}
 		    map1.put("tuanduilist",listone);
+		    
+		    if(orderService.selectSum(params)==null){
+				 
+				 map1.put("totalYJ","0");
+			 }else{
+		    
 			map1.put("totalYJ",orderService.selectSum(params).get("Totalperformance"));
+			 }
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		return Result.successResult("查询成功",map1);
 		
 	}
-	
-	
-	
-	
-	
-	
+
 	
 	
 	@RequestMapping(value = "/recharge", method = RequestMethod.POST)
@@ -130,9 +151,9 @@ public class MemberAcountController extends BaseController {
 		orderDo.setOrderStatus(1); // 有效
 		orderDo.setPayStatus(0); // 未成交
 		orderDo.setCreateTime(new Date());
-		Long orderId = orderService.addOrder(orderDo);
+		//Long orderId = orderService.addOrder(orderDo);
 
-		return Result.successResult("充值成功", orderId);
+		return Result.successResult("充值成功", 2);
 	}
 
 	/**

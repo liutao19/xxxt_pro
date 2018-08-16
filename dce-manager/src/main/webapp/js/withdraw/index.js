@@ -31,21 +31,21 @@ $(function(){
 	 				{field:"amount",title:"提现金额",width:30,align:"center"},
 	 				{field:"withdrawDateStr",title:"申请时间",width:80,align:"center"},
 	 				{field:"confirmDateStr",title:"审批时间",width:80,align:"center"},
-	 				{field:"process_status",title:"提现状态",width:30,align:"center",
+	 				{field:"processStatusStr",title:"提现状态",width:30,align:"center",
 	 					formatter:function(value,row,index){
-	 						if(value == "1"){
+	 						if(row.process_status == "1"){
 	 							return "待审批";
-	 						}else if(value == "2"){
+	 						}else if(row.process_status == "2"){
 	 							return "已审批";
-	 						}else if(value == "3"){
+	 						}else if(row.process_status == "3"){
 	 							return "已拒绝";
 	 						}
 	 					}
 	 				},
 	 				{field:"fee",title:"提现手续费",width:35,align:"center"},
-	 				{field:"confirmed",title:"是否到账",width:30,align:"center"},
-	 				{field:"confirmedAmt",title:"到账以太坊金额",width:45,align:"center"},
-	 				{field:"confirmed_date",title:"到账日期",width:80,align:"center"},
+	 				{field:"withdrawStatus",title:"是否到账",width:30,align:"center"},
+	 				{field:"fack_receive",title:"到账以太坊金额",width:45,align:"center"},
+	 				{field:"paymentDateStr",title:"到账日期",width:80,align:"center"},
 	 				
 	 				{field:"edit",title:"审核",width:80,align:"center",
 	 					formatter:function(value,row,index){

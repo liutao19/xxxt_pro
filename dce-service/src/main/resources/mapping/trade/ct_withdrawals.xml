@@ -17,11 +17,12 @@
 		<result column="process_status" jdbcType="VARCHAR" property="processStatus" />
 		<result column="type" jdbcType="VARCHAR" property="type" />
 		<result column="money_type" jdbcType="VARCHAR" property="moneyType" />
+		<result column="withdraw_status" jdbcType="VARCHAR" property="withdraw_status" />
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		id, withdraw_date, amount, fack_receive, payment_date, confirm_date, userid, fee,
-		name, bank, bank_content, bank_no, process_status, type, money_type, remark
+		name, bank, bank_content, bank_no, process_status, type, money_type,withdraw_status, remark
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
@@ -222,11 +223,9 @@
 		CASE WHEN a.withdraw_date > 0 THEN FROM_UNIXTIME(a.withdraw_date) ELSE '' END AS withdrawDateStr, 
 		CASE WHEN a.confirm_date > 0 THEN FROM_UNIXTIME(a.confirm_date) ELSE '' END AS confirmDateStr, 
 		CASE a.process_status WHEN 1 THEN '待审批' WHEN 2 THEN '已审批' WHEN 3 THEN '已拒绝' END AS processStatusStr,
-		CASE c.confirmed WHEN 'true' THEN '已到账'  ELSE '未到账' END confirmed, 
-		c.updateTime AS confirmed_date,
-		c.actualAmount AS confirmedAmt
+		CASE a.withdraw_status WHEN 1 THEN '已到账' ELSE '未到账' END AS withdrawStatus
 		FROM ct_withdrawals a LEFT JOIN ct_user b  ON a.userid = b.id
-		                      LEFT JOIN  ct_ethereum_trans_info c ON a.id = c.withdrawalsId and c.hash <![CDATA[ <> ]]> ''
+		                      <![CDATA[ <> ]]> ''
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 		    
 		    <if test="userid!=null">  
@@ -451,12 +450,11 @@
 	       b.user_name,b.mobile, 
 		CASE WHEN a.withdraw_date > 0 THEN FROM_UNIXTIME(a.withdraw_date) ELSE '' END AS withdrawDateStr, 
 		CASE WHEN a.confirm_date > 0 THEN FROM_UNIXTIME(a.confirm_date) ELSE '' END AS confirmDateStr, 
+		CASE WHEN a.payment_date > 0 THEN FROM_UNIXTIME(a.payment_date) ELSE '' END AS paymentDateStr, 
 		CASE a.process_status WHEN 1 THEN '待审批' WHEN 2 THEN '已审批' WHEN 3 THEN '已拒绝' END AS processStatusStr,
-		CASE c.confirmed WHEN 'true' THEN '已到账'  ELSE '未到账' END confirmed, 
-		c.updateTime AS confirmed_date,
-		c.actualAmount AS confirmedAmt
+		CASE a.withdraw_status WHEN '1' THEN '已到账' ELSE '未到账' END withdrawStatus
 		FROM ct_withdrawals a LEFT JOIN ct_user b  ON a.userid = b.id
-		                      LEFT JOIN  ct_ethereum_trans_info c ON a.id = c.withdrawalsId and c.hash <![CDATA[ <> ]]> ''
+		 <![CDATA[ <> ]]> ''
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="mobile != null">  
               AND  b.mobile=#{mobile}

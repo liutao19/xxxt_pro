@@ -19,7 +19,7 @@
 					<input type="hidden" id="id" name="id" value="${ysnews.id}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">title</label>
+							<label for="name">标题</label>
 						</td>	
 						<td>
 								<input type="text" id="title" name="title" value="${ysnews.title}"/>												
@@ -27,7 +27,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">image</label>
+							<label for="name">图片</label>
 						</td>	
 						<td>
 								<input type="text" id="image" name="image" value="${ysnews.image}"/>												
@@ -35,7 +35,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">content</label>
+							<label for="name">内容</label>
 						</td>	
 						<td>
 								<input type="text" id="content" name="content" value="${ysnews.content}"/>												
@@ -43,7 +43,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">author</label>
+							<label for="name">作者</label>
 						</td>	
 						<td>
 								<input type="text" id="author" name="author" value="${ysnews.author}"/>												
@@ -51,7 +51,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">topNews</label>
+							<label for="name">置顶新闻</label>
 						</td>	
 						<td>
 								<input type="text" id="topNews" name="topNews" value="${ysnews.topNews}"/>												
@@ -59,7 +59,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">remark</label>
+							<label for="name">置顶新闻</label>
 						</td>	
 						<td>
 								<input type="text" id="remark" name="remark" value="${ysnews.remark}"/>												
@@ -67,49 +67,50 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">status</label>
+							<label for="name">状态</label>
 						</td>	
 						<td>
 								<input type="text" id="status" name="status" value="${ysnews.status}"/>												
 						</td>						   
 					</tr>
-					<%-- <tr>	
+					<tr>	
 						<td align="right">
-							<label for="name">createDate</label>
+							<label for="name">创建日期</label>
 						</td>	
 						<td>
 								<input type="text" 
 								id="createDate" 
 								name="createDate" 
-								value="<fmt:formatDate value="${ysnews.creteName}createDate" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${ysnews.createDate}" pattern="yyyy-MM-dd"/>"
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   
-					</tr> --%>
-					<%-- <tr>	
+					</tr>
+					<tr>	
 						<td align="right">
-							<label for="name">createName</label>
+							<label for="name">创建人</label>
 						</td>	
 						<td>
 								<input type="text" id="createName" name="createName" value="${ysnews.createName}"/>												
 						</td>						   
-					</tr> --%>
-					<%-- <tr>	
+					</tr>
+					
+					<tr>	
 						<td align="right">
-							<label for="name">updateDate</label>
+							<label for="name">修改日期</label>
 						</td>	
 						<td>
 								<input type="text" 
 								id="updateDate" 
 								name="updateDate" 
-								value="<fmt:formatDate value="${ysnews.creteName}updateDate" pattern="yyyy-MM-dd"/>"
+								value="<fmt:formatDate value="${ysnews.updateDate}" pattern="yyyy-MM-dd"/>"
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   
-					</tr> --%>
+					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">updateName</label>
+							<label for="name">修改人</label>
 						</td>	
 						<td>
 								<input type="text" id="updateName" name="updateName" value="${ysnews.updateName}"/>												

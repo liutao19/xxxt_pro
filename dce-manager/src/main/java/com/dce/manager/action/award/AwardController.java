@@ -42,7 +42,7 @@ public class AwardController  extends BaseAction{/*
 		
 		List<AwardConfig> list=awardConfigService.selectAward();
 		
-		List<Map<String,Object>> listmap=new ArrayList<>();
+		List<Map<String,Object>> listmap=new ArrayList<Map<String, Object>>();
 		if(!CollectionUtils.isEmpty(list)){
 			 for(AwardConfig award : list){
 				 Map<String,Object> map = new HashMap<String,Object>();

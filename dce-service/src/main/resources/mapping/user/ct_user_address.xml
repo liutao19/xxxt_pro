@@ -22,7 +22,7 @@
 	<sql id="Base_Column_List">
 		addressId, userId, userName, userPhone, userTel, areaId1,
 		areaId2, areaId3, communityId, address, postCode, isDefault,
-		addressFlag, createTime, remark, addressDetails
+		addressFlag, createTime, addressDetails, remark
 	</sql>
 
 

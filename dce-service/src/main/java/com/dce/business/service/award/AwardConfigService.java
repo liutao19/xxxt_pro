@@ -66,5 +66,16 @@ public interface AwardConfigService {
      * 判断用户是否是否有资格升级为股东
      */
     
-    int  upgradePartner(Integer userid);
+    boolean  upgradePartner(Integer userid);
+    
+    /**
+     * 发放奖励方法
+     */
+    boolean   updateAward(int userid,int count);
+    /**
+     * 商品区域奖方法
+     * area 区域
+     */
+    boolean areaAward(String area,int count);
+    
 }

@@ -1,7 +1,5 @@
 package com.dce.business.service.impl.goods;
 
-import java.math.RoundingMode;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +10,12 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import com.dce.business.common.result.Result;
 import com.dce.business.common.util.Constants;
-import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.goods.ICTGoodsDao;
 import com.dce.business.dao.goods.ICTUserAddressDao;
 import com.dce.business.dao.order.IOrderDao;
 import com.dce.business.entity.goods.CTGoodsDo;
-import com.dce.business.entity.goods.CTUserAddressDo;
-import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IPayService;
@@ -61,7 +54,7 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		return ctGoodsDao.selectByPrimaryKey(id);
 	}
 
-	@Override
+/*	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Result<?> buyGoods(OrderDo order, Integer addressId) {
 		if (order.getGoodsId() == null || order.getQty().intValue() <= 0) {
@@ -102,11 +95,13 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		order.setPrice(goods.getShopPrice());
 		order.setTotalPrice(order.getQty().multiply(order.getPrice()).setScale(6, RoundingMode.HALF_UP));
 		order.setPayTime(new Date());
+		
 		int flag = orderDao.insertSelective(order);
 
 		if (flag < 1) {
 			return Result.failureResult("购买订单保存失败");
 		}
+		
 
 		
 		CTGoodsDo _goods = new CTGoodsDo();
@@ -125,7 +120,7 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 
 		return payService.buyGoods(order.getUserId(), order.getTotalPrice());
 
-	}
+	}*/
 
 	@Override
 	public boolean insertSelectiveService(CTGoodsDo goods) {

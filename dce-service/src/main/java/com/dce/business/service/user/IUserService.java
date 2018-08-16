@@ -138,4 +138,11 @@ public interface IUserService {
      */
     Long selectBaoDanAmount(Map<String,Object> params);
     
+    /**
+     * 选择性多条件查
+     * @param map
+     * @return
+     */
+    List<UserDo> selectUserCondition(Map<String, Object> map);
+    
 }

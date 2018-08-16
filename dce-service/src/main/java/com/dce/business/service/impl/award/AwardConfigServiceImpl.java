@@ -32,7 +32,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 	private final static Logger logger = LoggerFactory.getLogger(AwardConfigServiceImpl.class);
 	@Resource
-	private IUserDao userService;
+	private IUserDao userDao;
 
 	@Resource
 	private AwardlistMapper awardlistDao;
@@ -154,7 +154,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	@Override
 	public int userUpgrade(Integer userid, int count) {
 		// 获取购买者的信息
-		UserDo user = userService.selectByPrimaryKey(userid);
+		UserDo user = userDao.selectByPrimaryKey(userid);
 		// 获取用户等级
 		int userLevel = user.getUserLevel();
 		UserDo updatauser = new UserDo();
@@ -165,21 +165,21 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			if (count >= 1 && 5 > count) {
 				// 普通用户升级为会员
 				updatauser.setUserLevel((byte) 1);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 					level = 1;
 				}
 
 			} else if (count >= 5 && 50 > count) {
 				// 普通用户升级为vip
 				updatauser.setUserLevel((byte) 2);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 					level = 2;
 				}
 
 			} else if (count >= 50) {
 				// 普通用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 					level = 3;
 				}
 			}
@@ -188,14 +188,14 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			if (count >= 5 && 50 > count) {
 				// 会员用户升级为vip
 				updatauser.setUserLevel((byte) 2);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 
 				}
 				level = 2;
 			} else if (count >= 50) {
 				// 会员用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 					level = 3;
 				}
 
@@ -205,7 +205,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			if (count >= 50) {
 				// vip用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
-				if (userService.updateByPrimaryKeySelective(user) > 0) {
+				if (userDao.updateByPrimaryKeySelective(user) > 0) {
 					level = 3;
 				}
 				// 判断该购买者的推荐人是否满足升级为股东的条件,首先必须为城市合伙人，如何推荐5人为城市合伙人
@@ -236,20 +236,20 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		// 返回值
 		boolean flag = false;
 		// 获取推荐人的信息
-		UserDo user = userService.selectByPrimaryKey(userid);
+		UserDo user = userDao.selectByPrimaryKey(userid);
 		// 推荐人必须为城市合伙人才能升级
 		if (user.getUserLevel() == 3) {
 			// 获取推荐人推荐城市合伙人的个数
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("userLevel", 3);
 			map.put("refereeid", userid);
-			List<UserDo> listuser = userService.selectUser(map);
+			List<UserDo> listuser = userDao.selectUser(map);
 			if (listuser.size() >= 5) {
 				UserDo updatauser = new UserDo();
 				// 推荐人升级为股东
 
 				updatauser.setUserLevel((byte) 4);
-				if (userService.updateByPrimaryKeySelective(updatauser) > 0) {
+				if (userDao.updateByPrimaryKeySelective(updatauser) > 0) {
 					// 升级股东成功
 					flag = true;
 				} else {
@@ -273,12 +273,12 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	@Override
 	public boolean updateAward(int userid, int count) {
 		// 获取购买者的信息
-		UserDo buyerUser = userService.selectByPrimaryKey(userid);
+		UserDo buyerUser = userDao.selectByPrimaryKey(userid);
 		// 获取推荐人的信息refereeid
-		UserDo presenterUser = userService.selectByPrimaryKey(buyerUser.getRefereeid());
+		UserDo presenterUser = userDao.selectByPrimaryKey(buyerUser.getRefereeid());
 
 		// 获取第二代推荐人的信息
-		UserDo presenterUserTow = userService.selectByPrimaryKey(presenterUser.getRefereeid());
+		UserDo presenterUserTow = userDao.selectByPrimaryKey(presenterUser.getRefereeid());
 
 		//返回值
 		boolean  flag=false;

@@ -1,18 +1,36 @@
 package com.dce.business.entity.order;
 
-import java.util.Date;
-
 public class OrderSendOut {
 
-	private Long id; //订单发货id
+	private Long id; // 订单发货id
 
-	private Long orderId; //订单编号
+	private Long orderId; // 订单id
 
-	private Long operatorId; //操作人id
+	private Long operatorId; // 操作人id
 
-	private String address; //地址
+	private String address; // 地址
 
-	private Date createTime; //创建时间
+	private String createTime; // 创建时间
+
+	private String operator; // 操作人
+	
+	private String orderCode; //订单编号
+
+	public String getOrderCode() {
+		return orderCode;
+	}
+
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
 
 	public Long getId() {
 		return id;
@@ -46,11 +64,18 @@ public class OrderSendOut {
 		this.address = address;
 	}
 
-	public Date getCreateTime() {
+	public String getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
+	public void setCreateTime(String string) {
+		this.createTime = string;
 	}
+
+	@Override
+	public String toString() {
+		return "OrderSendOut [id=" + id + ", orderId=" + orderId + ", operatorId=" + operatorId + ", address=" + address
+				+ ", createTime=" + createTime + ", operator=" + operator + ", orderCode=" + orderCode + "]";
+	}
+
 }

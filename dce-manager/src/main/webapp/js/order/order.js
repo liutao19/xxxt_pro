@@ -36,18 +36,10 @@ $(function(){
       			[	 				
 							{field:'orderid',title:'orderid',width:100,hidden:true},						
 								{field:"orderCode",title:"订单编号",width:180,align:"center"},
-								{field:"trueName",title:"客户姓名",width:180,align:"center"},
+								{field:"trueName",title:"收货人",width:180,align:"center"},
 								{field:"qty",title:"数量",width:180,align:"center"},
 								{field:"totalPrice",title:"总金额",width:180,align:"center"},
 								{field:"createTime",title:"创建时间",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"orderStatus",title:"订单状态",width:180,align:"center",
-									formatter:function(value,row,index){
-			 						if(value == "0"){
-			 							return "未发货";
-			 						}else if(value == "1"){
-			 							return "已发货";
-			 						}
-			 					}},
 								{field:"payStatus",title:"付款状态",width:180,align:"center",
 			 						formatter:function(value,row,index){
 			 						if(value == "0"){
@@ -56,7 +48,7 @@ $(function(){
 			 							return "已付";
 			 						}
 			 					}},
-								{field:"payTime",title:"支付时间",width:180,align:"center",formatter:dateTimeFormatter},
+								/*{field:"payTime",title:"支付时间",width:180,align:"center",formatter:dateTimeFormatter},*/
 								{field:"orderType",title:"支付方式",width:180,align:"center",
 									formatter:function(value,row,index){
 				 						if(value == "1"){
@@ -78,12 +70,25 @@ $(function(){
 					 						}
 					 					}},
 								{field:"address",title:"地址",width:180,align:"center"},
-					/*{field:"操作",title:"操作",width:80,align:"left",
+								{field:"orderStatus",title:"订单状态",width:180,align:"center",
+									formatter:function(value,row,index){
+			 						if(value == "0"){
+			 							return "未发货";
+			 						}else if(value == "1"){
+			 							return "已发货";
+			 						}
+			 					}},
+					{field:"orderStatus",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editorder(\''+row.orderid+'\');">编辑</a>';
+	 						var str = "";
+	 						if(value == "0"){
+	 							str = '<a href="javascript:void(0);" onclick="to_editorder(\''+row.orderid+'\');">发货</a>';
+	 						}else{
+	 							str = '';
+	 						}
 	 					  return str;
 	 					}
-	 				}	*/ 				
+	 				}					
 	 			]
 	 	];
 /*######################grid columns end##############################*/
@@ -132,32 +137,25 @@ $(function(){
 
 
 /**
- * 编辑
+ * 发货
  * @param id
  */
 function to_editorder(id){
 	
-	var url = httpUrl+"/order/addOrder.html?&rand=" + Math.random()+"&orderid="+id;
-	$('#editOrderDiv').dialog({
-		title: "修改",
-		width: 760,
-		height: 500,
-		closed: false,
-		closable:false,
-		cache: false,
-		href: url,
-		modal: true,
-		toolbar:[
-				{
-					iconCls:"icon-save",text:"保存",
-					handler:save_Order
-				},
-				{
-					iconCls:"icon-no",text:"关闭",
-					handler:function(){
-						$("#editOrderDiv").dialog("close");
-				}
-		}]
+	var url = httpUrl+"/order/sendOut.html?&rand=" + Math.random()+"&orderid="+id;
+	 $.ajax({   
+		 type: 'POST',
+		 dataType: 'json',
+		 url: url,  
+		 /*data:$("#editOrderForm").serialize(),*/
+		 success: function(data){ 
+			 if(data.code ==="0"){
+				 $('tt_Order').datagrid('reload');
+				 $.messager.alert("提示","发货成功","info");
+			 }else{
+				 $.messager.alert("提示","发货失败","error");
+			 }   
+		 } 
 	});
 }
 

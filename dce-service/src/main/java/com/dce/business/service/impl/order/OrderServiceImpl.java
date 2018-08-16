@@ -1,5 +1,6 @@
 package com.dce.business.service.impl.order;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,15 +13,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dce.business.common.util.Constants;
 import com.dce.business.dao.order.IOrderDao;
+import com.dce.business.dao.order.OrderDetailMapper;
 import com.dce.business.dao.trade.IKLineDao;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
+import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.dict.ILoanDictService;
+import com.dce.business.service.order.IOrderSendoutService;
 import com.dce.business.service.order.IOrderService;
-import com.dce.business.dao.order.OrderDetailMapper;
 
 @Service("orderService")
 public class OrderServiceImpl implements IOrderService {
@@ -37,6 +40,9 @@ public class OrderServiceImpl implements IOrderService {
 	private ILoanDictService loanDictService;
 	@Resource
 	private ICtCurrencyService ctCurrencyService;
+	@Resource
+	private IOrderSendoutService orderSendOutService;
+	
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -169,4 +175,23 @@ public class OrderServiceImpl implements IOrderService {
 
 		return orderDao.selectSum(paraMap);
 	}
+
+	//更新订单状态发货
+	@Override
+	public int updateByPrimaryKeySelective(Order order,Integer userId) {
+
+		//添加一条记录到订单发货表中
+		OrderSendOut orderSendOut = new OrderSendOut();
+		orderSendOut.setOrderId(Long.valueOf(order.getOrderid()));
+		orderSendOut.setAddress(order.getAddress());
+		orderSendOut.setCreateTime(new Date());
+		orderSendOut.setOperatorId(Long.valueOf(userId));
+		int i = orderSendOutService.addOrderSendout(orderSendOut);
+		if(i <=0){
+			return 0;
+		}
+		
+		return orderDao.updateByPrimaryKeySelective(order);
+	}
+
 }

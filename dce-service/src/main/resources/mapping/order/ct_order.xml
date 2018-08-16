@@ -35,9 +35,10 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />
-		from ct_order
-		where orderId = #{orderId,jdbcType=BIGINT}
+		<include refid="Base_Column_List" />,b.address address
+		from ct_order a, ct_user_address b
+		where orderId = #{orderId,jdbcType=BIGINT} 
+		and b.addressId = a.addressId
 	</select>
 
 	<select id="selectByOrderCode" parameterType="java.lang.String"
@@ -324,7 +325,7 @@
 		</set>
 		where orderCode = #{orderCode,jdbcType=INTEGER}
 	</update>
-
+	
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		set orderCode = #{ordercode,jdbcType=VARCHAR},

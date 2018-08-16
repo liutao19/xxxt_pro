@@ -1,9 +1,3 @@
-/*
- * Powered By  huangzl QQ: 272950754
- * Web Site: http://www.hehenian.com
- * Since 2008 - 2018
- */
-
 package com.dce.manager.action.order;
 
 import java.util.Date;
@@ -34,7 +28,7 @@ import com.dce.business.service.order.IOrderService;
 import com.dce.manager.action.BaseAction;
 
 /**
- * @author huangzl QQ: 272950754
+ * @author 订单控制类
  * @version 1.0
  * @since 1.0
  */
@@ -44,7 +38,7 @@ import com.dce.manager.action.BaseAction;
 public class OrderController extends BaseAction {
 	@Resource
 	private IOrderService orderService;
-
+	
 	/**
 	 * 去列表页面
 	 * 
@@ -58,6 +52,7 @@ public class OrderController extends BaseAction {
 
 	/**
 	 * 订单列表分页页面
+	 * 
 	 * @param pagination
 	 * @param model
 	 * @param response
@@ -69,58 +64,69 @@ public class OrderController extends BaseAction {
 		logger.info("----listOrder----");
 
 		try {
-			PageDo<Map<String,Object>> page = PageDoUtil.getPage(pagination);
+			PageDo<Map<String, Object>> page = PageDoUtil.getPage(pagination);
 			Map<String, Object> param = new HashMap<String, Object>();
-			
+
 			String userName = getString("userName");
 			if (StringUtils.isNotBlank(userName)) {
 				param.put("trueName", userName);
 				model.addAttribute("userName", userName);
 			}
-			
+
 			String startDate = getString("startDate");
 			if (StringUtils.isNotBlank(startDate)) {
 				param.put("startDate", startDate);
 				model.addAttribute("startDate", startDate);
 			}
-			
+
 			String endDate = getString("endDate");
-			if(StringUtils.isNotBlank(endDate)){
+			if (StringUtils.isNotBlank(endDate)) {
 				param.put("endDate", endDate);
-				model.addAttribute("endDate",endDate);
+				model.addAttribute("endDate", endDate);
 			}
 
-			page = orderService.selectOrderByPage(page,param);
+			page = orderService.selectOrderByPage(page, param);
 			pagination = PageDoUtil.getPageValue(pagination, page);
-			
+
 			outPrint(response, JSONObject.toJSON(pagination));
 		} catch (Exception e) {
-			logger.error("查询清单异常", e);
+			logger.error("查询订单异常", e);
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
 	}
 
 	/**
-	 * 编辑页面
-	 *
-	 * @return
+	 * 发货
+	 * @param orderid
+	 * @param modelMap
+	 * @param response
 	 */
-	@RequestMapping("/addOrder")
-	public String addOrder(String orderid, ModelMap modelMap, HttpServletResponse response) {
-		logger.info("获取的订单编号："+orderid);
+	@RequestMapping("/sendOut")
+	public void sendOut(String orderid, ModelMap modelMap, HttpServletResponse response) {
+		logger.info("获取的订单编号：" + orderid);
+		Integer userId = this.getUserId();
+		
 		try {
 			if (StringUtils.isNotBlank(orderid)) {
+				// 先查询出订单
 				Order order = orderService.selectByPrimaryKey(Integer.valueOf(orderid));
-				if (null != order) {
-					modelMap.addAttribute("order", order);
+
+				int i = 0;
+				if (order != null) {
+					// 更新订单状态发货
+					order.setOrderstatus(1);
+					i = orderService.updateByPrimaryKeySelective(order,userId);
 				}
+				if (i <= 0) {
+					outPrint(response, this.toJSONString(Result.failureResult("发货失败")));
+					return;
+				}
+				outPrint(response, this.toJSONString(Result.failureResult("发货成功")));
 			}
-			return "order/addOrder";
 		} catch (Exception e) {
-			logger.error("跳转到数据字典编辑页面异常", e);
+			e.printStackTrace();
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
-
 	}
 
 	/**

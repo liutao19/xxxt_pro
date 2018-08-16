@@ -26,6 +26,9 @@ public interface IOrderService {
 	// 根据订单编号更新订单
 	int updateByOrderCodeSelective(Order order);
 
+	//更新订单状态发货
+	int updateByPrimaryKeySelective(Order record,Integer userId);
+
 	Integer addOrder(Order order);
 
 	List<Order> selectOrder(Map<String, Object> params);
@@ -43,12 +46,11 @@ public interface IOrderService {
 	 * @return
 	 */
 	Order buyOrder(Order order);
-	
-    
-    //根据主键id查询订单
-    Order selectByPrimaryKey(long orderId);
 
-    // 查询总业绩
- 	Map<String, Object> selectSum(Map<String, Object> paraMap);
+	// 根据主键id查询订单
+	Order selectByPrimaryKey(long orderId);
+
+	// 查询总业绩
+	Map<String, Object> selectSum(Map<String, Object> paraMap);
 
 }

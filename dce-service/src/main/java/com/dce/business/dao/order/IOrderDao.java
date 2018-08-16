@@ -14,8 +14,6 @@ public interface IOrderDao {
 
     int updateByPrimaryKeySelective(Order record);
 
-   // int updateByPrimaryKey(Order record);
-    
     List<Order> selectOrder(Map<String, Object> paraMap);
     
     void updateOrderStatusByOldStatus(Map<String, Object> paraMap);
@@ -49,6 +47,9 @@ public interface IOrderDao {
     
     //根据订单编号更新订单
     int updateByOrderCodeSelective(Order order);
+    
+    //发货，更新订单状态
+    int sendOutOrder(Integer orderid);
     
     //一对多联表查询订单
     List<Order> selectByUesrIdOneToMany(Integer userId);

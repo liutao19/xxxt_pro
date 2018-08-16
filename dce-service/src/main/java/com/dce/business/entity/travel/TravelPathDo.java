@@ -18,6 +18,7 @@ public class TravelPathDo {
      * @mbg.generated Tue Aug 07 14:21:23 CST 2018
      */
     private String linename;
+    
 
     /**
      *

@@ -11,13 +11,13 @@ public interface ITravelPathService {
 	
 	public List<TravelPathDo> selectAll();
 	
-	TravelPathDo selectByPrimaryKey(Integer pathid);
+	TravelPathDo selectByPrimaryKey(Integer id);
 	
 	public int addPath(TravelPathDo ravelPathDo);
 	
 	public int updatePathById(TravelPathDo ravelPathDo);
 	
-	public int deletePathById(Integer pathId);
+	public int deletePathById(Integer id);
 	
 	
 	public PageDo<TravelPathDo> getTravelPathPage(Map<String, Object> param, PageDo<TravelPathDo> page);

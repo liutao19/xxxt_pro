@@ -1,10 +1,3 @@
-/*
- * Powered By  huangzl QQ: 272950754
- * Web Site: http://www.hehenian.com
- * Since 2008 - 2018
- */
-
-
 package com.dce.manager.action.news;
 
 import java.util.HashMap;
@@ -34,11 +27,6 @@ import com.dce.manager.action.BaseAction;
 
 
 
-/**
- * @author  huangzl QQ: 272950754
- * @version 1.0
- * @since 1.0
- */
 
 @Controller
 @RequestMapping("/ysnews")
@@ -124,7 +112,6 @@ public class YsNewsController extends BaseAction{
         logger.info("----saveYsNews------");
         try{
             Integer id = ysnewsDo.getId();
-            Long userId = new Long(this.getUserId());
             
             int i = 0;
             if (id != null && id.intValue()>0) {

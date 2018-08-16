@@ -27,7 +27,7 @@ public class TravelPathServiceImpl implements ITravelPathService {
 	 */
 	@Override
 	public List<TravelPathDo> selectAll() {
-		logger.info("----deletePathByid----");
+		logger.info("----selectAll----");
 		return travelPathMapperdao.selectPathAll();
 	}
 
@@ -75,7 +75,10 @@ public class TravelPathServiceImpl implements ITravelPathService {
 		return travelPathMapperdao.deleteByPrimaryKey(pathId);
 	}
 
-
+	
+	/**
+	 * 分页查询
+	 */
 	@Override
 	public PageDo<TravelPathDo> getTravelPathPage(Map<String, Object> param, PageDo<TravelPathDo> page) {
 		logger.info("----getPathPage----"+param);

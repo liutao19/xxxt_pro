@@ -1,13 +1,5 @@
-/*
- * Powered By  huangzl QQ: 272950754
- * Web Site: http://www.hehenian.com
- * Since 2008 - 2018
- */
+package com.dce.manager.action.applyTravel;
 
-
-package com.dce.manager.action.travelPath;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,26 +20,18 @@ import com.dce.business.common.result.Result;
 import com.dce.business.entity.page.NewPagination;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
-import com.dce.business.entity.travel.TravelPathDo;
-import com.dce.business.service.travel.ITravelPathService;
+import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.service.travel.ITravelApplyService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
 
 
-
-/**
- * @author  huangzl QQ: 272950754
- * @version 1.0
- * @since 1.0
- */
-
 @Controller
-@RequestMapping("/path")
-public class PathController extends BaseAction{
-	//默认多列排序,example: username desc,createTime asc
-	//protected static final String DEFAULT_SORT_COLUMNS = null; 
+@RequestMapping("/applytravel")
+public class ApplyTravelController extends BaseAction{
 	@Resource
-	private ITravelPathService travelPathService;
+	private ITravelApplyService travelApplyService;
+
 	/**
      * 去列表页面
      * @param model
@@ -55,17 +39,17 @@ public class PathController extends BaseAction{
      */
     @RequestMapping("/index")
     public String index(Model model){
-        return "path/listPath";
+        return "applytravel/listApplyTravel";
     }
 	
-	@RequestMapping("/listPath")
-    public void listPath(NewPagination<TravelPathDo> pagination,
+	@RequestMapping("/listApplyTravel")
+    public void listApplyTravel(NewPagination<TravelDo> pagination,
     							  ModelMap model,
     							  HttpServletResponse response) {
 
-        logger.info("----listPath----");
+		logger.info("----listApplyTravel----");
         try{
-            PageDo<TravelPathDo> page = PageDoUtil.getPage(pagination);
+            PageDo<TravelDo> page = PageDoUtil.getPage(pagination);
             String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
             if(StringUtils.isNotBlank(companyName)){
@@ -77,7 +61,8 @@ public class PathController extends BaseAction{
                 param.put("managerName", managerName);
                 model.addAttribute("searManagerName",managerName);
             }
-            page = travelPathService.getTravelPathPage(param, page);
+            page = travelApplyService.getTravelapplyTravelPage(param, page);
+            logger.info(page.getModelList().toString());
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));
         }catch(Exception e){
@@ -86,24 +71,42 @@ public class PathController extends BaseAction{
         }
     }
 	
-	
+    /**
+     * 同意申请
+     */
+    @RequestMapping("/agreeApply")
+    public void agreeApply(String id,HttpServletRequest request,
+            HttpServletResponse response) {
+        logger.info("----agreeApply----");
+         try{
+             if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
+                 ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+                 return;
+             }
+             int ret = travelApplyService.updateapplyStateById(Integer.valueOf(id));
+             ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+         }catch(Exception e){
+             logger.error("审批申请异常",e);
+             ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+         }
+     }
 	  
     /**
      * 编辑页面
      *
      * @return
      */
-    @RequestMapping("/addPath")
-    public String addPath(String id, ModelMap modelMap, HttpServletResponse response) {
-        logger.info("----addPath----");
+    @RequestMapping("/addApplyTravel")
+    public String addApplyTravel(String id, ModelMap modelMap, HttpServletResponse response) {
+        logger.info("----addApplyTravel----");
         try{
             if(StringUtils.isNotBlank(id)){
-                TravelPathDo TravelPathDo = travelPathService.selectByPrimaryKey(Integer.valueOf(id));
-                if(null != TravelPathDo){
-                    modelMap.addAttribute("path", TravelPathDo);
+                TravelDo TravelDo = travelApplyService.selectByPrimaryKey(Integer.valueOf(id));
+                if(null != TravelDo){
+                    modelMap.addAttribute("applytravel", TravelDo);
                 }
             }
-            return "path/addPath";
+            return "applytravel/addApplyTravel";
         }catch(Exception e){
             logger.error("跳转到数据字典编辑页面异常",e);
             throw new BusinessException("系统繁忙，请稍后再试");
@@ -112,49 +115,26 @@ public class PathController extends BaseAction{
     }
 
     /**
-     * 删除
-     */
-    @RequestMapping("/deletePath")
-    public void deleteYsNotice(String id,HttpServletRequest request,
-            HttpServletResponse response) {
-        logger.info("----deletePath----");
-         try{
-             if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
-            	 logger.info(id);
-                 ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
-                 return;
-             }
-             int ret = travelPathService.deletePathById(Integer.valueOf(id));
-             ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
-         }catch(Exception e){
-             logger.error("删除公告异常",e);
-             ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
-         }
-     }
-    
-    
-    /**
      * 保存更新
      *
      * @return
      * @author: huangzlmf
      * @date: 2015年4月21日 12:49:05
      */
-    @RequestMapping("/savePath")
+    @RequestMapping("/saveApplyTravel")
     @ResponseBody
-    public void savePath(TravelPathDo TravelPathDo, 
+    public void saveApplyTravel(TravelDo TravelDo, 
     							  HttpServletRequest request, 
     							  HttpServletResponse response) {
-        logger.info("----savePath------");
+        logger.info("----saveApplyTravel------");
         try{
-        	Integer id = TravelPathDo.getPathid();
-        	
+        	Integer id = TravelDo.getId();
+            
             int i = 0;
             if (id != null && id.intValue()>0) {
-                i = travelPathService.updatePathById(TravelPathDo);
+                i = travelApplyService.updateapplyTravelById(TravelDo);
             } else {
-            	
-                i = travelPathService.addPath(TravelPathDo);
+                i = travelApplyService.addapplyTravel(TravelDo);
             }
 
             if (i <= 0) {
@@ -166,10 +146,8 @@ public class PathController extends BaseAction{
             logger.error("保存更新失败",e);
             outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
         }
-        logger.info("----end savePath--------");
+        logger.info("----end saveApplyTravel--------");
     }
     
-	
-	
 }
 

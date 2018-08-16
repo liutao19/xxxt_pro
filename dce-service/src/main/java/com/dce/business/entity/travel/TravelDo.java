@@ -92,6 +92,34 @@ public class TravelDo {
      * @mbg.generated Thu Aug 09 21:14:24 CST 2018
      */
     private Integer pathid;
+    
+    public String getLinename() {
+		return linename;
+	}
+
+	public void setLinename(String linename) {
+		this.linename = linename;
+	}
+
+	@Override
+	public String toString() {
+		return "TravelDo [id=" + id + ", userid=" + userid + ", sex=" + sex + ", nation=" + nation + ", identity="
+				+ identity + ", phone=" + phone + ", address=" + address + ", isbeen=" + isbeen + ", people=" + people
+				+ ", pathid=" + pathid + ", linename=" + linename + ", truename=" + truename + ", createtime="
+				+ createtime + ", state=" + state + "]";
+	}
+
+	private String linename;
+	
+	public String getTruename() {
+		return truename;
+	}
+
+	public void setTruename(String trueName) {
+		this.truename = trueName;
+	}
+
+	private String truename;
 
     /**
      *

@@ -251,7 +251,15 @@
 	</select>
 	<select id="selectAccountInfomByPage" parameterType="Map" resultType="Map">
 		SELECT CONCAT(b.user_name,'[',b.true_name,']') AS userName, a.userId,
-		a.amount,a.updateTime	
+		
+		MAX(CASE a.accountType WHEN 'wallet_money' THEN a.amount ELSE 0 END ) wallet_money,
+		
+		MAX(CASE a.accountType WHEN 'wallet_travel' THEN a.amount ELSE 0 END) wallet_travel ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_goods' THEN a.amount ELSE 0 END) wallet_goods ,
+		
+		MAX(CASE a.accountType WHEN 'wallet_active' THEN a.amount ELSE 0 END) wallet_active
+				
 		FROM ct_user_account a LEFT JOIN ct_user b on a.userId=b.id
 		<trim prefix="WHERE" prefixOverrides="AND">
 			<if test="userName != null">
@@ -260,9 +268,8 @@
 			<if test="trueName != null">
 				AND b.true_name = #{trueName}
 			</if>
-			    AND accountType='wallet_original'
 		</trim>
-		 GROUP BY a.userId 
+		GROUP BY a.userId 
 		
 	</select>
 	<select id="sumAccount" parameterType="java.util.Map" resultMap="BaseResultMap">

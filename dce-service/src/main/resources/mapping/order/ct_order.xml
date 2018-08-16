@@ -35,9 +35,15 @@
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="BaseResultMap">
 		select
-		<include refid="Base_Column_List" />,b.address address
+		a.orderId orderid, a.orderCode ordercode, a.userId userid,
+		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
+		a.orderStatus orderstatus,a.payStatus paystatus,
+		a.payTime paytime,a.orderType ordertype,a.addressId addressid,
+		a.alipayStatus alipayStatus,
+		CONCAT(b.address,b.addressDetails) address
 		from ct_order a, ct_user_address b
-		where orderId = #{orderId,jdbcType=BIGINT} 
+		where orderId =
+		#{orderId,jdbcType=BIGINT}
 		and b.addressId = a.addressId
 	</select>
 
@@ -325,7 +331,7 @@
 		</set>
 		where orderCode = #{orderCode,jdbcType=INTEGER}
 	</update>
-	
+
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.Order">
 		update ct_order
 		set orderCode = #{ordercode,jdbcType=VARCHAR},
@@ -490,10 +496,15 @@
 	</select>
 
 	<select id="selectOrderByPage" parameterType="Map" resultType="Map">
-		SELECT a.*, b.true_name trueName,CONCAT(c.address,c.addressDetails)
+		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
+		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
+		a.orderStatus orderstatus,a.payStatus paystatus,
+		a.payTime paytime,a.orderType ordertype,a.addressId addressid,
+		a.alipayStatus alipayStatus, b.true_name trueName,CONCAT(c.address,c.addressDetails)
 		address
 		FROM ct_order a
-		LEFT JOIN ct_user b ON a.userid = b.id
+		LEFT
+		JOIN ct_user b ON a.userid = b.id
 		left join ct_user_address c on
 		c.addressId = a.addressId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
@@ -522,7 +533,7 @@
 				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 		</trim>
-		order by a.createTime desc
+		order by a.createTime, a.orderStatus desc
 	</select>
 	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
 		SELECT sum(qty) as qty

@@ -121,7 +121,7 @@ public class OrderController extends BaseAction {
 					outPrint(response, this.toJSONString(Result.failureResult("发货失败")));
 					return;
 				}
-				outPrint(response, this.toJSONString(Result.failureResult("发货成功")));
+				outPrint(response, this.toJSONString(Result.successResult("发货成功")));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

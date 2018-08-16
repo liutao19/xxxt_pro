@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dce.business.common.util.Constants;
+import com.dce.business.common.util.DateUtil;
 import com.dce.business.dao.order.IOrderDao;
 import com.dce.business.dao.order.OrderDetailMapper;
 import com.dce.business.dao.trade.IKLineDao;
@@ -184,7 +185,7 @@ public class OrderServiceImpl implements IOrderService {
 		OrderSendOut orderSendOut = new OrderSendOut();
 		orderSendOut.setOrderId(Long.valueOf(order.getOrderid()));
 		orderSendOut.setAddress(order.getAddress());
-		orderSendOut.setCreateTime(new Date());
+		orderSendOut.setCreateTime(DateUtil.YYYY_MM_DD_MM_HH_SS.format(new Date()));
 		orderSendOut.setOperatorId(Long.valueOf(userId));
 		int i = orderSendOutService.addOrderSendout(orderSendOut);
 		if(i <=0){

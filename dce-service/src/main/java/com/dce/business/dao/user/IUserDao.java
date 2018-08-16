@@ -79,4 +79,14 @@ public interface IUserDao {
      * @return
      */
     Long selectBaoDanAmount(Map<String,Object> params);
+    
+    /**
+     * 选择性多条件查询
+     * @param map
+     * @return
+     */
+    List<UserDo> selectUserCondition(Map<String, Object> map);
+    
+    
+    
 }

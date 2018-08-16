@@ -265,6 +265,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	
 	
 	
+	
+	
 
 	/**
 	 * 发放奖励方法
@@ -307,6 +309,46 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	@Override
 	public boolean areaAward(String area, int count) {
 		// 查询购买者填写地址所在区域的管理者信息 实体类字段district 数据库字段district
+		//判断该地区是否有区域代表
+		/*Map<String,Object> map=new HashMap<>();
+		map.put("", area);
+		List<UserDo> user=userDao.selectUser(map);*/
+		
+		if(true){
+			
+			//进行区域代表奖励50/盒
+			/*// 获取总奖金
+			//Double sum = awardlist.get(0).getP1Level1();
+			// 获取账户当前余额
+			UserAccountDo accont = new UserAccountDo();
+			accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
+			// 相加之后余额
+			accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
+			accont.setIncomeAmount(BigDecimal.valueOf(sum));
+			userAccoutDao.updateByPrimaryKeySelective(accont);
+
+			// 生成流水记录
+			UserAccountDetailDo detail = new UserAccountDetailDo();
+			detail.setUserId(presenterUser.getId());
+			detail.setAmount(BigDecimal.valueOf(sum));
+			detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
+			detail.setMoreOrLess("增加");
+			detail.setIncomeType(311);
+			detail.setCreateTime(new Date());
+			detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
+			detail.setSeqId(UUID.randomUUID().toString());
+			userAccountDetailDao.addUserAccountDetail(detail);*/
+			
+			
+			//判断区域代表是否有推荐人
+			if(true){
+				
+			}
+			
+			
+		}
+		
+		
 
 		return false;
 	}

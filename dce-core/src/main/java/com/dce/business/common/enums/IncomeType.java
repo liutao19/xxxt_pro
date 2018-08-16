@@ -53,7 +53,7 @@ public enum IncomeType {
     /**
      * 领导奖励
      */
-    TYPE_AWARD_LEADER(321, "领导奖励"),
+    TYPE_AWARD_LEADER(321, "区域奖励"),
     /**
      * 量碰奖励
      */

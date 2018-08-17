@@ -36,7 +36,7 @@ $(function(){
 								{field:"districtStatus",title:"封地状态",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.id+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.districtId+'\');">编辑</a>';
 	 					  return str;
 	 					}
 	 				}	 				

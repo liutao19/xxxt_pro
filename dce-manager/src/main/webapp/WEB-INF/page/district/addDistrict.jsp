@@ -16,13 +16,13 @@
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
-					<input type="hidden" id="districtId" name="districtId" value="${district.districtId}"/>
+					<input type="hidden" id="districtId" name="districtId" value="${district.districtid}"/>
 					<tr>	
 						<td align="right">
 							<label for="name">distrctName</label>
 						</td>	
 						<td>
-								<input type="text" id="distrctName" name="distrctName" value="${district.distrctName}"/>												
+								<input type="text" id="distrctName" name="distrctName" value="${district.distrctname}"/>												
 						</td>						   
 					</tr>
 					<tr>	
@@ -38,7 +38,7 @@
 							<label for="name">districtStatus</label>
 						</td>	
 						<td>
-								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtStatus}"/>												
+								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtstatus}"/>												
 						</td>						   
 					</tr>
 		

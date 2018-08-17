@@ -3,9 +3,10 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchysNoticeForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/ysnotice/listYsNotice.html";
+		$("#tt_Order").datagrid('options').url = dataUrl;
 		$("#tt_YsNotice").datagrid('load',{
-			'searchStr': $("#searchysNoticeForm #searchStr").val(),
-			'searchCodeStr':$("#searchysNoticeForm #searchCodeStr").val()		
+			'title': $("#searchysNoticeForm #title").val(),
 		});
 	});
 	
@@ -49,7 +50,7 @@ $(function(){
 	 				}	 				
 	 			]
 	 	];
-/*######################grid columns end##############################*/
+/*######################rid columns end##############################*/
 	
 	$("#tt_YsNotice").datagrid({
 		url:httpUrl+"/ysnotice/listYsNotice.html?&rand=" + Math.random(),
@@ -78,8 +79,7 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchysNoticeForm #searchStr").val(),
-			'searchCodeStr':$("#searchysNoticeForm #searchCodeStr").val()
+			'title': $("#searchysNoticeForm #title").val(),
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			

@@ -78,4 +78,13 @@ public class NewsServiceImpl implements INewsService {
         page.setModelList(list);
         return page;
 	}
+
+	/**
+	 * 删除
+	 */
+	@Override
+	public int deleteById(int id) {
+		// TODO Auto-generated method stub
+		return newsDao.deleteById(id);
+	}
 }

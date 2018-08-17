@@ -34,5 +34,12 @@ public interface INewsService {
 	 */
 	public PageDo<NewsDo> getYsNewsPage(Map<String, Object> param, PageDo<NewsDo> page);
 	
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(int id);
+	
 	
 }

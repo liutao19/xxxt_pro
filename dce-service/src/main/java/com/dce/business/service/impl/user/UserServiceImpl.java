@@ -93,7 +93,7 @@ public class UserServiceImpl implements IUserService {
     	if(StringUtils.isNotBlank(userDo.getRefereeUserMobile())){
 	        Map<String, Object> params = new HashMap<String,Object>();
 	        params.put("mobile", userDo.getRefereeUserMobile());
-			List<UserDo> refUserLst = this.selectUser(params );
+			List<UserDo> refUserLst = this.selectUser(params);
 	        if(refUserLst == null || refUserLst.size()<1){
 	            return Result.failureResult("推荐人不存在");
 	        }

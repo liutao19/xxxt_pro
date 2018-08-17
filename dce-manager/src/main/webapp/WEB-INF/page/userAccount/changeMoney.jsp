@@ -38,7 +38,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td><c:if test="${type==0 }">划扣</c:if><c:if test="${type==1 }">充值</c:if>金额:</td>
+			<td><c:if test="${type==0 }">划扣</c:if><c:if test="${type==1 }">充值</c:if></td>
 			<td><input class="easyui-validatebox" type="text" name="qty" id="change_money_qty" style="height:30px;" /></td>
 		</tr>
 	</table>

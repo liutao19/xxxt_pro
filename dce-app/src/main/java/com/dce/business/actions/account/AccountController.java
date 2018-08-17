@@ -149,17 +149,10 @@ public class AccountController extends BaseController {
 	 */
 	@RequestMapping(value = "/amount", method = { RequestMethod.GET, RequestMethod.POST })
 	public Result<?> amount() {
-
-		String accountType = getString("accountType");
-
-		if (StringUtils.isBlank(accountType)) {
-			return Result.failureResult("请选择查询的账户类别!");
-		}
+		
 		Integer userId = getUserId();
 
-		logger.info("查询账户余额:accountType=" + accountType);
-
-		UserAccountDo account = accountService.selectUserAccount(userId, accountType);
+		UserAccountDo account = accountService.selectUserAccount2(userId);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (account == null || account.getAmount() == null) {

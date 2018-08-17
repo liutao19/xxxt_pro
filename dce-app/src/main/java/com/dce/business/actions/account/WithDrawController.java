@@ -57,7 +57,7 @@ public class WithDrawController extends BaseController {
      * @return
      */
     @RequestMapping(value="/info",method=RequestMethod.POST)
-    public List<Map<String,Object>> withraw2(){
+    public Result<List<Map<String,Object>>> withraw2(){
 
     	Map<String, Object> map=new HashMap<String,Object>();
     	
@@ -65,7 +65,6 @@ public class WithDrawController extends BaseController {
     	
     	System.out.println("list----->>"+withdrawService.getWithdrawRecords(map));
     	
-    	return withdrawService.getWithdrawRecords(map);
-    			
+    	return Result.successResult("查询成功", withdrawService.getWithdrawRecords(map));		
     }
 }

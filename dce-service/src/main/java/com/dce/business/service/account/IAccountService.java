@@ -40,6 +40,16 @@ public interface IAccountService {
 	UserAccountDo getUserAccount(Integer userId, AccountType accountType);
 
 	UserAccountDo selectUserAccount(Integer userId, String accountType);
+	
+	/**
+	 * 查询账户余额
+	 * 用户提现
+	 * @param userId
+	 * @return
+	 */
+	UserAccountDo selectUserAccount2(Integer userId);
+
+
 
 	/**
 	 * 查询用户账户

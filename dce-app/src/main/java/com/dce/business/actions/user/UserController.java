@@ -31,7 +31,6 @@ import com.dce.business.common.util.NumberUtil;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.message.NewsDo;
-import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ILoanDictService;
@@ -397,37 +396,6 @@ public class UserController extends BaseController {
 		mv.addObject("KHJB", KHJB);
 		return mv;
 	}
-<<<<<<< HEAD
-=======
-	/**
-	* 修改支付密码
-	* 
-	* @return
-	*/
-	@RequestMapping(value = "/updPayPass", method = RequestMethod.POST)
-	public Result<?> updPayPass() {
-		try {
-			Integer userId = getUserId();
-			String twoPassword = getString("password");
-			Assert.hasText(twoPassword, "支付密码不能为空");
-			logger.info("修改用户登录密码，userId:" + userId);
-			// 用户信息
-			UserDo userDo = new UserDo();
-			userDo.setId(userId);
-			// 登录密码加密
-			if (StringUtils.isNotBlank(twoPassword)) {
-				twoPassword = DataEncrypt.encrypt(twoPassword);
-				// userDo.setTwoPassword(password);
-			}
-			return userService.update(userDo);
-		} catch (Exception e) {
-				return Result.failureResult("用户支付密码修改失败");
-		}
-	}
-}
-/*=======
-package com.dce.business.actions.user;
->>>>>>> c456d248680c9e48e4c63f0c4ed667b5ed817150
 
 	/**
 	 * 查询用户等级
@@ -479,143 +447,8 @@ package com.dce.business.actions.user;
 		map.put("userLevel", userDo.getUserLevel()); // 用户等级
 		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
 		map.put("sex", userDo.getSex()); // 用户性别
-<<<<<<< HEAD
 		map.put("refereeUserMobile", userDo.getRefereeUserMobile()); // 用户推荐人
 		map.put("banktype", userDo.getBanktype());
-=======
-		map.put("refereeid", userDo.getRefereeid()); // 用户推荐人
-		// map.put("banktype", userDo.getBanktype()); //
-		// map.put("bankUserName", userDo.getBankUserName());
-		// map.put("banknumber", userDo.getBanknumber());
-		// map.put("bankContent", userDo.getBankContent());
-		// map.put("email", userDo.getEmail()); // 邮箱
-		return Result.successResult("查询成功", map);
-	}
-
-	*//**
-	 * 修改登录密码
-	 * 
-	 * @return
-	 *//*
-	@RequestMapping(value = "/updLogPass", method = RequestMethod.POST)
-	public Result<?> updLogPass() {
-		try {
-			Integer userId = getUserId();
-			String password = getString("password");
-			Assert.hasText(password, "支付密码不能为空");
-			logger.info("修改用户登录密码，userId:" + userId);
-			// 用户信息
-			UserDo userDo = new UserDo();
-			userDo.setId(userId);
-			// 登录密码加密
-			if (StringUtils.isNotBlank(password)) {
-				password = DataEncrypt.encrypt(password);
-				// userDo.setTwoPassword(password);
-			}
-			return userService.update(userDo);
-		} catch (Exception e) {
-			return Result.failureResult("用户密码修改失败");
-		}
-	}
-
-	*
-
-	*//**
-	 * 模糊搜索用户列表
-	 * 
-	 * @return
-	 *//*
-	@RequestMapping(value = "/list", method = RequestMethod.POST)
-	public Result<?> list() {
-		String userName = getString("userName");
-		String type = getString("type"); // 查询类型，type=1表示推荐人、type=2表示接点人
-		logger.info("模糊查询, userName:" + userName + "; type:" + type);
-
-		Assert.hasText(userName, "请输入用户名");
-
-		List<UserDo> list = userService.list(userName);
-
-		return Result.successResult("查询成功", list);
-	}
-
-	*//**
-	 * 首页，查询用户基本信息
-	 * 
-	 * @return
-	 *//*
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public Result<?> getUserInfo() {
-		Integer userId = getUserId();
-
-		logger.info("查询用户基本信息，userId:" + userId);
-
-		// 用户信息
-		UserDo userDo = userService.getUser(userId);
-		UserDo newUserDo = new UserDo();
-		newUserDo.setId(userDo.getId());
-		newUserDo.setUserName(userDo.getUserName());
-		newUserDo.setTrueName(userDo.getTrueName());
-		newUserDo.setUserLevel(userDo.getUserLevel());
-		newUserDo.setReleaseTime(userDo.getReleaseTime()); // 释放时间
-		newUserDo.setUserFace(userDo.getUserFace());
-		newUserDo.setRefereeNumber(userDo.getRefereeNumber());
-		newUserDo.setUserLevelName(userDo.getUserLevel() + "");
-		// 用户等级
-		List<LoanDictDtlDo> leves = loanDictService.queryDictDtlListByDictCode(DictCode.BaoDanFei.getCode());
-		if (!CollectionUtils.isEmpty(leves)) {
-			for (LoanDictDtlDo dtl : leves) {
-				if (dtl.getCode().equals(userDo.getUserLevel() + "")) {
-					newUserDo.setUserLevelName(dtl.getName());
-					break;
-				}
-			}
-		}
-		// 推荐人
-		if (userDo.getRefereeid() != null) {
-			UserDo referee = userService.getUser(userDo.getRefereeid());
-			if (referee != null) {
-				newUserDo.setRefereeUserName(referee.getUserName());
-			}
-		}
-
-		// 接点人
-		if (userDo.getParentid() != null) {
-			UserDo parent = userService.getUser(userDo.getParentid());
-			if (parent != null) {
-				newUserDo.setParentUserName(parent.getUserName());
-			}
-		}
-
-		// 财务信息
-		Map<String, Object> accountInfo = new HashMap<>();
-		accountInfo.put("amount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.current))); // 现持仓
-		accountInfo.put("originalAmount",
-				NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original))); // 原始仓
-		accountInfo.put("pointAmount", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.point))); // 美元点
-		accountInfo.put("frozenDeposit", NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked))); // 锁仓
-
-		BigDecimal _point = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.original));
-		BigDecimal _locked = NumberUtil.formatterBigDecimal(getAccountAmount(userId, AccountType.locked));
-
-		Map<String, Object> topInfoMap = new HashMap<>();
-		topInfoMap.put("decCount", "DEC/9901A");
-		topInfoMap.put("total", _point.add(_locked));
-		topInfoMap.put("canUse", _point);
-		topInfoMap.put("apply", _locked);
-
-		// DCE最新消息
-		NewsDo message = newsService.selectLatestNews();
-		if (message != null) {
-			topInfoMap.put("dceMsg", message.getTitle());
-		} else {
-
-			topInfoMap.put("dceMsg", "");
-		}
-		Map<String, Object> map = new HashMap<>();
-		map.put("userInfo", newUserDo);
-		map.put("userAccountDo", accountInfo);
-		map.put("topInfo", topInfoMap);
->>>>>>> c456d248680c9e48e4c63f0c4ed667b5ed817150
 		return Result.successResult("查询成功", map);
 	}
 

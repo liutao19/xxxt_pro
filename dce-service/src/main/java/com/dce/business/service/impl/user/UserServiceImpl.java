@@ -87,11 +87,11 @@ public class UserServiceImpl implements IUserService {
 		// 判断注册用户名是否为空
 		userDo.setUserName(userDo.getUserName().trim());	
 		
-		
-		
 		UserDo ref = null;
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
+			
 			Map<String, Object> params = new HashMap<String, Object>();
+			
 			params.put("mobile", userDo.getRefereeUserMobile());
 			
 			List<UserDo> refUserLst = this.selectUser(params);
@@ -118,11 +118,11 @@ public class UserServiceImpl implements IUserService {
 		// 用户注册
 		int result = userDao.insertSelective(userDo);
 
-		// 维护父节点关系
-		maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
-
-		// 维护推荐人关系
-		maintainUserReferee(userDo.getId(), ref.getId());
+		// // 维护父节点关系
+		// maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+		//
+		// // 维护推荐人关系
+		// maintainUserReferee(userDo.getId(), ref.getId());
 
 		// 维护賬戶
 		maintainUserAccount(userDo.getId());
@@ -153,74 +153,6 @@ public class UserServiceImpl implements IUserService {
 		return userDao.selectByPrimaryKey(userId);
 	}
 
-	/*
-	 * @Override
-	 * 
-	 * @Transactional(rollbackFor = Exception.class, propagation =
-	 * Propagation.REQUIRED) public Result<?> reg(UserDo userDo) { //
-	 * 判断注册用户名是否为空 userDo.setUserName(userDo.getUserName().trim());
-	 * userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid //
-	 * userDo.setRefereeUserName(userDo.getRefereeUserName().trim());
-	 * 
-	 * 
-	 * UserDo ref = getUser(userDo.getRefereeUserName()); if(ref == null){
-	 * return Result.failureResult("推荐人不存在"); }
-	 * 
-	 * 
-	 * UserDo oldUser = getUser(userDo.getUserName()); if (oldUser != null) {
-	 * return Result.failureResult("用户已存在"); }
-	 * 
-	 * 
-	 * UserDo par = getUser(userDo.getParentUserName()); if(par == null){ return
-	 * Result.failureResult("接点人不存在!"); }
-	 * 
-	 * //判断所在位置是否已经有用户 Map<String, Object> params = new HashMap<>();
-	 * params.put("parentid", par.getId()); params.put("distance", 1);
-	 * params.put("lrDistrict", userDo.getPos()); List<UserParentDo> list =
-	 * userParentDao.select(params); if (!CollectionUtils.isEmpty(list)) {
-	 * return Result.failureResult("接点人左（右）区已有用户，请重新选择!"); }
-	 * 
-	 * 
-	 * String twoPassword = userDo.getTwoPassword(); // 加密前交易密码，用来以太坊开户
-	 * 
-	 * userDo.setRefereeid(ref.getId()); userDo.setParentid(par.getId());
-	 * 
-	 * userDo.setRegTime(new Date().getTime());
-	 * userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); //
-	 * 登录密码与支付密码加密处理
-	 * userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
-	 * 
-	 * // 用户注册 int result = userDao.insertSelective(userDo);
-	 * 
-	 * 
-	 * //维护父节点关系 maintainUserParent(userDo.getId(), par.getId(),
-	 * userDo.getPos());
-	 * 
-	 * //维护推荐人关系 maintainUserReferee(userDo.getId(), ref.getId());
-	 * 
-	 * 
-	 * //维护賬戶 maintainUserAccount(userDo.getId());
-	 * 
-	 * //以太坊开户 ethereumService.creatAccount(userDo.getId(), twoPassword);
-	 * 
-	 * 
-	 * return result > 0 ? Result.successResult("注册成功!") :
-	 * Result.failureResult("注册失败"); }
-	 */
-
-	/*
-	 * // 维护賬戶 private void maintainUserAccount(Integer userId) { String[]
-	 * accountTypes = new String[] { AccountType.wallet_original.name(),
-	 * AccountType.wallet_original_release.name(),
-	 * AccountType.wallet_bonus.name(), AccountType.wallet_interest.name(),
-	 * AccountType.wallet_release_release.name(),
-	 * AccountType.wallet_cash.name(), AccountType.wallet_score.name() };
-	 * 
-	 * for (String accountType : accountTypes) { UserAccountDo record = new
-	 * UserAccountDo(); record.setUserId(userId);
-	 * record.setAccountType(accountType); record.setAmount(BigDecimal.ZERO);
-	 * record.setUpdateTime(new Date()); userAccountDao.insert(record); } }
-	 */
 	/**
 	 * 维护父节点关系表
 	 * 

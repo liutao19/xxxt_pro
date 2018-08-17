@@ -75,6 +75,12 @@ public class UserController extends BaseAction {
 		}
 	}
 
+	/**
+	 * 报单总计
+	 * @param pagination
+	 * @param request
+	 * @param response
+	 */
 	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping("/list")
@@ -130,6 +136,10 @@ public class UserController extends BaseAction {
 		return "/user/activitiUser";
 	}
 
+	/**
+	 * 修改用户等级
+	 * @param response
+	 */
 	@RequestMapping(value = "/activityUser", method = { RequestMethod.GET, RequestMethod.POST })
 	public void activityUser(HttpServletResponse response) {
 		String userName = getString("userName");
@@ -176,7 +186,10 @@ public class UserController extends BaseAction {
 		modelMap.addAttribute("userId", userId);
 		return "/user/orgtree";
 	}
-
+/**
+ * 查看直推树
+ * @param response
+ */
 	@RequestMapping(value = "/listMyRef", method = RequestMethod.POST)
 	@ResponseBody
 	public void listMyRef(HttpServletResponse response) {
@@ -327,7 +340,7 @@ public class UserController extends BaseAction {
 			// 支付密码
 			String twoPassword = getString("twoPassword");
 			// 推荐人
-			//Integer refereeid = gitString("refereeid");
+			// String refereeUserMobile = gitString("refereeUserMobile");
 			// 用户会员等级
 			//String userLevel = gitString("userLevel");
 			// 激活状态

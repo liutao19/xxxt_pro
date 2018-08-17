@@ -32,10 +32,10 @@ public class UserAddressController extends BaseController {
 	 */
 	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
 	public Result<?> addAddress() {
-		String addressId = getString("address");
+		String addressId = getString("addressid");
 		String username = getString("username");
 		String userphone = getString("userphone");
-		String address = getString("address");
+		String address = getString("userphone");
 		String addressDetails = getString("addressDetails");
 		Integer userId = getUserId();
 
@@ -56,10 +56,12 @@ public class UserAddressController extends BaseController {
 		if (StringUtils.isNotBlank(addressId)) {
 			addressadd.setAddressid(Integer.parseInt(addressId));
 			addressService.updateByPrimaryKeySelective(addressadd);
+			return Result.successResult("地址修改成功");
 		} else {
 			addressService.insertSelective(addressadd);
+			return Result.successResult("地址添加成功");
 		}
-		return Result.successResult("地址修改成功");
+		
 	}
 
 	/**
@@ -85,10 +87,10 @@ public class UserAddressController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/delAddress1", method = { RequestMethod.POST })
+	@RequestMapping(value = "/delAddress", method = { RequestMethod.POST })
 	public Result<?> detAddress() {
 
-		String addressid = getString("address");
+		String addressid = getString("addressid");
 		// Integer detAddress = Integer.parseInt(addressid);
 		// 获取当前用户的id
 		Integer userId = getUserId();

@@ -79,10 +79,10 @@ public class UserDo {
 
 	private BigDecimal totalShopping;
 
-	// 用户推荐人
+	// 用户推荐人(无用）
 	private Integer refereeid;
 
-	// 接点人id
+	// 接点人id(无用）
 	private Integer parentid;
 
 	// 认证状态
@@ -91,7 +91,7 @@ public class UserDo {
 	// 报单金额
 	private BigDecimal baodan_amount;
 
-	// 推荐人用户名
+	// 推荐人用户名(无用）
 	// @NotBlank(message = "推荐人不能为空")
 	private String refereeUserName;
 

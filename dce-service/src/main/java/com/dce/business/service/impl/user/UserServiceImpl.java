@@ -63,7 +63,86 @@ public class UserServiceImpl implements IUserService {
 	@Resource
 	private IPerformanceDailyService performanceDailyService;
 
+<<<<<<< HEAD
 	@Override
+=======
+    
+    @Override
+    public UserDo getUser(String userName) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userName", userName);
+        List<UserDo> list = userDao.selectUser(params);
+
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+
+        return list.get(0);
+    }
+
+   /* @Override
+    public UserDo getUser(Integer userId) {
+        return userDao.selectByPrimaryKey(userId);
+    }*/
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    public Result<?> reg(UserDo userDo) {
+    	// 判断注册用户名是否为空
+    	userDo.setUserName(userDo.getUserName().trim());    	
+    	userDo.setRefereeid(userDo.getRefereeid());// 判断注册用户名是否为空refereeid
+     
+    	UserDo ref = null;
+    	if(StringUtils.isNotBlank(userDo.getRefereeUserMobile())){
+	        Map<String, Object> params = new HashMap<String,Object>();
+	        params.put("mobile", userDo.getRefereeUserMobile());
+			List<UserDo> refUserLst = this.selectUser(params);
+	        if(refUserLst == null || refUserLst.size()<1){
+	            return Result.failureResult("推荐人不存在");
+	        }
+	        ref = refUserLst.get(0);
+    	}
+     
+        UserDo oldUser = getUser(userDo.getUserName());
+        if (oldUser != null) {
+            return Result.failureResult("用户已存在");
+        }
+        
+        if(ref != null){
+	        userDo.setRefereeid(ref.getId());
+	        userDo.setParentid(ref.getId());
+        }
+        userDo.setRegTime(new Date().getTime());
+        userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); //密码加密处理
+        userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
+        
+        //用户注册
+        int result = userDao.insertSelective(userDo);
+
+        //维护父节点关系
+        maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+
+        //维护推荐人关系
+        maintainUserReferee(userDo.getId(), ref.getId());
+       
+        //维护賬戶
+        maintainUserAccount(userDo.getId());
+        
+        return result > 0?Result.successResult("注册成功!"):Result.failureResult("注册失败");
+    }
+    
+	//维护賬戶
+	private void maintainUserAccount(Integer userId) {
+		String[] accountTypes = new String[] { AccountType.wallet_money.name(), 
+											   AccountType.wallet_active.name(),
+											   AccountType.wallet_goods.name(), 
+											   AccountType.wallet_travel.name()};
+		}
+	// @Resource
+	// private IBaodanService baodanService;
+
+	/*@Override
+>>>>>>> c456d248680c9e48e4c63f0c4ed667b5ed817150
 	public UserDo getUser(String userName) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("userName", userName);

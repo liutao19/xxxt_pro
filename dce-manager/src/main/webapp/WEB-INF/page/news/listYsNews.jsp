@@ -27,10 +27,19 @@
 			<form id="searchysNewsForm" style="margin-top:7px;margin-left:5px;" >
 			      <table border="0">
 			        <tr>
-			          <td class="tdfont">查询条件:
-			          	<input type="text" size="14" id="searchStr" name="searchStr" placeholder="字典名称" >
-			          	<input type="text" size="14" id="searchCodeStr" name="searchCodeStr" placeholder="字典编码" >
+			          <td class="tdfont">标题:
+			          	<input type="text" size="14" id="title" name="title" placeholder="标题" >
 			          </td>
+			          <td class="tdfont">创建人:
+			          	<input type="text" size="14" id="createName" name="title" placeholder="创建人" >
+			          </td>
+			          <td class="tdfont">修改人:
+			          	<input type="text" size="14" id="updateName" name="title" placeholder="修改人" >
+			          </td>
+			          <td class="tdfont" colspan="2">创建时间:
+						 <input type="text" id="startDate"  name="startDate" class="easyui-datetimebox" size="14" data-options="editable : true" />-
+						 <input type="text" id="endDate" name="endDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
+					   	</td>
 			          <td >
 			              <a  href="javascript:void(0)" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a> 
 			              <a  href="javascript:void(0)" id="resetButton" class="easyui-linkbutton" iconCls="icon-reset" plain="true" >重置</a>

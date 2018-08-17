@@ -23,4 +23,10 @@ public interface INewsDao {
 
 	List<NewsDo> queryListPage(Map<String, Object> param);
 	
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	public int deleteById(int id);
 }

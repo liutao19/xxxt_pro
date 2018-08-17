@@ -53,6 +53,7 @@
 		    update_name
 		FROM
 		    t_ys_news
+		    order by create_date desc
     </select>
     
     
@@ -177,8 +178,14 @@
 			<if test="updateName != null">  
 				AND update_name = #{updateName}
 			</if>
+			<if test="startDate != null">  
+               AND <![CDATA[create_date >= #{startDate}]]>
+           </if>
+           <if test="endDate != null">  
+               AND <![CDATA[create_date <= #{endDate}]]>
+           </if>
          </trim> 
-         
+         order by create_date desc
 
 	</select>
 	

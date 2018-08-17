@@ -1,11 +1,16 @@
-
+var basePath="/dce-manager";
 $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchysNewsForm #searchButton").on("click",function(){
+		var dataUrl = basePath+"/ysnews/listYsNews.html";
+		$("#tt_YsNews").datagrid('options').url = dataUrl;
 		$("#tt_YsNews").datagrid('load',{
-			'searchStr': $("#searchysNewsForm #searchStr").val(),
-			'searchCodeStr':$("#searchysNewsForm #searchCodeStr").val()		
+			'title': $("#searchysNewsForm #title").val(),
+			'createName': $("#searchysNewsForm #createName").val(),
+			'updateName': $("#searchysNewsForm #updateName").val(),
+			'startDate':$("#searchysNewsForm #startDate").datebox('getValue'),
+			'endDate':$("#searchysNewsForm #endDate").datebox('getValue')
 		});
 	});
 	
@@ -41,9 +46,9 @@ $(function(){
 								{field:"createName",title:"创建人",width:180,align:"center"},
 								{field:"updateDate",title:"修改日期",width:180,align:"center",formatter:dateTimeFormatter},
 								{field:"updateName",title:"修改人",width:180,align:"center"},
-					{field:"操作",title:"操作",width:80,align:"left",
+					{field:"操作",title:"操作",width:180,align:"center",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>  <a href="javascript:void(0);" onclick="deleteNotice(\''+row.id+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -151,6 +156,37 @@ function save_YsNews(){
 		 } 
 	});
 }
+
+
+
+/**
+ * 删除
+ */
+
+function deleteNotice(id){
+	if(!id){
+		$.messager.alert("新闻","id不能为空");
+		return;
+	}
+	$.messager.confirm("新闻","确认删除该新闻吗，删除后不可恢复",function(r){
+		if(r){
+			$.ajax({
+				url:httpUrl+"/ysnews/deleteYsNews.html?id="+id,
+				type:"post",
+				data:{},
+				success:function(data){
+					if(data.ret==1){
+						$.messager.alert("新闻","删除成功");
+						$('#tableGrid').datagrid('reload');
+					}else{
+						$.messager.alert("新闻","删除失败，请稍后再试");
+					}
+				}
+			});
+		}
+	});
+}
+
 
 
 function reloadDataGrid()

@@ -131,26 +131,17 @@ $(function(){
 	 				},
 	 				{field:"accountType",title:"账户类型",width:80,align:"center",
 	 					formatter:function(value,row,index){
-	 						if(value == "wallet_original"){
-	 							return "原始币钱包";
+	 						if(value == "wallet_money"){
+	 							return "现金账户";
 							}
-							if (value == "wallet_original_release") {
-								return "释放币钱包";
+							if (value == "wallet_travel") {
+								return "旅游";
 							}
-							if (value == "wallet_interest") {
-								return "日息币钱包";
+							if (value == "wallet_goods") {
+								return "赠送商品";
 							}
-							if (value == "wallet_bonus") {
-								return "奖金币钱包";
-							}
-							if (value == "wallet_release_release") {
-								return "可提币钱包";
-							}
-							if (value == "wallet_score") {
-								return "流通币钱包";
-							}
-							if (value == "wallet_cash") {
-								return "现金币钱包";
+							if (value == "wallet_active") {
+								return "赠送活动";
 							}
 							return value;
 						}

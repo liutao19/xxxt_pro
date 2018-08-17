@@ -68,17 +68,14 @@ public class YsNoticeController extends BaseAction{
         logger.info("----listYsNotice----");
         try{
             PageDo<NoticeDo> page = PageDoUtil.getPage(pagination);
-            String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
-            }
+            
+            String title = getString("title");
+			if (StringUtils.isNotBlank(title)) {
+				System.out.println(title);
+				param.put("title", title);
+				model.addAttribute("title", title);
+			}
             page = noticeService.getNoticePage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));

@@ -31,7 +31,13 @@ public class FeedBackController extends BaseController {
     	//获取前台传过来的反馈信息
     	String feedBackContent = getString("feedBackContent") == null ? "" : getString("feedBackContent");
     	
+    	//获取用户id
+    	Integer userId = getUserId();
+    	
+    	
     	feedback.setFeedbackcontent(feedBackContent);
+    	feedback.setUserid(userId);
+    	
     	
     	Result<?> result = feedBackService.feedBack(feedback);
     	

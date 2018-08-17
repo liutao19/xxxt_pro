@@ -1478,7 +1478,7 @@
 	<!-- 查询所有电话号码 -->
 	<select id="selectMobile" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select
+		select 
 		<include refid="Base_Column_List" />
 		from ct_user u
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">

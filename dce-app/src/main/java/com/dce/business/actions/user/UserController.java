@@ -73,14 +73,13 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	public Result<?> reg(@Valid UserDo userDo, BindingResult bindingResult) {
 		logger.info("用户注册");
-
 		// 参数校验
 		if (bindingResult.hasErrors()) {
 			List<ObjectError> errors = bindingResult.getAllErrors();
 			logger.info("用户注册，参数校验错误：" + JSON.toJSONString(errors));
 			return Result.failureResult(errors.get(0).getDefaultMessage());
 		}
-
+		
 		Result<?> result = userService.reg(userDo);
 
 		logger.info("用户注册结果:" + JSON.toJSONString(result));

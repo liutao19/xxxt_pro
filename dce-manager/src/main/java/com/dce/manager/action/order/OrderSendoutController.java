@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.DateUtil;
 import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.NewPagination;
 import com.dce.business.entity.page.PageDo;
@@ -65,18 +66,18 @@ public class OrderSendoutController extends BaseAction{
         logger.info("----listOrderSendout----");
         try{
             PageDo<OrderSendOut> page = PageDoUtil.getPage(pagination);
-            String companyName = getString("searchPolicyName");
+            String startDate = getString("startDate");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
+            if(StringUtils.isNotBlank(startDate)){
+                param.put("startDate",startDate);
+                model.addAttribute("startDate",startDate);
             }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
+            String endDate = getString("endDate");
+            if(StringUtils.isNotBlank(endDate)){
+                param.put("endDate", endDate);
+                model.addAttribute("endDate",endDate);
             }
-            page = orderSendoutService.getOrderSendoutPage(param, page);
+            page = orderSendoutService.selectOrderSendByPage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
             
             outPrint(response, JSONObject.toJSON(pagination));
@@ -131,11 +132,11 @@ public class OrderSendoutController extends BaseAction{
             int i = 0;
             if (id != null && id.intValue()>0) {
             	ordersendout.setOperatorId(userId);
-            	ordersendout.setCreateTime(new Date());
+            	ordersendout.setCreateTime(DateUtil.YYYY_MM_DD_MM_HH_SS.format(new Date()));
                 i = orderSendoutService.updateOrderSendoutById(ordersendout);
             } else {
 				ordersendout.setOperatorId(userId);
-            	ordersendout.setCreateTime(new Date());
+            	ordersendout.setCreateTime(DateUtil.YYYY_MM_DD_MM_HH_SS.format(new Date()));
             	
                 i = orderSendoutService.addOrderSendout(ordersendout);
             }

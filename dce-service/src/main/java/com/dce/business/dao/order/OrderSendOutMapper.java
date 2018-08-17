@@ -36,5 +36,5 @@ public interface OrderSendOutMapper {
 
 	int updateByPrimaryKey(OrderSendOut record);
 	
-	List<OrderSendOut> selectOrderByPage(Map<String, Object> paraMap);
+	List<OrderSendOut> selectOrderSendByPage(Map<String, Object> paraMap);
 }

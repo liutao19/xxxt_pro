@@ -46,7 +46,7 @@ public interface IOrderSendoutService{
 	 * @param page
 	 * @return
 	 */
-	public PageDo<OrderSendOut> getOrderSendoutPage(Map<String, Object> param, PageDo<OrderSendOut> page);
+	public PageDo<OrderSendOut> selectOrderSendByPage(Map<String, Object> param, PageDo<OrderSendOut> page);
 	
 	
 	/**

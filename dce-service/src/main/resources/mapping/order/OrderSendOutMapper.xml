@@ -22,7 +22,8 @@
 									and ${criterion.condition} #{criterion.value}
 								</when>
 								<when test="criterion.betweenValue">
-									and ${criterion.condition} #{criterion.value} and
+									and ${criterion.condition} #{criterion.value}
+									and
 									#{criterion.secondValue}
 								</when>
 								<when test="criterion.listValue">
@@ -54,7 +55,8 @@
 									and ${criterion.condition} #{criterion.value}
 								</when>
 								<when test="criterion.betweenValue">
-									and ${criterion.condition} #{criterion.value} and
+									and ${criterion.condition} #{criterion.value}
+									and
 									#{criterion.secondValue}
 								</when>
 								<when test="criterion.listValue">
@@ -71,14 +73,22 @@
 			</foreach>
 		</where>
 	</sql>
-	
+
 	<sql id="Base_Column_List">
-		id, order_id, operator_id, address, date_format(create_time,'%Y-%m-%d %H:%i:%s')
+		id, order_id, operator_id, address,
+		date_format(create_time,'%Y-%m-%d %H:%i:%s')
 	</sql>
-	
+
 	<!-- 分页条件查询 -->
-	<select id="selectOrderSendByPage" parameterType="Map" resultType="Map">
-		SELECT <include refid="Base_Column_List"/> FROM ct_order_sendout 
+	<select id="selectOrderSendByPage" parameterType="Map"
+		resultType="Map">
+		SELECT
+		a.id, a.order_id orderId, a.operator_id operatorId, a.address
+		address, date_format(a.create_time,'%Y-%m-%d %H:%i:%s') createTime,
+		b.username operator,c.orderCode orderCode
+		FROM ct_order_sendout a left join managers b
+		on a.operator_id = b.id
+		left join ct_order c on a.order_id = c.orderId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="id != null">
 				AND id = #{id}
@@ -93,15 +103,15 @@
 				AND address = #{address}
 			</if>
 			<if test="startDate != null">
-				AND <![CDATA[create_time >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+				AND <![CDATA[a.create_time >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 			<if test="endDate != null">
-				AND <![CDATA[create_time <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+				AND <![CDATA[a.create_time <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 		</trim>
-		order by create_time desc
+		order by a.create_time desc
 	</select>
-	
+
 	<select id="selectByExample" parameterType="com.dce.business.entity.order.OrderSendOutExample"
 		resultMap="BaseResultMap">
 		select
@@ -125,7 +135,8 @@
 		where id = #{id,jdbcType=BIGINT}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-		delete from ct_order_sendout
+		delete from
+		ct_order_sendout
 		where id = #{id,jdbcType=BIGINT}
 	</delete>
 	<delete id="deleteByExample" parameterType="com.dce.business.entity.order.OrderSendOutExample">
@@ -135,11 +146,14 @@
 		</if>
 	</delete>
 	<insert id="insert" parameterType="com.dce.business.entity.order.OrderSendOut">
-		insert into ct_order_sendout (id, order_id, operator_id,
+		insert into ct_order_sendout
+		(id, order_id, operator_id,
 		address, create_time)
-		values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT},
+		values
+		(#{id,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT},
 		#{operatorId,jdbcType=BIGINT},
-		#{address,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE})
+		#{address,jdbcType=VARCHAR},
+		#{createTime,jdbcType=DATE})
 	</insert>
 	<insert id="insertSelective" parameterType="com.dce.business.entity.order.OrderSendOut">
 		insert into ct_order_sendout
@@ -211,10 +225,14 @@
 	<update id="updateByExample" parameterType="map">
 		update ct_order_sendout
 		set id = #{record.id,jdbcType=BIGINT},
-		order_id = #{record.orderId,jdbcType=BIGINT},
-		operator_id = #{record.operatorId,jdbcType=BIGINT},
-		address = #{record.address,jdbcType=VARCHAR},
-		create_time = #{record.createTime,jdbcType=DATE}
+		order_id
+		= #{record.orderId,jdbcType=BIGINT},
+		operator_id =
+		#{record.operatorId,jdbcType=BIGINT},
+		address =
+		#{record.address,jdbcType=VARCHAR},
+		create_time =
+		#{record.createTime,jdbcType=DATE}
 		<if test="_parameter != null">
 			<include refid="Update_By_Example_Where_Clause" />
 		</if>
@@ -238,11 +256,14 @@
 		where id = #{id,jdbcType=BIGINT}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.OrderSendOut">
-		update ct_order_sendout
+		update
+		ct_order_sendout
 		set order_id = #{orderId,jdbcType=BIGINT},
-		operator_id = #{operatorId,jdbcType=BIGINT},
+		operator_id
+		= #{operatorId,jdbcType=BIGINT},
 		address = #{address,jdbcType=VARCHAR},
 		create_time = #{createTime,jdbcType=DATE}
-		where id = #{id,jdbcType=BIGINT}
+		where id =
+		#{id,jdbcType=BIGINT}
 	</update>
 </mapper>

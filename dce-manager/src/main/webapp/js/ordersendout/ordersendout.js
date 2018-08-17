@@ -3,9 +3,11 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchorderSendoutForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/ordersendout/listOrderSendout.html";
+		$("#tt_OrderSendout").datagrid('options').url = dataUrl;
 		$("#tt_OrderSendout").datagrid('load',{
-			'searchStr': $("#searchorderSendoutForm #searchStr").val(),
-			'searchCodeStr':$("#searchorderSendoutForm #searchCodeStr").val()		
+			'startDate':$("#searchorderSendoutForm #startDate").datebox('getValue'),
+			'endDate':$("#searchorderSendoutForm #endDate").datebox('getValue'),
 		});
 	});
 	
@@ -17,29 +19,29 @@ $(function(){
 	
 /*##########################grid init begin####################################################*/
 /*##########################grid toolbar begin#################################################*/
-	var toolbar_tt = [
+	/*var toolbar_tt = [
 					{
 						iconCls:"icon-edit",
 						text:"新增",
 						handler:to_addorderSendout
 					}
-	          	];
+	          	];*/
 	
 /*######################grid toolbar end##############################*/
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"orderId",title:"订单编号",width:180,align:"center"},
-								{field:"operatorId",title:"操作人",width:180,align:"center"},
-								{field:"address",title:"收货地址",width:180,align:"center"},
-								{field:"createTime",title:"发货时间",width:180,align:"center",formatter:dateTimeFormatter},
-					{field:"操作",title:"操作",width:80,align:"left",
+					{field:'id',title:'id',width:100,hidden:true},						
+					{field:"orderCode",title:"订单编号",width:180,align:"center"},
+					{field:"operator",title:"操作人",width:180,align:"center"},
+					{field:"address",title:"收货地址",width:180,align:"center"},
+					{field:"createTime",title:"发货时间",width:180,align:"center",formatter:dateTimeFormatter},
+					/*{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editorderSendout(\''+row.id+'\');">发货</a>';
 	 					  return str;
 	 					}
-	 				}	 				
+	 				}	 */				
 	 			]
 	 	];
 /*######################grid columns end##############################*/
@@ -69,10 +71,10 @@ $(function(){
 		pageList:[10,20,30],
 		idField:"id",
 		columns:columns_tt,
-		toolbar:toolbar_tt,
+		/*toolbar:toolbar_tt,*/
 		queryParams:{
-			'searchStr': $("#searchorderSendoutForm #searchStr").val(),
-			'searchCodeStr':$("#searchorderSendoutForm #searchCodeStr").val()
+			'startDate':$("#searchorderForm #startDate").val(),
+			'endDate':$("#searchorderForm #endDate").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -90,13 +92,13 @@ $(function(){
  * 新增
  * @param id
  */
-function to_addorderSendout(){
+/*function to_addorderSendout(){
 	to_edit('');
 }
-/**
+*//**
  * 编辑
  * @param id
- */
+ *//*
 function to_editorderSendout(id){
 	
 	var url = httpUrl+"/ordersendout/addOrderSendout.html?&rand=" + Math.random()+"&id="+id;
@@ -149,7 +151,7 @@ function save_OrderSendout(){
 function reloadDataGrid()
 {
 	$("tt_OrderSendout").datagrid("reload");
-}
+}*/
 
 
 

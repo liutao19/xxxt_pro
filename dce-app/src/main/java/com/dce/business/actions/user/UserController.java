@@ -434,6 +434,31 @@ public class UserController extends BaseController {
 		mv.addObject("KHJB", KHJB);
 		return mv;
 	}
+	/**
+	* 修改支付密码
+	* 
+	* @return
+	*/
+	@RequestMapping(value = "/updPayPass", method = RequestMethod.POST)
+	public Result<?> updPayPass() {
+		try {
+			Integer userId = getUserId();
+			String twoPassword = getString("password");
+			Assert.hasText(twoPassword, "支付密码不能为空");
+			logger.info("修改用户登录密码，userId:" + userId);
+			// 用户信息
+			UserDo userDo = new UserDo();
+			userDo.setId(userId);
+			// 登录密码加密
+			if (StringUtils.isNotBlank(twoPassword)) {
+				twoPassword = DataEncrypt.encrypt(twoPassword);
+				// userDo.setTwoPassword(password);
+			}
+			return userService.update(userDo);
+		} catch (Exception e) {
+				return Result.failureResult("用户支付密码修改失败");
+		}
+	}
 }
 /*=======
 package com.dce.business.actions.user;
@@ -696,31 +721,7 @@ public class UserController extends BaseController {
 		}
 	}
 
-	*//**
-	 * 修改支付密码
-	 * 
-	 * @return
-	 *//*
-	@RequestMapping(value = "/updPayPass", method = RequestMethod.POST)
-	public Result<?> updPayPass() {
-		try {
-			Integer userId = getUserId();
-			String twoPassword = getString("password");
-			Assert.hasText(twoPassword, "支付密码不能为空");
-			logger.info("修改用户登录密码，userId:" + userId);
-			// 用户信息
-			UserDo userDo = new UserDo();
-			userDo.setId(userId);
-			// 登录密码加密
-			if (StringUtils.isNotBlank(twoPassword)) {
-				twoPassword = DataEncrypt.encrypt(twoPassword);
-				// userDo.setTwoPassword(password);
-			}
-			return userService.update(userDo);
-		} catch (Exception e) {
-			return Result.failureResult("用户支付密码修改失败");
-		}
-	}
+	*
 
 	*//**
 	 * 模糊搜索用户列表

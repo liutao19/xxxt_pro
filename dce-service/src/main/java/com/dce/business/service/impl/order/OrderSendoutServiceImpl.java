@@ -49,14 +49,17 @@ public class OrderSendoutServiceImpl implements IOrderSendoutService {
 		return orderSendOutMapper.insertSelective(newOrderSendout);
 	}
 
+	/**
+	 * 分页查询
+	 */
 	@Override
-	public PageDo<OrderSendOut> getOrderSendoutPage(Map<String, Object> param, PageDo<OrderSendOut> page) {
+	public PageDo<OrderSendOut> selectOrderSendByPage(Map<String, Object> param, PageDo<OrderSendOut> page) {
 
 		if(param == null){
 			param = new HashMap<String,Object>();
 		}
 		param.put(Constants.MYBATIS_PAGE, page);
-		List<OrderSendOut> list = orderSendOutMapper.selectOrderByPage(param);
+		List<OrderSendOut> list = orderSendOutMapper.selectOrderSendByPage(param);
 		page.setModelList(list);
 		
 		return page;

@@ -1482,8 +1482,8 @@
 		<include refid="Base_Column_List" />
 		from ct_user u
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="refereeUserMobile != null">
-				AND refereeUserMobile = #{refereeUserMobile}
+			<if test="mobile != null">
+				AND u.mobile = #{mobile}
 			</if>
 
 		</trim>

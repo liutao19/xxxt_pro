@@ -17,7 +17,7 @@ public class UserDo {
 	private Integer id;
 
 	// 登录用户名或昵称
-	// @NotBlank(message = "验证编号不能为空")
+	@NotBlank(message = "验证编号不能为空")
 	private String userName;
 
 	// 证件姓名
@@ -30,7 +30,7 @@ public class UserDo {
 	private String mobile;
 
 	// 登录密码
-	@NotBlank(message = "登录密码不能为空")
+	@NotBlank(message = "密码不能为空")
 	private String userPassword;
 
 	@NotBlank(message = "支付密码不能为空")

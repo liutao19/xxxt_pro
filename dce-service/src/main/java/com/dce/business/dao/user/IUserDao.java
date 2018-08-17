@@ -38,6 +38,13 @@ public interface IUserDao {
 
     int updateByPrimaryKey(UserDo record);
 
+    /**
+     * 查询所有手机号
+     * @param params
+     * @return
+     */
+    List<UserDo> selectMobile(Map<String, Object> params);
+    
     List<UserDo> selectUser(Map<String, Object> params);
 
     List<UserDo> list(Map<String, Object> params);

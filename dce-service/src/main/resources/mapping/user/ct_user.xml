@@ -1476,15 +1476,16 @@
 	</select>
 
 	<!-- 查询所有电话号码 -->
-	<select id="selectMobile" parameterType="java.util.Map" resultMap="BaseResultMap">
+	<select id="selectMobile" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_user u
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="mobile != null">
-				AND u.Mobile = #{mobile}
+			<if test="refereeUserMobile != null">
+				AND refereeUserMobile = #{refereeUserMobile}
 			</if>
-			
+
 		</trim>
 	</select>
 
@@ -1950,8 +1951,8 @@
 				AND district = #{district}
 			</if>
 			<if test="refereeUserMobile != null">
-	AND refereeUserMobile =
-	#{refereeUserMobile,jdbcType=VARCHAR}
+				AND refereeUserMobile =
+				#{refereeUserMobile,jdbcType=VARCHAR}
 			</if>
 		</trim>
 	</select>

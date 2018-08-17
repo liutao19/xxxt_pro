@@ -84,9 +84,6 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> reg(UserDo userDo) {
-		// 判断注册用户名是否为空
-		userDo.setUserName(userDo.getUserName().trim());	
-		
 		UserDo ref = null;
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
 			
@@ -94,13 +91,15 @@ public class UserServiceImpl implements IUserService {
 			
 			params.put("mobile", userDo.getRefereeUserMobile());
 			
-			List<UserDo> refUserLst = this.selectUser(params);
+			List<UserDo> refUserLst = this.selectMobile(params);
 			if (refUserLst == null || refUserLst.size() < 1) {
 				return Result.failureResult("推荐人不存在");
 			}
 			ref = refUserLst.get(0);
 		}
-
+		
+		// 判断注册用户名是否为空
+		userDo.setUserName(userDo.getUserName().trim());	
 		UserDo oldUser = getUser(userDo.getUserName());
 		if (oldUser != null) {
 			return Result.failureResult("用户已存在");
@@ -691,6 +690,14 @@ public class UserServiceImpl implements IUserService {
 	public List<UserDo> selectUserCondition(Map<String, Object> map) {
 		
 		return userDao.selectUserCondition(map);
+	}
+
+	/**
+	 * 查询所有用户的手机号
+	 */
+	@Override
+	public List<UserDo> selectMobile(Map<String, Object> params) {
+		return userDao.selectMobile(params);
 	}
 
 }

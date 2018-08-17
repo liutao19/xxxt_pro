@@ -32,12 +32,12 @@ public class UserAddressController extends BaseController {
 	 */
 	@RequestMapping(value = "/addAddress", method = { RequestMethod.POST })
 	public Result<?> addAddress() {
+		Integer userId = getUserId();
 		String addressId = getString("addressid");
 		String username = getString("username");
 		String userphone = getString("userphone");
-		String address = getString("userphone");
+		String address = getString("address");
 		String addressDetails = getString("addressDetails");
-		Integer userId = getUserId();
 
 		Assert.hasText(username, "收货人不能为空");
 		Assert.hasText(userphone, "收货人电话不能为空");

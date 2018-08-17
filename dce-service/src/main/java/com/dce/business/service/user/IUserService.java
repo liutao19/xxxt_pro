@@ -120,6 +120,13 @@ public interface IUserService {
     List<UserDo> selectPage(Map<String, Object> params);
     
     /**
+     * 查询所有手机号
+     * @param params
+     * @return
+     */
+    List<UserDo> selectMobile(Map<String, Object> params);
+    
+    /**
      * 设置用户级别
      * @param userCode
      * @param userLevel

@@ -333,6 +333,7 @@ public class UserController extends BaseAction {
 		try {
 			// 用户ID
 			Integer userId = getUserId();
+			
 			// 用户名
 			String userName = getString("userName");
 			// 密码
@@ -340,11 +341,11 @@ public class UserController extends BaseAction {
 			// 支付密码
 			String twoPassword = getString("twoPassword");
 			// 推荐人
-			// String refereeUserMobile = gitString("refereeUserMobile");
+			String refereeUserMobile = getString("refereeUserMobile");
 			// 用户会员等级
-			//String userLevel = gitString("userLevel");
+			String userLevel = getString("userLevel");
 			// 激活状态
-			//String isActivated = gitString("isActivated");
+			String isActivated = getString("isActivated");
 			// 姓名
 			String trueName = getString("trueName");
 			// 手机号码

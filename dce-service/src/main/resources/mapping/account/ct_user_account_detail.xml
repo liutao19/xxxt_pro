@@ -24,7 +24,7 @@
 	</select>
 	
 	<select id="selectUserAccountDetailByUserId" parameterType="Integer" resultMap="userAccountDetailResultMap">
-		select * from ct_user_account_detail where userId=#{userId}
+		select * from ct_user_account_detail where userId=#{userId} order by createTime desc
 	</select>
 
 	<select id="selectUserAccountDetail" parameterType="Map" resultMap="userAccountDetailResultMap">

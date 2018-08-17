@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.account.UserAccountDo;
 
 public interface IUserAccountDao {
@@ -58,4 +59,11 @@ public interface IUserAccountDao {
 	List<Map<String,Object>> selectAccountInfomByPage(Map<String,Object> prarams);
 
 	List<UserAccountDo> sumAccount(Map<String,Object> emptyMap);
+	
+	/**
+	 * 查询出当前用户的账户总金额
+	 * @param parameterMap
+	 * @return
+	 */
+	public UserAccountDo selectAmountByAccountType(Map<String, Object> parameterMap);
 }

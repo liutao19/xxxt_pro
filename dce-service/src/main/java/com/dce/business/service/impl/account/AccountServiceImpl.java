@@ -466,4 +466,46 @@ public class AccountServiceImpl implements IAccountService {
 		return null;
 	}
 
+	@Override
+	public UserAccountDo selectAmountByAccountType(Map<String, Object> parameterMap) {
+
+		return userAccountDao.selectAmountByAccountType(parameterMap);
+	}
+	
+	/**
+	 * 获取当前用户的账户余额
+	 * @return
+	 */
+	public BigDecimal getUserAmount(Integer userId){
+		String accountType = AccountType.wallet_money.getAccountType();
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("userId", userId);
+		param.put("accountType", accountType);
+		return selectAmountByAccountType(param).getAmount();
+	}
+
+	/**
+   	 * 流水记录
+   	 * @param userId 用户id 
+   	 * @param totalPrice 交易金额
+   	 * @param moreOrless 增加/减少
+   	 * @param incomeType 操作对应的数字，例如“提现”对应数字22
+   	 * @return
+   	 */
+	@Override
+	public int addUserAccountDetail(Integer userId , BigDecimal totalPrice, String moreOrLess, Integer incomeType) {
+
+		UserAccountDetailDo userAccountDetail = new UserAccountDetailDo();
+		userAccountDetail.setUserId(userId); // 用户ID
+		userAccountDetail.setAmount(totalPrice); // 交易金额
+		userAccountDetail.setCreateTime(new Date()); // 交易时间
+		userAccountDetail.setMoreOrLess(moreOrLess); // 增加/减少
+		userAccountDetail.setIncomeType(incomeType);
+		userAccountDetail.setRemark(IncomeType.getByType(incomeType).getRemark());
+		String seqId = UUID.randomUUID().toString();
+		userAccountDetail.setSeqId(seqId); // 流水序列号
+		userAccountDetail.setBalanceAmount(getUserAmount(userId)); // 获取账户的总金额
+		
+		return userAccountDetailDao.addUserAccountDetail(userAccountDetail);
+	}
 }

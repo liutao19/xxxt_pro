@@ -50,9 +50,8 @@ public class OrderController extends BaseController {
 	private IAccountService accountService;
 	@Resource
 	private IBonusLogService bonusServiceLog;
-
 	@Resource
-    private IUserAccountDetailDao userAccountDetailDao;
+	private IUserAccountDetailDao userAccountDetailDao;
 
 	/**
 	 * 用户订单列表显示
@@ -62,25 +61,25 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
 	public Result<?> getOrder() {
 		Integer userId = getUserId();
-		
+
 		List<Order> orderLitst = orderService.selectByUesrIdOneToMany(userId);
 		logger.info("获取当前用户的所有订单:" + orderLitst);
-		
-		//设置商品名称
-		for(Order order : orderLitst){
-			if(order.getOrderDetailLst() != null){
-				for(OrderDetail orderDetail : order.getOrderDetailLst()){
-					long id =Long.valueOf(orderDetail.getGoodsId());
-					logger.info("获取订单里面的商品id："+orderDetail.getGoodsId());
-					
+
+		// 设置商品名称
+		for (Order order : orderLitst) {
+			if (order.getOrderDetailLst() != null) {
+				for (OrderDetail orderDetail : order.getOrderDetailLst()) {
+					long id = Long.valueOf(orderDetail.getGoodsId());
+					logger.info("获取订单里面的商品id：" + orderDetail.getGoodsId());
+
 					CTGoodsDo goods = ctGoodsService.selectById(id);
-					logger.info("商品名称："+goods.getTitle());
-					
+					logger.info("商品名称：" + goods.getTitle());
+
 					orderDetail.setGoodsName(goods.getTitle());
 				}
 			}
 		}
-		
+
 		return Result.successResult("获取订单成功", orderLitst);
 	}
 
@@ -117,13 +116,13 @@ public class OrderController extends BaseController {
 
 		// 产生订单编号
 		String orderCode = OrderCodeUtil.genOrderCode(userId);
-		logger.info("产生的订单编号------》》》》》" + orderCode);
+		logger.info("产生的订单编号------>>>" + orderCode);
 
 		Integer quantity = 0; // 商品总数量
-		BigDecimal totalprice = new BigDecimal(0); //商品总价格
+		BigDecimal totalprice = new BigDecimal(0); // 商品总价格
 		for (OrderDetail orderDetail : chooseGoodsLst) { // 循环遍历出商品信息，计算商品总价格和商品总数量
-			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId())); 
-			orderDetail.setGoodsName(goods.getTitle()); //获取商品名称
+			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
+			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 			quantity += orderDetail.getQty();
 			totalprice = totalprice.multiply(BigDecimal.valueOf(orderDetail.getPrice()));
 		}
@@ -131,15 +130,15 @@ public class OrderController extends BaseController {
 		// 添加订单
 		Order order = new Order();
 		order.setUserid(userId);
-		order.setOrdercode(orderCode); //订单号
+		order.setOrdercode(orderCode); // 订单号
 		Date date = new Date();
-		order.setCreatetime(DateUtil.dateformat(date));//订单创建时间
+		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
 		order.setOrderstatus(0); // 未发货状态
 		order.setPaystatus(0); // 未支付状态
-		order.setQty(quantity); //商品总数量
-		order.setTotalprice(totalprice); //商品总价格
-		order.setOrderDetailList(chooseGoodsLst); //订单明细
-		
+		order.setQty(quantity); // 商品总数量
+		order.setTotalprice(totalprice); // 商品总价格
+		order.setOrderDetailList(chooseGoodsLst); // 订单明细
+
 		return orderService.buyOrder(order);
 	}
 
@@ -156,42 +155,28 @@ public class OrderController extends BaseController {
 		String addressId = getString("addressId") == "" ? null : getString("addressId");
 		String orderPayType = getString("orderPayType") == "" ? null : getString("orderPayType");
 
-		
 		// 根据订单编号查询出订单
 		Order order = orderService.selectByOrderCode(orderCode);
-		logger.info("根据订单编号查询出的订单："+orderCode);
+		logger.info("根据订单编号查询出的订单：" + orderCode);
 		order.setOrdertype(Integer.valueOf(orderPayType)); // 支付方式
 		order.setPaystatus(1); // 付款状态为已支付
 		order.setAlipayStatus(1); // 支付成功
 		order.setAddressid(Integer.valueOf(addressId));
 		Date date = new Date();
 		order.setPaytime(DateUtil.dateformat(date)); // 支付时间
-		
+
 		// 更新订单状态
 		orderService.updateByOrderCodeSelective(order);
 
 		// 记录到交易流水表中
-		UserAccountDetailDo userAccountDetail = new UserAccountDetailDo();
-		userAccountDetail.setUserId(order.getUserid());
-		userAccountDetail.setAmount(order.getTotalprice());
-		userAccountDetail.setMoreOrLess("减少"); // 增加减少
-		userAccountDetail.setIncomeType(902); // 商城消费
-		userAccountDetail.setCreateTime(new Date());
-		userAccountDetail.setRemark(IncomeType.TYPE_GOODS_BUY.getRemark());
-		String seqId = UUID.randomUUID().toString();
-		userAccountDetail.setSeqId(seqId);
-		userAccountDetailDao.addUserAccountDetail(userAccountDetail);
-		
+		accountService.addUserAccountDetail(order.getUserid(), order.getTotalprice(), "减少", 902);
+
 		return Result.successResult("测试", null);
 	}
 
 	/**
-	 * json 转OrderDetail对象 
-	 * json 格式 
-	 * [
-	 * 	{ "goodsId": "0001", "qty": "20", "price":"597" }, 
-	 * 	{ "goodsId": "0002", "qty": "10", "price": "637" } 
-	 * ]
+	 * json 转OrderDetail对象 json 格式 [ { "goodsId": "0001", "qty": "20",
+	 * "price":"597" }, { "goodsId": "0002", "qty": "10", "price": "637" } ]
 	 * 
 	 * @param goods
 	 * @return
@@ -203,5 +188,4 @@ public class OrderController extends BaseController {
 		return (List<OrderDetail>) JSONArray.parse(goods);
 	}
 
-	
 }

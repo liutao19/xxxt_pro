@@ -51,7 +51,7 @@ public class UserAccountDetailDo implements java.io.Serializable {
 	private String transactionObject; //转出对象
 
 	private String relevantUser; //发生对象用户
-
+	
 	public Long getId() {
 		return this.id;
 	}

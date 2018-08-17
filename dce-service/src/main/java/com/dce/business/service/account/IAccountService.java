@@ -154,4 +154,25 @@ public interface IAccountService {
      */
     public PageDo<UserAccountDetailDo> selectUserAccountDetailByPage(PageDo<UserAccountDetailDo> page, Map<String, Object> parameterMap);
 
+    /**
+   	 * 查询出当前用户的账户总金额
+   	 * @param parameterMap
+   	 * @return
+   	 */
+   	public UserAccountDo selectAmountByAccountType(Map<String, Object> parameterMap);
+   	
+   	/**
+   	 * 获取当前用户的账户总金额
+   	 * @param userId
+   	 * @return
+   	 */
+   	public BigDecimal getUserAmount(Integer userId);
+   	
+   	/**
+   	 * 流水记录
+   	 * @param newUserAccountDetailDo
+   	 * @return
+   	 */
+    public int addUserAccountDetail(Integer userId , BigDecimal totalprice, String moreOrLess, Integer incomeType);
+   	
 }

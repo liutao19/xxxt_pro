@@ -53,6 +53,7 @@
 		    update_name
 		FROM
 		    t_ys_news
+		    order by create_date desc
     </select>
     
     
@@ -178,7 +179,7 @@
 				AND update_name = #{updateName}
 			</if>
          </trim> 
-         
+         order by create_date desc
 
 	</select>
 	

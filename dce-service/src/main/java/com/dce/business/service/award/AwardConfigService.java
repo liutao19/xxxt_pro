@@ -71,11 +71,13 @@ public interface AwardConfigService {
     /**
      * 发放奖励方法
      */
-    boolean   updateAward(int userid,int count);
+    boolean   updateAward(int userid,int count,String area);
     /**
      * 商品区域奖方法
      * area 区域
      */
     boolean areaAward(String area,int count);
+    
+    
     
 }

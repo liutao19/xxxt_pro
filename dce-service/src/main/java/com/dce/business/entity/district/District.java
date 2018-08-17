@@ -1,6 +1,8 @@
 package com.dce.business.entity.district;
 
-public class District {
+import com.dce.business.entity.user.UserDo;
+
+public class District extends UserDo{
    
 	//区域id
     private Integer districtid;

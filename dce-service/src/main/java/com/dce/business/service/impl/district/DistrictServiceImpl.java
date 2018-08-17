@@ -75,6 +75,7 @@ public class DistrictServiceImpl implements IDistrictService {
 		logger.info("----getDistrictPage----"+param);
         param.put(Constants.MYBATIS_PAGE, page);
         List<District> list =  districtDao.queryListPage(param);
+        System.out.println("数据------"+list);
         page.setModelList(list);
         return page;
 	}

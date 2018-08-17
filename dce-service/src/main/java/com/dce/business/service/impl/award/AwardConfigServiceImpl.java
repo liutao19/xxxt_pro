@@ -19,11 +19,15 @@ import com.dce.business.dao.account.IUserAccountDao;
 import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.dao.award.AwardConfigDao;
 import com.dce.business.dao.award.AwardlistMapper;
+import com.dce.business.dao.district.districtMapper;
+import com.dce.business.dao.district.regionalawardsMapper;
 import com.dce.business.dao.user.IUserDao;
 import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.award.AwardConfig;
 import com.dce.business.entity.award.Awardlist;
+import com.dce.business.entity.district.District;
+import com.dce.business.entity.district.Regionalawards;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.award.AwardConfigService;
 
@@ -45,6 +49,12 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 	@Resource
 	private IUserAccountDetailDao userAccountDetailDao;
+
+	@Resource
+	private districtMapper districtDao;
+
+	@Resource
+	private regionalawardsMapper regionlDao;
 
 	/*
 	 * id条件删除等级 (non-Javadoc)
@@ -147,9 +157,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	}
 
 	/**
-	 * 用户购买商品升级方法
-	 * userid 购买者id
-	 * count 数量
+	 * 用户购买商品升级方法 userid 购买者id count 数量
 	 */
 	@Override
 	public int userUpgrade(Integer userid, int count) {
@@ -180,6 +188,10 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 普通用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
 				if (userDao.updateByPrimaryKeySelective(user) > 0) {
+					// 获得区域代表资格，生成一条数据，等待后台封地
+					District dis = new District();
+					dis.setUserId(userid);
+					districtDao.insertSelective(dis);
 					level = 3;
 				}
 			}
@@ -196,6 +208,10 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 会员用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
 				if (userDao.updateByPrimaryKeySelective(user) > 0) {
+					// 获得区域代表资格，生成一条数据，等待后台封地
+					District dis = new District();
+					dis.setUserId(userid);
+					districtDao.insertSelective(dis);
 					level = 3;
 				}
 
@@ -203,9 +219,13 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			break;
 		case 2:
 			if (count >= 50) {
-				// vip用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+				// vip用户升级为，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
 				updatauser.setUserLevel((byte) 3);
 				if (userDao.updateByPrimaryKeySelective(user) > 0) {
+					// 获得区域代表资格，生成一条数据，等待后台封地
+					District dis = new District();
+					dis.setUserId(userid);
+					districtDao.insertSelective(dis);
 					level = 3;
 				}
 				// 判断该购买者的推荐人是否满足升级为股东的条件,首先必须为城市合伙人，如何推荐5人为城市合伙人
@@ -227,8 +247,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	}
 
 	/**
-	 * 用户升级为股东方法
-	 * userid 推荐人id
+	 * 用户升级为股东方法 userid 推荐人id
 	 */
 	@Override
 	public boolean upgradePartner(Integer userid) {
@@ -261,19 +280,20 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 		return flag;
 	}
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * 发放奖励方法
 	 * 
 	 */
 	@Override
-	public boolean updateAward(int userid, int count) {
+	public boolean updateAward(int userid, int count, String area) {
+		// 返回值
+		boolean flag = false;
+
+		// 区域奖励,先进行区域奖励，再进行升级
+		areaAward(area, count);
+		
+		System.out.println("进去了");
 		// 获取购买者的信息
 		UserDo buyerUser = userDao.selectByPrimaryKey(userid);
 		// 获取推荐人的信息refereeid
@@ -282,21 +302,21 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		// 获取第二代推荐人的信息
 		UserDo presenterUserTow = userDao.selectByPrimaryKey(presenterUser.getRefereeid());
 
-		//返回值
-		boolean  flag=false;
-		if (count >= 1 && count > 5) {
-			//1-5盒没有到5
-			awardone(buyerUser,presenterUser,presenterUserTow,count);
-			flag=true;
+		// 推荐奖励
+		if (count >= 1 && count < 5) {
+			// 1-5盒没有到5
+			System.out.println("1-54asdasdasdasd");
+			awardone(buyerUser, presenterUser, presenterUserTow, count);
+			flag = true;
 
-		} else if (count >= 5 && count > 50) {
-            //5-50没有到50
-			awardtwo(buyerUser,presenterUser,presenterUserTow,count);
-			flag=true;
+		} else if (count >= 5 && count < 50) {
+			// 5-50没有到50
+			awardtwo(buyerUser, presenterUser, presenterUserTow, count);
+			flag = true;
 		} else if (count >= 50) {
-			//50盒以上
-			awardthree(buyerUser,presenterUser,presenterUserTow,count);
-			flag=true;
+			// 50盒以上
+			awardthree(buyerUser, presenterUser, presenterUserTow, count);
+			flag = true;
 		}
 
 		return flag;
@@ -309,19 +329,22 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	@Override
 	public boolean areaAward(String area, int count) {
 		// 查询购买者填写地址所在区域的管理者信息 实体类字段district 数据库字段district
-		//判断该地区是否有区域代表
-		/*Map<String,Object> map=new HashMap<>();
-		map.put("", area);
-		List<UserDo> user=userDao.selectUser(map);*/
-		
-		if(true){
-			
-			//进行区域代表奖励50/盒
-			/*// 获取总奖金
-			//Double sum = awardlist.get(0).getP1Level1();
+		// 判断该地区是否有区域代表
+		Map<String, Object> map = new HashMap<>();
+		map.put("district", area);
+		List<UserDo> user = userDao.selectUser(map);
+
+		if (user != null && user.size() == 1) {
+
+			// 进行区域代表奖励50/盒
+			// 获取总奖金
+			Map<String, Object> maps = new HashMap<>();
+			maps.put("algebra", 0);
+			List<Regionalawards> regional = regionlDao.queryListPage(maps);
+			Double sum = regional.get(0).getRewardbalance() * count;
 			// 获取账户当前余额
 			UserAccountDo accont = new UserAccountDo();
-			accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
+			accont = userAccoutDao.selectByPrimaryKey(user.get(0).getId());
 			// 相加之后余额
 			accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
 			accont.setIncomeAmount(BigDecimal.valueOf(sum));
@@ -329,26 +352,46 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 			// 生成流水记录
 			UserAccountDetailDo detail = new UserAccountDetailDo();
-			detail.setUserId(presenterUser.getId());
+			detail.setUserId(user.get(0).getId());
 			detail.setAmount(BigDecimal.valueOf(sum));
 			detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
 			detail.setMoreOrLess("增加");
-			detail.setIncomeType(311);
+			detail.setIncomeType(321);
 			detail.setCreateTime(new Date());
 			detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
 			detail.setSeqId(UUID.randomUUID().toString());
-			userAccountDetailDao.addUserAccountDetail(detail);*/
-			
-			
-			//判断区域代表是否有推荐人
-			if(true){
-				
+			userAccountDetailDao.addUserAccountDetail(detail);
+
+			// 判断区域代表是否有推荐人
+			if (user.get(0).getRefereeid() != null) {
+				// 进行区域代表奖励50/盒
+				// 获取总奖金
+				Map<String, Object> mapstwo = new HashMap<>();
+				maps.put("algebra", 1);
+				List<Regionalawards> regionaltwo = regionlDao.queryListPage(mapstwo);
+				Double sumtwo = regionaltwo.get(0).getRewardbalance() * count;
+				// 获取账户当前余额
+				UserAccountDo acconttwo = new UserAccountDo();
+				acconttwo = userAccoutDao.selectByPrimaryKey(user.get(0).getRefereeid());
+				// 相加之后余额
+				acconttwo.setAmount(acconttwo.getAmount().add(BigDecimal.valueOf(sumtwo)));
+				acconttwo.setIncomeAmount(BigDecimal.valueOf(sumtwo));
+				userAccoutDao.updateByPrimaryKeySelective(acconttwo);
+
+				// 生成流水记录
+				UserAccountDetailDo detailtwo = new UserAccountDetailDo();
+				detailtwo.setUserId(user.get(0).getRefereeid());
+				detailtwo.setAmount(BigDecimal.valueOf(sumtwo));
+				detailtwo.setBalanceAmount(acconttwo.getAmount().add(BigDecimal.valueOf(sumtwo)));
+				detailtwo.setMoreOrLess("增加");
+				detailtwo.setIncomeType(311);
+				detailtwo.setCreateTime(new Date());
+				detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
+				detailtwo.setSeqId(UUID.randomUUID().toString());
+				userAccountDetailDao.addUserAccountDetail(detailtwo);
 			}
-			
-			
+
 		}
-		
-		
 
 		return false;
 	}
@@ -370,13 +413,15 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	public boolean awardone(UserDo buyerUser, UserDo presenterUser, UserDo presenterUserTow, int count) {
 		Map<String, Object> map = new HashMap<>();
 		List<Awardlist> awardlist = new ArrayList<Awardlist>();
+		System.out.println(buyerUser.getUserLevel());
 		// 购买者的等级分类
 		switch (buyerUser.getUserLevel()) {
 		// 购买者等级为普通用户
 		case 0:
 
-			userUpgrade(buyerUser.getId(),count);
+			userUpgrade(buyerUser.getId(), count);
 			// 推荐者等级分类
+			System.out.println(presenterUser.getUserLevel());
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
@@ -424,7 +469,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 
 				// 判断购买者是否已奖励过旅游
 
@@ -465,7 +510,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -506,7 +551,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -547,7 +592,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -567,9 +612,9 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
-				userUpgrade(buyerUser.getId(),count);
+
+				// 用户升级
+				userUpgrade(buyerUser.getId(), count);
 				break;
 			case 1:
 				// 推荐人为会员，有一次分享机会，获得300元奖金
@@ -610,7 +655,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -651,7 +696,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -692,7 +737,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -735,7 +780,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
 
 				// 判断购买者是否已奖励过旅游
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 赠送旅游和商品没有写
 
 				break;
@@ -792,7 +837,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -833,7 +878,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -873,7 +918,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -913,7 +958,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -972,7 +1017,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1012,7 +1057,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1053,7 +1098,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1094,7 +1139,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-			
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1153,7 +1198,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1194,7 +1239,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1235,7 +1280,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				
+
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1276,8 +1321,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		Map<String, Object> map = new HashMap<>();
 		List<Awardlist> awardlist = new ArrayList<Awardlist>();
 
-		//单价/盒
-				Double  price=300.00;
+		// 单价/盒
+		Double price = 300.00;
 		// 购买者的等级分类
 		switch (buyerUser.getUserLevel()) {
 		// 购买者等级为普通用户
@@ -1287,9 +1332,9 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
-				userUpgrade(buyerUser.getId(),count);
+
+				// 用户升级
+				userUpgrade(buyerUser.getId(), count);
 
 				// 赠送给购买者旅游和商品没有写
 
@@ -1334,7 +1379,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1407,7 +1452,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1480,8 +1525,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
-				//判断推荐人是否有资格升级股东
+				userUpgrade(buyerUser.getId(), count);
+				// 判断推荐人是否有资格升级股东
 				upgradePartner(presenterUser.getId());
 				// 判断购买者是否已奖励过旅游
 
@@ -1556,7 +1601,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1576,9 +1621,9 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
-				userUpgrade(buyerUser.getId(),count);
+
+				// 用户升级
+				userUpgrade(buyerUser.getId(), count);
 				break;
 			case 1:
 				// 推荐人为会员，有一次分享机会，获得300元奖金
@@ -1619,7 +1664,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1693,7 +1738,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1767,8 +1812,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
-				//判断推荐人是否有资格升级股东
+				userUpgrade(buyerUser.getId(), count);
+				// 判断推荐人是否有资格升级股东
 				upgradePartner(presenterUser.getId());
 				// 判断购买者是否已奖励过旅游
 
@@ -1844,7 +1889,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1864,9 +1909,9 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
-				userUpgrade(buyerUser.getId(),count);
+
+				// 用户升级
+				userUpgrade(buyerUser.getId(), count);
 				break;
 			case 1:
 				// 推荐人为会员，有一次分享机会，获得300元奖金
@@ -1906,7 +1951,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -1954,7 +1999,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2001,8 +2046,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
-				//判断推荐人是否有资格升级股东
+				userUpgrade(buyerUser.getId(), count);
+				// 判断推荐人是否有资格升级股东
 				upgradePartner(presenterUser.getId());
 				// 判断购买者是否已奖励过旅游
 
@@ -2050,7 +2095,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2070,8 +2115,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
+
+				// 用户升级
 				upgradePartner(presenterUser.getId());
 				break;
 			case 1:
@@ -2444,8 +2489,8 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		Map<String, Object> map = new HashMap<>();
 		List<Awardlist> awardlist = new ArrayList<Awardlist>();
 
-		//单价/盒
-				Double  price=300.00;
+		// 单价/盒
+		Double price = 300.00;
 		// 购买者的等级分类
 		switch (buyerUser.getUserLevel()) {
 		// 购买者等级为普通用户
@@ -2455,9 +2500,9 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			switch (presenterUser.getUserLevel()) {
 			case 0:
 				// 推荐人为普通用户，无任何优惠
-				
-				//用户升级
-				userUpgrade(buyerUser.getId(),count);
+
+				// 用户升级
+				userUpgrade(buyerUser.getId(), count);
 
 				// 赠送给购买者旅游和商品没有写
 
@@ -2502,7 +2547,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2569,7 +2614,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2636,7 +2681,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2704,7 +2749,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2764,7 +2809,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2833,7 +2878,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2903,7 +2948,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -2973,7 +3018,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写
@@ -3032,7 +3077,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
 
 				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(),count);
+				userUpgrade(buyerUser.getId(), count);
 				// 判断购买者是否已奖励过旅游
 
 				// 赠送旅游和商品没有写

@@ -6,7 +6,7 @@
 
 		<id column="rewardsAreaId" jdbcType="INTEGER" property="rewardsareaid" />
 		<result column="rewardBalance" jdbcType="DOUBLE" property="rewardbalance" />
-		<result column=" algebra" jdbcType="INTEGER" property="algebra" />
+		<result column="algebra" jdbcType="INTEGER" property="algebra" />
 	</resultMap>
 
 	<sql id="Base_Column_List">

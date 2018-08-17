@@ -14,7 +14,6 @@
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="BaseResultMap">
-
 		select
 		<include refid="Base_Column_List" />
 		from district
@@ -22,11 +21,13 @@
 	</select>
 
 	<!-- 自定义查询 -->
-	<select id="queryListPage" parameterType="java.util.Map" resultMap="BaseResultMap">
-		select
-		<include refid="Base_Column_List" />
-		from district
-		where 0=0 
+	<select id="queryListPage" parameterType="java.util.Map"
+		resultType="map">
+		select a.*,b.id,b.user_name,b.true_name
+		from district a LEFT
+		JOIN
+		ct_user b ON a.user_id = b.id
+		where 0=0
 		<if test="districtId!=null">
 			and districtId = #{districtid,jdbcType=INTEGER}
 		</if>
@@ -37,29 +38,32 @@
 		<if test="districtstatus!=null">
 			and districtStatus=#{districtstatus,jdbcType=INTEGER}
 		</if>
-		
+
 		<if test="distrctname!=null">
-		 and distrctName=#{distrctname,jdbcType=VARCHAR}
+			and distrctName=#{distrctname,jdbcType=VARCHAR}
 		</if>
-		
+
 		<if test="page!=null and pageSize!=null">
-		limit #{page,jdbcType=INTEGER} ,#{pageSize,jdbcType=VARCHAR}
+			limit #{page,jdbcType=INTEGER} ,#{pageSize,jdbcType=VARCHAR}
 		</if>
 
 
 	</select>
-	
+
 
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 
-		delete from district
+		delete from
+		district
 		where districtId = #{districtid,jdbcType=INTEGER}
 	</delete>
 
 	<insert id="insert" parameterType="com.dce.business.entity.district.District">
-		insert into district (districtId, distrctName, user_id,
+		insert into district
+		(districtId, distrctName, user_id,
 		districtStatus)
-		values (#{districtid,jdbcType=INTEGER}, #{distrctname,jdbcType=VARCHAR},
+		values
+		(#{districtid,jdbcType=INTEGER}, #{distrctname,jdbcType=VARCHAR},
 		#{userId,jdbcType=INTEGER},
 		#{districtstatus,jdbcType=INTEGER})
 	</insert>
@@ -115,8 +119,11 @@
 
 		update district
 		set distrctName = #{distrctname,jdbcType=VARCHAR},
-		user_id = #{userId,jdbcType=INTEGER},
-		districtStatus = #{districtstatus,jdbcType=INTEGER}
-		where districtId = #{districtid,jdbcType=INTEGER}
+		user_id =
+		#{userId,jdbcType=INTEGER},
+		districtStatus =
+		#{districtstatus,jdbcType=INTEGER}
+		where districtId =
+		#{districtid,jdbcType=INTEGER}
 	</update>
 </mapper>

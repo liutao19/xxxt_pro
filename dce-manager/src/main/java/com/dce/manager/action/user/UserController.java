@@ -336,6 +336,12 @@ public class UserController extends BaseAction {
 			
 			// 用户名
 			String userName = getString("userName");
+			// // 判断注册用户名是否为空
+			// userDo.setUserName(userDo.getUserName().trim());
+			// UserDo oldUser = getUser(userDo.getUserName());
+			// if (oldUser != null) {
+			// return Result.failureResult("用户已存在");
+			// }
 			// 密码
 			String password = getString("password");
 			// 支付密码

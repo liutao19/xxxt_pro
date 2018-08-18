@@ -3,9 +3,12 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchuserFeedbackForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/userfeedback/listUserFeedback.html";
+		$("#tt_UserFeedback").datagrid('options').url = dataUrl;
 		$("#tt_UserFeedback").datagrid('load',{
-			'searchStr': $("#searchuserFeedbackForm #searchStr").val(),
-			'searchCodeStr':$("#searchuserFeedbackForm #searchCodeStr").val()		
+			'userName': $("#searchuserFeedbackForm #userName").val(),
+			'startDate':$("#searchuserFeedbackForm #startDate").datebox('getValue'),
+			'endDate':$("#searchuserFeedbackForm #endDate").datebox('getValue')
 		});
 	});
 	
@@ -30,7 +33,7 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'feedbackid',title:'id',width:100,hidden:true},						
-								{field:"userid",title:"反馈人id",width:180,align:"center"},
+								{field:"truename",title:"反馈人姓名",width:180,align:"center"},
 								{field:"feedbackcontent",title:"内容",width:180,align:"center"},
 								{field:"createtime",title:"反馈时间",width:180,align:"center",formatter:dateTimeFormatter},
 					{field:"操作",title:"操作",width:80,align:"left",
@@ -70,8 +73,9 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchuserFeedbackForm #searchStr").val(),
-			'searchCodeStr':$("#searchuserFeedbackForm #searchCodeStr").val()
+			'userName': $("#searchuserFeedbackForm #userName").val(),
+			'startDate':$("#searchuserFeedbackForm #startDate").datebox('getValue'),
+			'endDate':$("#searchuserFeedbackForm #endDate").datebox('getValue')
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			

@@ -3,8 +3,12 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchgoodsForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/goods/listGoods.html";
+		$("#tt_Goods").datagrid('options').url = dataUrl;
 		$("#tt_Goods").datagrid('load',{
-			'searchStr': $("#searchgoodsForm #searchStr").val()		
+			'title': $("#searchgoodsForm #title").val(),
+			'startDate':$("#searchgoodsForm #startDate").datebox('getValue'),
+			'endDate':$("#searchgoodsForm #endDate").datebox('getValue'),	
 		});
 	});
 	
@@ -28,18 +32,26 @@ $(function(){
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'id',title:'id',width:100,hidden:true},						
+							{field:'goodsId',title:'id',width:100,hidden:true},						
 								{field:"title",title:"商品名称",width:180,align:"center"},
 								{field:"shopPrice",title:"价格",width:180,align:"center"},
 								{field:"goodsUnit",title:"单位",width:180,align:"center"},
 								{field:"goodsDesc",title:"内容",width:180,align:"center"},
 								{field:"goodsImg",title:"商品图片地址",width:180,align:"center"},
-								{field:"status",title:"商品上架的状态",width:180,align:"center"},
+								{field:"status",title:"商品上架的状态",width:180,align:"center",
+									formatter:function(value,row,index){
+				 						if(row.status == "0"){
+				 							return "未上架";
+				 						}else if(row.status == "1"){
+				 							return "已上架";
+				 						}
+									}
+								},
 								{field:"saleTime",title:"商品上架时间",width:180,align:"center",formatter:dateTimeFormatter},
 								{field:"createTime",title:"商品创建时间",width:180,align:"center",formatter:dateTimeFormatter},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editgoods(\''+row.goodsId+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editgoods(\''+row.goodsId+'\');">编辑</a> <a href="javascript:void(0);" onclick="deleteNotice(\''+row.goodsId+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -74,7 +86,9 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchgoodsForm #searchStr").val()
+			'title': $("#searchgoodsForm #title").val(),
+			'startDate':$("#searchgoodsForm #startDate").datebox('getValue'),
+			'endDate':$("#searchgoodsForm #endDate").datebox('getValue'),
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -94,6 +108,9 @@ $(function(){
  */
 function to_addgoods(){
 	to_editgoods('');
+	$('#editGoodsDiv').dialog({
+		title: "新增",
+	})
 }
 /**
  * 编辑
@@ -103,7 +120,7 @@ function to_editgoods(id){
 	
 	var url = httpUrl+"/goods/addGoods.html?&rand=" + Math.random()+"&id="+id;
 	$('#editGoodsDiv').dialog({
-		title: "新增",
+		title: "编辑",
 		width: 760,
 		height: 500,
 		closed: false,
@@ -125,6 +142,39 @@ function to_editgoods(id){
 	});
 }
 
+
+/**
+ * 删除
+ */
+
+function deleteNotice(id){
+	if(!id){
+		$.messager.alert("消息","id不能为空");
+		return;
+	}
+	$.messager.confirm("消息","确认删除该商品吗，删除后不可恢复",function(r){
+		if(r){
+			$.ajax({
+				url:httpUrl+"/goods/deleteGoodsById.html?id="+id,
+				type:"post",
+				data:{},
+				success:function(data){
+					if(data.ret==1){
+						$.messager.alert("消息","删除成功");
+						$('#tableGrid').datagrid('reload');
+					}else{
+						$.messager.alert("消息","删除失败，请稍后再试");
+					}
+				}
+			});
+		}
+	});
+}
+
+
+/**
+ * 保存更新
+ */
 function save_Goods(){
 	var formdata = $("#editGoodsForm").serialize();
 	console.info("formdata");

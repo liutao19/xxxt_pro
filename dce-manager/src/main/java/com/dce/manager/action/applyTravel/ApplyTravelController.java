@@ -2,6 +2,7 @@ package com.dce.manager.action.applyTravel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -52,15 +53,26 @@ public class ApplyTravelController extends BaseAction{
             PageDo<TravelDo> page = PageDoUtil.getPage(pagination);
             String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
-            }
+            
+        	String userName = getString("userName");
+        	System.out.println(userName);
+			if (StringUtils.isNotBlank(userName)) {
+				param.put("userName", userName);
+				model.addAttribute("userName", userName);
+			}
+			
+			 String startDate = getString("startDate");
+				if (StringUtils.isNotBlank(startDate)) {
+					param.put("startDate", startDate);
+					model.addAttribute("startDate", startDate);
+				}
+
+				String endDate = getString("endDate");
+				if (StringUtils.isNotBlank(endDate)) {
+					param.put("endDate", endDate);
+					model.addAttribute("endDate", endDate);
+				}
+            
             page = travelApplyService.getTravelapplyTravelPage(param, page);
             logger.info(page.getModelList().toString());
             pagination = PageDoUtil.getPageValue(pagination, page);
@@ -134,6 +146,7 @@ public class ApplyTravelController extends BaseAction{
             if (id != null && id.intValue()>0) {
                 i = travelApplyService.updateapplyTravelById(TravelDo);
             } else {
+            	TravelDo.setCreatetime(new Date());
                 i = travelApplyService.addapplyTravel(TravelDo);
             }
 

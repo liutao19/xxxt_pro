@@ -25,9 +25,8 @@
 			<form id="searchpathForm" style="margin-top:7px;margin-left:5px;" >
 			      <table border="0">
 			        <tr>
-			          <td class="tdfont">查询条件:
-			          	<input type="text" size="14" id="searchStr" name="searchStr" placeholder="字典名称" >
-			          	<input type="text" size="14" id="searchCodeStr" name="searchCodeStr" placeholder="字典编码" >
+			       <td class="tdfont">路线名称:
+			          	<input type="text" size="14" id="linename" name="linename" placeholder="路线名称" >
 			          </td>
 			          <td >
 			              <a  href="javascript:void(0)" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a> 

@@ -13,7 +13,7 @@ public class CTGoodsDo implements Serializable {
 
 	  private static final long serialVersionUID = -9153547858826001223L;
 	  //商品id
-	  private Long goodsId;
+	  private Integer goodsId;
 	  private String goodsSn ;
 	  //商品名称
 	  private String title ;
@@ -59,10 +59,10 @@ public class CTGoodsDo implements Serializable {
 	  private Date createTime ;
 	  
 	  
-	public Long getGoodsId() {
+	public Integer getGoodsId() {
 		return goodsId;
 	}
-	public void setGoodsId(Long goodsId) {
+	public void setGoodsId(Integer goodsId) {
 		this.goodsId = goodsId;
 	}
 	public String getGoodsSn() {

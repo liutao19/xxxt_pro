@@ -31,6 +31,7 @@ import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.manager.action.BaseAction;
+import com.dce.manager.util.ResponseUtils;
 
 
 
@@ -68,15 +69,24 @@ public class GoodsController extends BaseAction{
             PageDo<CTGoodsDo> page = PageDoUtil.getPage(pagination);
             String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
-            }
+           
+            String title = getString("title");
+			if (StringUtils.isNotBlank(title)) {
+				param.put("title", title);
+				model.addAttribute("title", title);
+			}
+			String startDate = getString("startDate");
+			if (StringUtils.isNotBlank(startDate)) {
+				param.put("startDate", startDate);
+				model.addAttribute("startDate", startDate);
+			}
+
+			String endDate = getString("endDate");
+			if (StringUtils.isNotBlank(endDate)) {
+				param.put("endDate", endDate);
+				model.addAttribute("endDate", endDate);
+			}
+            
             page = goodsService.getGoodsPage(param, page);
             /*List<CommonComboxConstants> statusList = CommonComboxConstants.getStatusList();*/
             //model.addAttribute("statusList", statusList);
@@ -112,6 +122,28 @@ public class GoodsController extends BaseAction{
         }
 
     }
+    
+    
+    /**
+     * 删除
+     */
+    @RequestMapping("/deleteGoodsById")
+    public void deleteGoodsById(String id,HttpServletRequest request,
+            HttpServletResponse response) {
+        logger.info("----deleteGoodsById----");
+         try{
+             if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
+            	 logger.info(id);
+                 ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+                 return;
+             }
+             int ret = goodsService.deleteGoodsService(Integer.valueOf(id));
+             ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+         }catch(Exception e){
+             logger.error("删除商品异常",e);
+             ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+         }
+     }
 
     /**
      * 保存更新
@@ -127,23 +159,20 @@ public class GoodsController extends BaseAction{
     							  HttpServletResponse response) {
         logger.info("----saveGoods------");
         try{
-            Long id = CTGoodsDo.getGoodsId();
-            Long userId = new Long(this.getUserId());
+        	Integer id = CTGoodsDo.getGoodsId();
             
             int i = 0;
             if (id != null && id.intValue()>0) {
-            	//CTGoodsDo.setUpdateBy(userId);
-            	//CTGoodsDo.setUpdateTime(new Date());
+            	if(CTGoodsDo.getStatus()==1){
+            		CTGoodsDo.setSaleTime(new Date());
+            	}
                 i = goodsService.updateGoodsById(CTGoodsDo);
             } else {
-				//CTGoodsDo.setCreateBy(userId);
             	CTGoodsDo.setCreateTime(new Date());
-            	
                 if(goodsService.insertSelectiveService(CTGoodsDo)){
                 	i = 1;
                 }
             }
-
             if (i <= 0) {
                 outPrint(response,this.toJSONString(Result.failureResult("操作失败")));
                 return;
@@ -155,48 +184,5 @@ public class GoodsController extends BaseAction{
         }
         logger.info("----end saveGoods--------");
     }
-    
-	/**
-     * 导出数据
-     */
-    /*@RequestMapping("/export")
-    public void export(HttpServletResponse response) throws IOException {
-        try {
-            Long time = System.currentTimeMillis();
-            GoodsExample example  = new GoodsExample();
-            String companyName = getString("searchPolicyName");
-          
-            if(StringUtils.isNotBlank(companyName)){
-                example.createCriteria().andPolicyNameLike(companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-            	example.createCriteria().andManagerNameEqualTo(managerName);
-            }
-            List<CTGoodsDo> goodsLst = goodsService.selectGoods(example);
-            
-            String excelHead = "数据导出";
-            String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
-            List<String[]> excelheaderList = new ArrayList<String[]>();
-            String[] excelheader = { "保险公司名称", "保险公司简称", "联系人姓名", "联系人手机号码", "跟进单员", "合作状态", "记录状态" };
-            excelheaderList.add(0, excelheader);
-            String[] excelData = { "policyName", "shortName", "contactName", "contactPhone", "managerName", "partnerStatus", "status" };
-            HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, goodsLst);
-            response.setContentType("application/vnd.ms-excel;charset=utf-8");
-            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            wb.write(response.getOutputStream());
-            time = System.currentTimeMillis() - time;
-            logger.info("导出数据，导出耗时(ms)：" + time);
-        } catch (Exception e) {
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().println("下载失败");
-            logger.error("导出数据，Excel下载失败", e);
-            logger.error("导出数据异常", e);
-            throw new BusinessException("系统繁忙，请稍后再试");
-        } finally {
-            response.flushBuffer();
-        }
-        }
-        */
+   
 }

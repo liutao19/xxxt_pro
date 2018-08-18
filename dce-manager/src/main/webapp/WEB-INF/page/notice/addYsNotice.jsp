@@ -38,7 +38,7 @@
 							<label for="name">content</label>
 						</td>	
 						<td>
-								<input type="text" id="content" name="content" value="${ysnotice.content}"/>												
+ 								<textarea rows="3" cols="20" form="editYsNoticeForms">${ysnotice.content}</textarea>												
 						</td>						   
 					</tr>
 					<tr>	
@@ -116,11 +116,6 @@
 						</td>						   
 					</tr>
 		
-				<tr>
-					<td colspan="2">
-						<input id="submitButton" name="submitButton" type="button" onclick="ysnotice_submit();"  value="提交" />	
-					</td>
-				<tr>			 
 			</table>	   
 		</div>	
 	</form>

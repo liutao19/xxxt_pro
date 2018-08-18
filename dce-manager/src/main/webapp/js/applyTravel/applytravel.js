@@ -6,9 +6,12 @@ $(function(){
  */	
 		
 	$("#searchapplyTravelForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/applytravel/listApplyTravel.html";
+		$("#tt_ApplyTravel").datagrid('options').url = dataUrl;
 		$("#tt_ApplyTravel").datagrid('load',{
-			'searchStr': $("#searchapplyTravelForm #searchStr").val(),
-			'searchCodeStr':$("#searchapplyTravelForm #searchCodeStr").val()		
+			'userName': $("#searchapplyTravelForm #userName").val(),
+			'startDate':$("#searchapplyTravelForm #startDate").datebox('getValue'),
+			'endDate':$("#searchapplyTravelForm #endDate").datebox('getValue')		
 		});
 	});
 	
@@ -114,8 +117,9 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchapplyTravelForm #searchStr").val(),
-			'searchCodeStr':$("#searchapplyTravelForm #searchCodeStr").val()
+			'userName': $("#searchapplyTravelForm #userName").val(),
+			'startDate':$("#searchapplyTravelForm #startDate").datebox('getValue'),
+			'endDate':$("#searchapplyTravelForm #endDate").datebox('getValue')	
 		},
 		onLoadSuccess:function(data){// 根据状态限制checkbox
 			

@@ -4,9 +4,11 @@ $(function(){
 		
 	$("#searchysNoticeForm #searchButton").on("click",function(){
 		var dataUrl = httpUrl+"/ysnotice/listYsNotice.html";
-		$("#tt_Order").datagrid('options').url = dataUrl;
+		$("#tt_YsNotice").datagrid('options').url = dataUrl;
 		$("#tt_YsNotice").datagrid('load',{
 			'title': $("#searchysNoticeForm #title").val(),
+			'startDate':$("#searchysNoticeForm #startDate").datebox('getValue'),
+			'endDate':$("#searchysNoticeForm #endDate").datebox('getValue'),
 		});
 	});
 	
@@ -80,6 +82,8 @@ $(function(){
 		toolbar:toolbar_tt,
 		queryParams:{
 			'title': $("#searchysNoticeForm #title").val(),
+			'startDate':$("#searchysNoticeForm #startDate").val(),
+			'endDate':$("#searchysNoticeForm #endDate").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -99,7 +103,7 @@ $(function(){
  */
 function to_addysNotice(){
 	to_editysNotice('');
-	$('#editUserFeedbackDiv').dialog({
+	$('#editYsNoticeDiv').dialog({
 		title: "新增",
 	});
 }

@@ -337,9 +337,10 @@
 
 	</select>
 	
-	<select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
-		SELECT * 
-		  FROM ct_user_feedback
+	<select id="queryListPage" parameterType="Map" resultType="Map">
+		SELECT f.*,u.true_name AS truename
+		  FROM ct_user_feedback AS f
+		  LEFT JOIN ct_user AS u ON f.userid=u.id
 		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 
 			<if test="feedbackid != null">  
 				AND feedbackid = #{feedbackid}
@@ -352,6 +353,15 @@
 			</if>
 			<if test="createtime != null">  
 				AND createtime = #{createtime}
+			</if>
+			<if test="userName != null">
+				AND u.true_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[createtime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[createtime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
          </trim> 
 		order by createtime desc

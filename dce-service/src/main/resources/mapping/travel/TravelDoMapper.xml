@@ -390,7 +390,7 @@
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 
-	<select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
+	<select id="queryListPage" parameterType="Map" resultType="Map">
 		SELECT t.*,p.linename AS linename,u.true_name AS truename from
 		ct_apply_travel t
 		LEFT JOIN ct_travel_path AS p ON t.pathid=p.pathid
@@ -431,6 +431,15 @@
 			</if>
 			<if test="state != null">
 				AND state like #{state}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[createtime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[createtime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="userName != null">
+				AND u.true_name = #{userName}
 			</if>
 		</trim>
 		WHERE t.pathid IN(SELECT pathid FROM ct_travel_path WHERE state=0)

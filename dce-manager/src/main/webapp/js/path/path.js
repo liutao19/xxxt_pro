@@ -3,9 +3,10 @@ $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchpathForm #searchButton").on("click",function(){
+		var dataUrl = httpUrl+"/path/listPath.html";
+		$("#tt_Path").datagrid('options').url = dataUrl;
 		$("#tt_Path").datagrid('load',{
-			'searchStr': $("#searchpathForm #searchStr").val(),
-			'searchCodeStr':$("#searchpathForm #searchCodeStr").val()		
+			'linename': $("#searchpathForm #linename").val(),
 		});
 	});
 	
@@ -80,8 +81,7 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'searchStr': $("#searchpathForm #searchStr").val(),
-			'searchCodeStr':$("#searchpathForm #searchCodeStr").val()
+			'linename': $("#searchpathForm #linename").val(),
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			

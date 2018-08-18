@@ -518,6 +518,12 @@
 			<if test="updateName != null">  
 				AND update_name like #{updateName}
 			</if>
+			<if test="startDate != null">
+				AND <![CDATA[create_date >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[create_date <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
          </trim> 
 			order by create_name desc
 	</select>

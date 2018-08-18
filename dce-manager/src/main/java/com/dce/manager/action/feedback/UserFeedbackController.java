@@ -67,15 +67,25 @@ public class UserFeedbackController extends BaseAction{
             PageDo<FeedBackDo> page = PageDoUtil.getPage(pagination);
             String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
-            }
+           
+        	String userName = getString("userName");
+			if (StringUtils.isNotBlank(userName)) {
+				param.put("userName", userName);
+				model.addAttribute("userName", userName);
+			}
+            
+            String startDate = getString("startDate");
+			if (StringUtils.isNotBlank(startDate)) {
+				param.put("startDate", startDate);
+				model.addAttribute("startDate", startDate);
+			}
+
+			String endDate = getString("endDate");
+			if (StringUtils.isNotBlank(endDate)) {
+				param.put("endDate", endDate);
+				model.addAttribute("endDate", endDate);
+			}
+            logger.info("用户姓名-------》》》》》"+userName);
             page = feedBackService.getUserFeedbackPage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));
@@ -157,6 +167,7 @@ public class UserFeedbackController extends BaseAction{
                 i = feedBackService.updateUserFeedbackById(userfeedbackDo);
             } else {
             	i=1;
+            	userfeedbackDo.setCreatetime(new Date());
                 feedBackService.feedBack(userfeedbackDo);
             }
 

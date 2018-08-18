@@ -79,14 +79,10 @@ public class UserServiceImpl implements IUserService {
 		return list.get(0);
 	}
 
-	/*
-	 * @Override public UserDo getUser(Integer userId) { return
-	 * userDao.selectByPrimaryKey(userId); }
-	 */
-
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> reg(UserDo userDo) {
+		//推荐用户
 		UserDo ref = null;
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
 			
@@ -120,11 +116,12 @@ public class UserServiceImpl implements IUserService {
 		// 用户注册
 		int result = userDao.insertSelective(userDo);
 
-		// // 维护父节点关系
-		// maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
-		//
-		// // 维护推荐人关系
-		// maintainUserReferee(userDo.getId(), ref.getId());
+		if(ref != null){
+			// 维护父节点关系
+			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+			// 维护推荐人关系
+			maintainUserReferee(userDo.getId(), ref.getId());
+		}
 
 		// 维护賬戶
 		maintainUserAccount(userDo.getId());
@@ -134,21 +131,21 @@ public class UserServiceImpl implements IUserService {
 
 	// 维护賬戶
 	private void maintainUserAccount(Integer userId) {
-		String[] accountTypes = new String[] { AccountType.wallet_money.name(), AccountType.wallet_active.name(),
-				AccountType.wallet_goods.name(), AccountType.wallet_travel.name() };
+		String[] accountTypes = new String[] { AccountType.wallet_money.name(), 
+											   AccountType.wallet_active.name(),
+											   AccountType.wallet_goods.name(), 
+											   AccountType.wallet_travel.name() };
+		//新增账号
+		for(String accountType : accountTypes){
+			UserAccountDo record = new UserAccountDo();
+			record.setAccountType(accountType);
+			record.setAmount(BigDecimal.ZERO);
+			record.setUserId(userId);
+			record.setUpdateTime(new Date());
+			userAccountDao.insertSelective(record );
+		}
 	}
-	// @Resource
-	// private IBaodanService baodanService;
 
-	/*
-	 * @Override public UserDo getUser(String userName) { Map<String, Object>
-	 * params = new HashMap<>(); params.put("userName", userName); List<UserDo>
-	 * list = userDao.selectUser(params);
-	 * 
-	 * if (CollectionUtils.isEmpty(list)) { return null; }
-	 * 
-	 * return list.get(0); }
-	 */
 
 	@Override
 	public UserDo getUser(Integer userId) {
@@ -336,7 +333,7 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public Result<?> updateByPrimaryKeyLogPass(UserDo userDo) {
 		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改用户密码错误!");
+			return Result.failureResult("修改登录密码错误!");
 		}
 
 		int flag = userDao.updateByPrimaryKeyLogPass(userDo);

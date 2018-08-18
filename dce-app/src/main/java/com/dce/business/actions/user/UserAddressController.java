@@ -75,11 +75,7 @@ public class UserAddressController extends BaseController {
 		Integer userId = getUserId();
 		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
 
-		Result ret = Result.successResult("查看收货地址");
-		ret.setData(addressList);
-
-		// return Result.successResult("获取用户地址成功",addressList);
-		return ret;
+		return Result.successResult("获取用户地址成功",addressList);
 	}
 
 	/**
@@ -88,7 +84,7 @@ public class UserAddressController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/delAddress", method = { RequestMethod.POST })
-	public Result<?> detAddress() {
+	public Result<?> delAddress() {
 
 		String addressid = getString("addressid");
 		// Integer detAddress = Integer.parseInt(addressid);

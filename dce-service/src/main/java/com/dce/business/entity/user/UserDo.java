@@ -17,7 +17,7 @@ public class UserDo {
 	private Integer id;
 
 	// 登录用户名或昵称
-	@NotBlank(message = "验证编号不能为空")
+	@NotBlank(message = "登录用户名不能为空")
 	private String userName;
 
 	// 证件姓名
@@ -79,10 +79,10 @@ public class UserDo {
 
 	private BigDecimal totalShopping;
 
-	// 用户推荐人(无用）
+	// 用户推荐人ID
 	private Integer refereeid;
 
-	// 接点人id(无用）
+	// 上级id
 	private Integer parentid;
 
 	// 认证状态

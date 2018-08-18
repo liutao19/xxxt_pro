@@ -79,7 +79,7 @@ public class UserController extends BaseController {
 			logger.info("用户注册，参数校验错误：" + JSON.toJSONString(errors));
 			return Result.failureResult(errors.get(0).getDefaultMessage());
 		}
-		
+
 		Result<?> result = userService.reg(userDo);
 
 		logger.info("用户注册结果:" + JSON.toJSONString(result));
@@ -152,15 +152,14 @@ public class UserController extends BaseController {
 	public Result<?> alterUser() {
 		try {
 			Integer userId = getUserId();
-			String password = getString("password");
+			String userPassword = getString("userPassword");
 			logger.info("修改用户登录密码，userId:" + userId);
 			// 用户信息
 			UserDo userDo = new UserDo();
 			userDo.setId(userId);
 			// 登录密码加密
-			if (StringUtils.isNotBlank(password)) {
-				password = DataEncrypt.encrypt(password);
-				// userDo.setTwoPassword(password);
+			if (StringUtils.isNotBlank(userPassword)) {
+				userPassword = DataEncrypt.encrypt(userPassword);
 			}
 			return userService.updateByPrimaryKeyLogPass(userDo);
 		} catch (Exception e) {
@@ -179,14 +178,13 @@ public class UserController extends BaseController {
 			Integer userId = getUserId();
 			String twoPassword = getString("twoPassword");
 			Assert.hasText(twoPassword, "支付密码不能为空");
-			logger.info("修改用户登录密码，userId:" + userId); // 更改支付密码的用户信息
+			logger.info("修改用户支付密码，userId:" + userId); // 更改支付密码的用户信息
 
 			UserDo userDo = new UserDo();
 			userDo.setId(userId);
 			// 支付密码加密
 			if (StringUtils.isNotBlank(twoPassword)) {
 				twoPassword = DataEncrypt.encrypt(twoPassword);
-				// userDo.setTwoPassword(password);
 			}
 			return userService.updateByPrimaryKeyPayPass(userDo);
 		} catch (Exception e) {

@@ -31,26 +31,11 @@ public class UserAdressServiceImpl implements UserAdressService {
 	@Override
 	public List<UserAddressDo> selectByUserId(Integer userId) {
 
-		return userAdressDao.selectByUserId(userId);
+		return userAdressDao.selectByUserId(Long.valueOf(userId));
 	}
 
-	/**
-	 * 添加收货地址
-	 */
-	@Override
-	public UserAddressDo selectByPrimaryKeyAdd(UserAddressDo addaddress) {
 
-		return userAdressDao.selectByPrimaryKeyAdd(addaddress);
-	}
 
-	/**
-	 * 修改收货地址
-	 */
-	@Override
-	public UserAddressDo selectByPrimaryKeyUpdate(UserAddressDo updateaddress) {
-
-		return userAdressDao.selectByPrimaryKeyUpdate(updateaddress);
-	}
 
 	/**
 	 * 修改收货地址
@@ -70,18 +55,7 @@ public class UserAdressServiceImpl implements UserAdressService {
 		return userAdressDao.insertSelective(record);
 	}
 
-	/**
-	 * 删除收货地址
-	 * <== 费弃 ==>
-	 */
-	@Override
-	public boolean deleteByPrimaryKeyBoo(Integer addressid) {
-		boolean flag = false;
-		if(addressid !=null && addressid != 0){
-			flag = userAdressDao.deleteByPrimaryKey(addressid) > 0;
-		}
-		return false;
-	}
+
 
 	/**
 	 * 按主键删除收货地址

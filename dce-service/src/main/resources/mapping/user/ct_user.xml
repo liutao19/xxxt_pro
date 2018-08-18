@@ -100,11 +100,13 @@
 		<result column="district" jdbcType="VARCHAR" property="district" />
 		<result column="refereeUserMobile" jdbcType="VARCHAR" property="refereeUserMobile" />
 	</resultMap>
+
 	<resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
 		type="com.dce.business.entity.user.UserDo">
 		<result column="touch_distance" jdbcType="LONGVARCHAR"
 			property="touchDistance" />
 	</resultMap>
+
 	<sql id="Base_Column_List">
 		u.id, u.user_name, u.true_name, u.email, u.mobile,
 		u.user_password, u.two_password, u.user_face,
@@ -137,9 +139,11 @@
 		u.isOut,u.baodan_amount,u.undo_opts,u.tran_direct,
 		identity,isActivated,certification,district,refereeUserMobile
 	</sql>
+
 	<sql id="Blob_Column_List">
 		u.touch_distance
 	</sql>
+
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="ResultMapWithBLOBs">
 		select
@@ -149,11 +153,13 @@
 		from ct_user u
 		where u.id = #{id,jdbcType=INTEGER}
 	</select>
+
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from
 		ct_user
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
+
 	<insert id="insert" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">
 		insert into ct_user (user_name, true_name, email,
@@ -264,6 +270,7 @@
 		#{identity,jdbcType=VARCHAR},#{isActivated,jdbcType=INTEGER},
 		#{certification,jdbcType=INTEGER},#{district,jdbcType=VARCHAR},#{refereeUserMobile,jdbcType=VARCHAR})
 	</insert>
+
 	<insert id="insertSelective" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">
 		insert into ct_user
@@ -554,6 +561,7 @@
 				refereeUserMobile
 			</if>
 		</trim>
+
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="userName != null">
 				#{userName,jdbcType=VARCHAR},
@@ -842,6 +850,7 @@
 			</if>
 		</trim>
 	</insert>
+
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
 		<set>
@@ -1134,6 +1143,7 @@
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
+
 	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.dce.business.entity.user.UserDo">
 		update
 		ct_user
@@ -1295,6 +1305,7 @@
 		#{refereeUserMobile,jdbcType=VARCHAR}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
+
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
 		set
@@ -1478,7 +1489,7 @@
 	<!-- 查询所有电话号码 -->
 	<select id="selectMobile" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
-		select 
+		select
 		<include refid="Base_Column_List" />
 		from ct_user u
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
@@ -1582,6 +1593,7 @@
 			</if>
 		</trim>
 	</select>
+
 	<select id="selectEthAccountByPage" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		select u.*, c.account as ethAccount
@@ -1607,6 +1619,7 @@
 			</if>
 		</trim>
 	</select>
+
 	<select id="selectBaoDanAmount" parameterType="java.util.Map"
 		resultType="Long">
 		SELECT sum(u.baodan_amount) as amount
@@ -1630,22 +1643,23 @@
 		</trim>
 	</select>
 
-	<!-- 更改支付密码 -->
-	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
-		update ct_user
-		<set>
-			<if test="twoPassword">
-				two_password = #{twoPassword,jdbcType=VARCHAR}
-			</if>
-		</set>
-		where id = #{id,jdbcType=INTEGER}
-	</update>
 	<!-- 更改登录密码 -->
 	<update id="updateByPrimaryKeyLogPass" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
 		<set>
 			<if test="userPassword">
 				user_password = #{userPassword,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 更改支付密码 -->
+	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
+		update ct_user
+		<set>
+			<if test="twoPassword">
+				two_password = #{twoPassword,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}

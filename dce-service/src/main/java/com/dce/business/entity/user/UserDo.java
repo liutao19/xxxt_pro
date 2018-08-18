@@ -95,7 +95,7 @@ public class UserDo {
 	// @NotBlank(message = "推荐人不能为空")
 	private String refereeUserName;
 
-	// 推荐人用户名
+	// 推荐人的手机号
 	private String refereeUserMobile;
 
 	// 接点人用户名

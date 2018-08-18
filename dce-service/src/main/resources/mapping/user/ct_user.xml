@@ -1645,7 +1645,7 @@
 		update ct_user
 		<set>
 			<if test="userPassword">
-				user_password = #{userPassword,jdbcType=VARCHAR},
+				user_password = #{userPassword,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}

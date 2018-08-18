@@ -146,7 +146,7 @@ function to_editorder(id){
 		 url: url,  
 		 /*data:$("#editOrderForm").serialize(),*/
 		 success: function(data){ 
-			 if(data.code ==="0"){
+			 if(data.code =="0"){
 				 $('#tt_Order').datagrid('reload');
 				 $.messager.alert("提示","发货成功","info");
 			 }else{

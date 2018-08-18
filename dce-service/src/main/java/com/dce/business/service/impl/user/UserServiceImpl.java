@@ -317,8 +317,10 @@ public class UserServiceImpl implements IUserService {
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改用户支付密码错误!");
 		}
-
-		int flag = userDao.updateByPrimaryKeyPayPass(userDo);
+		Map<String, Object> params =new HashMap<>();
+		params.put("userId", userDo.getId());
+		params.put("twoPassword", userDo.getTwoPassword());
+		int flag = userDao.updateByPrimaryKeyPayPass(params);
 		if (flag > 0) {
 			return Result.successResult("修改支付密码成功");
 		} else {
@@ -332,11 +334,14 @@ public class UserServiceImpl implements IUserService {
 	 */
 	@Override
 	public Result<?> updateByPrimaryKeyLogPass(UserDo userDo) {
+		System.out.println("xiugaidenglumima"+userDo.getUserPassword());
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改登录密码错误!");
 		}
-
-		int flag = userDao.updateByPrimaryKeyLogPass(userDo);
+		Map<String, Object> params =new HashMap<>();
+		params.put("userId", userDo.getId());
+		params.put("userPassword", userDo.getUserPassword());
+		int flag = userDao.updateByPrimaryKeyLogPass(params);
 		if (flag > 0) {
 			return Result.successResult("修改登录密码成功");
 		} else {

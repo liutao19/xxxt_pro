@@ -17,7 +17,7 @@ public interface ICTGoodsService {
 	boolean insertSelectiveService(CTGoodsDo goods);
 	
 	//id条件删除商品
-	boolean deleteGoodsService(Integer goodsid);
+	int deleteGoodsService(Integer goodsid);
 	
 	/**
 	 * 购买商品

@@ -66,17 +66,15 @@ public class PathController extends BaseAction{
         logger.info("----listPath----");
         try{
             PageDo<TravelPathDo> page = PageDoUtil.getPage(pagination);
-            String companyName = getString("searchPolicyName");
             Map<String,Object> param = new HashMap<String,Object>();
-            if(StringUtils.isNotBlank(companyName)){
-                param.put("policyName",companyName);
-                model.addAttribute("searchPolicyName",companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-                param.put("managerName", managerName);
-                model.addAttribute("searManagerName",managerName);
-            }
+        
+            String linename = getString("linename");
+            System.out.println(linename);
+			if (StringUtils.isNotBlank(linename)) {
+				param.put("linename", linename);
+				model.addAttribute("linename", linename);
+			}
+            
             page = travelPathService.getTravelPathPage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
             outPrint(response, JSONObject.toJSON(pagination));
@@ -153,7 +151,6 @@ public class PathController extends BaseAction{
             if (id != null && id.intValue()>0) {
                 i = travelPathService.updatePathById(TravelPathDo);
             } else {
-            	
                 i = travelPathService.addPath(TravelPathDo);
             }
 

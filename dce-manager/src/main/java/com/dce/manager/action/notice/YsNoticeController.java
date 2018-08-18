@@ -72,9 +72,19 @@ public class YsNoticeController extends BaseAction{
             
             String title = getString("title");
 			if (StringUtils.isNotBlank(title)) {
-				System.out.println(title);
 				param.put("title", title);
 				model.addAttribute("title", title);
+			}
+			String startDate = getString("startDate");
+			if (StringUtils.isNotBlank(startDate)) {
+				param.put("startDate", startDate);
+				model.addAttribute("startDate", startDate);
+			}
+
+			String endDate = getString("endDate");
+			if (StringUtils.isNotBlank(endDate)) {
+				param.put("endDate", endDate);
+				model.addAttribute("endDate", endDate);
 			}
             page = noticeService.getNoticePage(param, page);
             pagination = PageDoUtil.getPageValue(pagination, page);
@@ -147,8 +157,10 @@ public class YsNoticeController extends BaseAction{
         	Integer id = noticeDo.getId();
             int i = 0;
             if (id != null && id.intValue()>0) {
+            	noticeDo.setUpdateDate(new Date());
                 i = noticeService.updateNoticeById(noticeDo);
             } else {
+            	noticeDo.setCreateDate(new Date());
                 i = noticeService.addNotice(noticeDo);
             }
             if (i <= 0) {
@@ -159,6 +171,7 @@ public class YsNoticeController extends BaseAction{
         }catch(Exception e){
             logger.error("保存更新失败",e);
             outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
+            
         }
         logger.info("----end saveYsNotice--------");
     }

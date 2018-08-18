@@ -47,11 +47,6 @@
 						</td>						   
 					</tr>  --%>
 		
-				<tr>
-					<td colspan="2">
-						<input id="submitButton" name="submitButton" type="button" onclick="userfeedback_submit();"  value="提交" />	
-					</td>
-				<tr>			 
 			</table>	   
 		</div>	
 	</form>

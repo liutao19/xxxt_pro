@@ -54,73 +54,6 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 		return ctGoodsDao.selectByPrimaryKey(id);
 	}
 
-/*	@Override
-	@Transactional(propagation = Propagation.REQUIRED)
-	public Result<?> buyGoods(OrderDo order, Integer addressId) {
-		if (order.getGoodsId() == null || order.getQty().intValue() <= 0) {
-
-			logger.error("购买商品参数错误:goodsId=" + order.getGoodsId() + ",qty=" + order.getQty());
-			return Result.failureResult("购买商品参数错误");
-		}
-
-		CTGoodsDo goods = selectById(order.getGoodsId());
-		// 判断购买数量是否大于库存量
-		if (order.getQty().intValue() > goods.getGoodsStock()) {
-			return Result.failureResult("购买商品数量大于库存量");
-		}
-
-		// 如果没传收货地址,则查询默认且有效的收货地址
-		if (addressId == null) {
-
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("userId", order.getUserId());
-			params.put("isDefault", 1);
-			params.put("addressFlag", 1);
-
-			List<CTUserAddressDo> addressList = ctUserAddressDao.select(params);
-			if (CollectionUtils.isEmpty(addressList)) {
-				return Result.failureResult("请先设置收货地址");
-			}
-			order.setRecAddress(addressList.get(0).getAddress());
-		} else {
-			CTUserAddressDo address = ctUserAddressDao.selectByPrimaryKey(addressId);
-			order.setRecAddress(address.getAddress());
-		}
-
-		order.setCreateTime(new Date());
-		order.setOrderCode(OrderCodeUtil.genOrderCode(order.getUserId()));
-		order.setOrderStatus(2);
-		order.setOrderType(3);
-		order.setPayStatus(1);
-		order.setPrice(goods.getShopPrice());
-		order.setTotalPrice(order.getQty().multiply(order.getPrice()).setScale(6, RoundingMode.HALF_UP));
-		order.setPayTime(new Date());
-		
-		int flag = orderDao.insertSelective(order);
-
-		if (flag < 1) {
-			return Result.failureResult("购买订单保存失败");
-		}
-		
-
-		
-		CTGoodsDo _goods = new CTGoodsDo();
-		_goods.setGoodsId(goods.getGoodsId());
-		_goods.setBookQuantity(order.getQty().longValue());
-		// 修改库存
-		try {
-			int ret = ctGoodsDao.updateBookQty(_goods);
-			if (ret < 1) {
-				return Result.failureResult("购买失败库存不够");
-			}
-		} catch (Exception e) {
-			logger.error(e);
-			return Result.failureResult("购买失败库存不够");
-		}
-
-		return payService.buyGoods(order.getUserId(), order.getTotalPrice());
-
-	}*/
 
 	@Override
 	public boolean insertSelectiveService(CTGoodsDo goods) {
@@ -134,13 +67,14 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 	}
 
 	@Override
-	public boolean deleteGoodsService(Integer goodsid) {
-		boolean flag=false;
+	public int deleteGoodsService(Integer goodsid) {
+		logger.info("----deleteGoodsService----");
+		int result = 0;
 		if(goodsid!=null&&goodsid!=0){
-			flag=ctGoodsDao.deleteByPrimaryKey(goodsid)>0;
+			 result =ctGoodsDao.deleteByPrimaryKey(goodsid);
 		}
 		
-		return flag;
+		return result;
 	}
 	
 	/**

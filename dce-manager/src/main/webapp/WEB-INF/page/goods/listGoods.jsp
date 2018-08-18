@@ -31,8 +31,11 @@
 			      <table border="0">
 			        <tr>
 			          <td class="tdfont">查询条件:
-			          	<input type="text" size="14" id="searchStr" name="searchStr" placeholder="商品名称" >
-			          </td>
+			          	<input type="text" size="14" id="title" name="title" placeholder="商品名称" >
+			          <td class="tdfont" colspan="2">创建时间:
+						 <input type="text" id="startDate"  name="startDate" class="easyui-datetimebox" size="14" placeholder="开始时间" data-options="editable : true" />-
+						 <input type="text" id="endDate" name="endDate" class="easyui-datetimebox" size="14" placeholder="结束时间" data-options="editable : true" />
+					   	</td>
 			          <td >
 			              <a  href="javascript:void(0)" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a> 
 			              <a  href="javascript:void(0)" id="resetButton" class="easyui-linkbutton" iconCls="icon-reset" plain="true" >重置</a>

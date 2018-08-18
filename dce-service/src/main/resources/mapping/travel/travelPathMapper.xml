@@ -257,7 +257,6 @@
 
 	<select id="queryListPage" parameterType="Map" resultType="Map">
 		SELECT * from ct_travel_path
-
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="pathid != null">
 				AND pathid like #{pathid}

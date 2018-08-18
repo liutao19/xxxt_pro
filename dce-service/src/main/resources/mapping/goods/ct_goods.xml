@@ -146,73 +146,73 @@
     -->
     insert into ct_goods
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="goodsid != null">
+      <if test="goodsId != null">
         goodsId,
       </if>
-      <if test="goodssn != null">
+      <if test="goodsSn != null">
         goodsSn,
       </if>
       <if test="title != null">
         title,
       </if>
-      <if test="goodsimg != null">
+      <if test="goodsImg != null">
         goodsImg,
       </if>
-      <if test="goodsthums != null">
+      <if test="goodsThums != null">
         goodsThums,
       </if>
-      <if test="brandid != null">
+      <if test="brandId != null">
         brandId,
       </if>
-      <if test="shopid != null">
+      <if test="shopId != null">
         shopId,
       </if>
-      <if test="marketprice != null">
+      <if test="marketPrice != null">
         marketPrice,
       </if>
-      <if test="shopprice != null">
+      <if test="shopPrice != null">
         shopPrice,
       </if>
-      <if test="goodsstock != null">
+      <if test="goodsStock != null">
         goodsStock,
       </if>
-      <if test="salecount != null">
+      <if test="saleCount != null">
         saleCount,
       </if>
-      <if test="isbook != null">
+      <if test="isBook != null">
         isBook,
       </if>
-      <if test="bookquantity != null">
+      <if test="bookQuantity != null">
         bookQuantity,
       </if>
-      <if test="warnstock != null">
+      <if test="warnStock != null">
         warnStock,
       </if>
-      <if test="goodsunit != null">
+      <if test="goodsUnit != null">
         goodsUnit,
       </if>
-      <if test="issale != null">
+      <if test="isSale != null">
         isSale,
       </if>
-      <if test="isbest != null">
+      <if test="isBest != null">
         isBest,
       </if>
-      <if test="ishot != null">
+      <if test="isHot != null">
         isHot,
       </if>
-      <if test="isrecomm != null">
+      <if test="isRecomm != null">
         isRecomm,
       </if>
-      <if test="isnew != null">
+      <if test="isNew != null">
         isNew,
       </if>
-      <if test="isadminbest != null">
+      <if test="isAdminBest != null">
         isAdminBest,
       </if>
-      <if test="isadminrecom != null">
+      <if test="isAdminRecom != null">
         isAdminRecom,
       </if>
-      <if test="recommdesc != null">
+      <if test="recommDesc != null">
         recommDesc,
       </if>
       <if test="cid1 != null">
@@ -224,116 +224,119 @@
       <if test="cid3 != null">
         cid3,
       </if>
-      <if test="shopcatid1 != null">
+      <if test="shopCatId1 != null">
         shopCatId1,
       </if>
-      <if test="shopcatid2 != null">
+      <if test="shopCatId2 != null">
         shopCatId2,
       </if>
-      <if test="isshoprecomm != null">
+      <if test="goodsDesc != null">  
+		goodsDesc,
+	  </if>
+      <if test="isShopRecomm != null">
         isShopRecomm,
       </if>
-      <if test="isindexrecomm != null">
+      <if test="isIndexRecomm != null">
         isIndexRecomm,
       </if>
-      <if test="isactivityrecomm != null">
+      <if test="isActivityRecomm != null">
         isActivityRecomm,
       </if>
-      <if test="isinnerrecomm != null">
+      <if test="isInnerRecomm != null">
         isInnerRecomm,
       </if>
       <if test="status != null">
         status,
       </if>
-      <if test="saletime != null">
+      <if test="saleTime != null">
         saleTime,
       </if>
-      <if test="attrcatid != null">
+      <if test="attrCatId != null">
         attrCatId,
       </if>
-      <if test="goodskeywords != null">
+      <if test="goodsKeywords != null">
         goodsKeywords,
       </if>
-      <if test="goodsflag != null">
+      <if test="goodsFlag != null">
         goodsFlag,
       </if>
-      <if test="statusremarks != null">
+      <if test="statusRemarks != null">
         statusRemarks,
       </if>
-      <if test="createtime != null">
+      <if test="createTime != null">
         createTime,
       </if>
  
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="goodsid != null">
-        #{goodsid,jdbcType=INTEGER},
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
       </if>
-      <if test="goodssn != null">
-        #{goodssn,jdbcType=VARCHAR},
+      <if test="goodsSn != null">
+        #{goodsSn,jdbcType=VARCHAR},
       </if>
       <if test="title != null">
         #{title,jdbcType=VARCHAR},
       </if>
-      <if test="goodsimg != null">
-        #{goodsimg,jdbcType=VARCHAR},
+      <if test="goodsImg != null">
+        #{goodsImg,jdbcType=VARCHAR},
       </if>
-      <if test="goodsthums != null">
-        #{goodsthums,jdbcType=INTEGER},
+      <if test="goodsThums != null">
+        #{goodsThums,jdbcType=INTEGER},
       </if>
-      <if test="brandid != null">
-        #{brandid,jdbcType=INTEGER},
+      <if test="brandId != null">
+        #{brandId,jdbcType=INTEGER},
       </if>
-      <if test="shopid != null">
-        #{shopid,jdbcType=INTEGER},
+      <if test="shopId != null">
+        #{shopId,jdbcType=INTEGER},
       </if>
-      <if test="marketprice != null">
-        #{marketprice,jdbcType=DECIMAL},
+      <if test="marketPrice != null">
+        #{marketPrice,jdbcType=DECIMAL},
       </if>
-      <if test="shopprice != null">
-        #{shopprice,jdbcType=DECIMAL},
+      <if test="shopPrice != null">
+        #{shopPrice,jdbcType=DECIMAL},
       </if>
-      <if test="goodsstock != null">
-        #{goodsstock,jdbcType=INTEGER},
+      <if test="goodsStock != null">
+        #{goodsStock,jdbcType=INTEGER},
       </if>
-      <if test="salecount != null">
-        #{salecount,jdbcType=INTEGER},
+      <if test="saleCount != null">
+        #{saleCount,jdbcType=INTEGER},
       </if>
-      <if test="isbook != null">
-        #{isbook,jdbcType=TINYINT},
+      <if test="isBook != null">
+        #{isBook,jdbcType=TINYINT},
       </if>
-      <if test="bookquantity != null">
-        #{bookquantity,jdbcType=INTEGER},
+      <if test="bookQuantity != null">
+        #{bookQuantity,jdbcType=INTEGER},
       </if>
-      <if test="warnstock != null">
-        #{warnstock,jdbcType=INTEGER},
+      <if test="warnStock != null">
+        #{warnStock,jdbcType=INTEGER},
       </if>
-      <if test="goodsunit != null">
-        #{goodsunit,jdbcType=CHAR},
+      <if test="goodsUnit != null">
+        #{goodsUnit,jdbcType=CHAR},
       </if>
-      <if test="issale != null">
-        #{issale,jdbcType=TINYINT},
+      <if test="isSale != null">
+        #{isSale,jdbcType=TINYINT},
       </if>
-      <if test="isbest != null">
-        #{isbest,jdbcType=TINYINT},
+      <if test="isBest != null">
+        #{isBest,jdbcType=TINYINT},
       </if>
-      <if test="ishot != null">
-        #{ishot,jdbcType=TINYINT},
+      <if test="isHot != null">
+        #{isHot,jdbcType=TINYINT},
       </if>
-      <if test="isrecomm != null">
-        #{isrecomm,jdbcType=TINYINT},
+      <if test="isRecomm != null">
+        #{isRecomm,jdbcType=TINYINT},
       </if>
-      <if test="isnew != null">
-        #{isnew,jdbcType=TINYINT},
+      <if test="isNew != null">
+        #{isNew,jdbcType=TINYINT},
       </if>
-      <if test="isadminbest != null">
-        #{isadminbest,jdbcType=TINYINT},
+      <if test="isAdminBest != null">
+        #{isAdminBest,jdbcType=TINYINT},
       </if>
-      <if test="isadminrecom != null">
-        #{isadminrecom,jdbcType=TINYINT},
+      <if test="isAdminRecom != null">
+        #{isAdminRecom,jdbcType=TINYINT},
       </if>
-      <if test="recommdesc != null">
-        #{recommdesc,jdbcType=VARCHAR},
+      <if test="recommDesc != null">
+        #{recommDesc,jdbcType=VARCHAR},
       </if>
       <if test="cid1 != null">
         #{cid1,jdbcType=INTEGER},
@@ -344,44 +347,47 @@
       <if test="cid3 != null">
         #{cid3,jdbcType=INTEGER},
       </if>
-      <if test="shopcatid1 != null">
-        #{shopcatid1,jdbcType=INTEGER},
+      <if test="shopCatId1 != null">
+        #{shopCatId1,jdbcType=INTEGER},
       </if>
-      <if test="shopcatid2 != null">
-        #{shopcatid2,jdbcType=INTEGER},
+      <if test="shopCatId2 != null">
+        #{shopCatId2,jdbcType=INTEGER},
       </if>
-      <if test="isshoprecomm != null">
-        #{isshoprecomm,jdbcType=TINYINT},
+      <if test="goodsDesc != null">  
+		#{goodsDesc,jdbcType=VARCHAR},
+	  </if>
+      <if test="isShopRecomm != null">
+        #{isShopRecomm,jdbcType=TINYINT},
       </if>
-      <if test="isindexrecomm != null">
-        #{isindexrecomm,jdbcType=TINYINT},
+      <if test="isIndexRecomm != null">
+        #{isIndexRecomm,jdbcType=TINYINT},
       </if>
-      <if test="isactivityrecomm != null">
-        #{isactivityrecomm,jdbcType=TINYINT},
+      <if test="isActivityRecomm != null">
+        #{isActivityRecomm,jdbcType=TINYINT},
       </if>
-      <if test="isinnerrecomm != null">
-        #{isinnerrecomm,jdbcType=TINYINT},
+      <if test="isInnerRecomm != null">
+        #{isInnerRecomm,jdbcType=TINYINT},
       </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
       </if>
-      <if test="saletime != null">
-        #{saletime,jdbcType=TIMESTAMP},
+      <if test="saleTime != null">
+        #{saleTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="attrcatid != null">
-        #{attrcatid,jdbcType=INTEGER},
+      <if test="attrCatId != null">
+        #{attrCatId,jdbcType=INTEGER},
       </if>
-      <if test="goodskeywords != null">
-        #{goodskeywords,jdbcType=VARCHAR},
+      <if test="goodsKeywords != null">
+        #{goodsKeywords,jdbcType=VARCHAR},
       </if>
-      <if test="goodsflag != null">
-        #{goodsflag,jdbcType=TINYINT},
+      <if test="goodsFlag != null">
+        #{goodsFlag,jdbcType=TINYINT},
       </if>
-      <if test="statusremarks != null">
-        #{statusremarks,jdbcType=VARCHAR},
+      <if test="statusRemarks != null">
+        #{statusRemarks,jdbcType=VARCHAR},
       </if>
-      <if test="createtime != null">
-        #{createtime,jdbcType=TIMESTAMP},
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -397,6 +403,9 @@
 			</if>
 			<if test="goodsImg != null">
 				goodsImg = #{goodsImg},
+			</if>
+			<if test="status != null">
+				status = #{status},
 			</if>
 			<if test="goodsThums != null">
 				goodsThums = #{goodsThums},
@@ -418,6 +427,9 @@
 			</if>
 			<if test="saleCount != null">
 				saleCount = #{saleCount},
+			</if>
+			<if test="saleTime != null">
+				saleTime = #{saleTime},
 			</if>
 			<if test="isBook != null">
 				isBook = #{isBook},
@@ -593,8 +605,14 @@
 			<if test="createTime != null">  
 				AND createTime = #{createTime}
 			</if>
+			<if test="startDate != null">
+				AND <![CDATA[createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
          </trim> 
-
+			order by saleTime desc
 	</select>
     
 </mapper>

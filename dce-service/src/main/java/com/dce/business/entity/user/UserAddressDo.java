@@ -22,7 +22,7 @@ public class UserAddressDo {
     private String address;
     
     // 收货地址详情
-    private String addressdetails;
+    private String addressDetails;
 
     // 邮政编码
     private String postcode;
@@ -46,12 +46,12 @@ public class UserAddressDo {
 
     private String createtime;
 
-    public String getAddressdetails() {
-		return addressdetails;
+    public String getAddressDetails() {
+		return addressDetails;
 	}
 
-	public void setAddressdetails(String addressDetails) {
-		this.addressdetails = addressDetails;
+	public void setAddressDetails(String addressDetails) {
+		this.addressDetails = addressDetails;
 	}
 
 	public Integer getAddressid() {

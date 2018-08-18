@@ -21,9 +21,9 @@
     <result column="isDefault" jdbcType="TINYINT" property="isdefault" />
     <result column="addressFlag" jdbcType="TINYINT" property="addressflag" />
     <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
-    <result column="addressDetails" jdbcType="VARCHAR" property="addressdetails" />
+    <result column="addressDetails" jdbcType="VARCHAR" property="addressDetails" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
-    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   
   <sql id="Base_Column_List">
@@ -84,8 +84,8 @@
       #{userphone,jdbcType=VARCHAR}, #{usertel,jdbcType=VARCHAR}, #{areaid1,jdbcType=INTEGER}, 
       #{areaid2,jdbcType=INTEGER}, #{areaid3,jdbcType=INTEGER}, #{communityid,jdbcType=INTEGER}, 
       #{address,jdbcType=VARCHAR}, #{postcode,jdbcType=CHAR}, #{isdefault,jdbcType=TINYINT}, 
-      #{addressflag,jdbcType=TINYINT}, #{createtime,jdbcType=TIMESTAMP}, #{addressdetails,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP})
+      #{addressflag,jdbcType=TINYINT}, #{createtime,jdbcType=TIMESTAMP}, #{addressDetails,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.dce.business.entity.user.UserAddressDo">
     <!--
@@ -137,13 +137,13 @@
       <if test="createtime != null">
         createTime,
       </if>
-      <if test="addressdetails != null">
+      <if test="addressDetails != null">
         addressDetails,
       </if>
       <if test="remark != null">
         remark,
       </if>
-      <if test="updatetime != null">
+      <if test="updateTime != null">
         updateTime,
       </if>
     </trim>
@@ -190,14 +190,14 @@
       <if test="createtime != null">
         #{createtime,jdbcType=TIMESTAMP},
       </if>
-      <if test="addressdetails != null">
-        #{addressdetails,jdbcType=VARCHAR},
+      <if test="addressDetails != null">
+        #{addressDetails,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="updatetime != null">
-        #{updatetime,jdbcType=TIMESTAMP},
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -250,14 +250,14 @@
       <if test="createtime != null">
         createTime = #{createtime,jdbcType=TIMESTAMP},
       </if>
-      <if test="addressdetails != null">
-        addressDetails = #{addressdetails,jdbcType=VARCHAR},
+      <if test="addressDetails != null">
+        addressDetails = #{addressDetails,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="updatetime != null">
-        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where addressId = #{addressid,jdbcType=INTEGER}
@@ -282,9 +282,9 @@
       isDefault = #{isdefault,jdbcType=TINYINT},
       addressFlag = #{addressflag,jdbcType=TINYINT},
       createTime = #{createtime,jdbcType=TIMESTAMP},
-      addressDetails = #{addressdetails,jdbcType=VARCHAR},
+      addressDetails = #{addressDetails,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      updateTime = #{updatetime,jdbcType=TIMESTAMP}
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
     where addressId = #{addressid,jdbcType=INTEGER}
   </update>
 </mapper>

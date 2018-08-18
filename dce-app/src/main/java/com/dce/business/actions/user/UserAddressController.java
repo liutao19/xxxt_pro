@@ -50,7 +50,7 @@ public class UserAddressController extends BaseController {
 		addressadd.setUsername(username);
 		addressadd.setUserphone(userphone);
 		addressadd.setAddress(address);
-		addressadd.setAddressdetails(addressDetails);
+		addressadd.setAddressDetails(addressDetails);
 
 		// id为空是新记录 新增， 非空是已经存在的记录调用修改
 		if (StringUtils.isNotBlank(addressId)) {

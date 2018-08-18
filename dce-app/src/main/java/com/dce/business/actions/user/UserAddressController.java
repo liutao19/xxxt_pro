@@ -61,7 +61,7 @@ public class UserAddressController extends BaseController {
 			addressService.insertSelective(addressadd);
 			return Result.successResult("地址添加成功");
 		}
-		
+
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class UserAddressController extends BaseController {
 		Integer userId = getUserId();
 		List<UserAddressDo> addressList = addressService.selectByUserId(userId);
 
-		return Result.successResult("获取用户地址成功",addressList);
+		return Result.successResult("获取用户地址成功", addressList);
 	}
 
 	/**
@@ -87,7 +87,6 @@ public class UserAddressController extends BaseController {
 	public Result<?> delAddress() {
 
 		String addressid = getString("addressid");
-		// Integer detAddress = Integer.parseInt(addressid);
 		// 获取当前用户的id
 		Integer userId = getUserId();
 

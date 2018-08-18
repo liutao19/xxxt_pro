@@ -162,7 +162,7 @@ public class UserController extends BaseController {
 				password = DataEncrypt.encrypt(password);
 				// userDo.setTwoPassword(password);
 			}
-			return userService.update(userDo);
+			return userService.updLogPass(userDo);
 		} catch (Exception e) {
 			return Result.failureResult("用户密码修改失败");
 		}

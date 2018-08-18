@@ -22,11 +22,11 @@ $(function(){
 	var toolbar_tt = [
 	                 {
 	          			iconCls: 'icon-edit',
-	          			text:'转入',
+	          			text:'增加',
 	          			handler:addMoney
 	          		},'-',{
 	          			iconCls: 'icon-edit',
-	          			text:'转出',
+	          			text:'减少',
 	          			handler:subMoney
 	          		}
 	          	];
@@ -36,10 +36,10 @@ $(function(){
       			[
 	 			 	{field:'userId',title:'id',width:30,halign:"center", align:"left",checkbox:true},
 	 				{field:"userName",title:"用户名",width:30,align:"center"},
-	 				{field:"wallet_money",title:"账户余额",width:80,align:"center"},
-	 				{field:"wallet_travel",title:"奖励旅游",width:80,align:"center"},
-	 				{field:"wallet_goods",title:"奖励商品",width:80,align:"center"},
-	 				{field:"wallet_active",title:"奖励活动",width:80,align:"center"}
+	 				{field:"wallet_money",title:"账户余额(元)",width:80,align:"center"},
+	 				{field:"wallet_travel",title:"奖励旅游(次)",width:80,align:"center"},
+	 				{field:"wallet_goods",title:"奖励商品(盒)",width:80,align:"center"},
+	 				{field:"wallet_active",title:"奖励活动(场)",width:80,align:"center"}
 	 				/*{field:"wallet_score",title:"流通币钱包",width:80,align:"center"},
 	 				{field:"wallet_cash",title:"现金币钱包",width:80,align:"center"},
 	 				{field:"wallet_release_release",title:"可提币钱包",width:80,align:"center"}
@@ -143,7 +143,7 @@ function changeMoney(type){
 	}
 	var url = basePath+"/userAccount/changeMoney.html?&rand=" + Math.random()+"&userId="+ id + "&type=" + type;
 	$('#editDiv').dialog({
-		title: type == 1?"转入":"转出",
+		title: type == 1?"增加":"减少",
 		width: 400,
 		height: 300,
 		closed: false,
@@ -192,7 +192,7 @@ function save_change(){
 		},
 		success:function(ret){
 			if(ret.code==0){
-				$.messager.alert("成功",(type=='0'?"转出":"转入" ) + "成功");
+				$.messager.alert("成功",(type=='0'?"减少":"增加" ) + "成功");
 				$("#editDiv").dialog("close");
 				reloadDataGrid();
 			}else{

@@ -162,7 +162,7 @@ public class UserController extends BaseController {
 				password = DataEncrypt.encrypt(password);
 				// userDo.setTwoPassword(password);
 			}
-			return userService.updLogPass(userDo);
+			return userService.updateByPrimaryKeyLogPass(userDo);
 		} catch (Exception e) {
 			return Result.failureResult("用户密码修改失败");
 		}
@@ -188,7 +188,7 @@ public class UserController extends BaseController {
 				twoPassword = DataEncrypt.encrypt(twoPassword);
 				// userDo.setTwoPassword(password);
 			}
-			return userService.update(userDo);
+			return userService.updateByPrimaryKeyPayPass(userDo);
 		} catch (Exception e) {
 			return Result.failureResult("用户支付密码修改失败");
 		}

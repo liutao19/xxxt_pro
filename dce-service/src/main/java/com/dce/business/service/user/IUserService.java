@@ -74,14 +74,14 @@ public interface IUserService {
      * @param userDo
      * @return
      */
-    Result<?> updLogPass(UserDo userDo);
+    Result<?> updateByPrimaryKeyLogPass(UserDo userDo);
     
     /**
      * 用户支付密码修改
      * @param userDo
      * @return
      */
-    Result<?> updPayPass(UserDo userDo);
+    Result<?> updateByPrimaryKeyPayPass(UserDo userDo);
     
     /**
      * 用户信息认证

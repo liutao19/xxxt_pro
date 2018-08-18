@@ -63,6 +63,9 @@ public class UserServiceImpl implements IUserService {
 	@Resource
 	private IPerformanceDailyService performanceDailyService;
 
+	/**
+	 * 查询用户名是否存在
+	 */
 	@Override
 	public UserDo getUser(String userName) {
 		Map<String, Object> params = new HashMap<>();
@@ -313,7 +316,7 @@ public class UserServiceImpl implements IUserService {
 	 * 支付密码
 	 */
 	@Override
-	public Result<?> updPayPass(UserDo userDo) {
+	public Result<?> updateByPrimaryKeyPayPass(UserDo userDo) {
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改用户支付密码错误!");
 		}
@@ -331,7 +334,7 @@ public class UserServiceImpl implements IUserService {
 	 * 登录密码
 	 */
 	@Override
-	public Result<?> updLogPass(UserDo userDo) {
+	public Result<?> updateByPrimaryKeyLogPass(UserDo userDo) {
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改用户密码错误!");
 		}

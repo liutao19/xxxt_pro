@@ -26,13 +26,13 @@ public interface IUserDao {
      * @param record
      * @return
      */
-    int updateByPrimaryKeyPayPass(UserDo record);
+    int updateByPrimaryKeyLogPass(UserDo record);
     /**
      * 支付密码
      * @param record
      * @return
      */
-    int updateByPrimaryKeyLogPass(UserDo record);
+    int updateByPrimaryKeyPayPass(UserDo record);
 
     int updateByPrimaryKeyWithBLOBs(UserDo record);
 

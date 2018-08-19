@@ -1,11 +1,13 @@
-
+var basePath="/dce-manager";
 $(function(){
 /*#############################################search form begin#################################*/	
 		
 	$("#searchdistrictForm #searchButton").on("click",function(){
+		var dataUrl = basePath+"/district/listDistrict.html";
+		$("#tt_District").datagrid('options').url = dataUrl;
 		$("#tt_District").datagrid('load',{
-			'searchStr': $("#searchdistrictForm #searchStr").val(),
-			'searchCodeStr':$("#searchdistrictForm #searchCodeStr").val()		
+			'distrct_name':$("#searchdistrictForm #distrct_name").val(),
+			'true_name':$("#searchdistrictForm #true_name").val()	
 		});
 	});
 	$("#searchdistrictForm #resetButton").on("click",function(){
@@ -28,15 +30,15 @@ $(function(){
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"distrctName",title:"区域",width:180,align:"center"},
-								{field:"user_id",title:"id",width:180,align:"center"},
+							    {field:'district_id',title:'id',width:100,hidden:true},						
+								{field:"distrct_name",title:"区域",width:180,align:"center"},
+								{field:"user_id",title:"用户id",width:180,align:"center"},
 								{field:"true_name",title:"真实姓名",width:180,align:"center"},
 								{field:"user_name",title:"用户呢称",width:180,align:"center"},
 								{field:"districtStatus",title:"封地状态",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.districtId+'\');">编辑</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.district_id+'\');">封地</a>   <a href="javascript:void(0);" onclick="deleteDistrict(\''+row.district_id+'\',\''+row.user_id+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -122,6 +124,40 @@ function to_editdistrict(id){
 		}]
 	});
 }
+
+
+/**
+ * 删除
+ */
+
+function deleteDistrict(id,userId){	
+	if(!id){
+		$.messager.alert("区域","id不能为空");
+		return;
+	}
+	$.messager.confirm("区域","确认删除该区域吗，删除后不可恢复",function(r){
+		if(r){
+			$.ajax({
+				url:httpUrl+"/district/deleteDistrict.html?districtId="+id+"&userId="+userId,
+				type:"post",
+				dataType:"json",
+				success:function(data){
+					if(data.ret==1){
+						$.messager.alert("区域","删除成功");
+						$('#tableGrid').datagrid('reload');
+					}else{
+						$.messager.alert("区域","删除失败，请稍后再试");
+					}
+				}
+			});
+		}
+	});
+}
+
+
+
+
+
 
 function save_District(){
 	var formdata = $("#editDistrictForm").serialize();

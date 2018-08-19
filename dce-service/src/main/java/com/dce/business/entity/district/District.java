@@ -5,52 +5,46 @@ import com.dce.business.entity.user.UserDo;
 public class District extends UserDo{
    
 	//区域id
-    private Integer districtid;
+    private Integer districtId;
 
    //区域地址名称
-    private String distrctname;
+    private String distrctName;
 
    //区域管理员id
     private Integer userId;
 
     //是否赋予区域
-    private Integer districtstatus;
+    private Integer districtStatus;
 
-    
-    public Integer getDistrictid() {
-        return districtid;
-    }
+	public Integer getDistrictId() {
+		return districtId;
+	}
 
-   
-    public void setDistrictid(Integer districtid) {
-        this.districtid = districtid;
-    }
+	public void setDistrictId(Integer districtId) {
+		this.districtId = districtId;
+	}
 
-    public String getDistrctname() {
-        return distrctname;
-    }
+	public String getDistrctName() {
+		return distrctName;
+	}
 
-    
-    public void setDistrctname(String distrctname) {
-        this.distrctname = distrctname;
-    }
+	public void setDistrctName(String distrctName) {
+		this.distrctName = distrctName;
+	}
 
-    
-    public Integer getUserId() {
-        return userId;
-    }
+	public Integer getUserId() {
+		return userId;
+	}
 
-  
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
 
-    
-    public Integer getDistrictstatus() {
-        return districtstatus;
-    }
+	public Integer getDistrictStatus() {
+		return districtStatus;
+	}
 
-    public void setDistrictstatus(Integer districtstatus) {
-        this.districtstatus = districtstatus;
-    }
+	public void setDistrictStatus(Integer districtStatus) {
+		this.districtStatus = districtStatus;
+	}
 }

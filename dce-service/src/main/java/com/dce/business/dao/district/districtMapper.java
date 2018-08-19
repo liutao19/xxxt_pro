@@ -12,7 +12,7 @@ public interface districtMapper {
     * @param districtid
     * @return
     */
-    int deleteByPrimaryKey(Integer districtid);
+    int deleteByPrimaryKey(Integer districtId);
 
    /**
     * 添加全部信息
@@ -33,7 +33,7 @@ public interface districtMapper {
      * @param districtid
      * @return
      */
-    District selectByPrimaryKey(Integer districtid);
+    District selectByPrimaryKey(Integer districtId);
     
    /**
     * 选择性更新

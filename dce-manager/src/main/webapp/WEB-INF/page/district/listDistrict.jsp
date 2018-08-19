@@ -25,10 +25,13 @@
 			<form id="searchdistrictForm" style="margin-top:7px;margin-left:5px;" >
 			      <table border="0">
 			        <tr>
-			          <td class="tdfont">查询条件:
-			          	<input type="text" size="14" id="searchStr" name="searchStr" placeholder="字典名称" >
-			          	<input type="text" size="14" id="searchCodeStr" name="searchCodeStr" placeholder="字典编码" >
+			        <td class="tdfont">区域:
+			          	<input type="text" size="14" id="distrct_name" name="searchStr" placeholder="区域" >
 			          </td>
+			          <td class="tdfont">用户真实姓名:
+			          	<input type="text" size="14" id="true_name" name="searchStr" placeholder="真实姓名" >
+			          </td>
+			          
 			          <td >
 			              <a  href="javascript:void(0)" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a> 
 			              <a  href="javascript:void(0)" id="resetButton" class="easyui-linkbutton" iconCls="icon-reset" plain="true" >重置</a>

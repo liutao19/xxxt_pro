@@ -61,4 +61,9 @@ public interface IAwardlistService{
 	 */
 	public int deleteById(Integer id);
 	
+	/**
+	 * 
+	 */
+	Map<String,Object> conditionQueryAward(Map map);
+	
 }

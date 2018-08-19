@@ -2,11 +2,9 @@ package com.dce.business.service.impl.award;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -14,22 +12,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.dao.account.IUserAccountDao;
-import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.dao.award.AwardConfigDao;
 import com.dce.business.dao.award.AwardlistMapper;
 import com.dce.business.dao.district.districtMapper;
 import com.dce.business.dao.district.regionalawardsMapper;
 import com.dce.business.dao.user.IUserDao;
-import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.award.AwardConfig;
 import com.dce.business.entity.award.Awardlist;
 import com.dce.business.entity.district.District;
 import com.dce.business.entity.district.Regionalawards;
 import com.dce.business.entity.user.UserDo;
+import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.AwardConfigService;
+import com.dce.business.service.impl.district.DistrictServiceImpl;
+import com.dce.business.service.impl.district.RegionalawardsServiceImpl;
 
 @Service("awardConfigService")
 public class AwardConfigServiceImpl implements AwardConfigService {
@@ -38,23 +38,24 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	@Resource
 	private IUserDao userDao;
 
+	// 奖励记录
 	@Resource
-	private AwardlistMapper awardlistDao;
+	private AwardlistServiceImpl awardlistService;
 
 	@Resource
 	private AwardConfigDao awardConfigDao;
 
-	@Resource
-	private IUserAccountDao userAccoutDao;
-
-	@Resource
-	private IUserAccountDetailDao userAccountDetailDao;
-
-	@Resource
-	private districtMapper districtDao;
-
+	// 区域奖励记录
 	@Resource
 	private regionalawardsMapper regionlDao;
+
+	// 区域管理
+	@Resource
+	private DistrictServiceImpl districtService;
+
+	// 账户
+	@Resource
+	private IAccountService accountService;
 
 	/*
 	 * id条件删除等级 (non-Javadoc)
@@ -163,84 +164,90 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	public int userUpgrade(Integer userid, int count) {
 		// 获取购买者的信息
 		UserDo user = userDao.selectByPrimaryKey(userid);
-		// 获取用户等级
-		int userLevel = user.getUserLevel();
-		UserDo updatauser = new UserDo();
 		// 返回升级级别
 		Integer level = null;
-		switch (userLevel) {
-		case 0:
-			if (count >= 1 && 5 > count) {
-				// 普通用户升级为会员
-				updatauser.setUserLevel((byte) 1);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
-					level = 1;
-				}
+		if (user != null) {
 
-			} else if (count >= 5 && 50 > count) {
-				// 普通用户升级为vip
-				updatauser.setUserLevel((byte) 2);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
-					level = 2;
-				}
+			// 获取用户等级
+			int userLevel = user.getUserLevel();
+			UserDo updatauser = new UserDo();
 
-			} else if (count >= 50) {
-				// 普通用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
-				updatauser.setUserLevel((byte) 3);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
-					// 获得区域代表资格，生成一条数据，等待后台封地
-					District dis = new District();
-					dis.setUserId(userid);
-					districtDao.insertSelective(dis);
-					level = 3;
-				}
-			}
-			break;
-		case 1:
-			if (count >= 5 && 50 > count) {
-				// 会员用户升级为vip
-				updatauser.setUserLevel((byte) 2);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
+			switch (userLevel) {
+			case 0:
+				if (count >= 1 && 5 > count) {
+					// 普通用户升级为会员
+					updatauser.setUserLevel((byte) 1);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+						level = 1;
+					}
 
-				}
-				level = 2;
-			} else if (count >= 50) {
-				// 会员用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
-				updatauser.setUserLevel((byte) 3);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
-					// 获得区域代表资格，生成一条数据，等待后台封地
-					District dis = new District();
-					dis.setUserId(userid);
-					districtDao.insertSelective(dis);
-					level = 3;
-				}
+				} else if (count >= 5 && 50 > count) {
+					// 普通用户升级为vip
+					updatauser.setUserLevel((byte) 2);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+						level = 2;
+					}
 
-			}
-			break;
-		case 2:
-			if (count >= 50) {
-				// vip用户升级为，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
-				updatauser.setUserLevel((byte) 3);
-				if (userDao.updateByPrimaryKeySelective(user) > 0) {
-					// 获得区域代表资格，生成一条数据，等待后台封地
-					District dis = new District();
-					dis.setUserId(userid);
-					districtDao.insertSelective(dis);
-					level = 3;
-				}
-				// 判断该购买者的推荐人是否满足升级为股东的条件,首先必须为城市合伙人，如何推荐5人为城市合伙人
-				if (user.getId() == 3) {
-					if (upgradePartner((int) user.getUserLevel())) {
-						level = 4;
+				} else if (count >= 50) {
+					// 普通用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+					updatauser.setUserLevel((byte) 3);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+						// 获得区域代表资格，生成一条数据，等待后台封地
+						District dis = new District();
+						dis.setUserId(userid);
+						districtService.insertSelective(dis);
+						level = 3;
 					}
 				}
+				break;
+			case 1:
+				if (count >= 5 && 50 > count) {
+					// 会员用户升级为vip
+					updatauser.setUserLevel((byte) 2);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+
+					}
+					level = 2;
+				} else if (count >= 50) {
+					// 会员用户升级为城市合伙人，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+					updatauser.setUserLevel((byte) 3);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+						// 获得区域代表资格，生成一条数据，等待后台封地
+						District dis = new District();
+						dis.setUserId(userid);
+						districtService.insertSelective(dis);
+						level = 3;
+					}
+
+				}
+				break;
+			case 2:
+				if (count >= 50) {
+					// vip用户升级为，升级为城市合伙人，要添加一条记录，并且判断用户推荐人是否有资格升级为股东
+					updatauser.setUserLevel((byte) 3);
+					if (userDao.updateByPrimaryKeySelective(user) > 0) {
+						// 获得区域代表资格，生成一条数据，等待后台封地
+						District dis = new District();
+						dis.setUserId(userid);
+						districtService.insertSelective(dis);
+						level = 3;
+					}
+					// 判断该购买者的推荐人是否满足升级为股东的条件,首先必须为城市合伙人，如何推荐5人为城市合伙人
+					if (user.getId() == 3) {
+						if (upgradePartner((int) user.getUserLevel())) {
+							level = 4;
+						}
+					}
+
+				}
+				break;
+			default:
+				level = -1;
+				break;
 
 			}
-			break;
-		default:
-			level = -1;
-			break;
-
+		} else {
+			logger.error("无此用户信息");
 		}
 
 		return level;
@@ -266,7 +273,6 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			if (listuser.size() >= 5) {
 				UserDo updatauser = new UserDo();
 				// 推荐人升级为股东
-
 				updatauser.setUserLevel((byte) 4);
 				if (userDao.updateByPrimaryKeySelective(updatauser) > 0) {
 					// 升级股东成功
@@ -292,8 +298,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 		// 区域奖励,先进行区域奖励，再进行升级
 		areaAward(area, count);
-		
-		System.out.println("进去了");
+
 		// 获取购买者的信息
 		UserDo buyerUser = userDao.selectByPrimaryKey(userid);
 		// 获取推荐人的信息refereeid
@@ -302,23 +307,34 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		// 获取第二代推荐人的信息
 		UserDo presenterUserTow = userDao.selectByPrimaryKey(presenterUser.getRefereeid());
 
-		// 推荐奖励
-		if (count >= 1 && count < 5) {
-			// 1-5盒没有到5
-			System.out.println("1-54asdasdasdasd");
-			awardone(buyerUser, presenterUser, presenterUserTow, count);
-			flag = true;
+		// 判断用户是否有推荐人
+		if (presenterUser != null) {
 
-		} else if (count >= 5 && count < 50) {
-			// 5-50没有到50
-			awardtwo(buyerUser, presenterUser, presenterUserTow, count);
-			flag = true;
-		} else if (count >= 50) {
-			// 50盒以上
-			awardthree(buyerUser, presenterUser, presenterUserTow, count);
-			flag = true;
+			// 推荐奖励
+			if (count >= 1 && count < 5) {
+				// 1-5盒没有到5
+				System.out.println("1-54asdasdasdasd");
+				awardone(buyerUser, presenterUser, presenterUserTow, count);
+				flag = true;
+
+			} else if (count >= 5 && count < 50) {
+				// 5-50没有到50
+				awardtwo(buyerUser, presenterUser, presenterUserTow, count);
+				flag = true;
+			} else if (count >= 50) {
+				// 50盒以上
+				awardthree(buyerUser, presenterUser, presenterUserTow, count);
+				flag = true;
+			}
+
+		} else {
+
+			logger.error("该用户无推荐人");
+
 		}
 
+		// 用户升级方法
+		userUpgrade(userid, count);
 		return flag;
 	}
 
@@ -332,9 +348,11 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 		// 判断该地区是否有区域代表
 		Map<String, Object> map = new HashMap<>();
 		map.put("district", area);
-		List<UserDo> user = userDao.selectUser(map);
+		List<UserDo> userLst = userDao.selectUser(map);
 
-		if (user != null && user.size() == 1) {
+		if (userLst != null && userLst.size() == 1) {
+
+			UserDo areaUser = userLst.get(0);
 
 			// 进行区域代表奖励50/盒
 			// 获取总奖金
@@ -344,26 +362,14 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 			Double sum = regional.get(0).getRewardbalance() * count;
 			// 获取账户当前余额
 			UserAccountDo accont = new UserAccountDo();
-			accont = userAccoutDao.selectByPrimaryKey(user.get(0).getId());
 			// 相加之后余额
 			accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-			accont.setIncomeAmount(BigDecimal.valueOf(sum));
-			userAccoutDao.updateByPrimaryKeySelective(accont);
-
-			// 生成流水记录
-			UserAccountDetailDo detail = new UserAccountDetailDo();
-			detail.setUserId(user.get(0).getId());
-			detail.setAmount(BigDecimal.valueOf(sum));
-			detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-			detail.setMoreOrLess("增加");
-			detail.setIncomeType(321);
-			detail.setCreateTime(new Date());
-			detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-			detail.setSeqId(UUID.randomUUID().toString());
-			userAccountDetailDao.addUserAccountDetail(detail);
+			accont.setUserId(areaUser.getId());
+			accont.setAccountType(AccountType.wallet_money.toString());
+			accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_LEADER);
 
 			// 判断区域代表是否有推荐人
-			if (user.get(0).getRefereeid() != null) {
+			if (areaUser.getRefereeid() != null) {
 				// 进行区域代表奖励50/盒
 				// 获取总奖金
 				Map<String, Object> mapstwo = new HashMap<>();
@@ -372,25 +378,16 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				Double sumtwo = regionaltwo.get(0).getRewardbalance() * count;
 				// 获取账户当前余额
 				UserAccountDo acconttwo = new UserAccountDo();
-				acconttwo = userAccoutDao.selectByPrimaryKey(user.get(0).getRefereeid());
 				// 相加之后余额
-				acconttwo.setAmount(acconttwo.getAmount().add(BigDecimal.valueOf(sumtwo)));
-				acconttwo.setIncomeAmount(BigDecimal.valueOf(sumtwo));
-				userAccoutDao.updateByPrimaryKeySelective(acconttwo);
+				acconttwo.setAmount(BigDecimal.valueOf(sumtwo));
+				acconttwo.setUserId(areaUser.getRefereeid());
+				accont.setAccountType(AccountType.wallet_money.toString());
+				accountService.updateUserAmountById(acconttwo, IncomeType.TYPE_AWARD_LEADER);
 
-				// 生成流水记录
-				UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-				detailtwo.setUserId(user.get(0).getRefereeid());
-				detailtwo.setAmount(BigDecimal.valueOf(sumtwo));
-				detailtwo.setBalanceAmount(acconttwo.getAmount().add(BigDecimal.valueOf(sumtwo)));
-				detailtwo.setMoreOrLess("增加");
-				detailtwo.setIncomeType(311);
-				detailtwo.setCreateTime(new Date());
-				detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-				detailtwo.setSeqId(UUID.randomUUID().toString());
-				userAccountDetailDao.addUserAccountDetail(detailtwo);
 			}
 
+		} else {
+			logger.error("该区域无管理员");
 		}
 
 		return false;
@@ -398,7 +395,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 
 	/**
 	 * 
-	 * 判断1-5盒数量的方法
+	 * 判断1-5盒数量的方法,小余5盒
 	 * 
 	 * @param buyerUser
 	 *            购买者的信息
@@ -411,894 +408,51 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	 * @return
 	 */
 	public boolean awardone(UserDo buyerUser, UserDo presenterUser, UserDo presenterUserTow, int count) {
+		// 接受参数
 		Map<String, Object> map = new HashMap<>();
-		List<Awardlist> awardlist = new ArrayList<Awardlist>();
-		System.out.println(buyerUser.getUserLevel());
-		// 购买者的等级分类
-		switch (buyerUser.getUserLevel()) {
-		// 购买者等级为普通用户
-		case 0:
-
-			userUpgrade(buyerUser.getId(), count);
-			// 推荐者等级分类
-			System.out.println(presenterUser.getUserLevel());
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 赠送给购买者旅游和商品没有写
-
-				// 区域奖励没有写，直接调用方法吧┭┮﹏┭┮
-
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
+		// 接受奖励记录
+		Map<String, Object> mapaward = new HashMap<>();
+		// 接受奖励金额
+		BigDecimal sum = new BigDecimal(0);
+		// 购买者等级
+		map.put("buyerLecel", (int) buyerUser.getUserLevel());
+		// 购买盒数
+		map.put("buyQty", 1);
+		// 推荐人等级
+		map.put("buyerLecel" + presenterUser.getUserLevel(), presenterUser.getUserLevel());
+		// 得到奖励记录
+		mapaward = awardlistService.conditionQueryAward(map);
+		// 判断获取的记录是唯一的，防止空指针
+		if (mapaward != null && mapaward.size() == 1&& presenterUser.getUserLevel()!=0) {
+			// 判断推荐人是否是会员
+			if (presenterUser.getUserLevel() == 1) {
 				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
+				if (awardlistService.getById(buyerUser.getRefereeid()) == null) {
 
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = awardlist.get(0).getP1Level2() * count;
+					//获取奖励的金额
+					sum = ((BigDecimal) mapaward.get("award"));
 					// 获取账户当前余额
 					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
 					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
+					accont.setAmount(sum);
+					accont.setUserId(presenterUser.getId());
+					accont.setAccountType(AccountType.wallet_money.toString());
+					accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 
 				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
+			} else {
+				//获取奖励的金额
+				sum = ((BigDecimal) mapaward.get("award")).multiply(BigDecimal.valueOf(count));
+				// 获取账户当前余额
+				UserAccountDo accont = new UserAccountDo();
+				// 相加之后余额
+				accont.setAmount(sum);
+				accont.setUserId(presenterUser.getId());
+				accont.setAccountType(AccountType.wallet_money.toString());
+				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level3() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level4() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
 			}
-
-			break;
-		// 购买者等级为会员
-		case 1:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				userUpgrade(buyerUser.getId(), count);
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level2() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level3() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level4() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-				userUpgrade(buyerUser.getId(), count);
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为vip
-		case 2:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level2() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level3() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level4() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为城市合伙人
-		case 3:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level2() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level3() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level4() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为股东
-		case 4:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level2() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level3() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					Double sum = awardlist.get(0).getP1Level4() * count;
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-
-		// 无此等级
-		default:
-			break;
 		}
-
 		return false;
 
 	}
@@ -1318,1157 +472,54 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	 * @return
 	 */
 	public boolean awardthree(UserDo buyerUser, UserDo presenterUser, UserDo presenterUserTow, int count) {
+		// 接受参数
 		Map<String, Object> map = new HashMap<>();
-		List<Awardlist> awardlist = new ArrayList<Awardlist>();
-
-		// 单价/盒
-		Double price = 300.00;
-		// 购买者的等级分类
-		switch (buyerUser.getUserLevel()) {
-		// 购买者等级为普通用户
-		case 0:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				userUpgrade(buyerUser.getId(), count);
-
-				// 赠送给购买者旅游和商品没有写
-
-				// 区域奖励没有写，直接调用方法吧┭┮﹏┭┮
-
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
+		// 接受奖励记录
+		Map<String,Object> mapaward = new HashMap<>();
+		// 接受奖励金额
+		BigDecimal sum = new BigDecimal(0);
+		// 购买者等级
+		map.put("buyerLecel", (int) buyerUser.getUserLevel());
+		// 购买盒数
+		map.put("buyQty", 50);
+		// 推荐人等级
+		map.put("p1Level" + presenterUser.getUserLevel(), presenterUser.getUserLevel());
+		// 得到奖励记录
+		mapaward = awardlistService.conditionQueryAward(map);
+		// 判断获取的记录是唯一的，防止空指针
+		if (mapaward != null && mapaward.size() == 1&& presenterUser.getUserLevel()!=0) {
+			// 判断推荐人是否是会员
+			if (presenterUser.getUserLevel() == 1) {
 				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
+				if (awardlistService.getById(buyerUser.getRefereeid()) == null) {
 
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
+					//获取奖励的金额
+					if(count>50){
+						sum=sum.add(moreFiveaward(buyerUser,presenterUser,count));
 					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
+					sum = sum.add((BigDecimal) mapaward.get("award"));
 					// 获取账户当前余额
 					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
 					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
+					accont.setAmount(sum);
+					accont.setUserId(presenterUser.getId());
+					accont.setAccountType(AccountType.wallet_money.toString());
+					accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 
 				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断推荐人是否有资格升级股东
-				upgradePartner(presenterUser.getId());
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
+			} else {
+				//获取奖励的金额
+				sum = (BigDecimal) mapaward.get("award");
+				// 获取账户当前余额
+				UserAccountDo accont = new UserAccountDo();
+				// 相加之后余额
+				accont.setAmount(sum);
+				accont.setUserId(presenterUser.getId());
+				accont.setAccountType(AccountType.wallet_money.toString());
+				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 			}
-
-			break;
-		// 购买者等级为会员
-		case 1:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				userUpgrade(buyerUser.getId(), count);
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * //流水记录 UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * //流水记录 UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断推荐人是否有资格升级股东
-				upgradePartner(presenterUser.getId());
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					/*
-					 * //第二代奖励 Double sumtow = awardlist.get(0).getP2Level2();
-					 * // 获取账户当前余额 UserAccountDo acconttow = new
-					 * UserAccountDo(); acconttow =
-					 * userAccoutDao.selectByPrimaryKey(presenterUserTow.getId()
-					 * ); // 相加之后余额
-					 * acconttow.setAmount(acconttow.getAmount().add(BigDecimal.
-					 * valueOf(sumtow)));
-					 * acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					 * userAccoutDao.updateByPrimaryKeySelective(acconttow);
-					 * 
-					 * 
-					 * //流水记录 UserAccountDetailDo detailtwo = new
-					 * UserAccountDetailDo();
-					 * detailtwo.setUserId(presenterUserTow.getId());
-					 * detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					 * detailtwo.setBalanceAmount(acconttow.getAmount().add(
-					 * BigDecimal.valueOf(sumtow)));
-					 * detailtwo.setMoreOrLess("增加");
-					 * detailtwo.setIncomeType(311); detailtwo.setCreateTime(new
-					 * Date());
-					 * detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.
-					 * getRemark());
-					 * detailtwo.setSeqId(UUID.randomUUID().toString());
-					 * userAccountDetailDao.addUserAccountDetail(detailtwo);
-					 */
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为vip
-		case 2:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				userUpgrade(buyerUser.getId(), count);
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断推荐人是否有资格升级股东
-				upgradePartner(presenterUser.getId());
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为城市合伙人
-		case 3:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				upgradePartner(presenterUser.getId());
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					/// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为股东
-		case 4:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 50));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-
-		// 无此等级
-		default:
-			break;
 		}
-
 		return false;
-
 	}
 
 	/**
@@ -2486,1113 +537,155 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 	 * @return
 	 */
 	public boolean awardtwo(UserDo buyerUser, UserDo presenterUser, UserDo presenterUserTow, int count) {
+		// 接受参数
 		Map<String, Object> map = new HashMap<>();
-		List<Awardlist> awardlist = new ArrayList<Awardlist>();
-
-		// 单价/盒
-		Double price = 300.00;
-		// 购买者的等级分类
-		switch (buyerUser.getUserLevel()) {
-		// 购买者等级为普通用户
-		case 0:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-
-				// 用户升级
-				userUpgrade(buyerUser.getId(), count);
-
-				// 赠送给购买者旅游和商品没有写
-
-				// 区域奖励没有写，直接调用方法吧┭┮﹏┭┮
-
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
+		// 接受奖励记录
+		Map<String, Object> mapaward = new HashMap<>();
+		// 接受奖励金额
+		BigDecimal sum = new BigDecimal(0);
+		// 购买者等级
+		map.put("buyerLecel", (int) buyerUser.getUserLevel());
+		// 购买盒数
+		map.put("buyQty", 5);
+		// 推荐人等级
+		map.put("p1Level" + presenterUser.getUserLevel(), presenterUser.getUserLevel());
+		// 得到奖励记录
+		mapaward = awardlistService.conditionQueryAward(map);
+		// 判断获取的记录是唯一的，防止空指针
+		if (mapaward != null && mapaward.size() == 1&& presenterUser.getUserLevel()!=0) {
+			// 判断推荐人是否是会员
+			if (presenterUser.getUserLevel() == 1) {
 				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
+				if (awardlistService.getById(buyerUser.getRefereeid()) == null) {
 
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
+					//获取奖励的金额
+					if(count>50){
+						sum=sum.add(moreFiveaward(buyerUser,presenterUser,count));
 					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
+					sum = sum.add((BigDecimal) mapaward.get("award"));
 					// 获取账户当前余额
 					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
 					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
+					accont.setAmount(sum);
+					accont.setUserId(presenterUser.getId());
+					accont.setAccountType(AccountType.wallet_money.toString());
+					accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 
 				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
-
+			} else {
+				//获取奖励的金额
+				sum = (BigDecimal) mapaward.get("award");
+				// 获取账户当前余额
+				UserAccountDo accont = new UserAccountDo();
+				// 相加之后余额
+				//计算5盒以上50以下的中的奖励
+				if(count>5&&count<50){
+					sum=sum.add(moreFiveaward(buyerUser,presenterUser,count));
 				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
-
+				accont.setAmount(sum);
+				accont.setUserId(presenterUser.getId());
+				accont.setAccountType(AccountType.wallet_money.toString());
+				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
+				
+				if(buyerUser.getUserLevel()==0||buyerUser.getUserLevel()==1){
+					//第二代奖励
+					awardtnt(buyerUser,presenterUser,presenterUserTow,count);
+					
 				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
 			}
-
-			break;
-		// 购买者等级为会员
-		case 1:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					// 流水记录
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					// 流水记录
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-					// 第二代奖励
-					Double sumtow = awardlist.get(0).getP2Level2();
-					// 获取账户当前余额
-					UserAccountDo acconttow = new UserAccountDo();
-					acconttow = userAccoutDao.selectByPrimaryKey(presenterUserTow.getId());
-					// 相加之后余额
-					acconttow.setAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					acconttow.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(acconttow);
-
-					// 流水记录
-					UserAccountDetailDo detailtwo = new UserAccountDetailDo();
-					detailtwo.setUserId(presenterUserTow.getId());
-					detailtwo.setAmount(BigDecimal.valueOf(sumtow));
-					detailtwo.setBalanceAmount(acconttow.getAmount().add(BigDecimal.valueOf(sumtow)));
-					detailtwo.setMoreOrLess("增加");
-					detailtwo.setIncomeType(311);
-					detailtwo.setCreateTime(new Date());
-					detailtwo.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detailtwo.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detailtwo);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为vip
-		case 2:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				userUpgrade(buyerUser.getId(), count);
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为城市合伙人
-		case 3:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				// 判断该会员是否是首次分享
-				if (awardlistDao.selectByPrimaryKey(buyerUser.getRefereeid()) == null) {
-					// 购买者等级
-					map.put("buyerLecel", (int) buyerUser.getUserLevel());
-					// 购买盒数
-					map.put("buyQty", 1);
-					awardlist = awardlistDao.queryListPage(map);
-					if (awardlist.size() == 1) {
-						// 生成账户记录
-						// 获取总奖金
-						Double sum = awardlist.get(0).getP1Level1();
-						// 获取账户当前余额
-						UserAccountDo accont = new UserAccountDo();
-						accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-						// 相加之后余额
-						accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						accont.setIncomeAmount(BigDecimal.valueOf(sum));
-						userAccoutDao.updateByPrimaryKeySelective(accont);
-
-						// 生成流水记录
-						UserAccountDetailDo detail = new UserAccountDetailDo();
-						detail.setUserId(presenterUser.getId());
-						detail.setAmount(BigDecimal.valueOf(sum));
-						detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-						detail.setMoreOrLess("增加");
-						detail.setIncomeType(311);
-						detail.setCreateTime(new Date());
-						detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-						detail.setSeqId(UUID.randomUUID().toString());
-						userAccountDetailDao.addUserAccountDetail(detail);
-
-					}
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					/// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-		// 购买者等级为股东
-		case 4:
-
-			// 推荐者等级分类
-			switch (presenterUser.getUserLevel()) {
-			case 0:
-				// 推荐人为普通用户，无任何优惠
-				break;
-			case 1:
-				// 推荐人为会员，有一次分享机会，获得300元奖金
-				break;
-			case 2:
-				// 推荐人为vip，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level2();
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 3:
-				// 推荐人为城市合伙人，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level3();
-
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-			case 4:
-				// 推荐人为股东，每分享一盒就奖励300元
-				// 购买者等级
-				map.put("buyerLecel", (int) buyerUser.getUserLevel());
-				// 购买盒数
-				map.put("buyQty", 1);
-				awardlist = awardlistDao.queryListPage(map);
-				if (awardlist.size() == 1) {
-					// 获取总奖金
-					Double sum = 0.00;
-					// 判断用户是否购买5和以上
-					if (count > 5) {
-						sum = (price * (count - 5));
-					}
-
-					sum += awardlist.get(0).getP1Level4();
-
-					// 获取账户当前余额
-					UserAccountDo accont = new UserAccountDo();
-					accont = userAccoutDao.selectByPrimaryKey(presenterUser.getId());
-					// 相加之后余额
-					accont.setAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					accont.setIncomeAmount(BigDecimal.valueOf(sum));
-					userAccoutDao.updateByPrimaryKeySelective(accont);
-
-					// 生成流水记录
-					UserAccountDetailDo detail = new UserAccountDetailDo();
-					detail.setUserId(presenterUser.getId());
-					detail.setAmount(BigDecimal.valueOf(sum));
-					detail.setBalanceAmount(accont.getAmount().add(BigDecimal.valueOf(sum)));
-					detail.setMoreOrLess("增加");
-					detail.setIncomeType(311);
-					detail.setCreateTime(new Date());
-					detail.setRemark(IncomeType.TYPE_AWARD_REFEREE.getRemark());
-					detail.setSeqId(UUID.randomUUID().toString());
-					userAccountDetailDao.addUserAccountDetail(detail);
-
-				}
-				// 区域奖励，写个发放直接调用吧┭┮﹏┭┮
-
-				// 用户升级，直接调用发放吧┭┮﹏┭┮
-
-				// 判断购买者是否已奖励过旅游
-
-				// 赠送旅游和商品没有写
-
-				break;
-
-			default:
-				// 获取推荐人无此等级
-				break;
-			}
-
-			break;
-
-		// 无此等级
-		default:
-			break;
 		}
-
 		return false;
-
 	}
+	
+	//第二代奖励
+	public boolean awardtnt(UserDo buyerUser, UserDo presenterUser,UserDo presenterUserTow, int count){
+		// 接受参数
+				Map<String, Object> map = new HashMap<>();
+				// 接受奖励记录
+				Map<String, Object> mapaward = new HashMap<>();
+				// 接受奖励金额
+				BigDecimal sum = new BigDecimal(0);
+				// 购买者等级
+				map.put("buyerLecel", (int) buyerUser.getUserLevel());
+				// 购买盒数
+				map.put("buyQty", 5);
+				// 推荐人等级
+				map.put("p2Level" + presenterUserTow.getUserLevel(), presenterUserTow.getUserLevel());
+				// 得到奖励记录
+				mapaward = awardlistService.conditionQueryAward(map);
+				// 判断获取的记录是唯一的，防止空指针
+				if (mapaward != null && mapaward.size() == 1&& presenterUser.getUserLevel()!=0) {
+					
+					//获取奖励的金额
+					sum = (BigDecimal) mapaward.get("award");
+					// 获取账户当前余额
+					UserAccountDo accont = new UserAccountDo();
+					// 增加余额
+					accont.setAmount(sum);
+					accont.setUserId(presenterUserTow.getId());
+					accont.setAccountType(AccountType.wallet_money.toString());
+					accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
+				}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * 判断5盒以上数量的方法
+	 * 
+	 * @param buyerUser
+	 *            购买者的信息
+	 * @param presenterUser
+	 *            获取推荐人的信息
+	 * @param presenterUserTow
+	 *            获取第二代推荐人的信息
+	 * @param count
+	 *            商品数量
+	 * @return
+	 */
+	public BigDecimal moreFiveaward(UserDo buyerUser, UserDo presenterUser, int count){
 
+		// 接受参数
+		Map<String, Object> map = new HashMap<>();
+		// 接受奖励记录
+		Map<String, Object> mapaward = new HashMap<>();
+		// 接受奖励金额
+		BigDecimal sum = new BigDecimal(0);
+		// 购买者等级
+		map.put("buyerLecel", (int) buyerUser.getUserLevel());
+		// 购买盒数
+		map.put("buyQty", 1);
+		// 推荐人等级
+		map.put("p1Level" + presenterUser.getUserLevel(), presenterUser.getUserLevel());
+		// 得到奖励记录
+		mapaward = awardlistService.conditionQueryAward(map);
+		// 判断获取的记录是唯一的，防止空指针
+		if (mapaward != null && mapaward.size() == 1&& presenterUser.getUserLevel()!=0) {
+			
+				//获取奖励的金额
+			   if(count>5&&count<50){
+				   count=count-5;
+			   }else if(count>50){
+				   count=count-50;
+			   }
+				sum = ((BigDecimal) mapaward.get("award")).multiply(BigDecimal.valueOf(count));
+				
+		}
+	
+		return sum;
+	}
+	
+	public boolean travel(UserDo buyerUser){
+		
+		//只有普通用户和会员用户可以触发旅游
+		if(buyerUser.getUserLevel()==0||buyerUser.getUserLevel()==0){
+			
+		}
+		
+		
+		return false;
+	}
+	
+	
+	
 }

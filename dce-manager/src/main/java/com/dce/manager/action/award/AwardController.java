@@ -32,7 +32,7 @@ public class AwardController extends BaseAction {
 	
 	@RequestMapping(value = "/aaa", method = { RequestMethod.GET, RequestMethod.POST })
     public boolean  aaa(){
-		awardConfigService.updateAward(39, 1, "耒阳市");
+		awardConfigService.grantAward(39, 1, 1);
 		return false;
 	}
 	

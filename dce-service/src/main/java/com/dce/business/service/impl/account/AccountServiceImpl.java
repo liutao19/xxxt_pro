@@ -525,4 +525,14 @@ public class AccountServiceImpl implements IAccountService {
 
 		return list.get(0);
 	}
+
+	//余额修改，提现申请
+	@Override
+	public int updateMoney(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		if(param==null){
+			return 0;
+		}
+		return userAccountDao.updateMoney(param);
+	}
 }

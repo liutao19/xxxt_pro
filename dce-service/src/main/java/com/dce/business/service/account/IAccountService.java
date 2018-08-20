@@ -185,4 +185,10 @@ public interface IAccountService {
    	 */
     public int addUserAccountDetail(Integer userId , BigDecimal totalprice, String moreOrLess, Integer incomeType);
    	
+    
+    /**
+     * 修改用户余额
+     * 提现申请
+     */
+    public int updateMoney(Map<String, Object> param);
 }

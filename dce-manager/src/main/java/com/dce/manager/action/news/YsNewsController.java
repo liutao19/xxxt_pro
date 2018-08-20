@@ -1,5 +1,7 @@
 package com.dce.manager.action.news;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
@@ -127,11 +131,38 @@ public class YsNewsController extends BaseAction {
 	 */
 	@RequestMapping("/saveYsNews")
 	@ResponseBody
-	public void saveYsNews(NewsDo ysnewsDo, HttpServletRequest request, HttpServletResponse response) {
-		logger.info("----saveYsNews------");
+	public void saveYsNews(NewsDo ysnewsDo, @RequestParam(value="file",required=false)MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+		
+		logger.info("----saveYsNews---------"+file);
+		
+		if(file!=null){
+		if(!file.isEmpty()){
+			try {
+			// 文件保存路径
+			String filePath = request.getSession().getServletContext().getRealPath("/") + "images/"
+					+ file.getOriginalFilename();
+			
+			System.err.println("文件地址----》》"+filePath);
+			
+			System.out.println(filePath);
+			// 转存文件
+				file.transferTo(new File(filePath));
+				
+				ysnewsDo.setImage(filePath);
+				
+				
+			} catch (IllegalStateException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		}
 		try {
 			Integer id = ysnewsDo.getId();
+			String img=ysnewsDo.getImage();
 
+			System.err.println("id---->>"+id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
 				i = ysNewsService.updateYsNewsById(ysnewsDo);

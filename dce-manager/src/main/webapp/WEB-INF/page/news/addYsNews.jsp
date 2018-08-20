@@ -12,7 +12,7 @@
 <body>
 
 <!-- 内容 -->
-<form id="editYsNewsForm" method="post" action="<c:url value='ysnews/saveYsNews.html'/>"> 
+<form id="editYsNewsForm" method="post" enctype="multipart/form-data" action="<c:url value='ysnews/saveYsNews.html'/>"> 
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
@@ -30,7 +30,7 @@
 							<label for="name">图片</label>
 						</td>	
 						<td>
-								<input type="text" id="image" name="image" value="${ysnews.image}"/>												
+								<input type="file" id="image" name="image"/>												
 						</td>						   
 					</tr>
 					<tr>	
@@ -38,7 +38,7 @@
 							<label for="name">内容</label>
 						</td>	
 						<td>
-								<input type="text" id="content" name="content" value="${ysnews.content}"/>												
+						<textarea rows="5" cols="20"  id="content" name="content">${ysnews.content}</textarea>
 						</td>						   
 					</tr>
 					<tr>	
@@ -59,10 +59,10 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">置顶新闻</label>
+							<label for="name">备注</label>
 						</td>	
 						<td>
-								<input type="text" id="remark" name="remark" value="${ysnews.remark}"/>												
+						<textarea rows="5" cols="20" id="remark" name="remark" >${ysnews.remark}</textarea>
 						</td>						   
 					</tr>
 					<tr>	
@@ -128,6 +128,7 @@
 	<script type="text/javascript">
 		
     function ysnews_submit(){
+    	alert( $("#editYsNewsForm").serialize());
     	$.ajax({ 
     			url: "<c:url value='/ysnews/saveYsNews.html'/>", 
     			data: $("#editYsNewsForm").serialize(),

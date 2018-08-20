@@ -12,7 +12,7 @@
 <body>
 
 <!-- 内容 -->
-<form id="editGoodsForm" method="post" action="<c:url value='goods/saveGoods.html'/>"> 
+<form id="editGoodsForm" method="post"  enctype="multipart/form-data" action="<c:url value='goods/saveGoods.html'/>"> 
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
@@ -23,7 +23,7 @@
 							<label for="name">商品名称：</label>
 						</td>	
 						<td>
-								<input type="text" id="title" name="title" value="${goods.title}"/>												
+								<input type="text" name="title" id="title" value="${goods.title}"/>												
 						</td>						   
 					</tr>
 					<tr>	
@@ -31,11 +31,20 @@
 							<label for="name">商品图片地址：</label>
 						</td>	
 						<td>
-								<input type="text" id="goodsImg" name="goodsImg" value="${goods.goodsImg}"/>												
+								<input type="file" id="goodsImg" name="goodsImg"/>												
 						</td>						   
 					</tr>
 				
 					<tr>	
+						<td align="right">
+							<label for="name">商品单位：</label>
+						</td>	
+						<td>
+								<input type="text" id="goodsUnit" name="goodsUnit" value="${goods.goodsUnit}"/>												
+						</td>						   
+					</tr>
+					
+						<tr>	
 						<td align="right">
 							<label for="name">商品价格：</label>
 						</td>	
@@ -43,7 +52,6 @@
 								<input type="text" id="shopPrice" name="shopPrice" value="${goods.shopPrice}"/>												
 						</td>						   
 					</tr>
-					
 					<tr>	
 						<td align="right">
 							<label for="name">商品内容：</label>

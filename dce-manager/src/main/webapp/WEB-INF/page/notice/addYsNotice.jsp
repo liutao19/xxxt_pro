@@ -12,14 +12,14 @@
 <body>
 
 <!-- 内容 -->
-<form id="editYsNoticeForm" method="post" action="<c:url value='ysnotice/saveYsNotice.html'/>"> 
+<form id="editYsNoticeForm" method="post"  enctype="multipart/form-data"  action="<c:url value='ysnotice/saveYsNotice.html'/>"> 
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
 					<input type="hidden" id="id" name="id" value="${ysnotice.id}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">title</label>
+							<label for="name">标题</label>
 						</td>	
 						<td>
 								<input type="text" id="title" name="title" value="${ysnotice.title}"/>												
@@ -27,31 +27,23 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">image</label>
+							<label for="name">图片地址</label>
 						</td>	
 						<td>
-								<input type="text" id="image" name="image" value="${ysnotice.image}"/>												
+								<input type="file" id="image" value="${ysnotice.image}"/>												
 						</td>						   
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">content</label>
+							<label for="name">内容</label>
 						</td>	
 						<td>
- 								<textarea rows="3" cols="20" form="editYsNoticeForms">${ysnotice.content}</textarea>												
+ 								<textarea rows="3" cols="20"  id="content" form="editYsNoticeForms">${ysnotice.content}</textarea>												
 						</td>						   
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">author</label>
-						</td>	
-						<td>
-								<input type="text" id="author" name="author" value="${ysnotice.author}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">topNotice</label>
+							<label for="name">是否置顶</label>
 						</td>	
 						<td>
 								<input type="text" id="topNotice" name="topNotice" value="${ysnotice.topNotice}"/>												
@@ -59,63 +51,12 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">remark</label>
+							<label for="name">备注</label>
 						</td>	
 						<td>
 								<input type="text" id="remark" name="remark" value="${ysnotice.remark}"/>												
 						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">status</label>
-						</td>	
-						<td>
-								<input type="text" id="status" name="status" value="${ysnotice.status}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">createDate</label>
-						</td>	
-						<td>
-								<input type="text" 
-								id="createDate" 
-								name="createDate" 
-								value="<fmt:formatDate value="${ysnotice.createDate}" pattern="yyyy-MM-dd"/>"
-								class="easyui-datebox" size="14" data-options="editable : true"  
-								/>
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">createName</label>
-						</td>	
-						<td>
-								<input type="text" id="createName" name="createName" value="${ysnotice.createName}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">updateDate</label>
-						</td>	
-						<td>
-								<input type="text" 
-								id="updateDate" 
-								name="updateDate" 
-								value="<fmt:formatDate value="${ysnotice.updateDate}" pattern="yyyy-MM-dd"/>"
-								class="easyui-datebox" size="14" data-options="editable : true"  
-								/>
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">updateName</label>
-						</td>	
-						<td>
-								<input type="text" id="updateName" name="updateName" value="${ysnotice.updateName}"/>												
-						</td>						   
-					</tr>
-		
+					</tr>		
 			</table>	   
 		</div>	
 	</form>

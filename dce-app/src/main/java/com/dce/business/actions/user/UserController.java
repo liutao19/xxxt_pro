@@ -427,7 +427,6 @@ public class UserController extends BaseController {
 	 * 
 	 * @return
 	 */
-
 	@RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
 	public Result<?> getUser() {
 		Integer userId = getUserId();
@@ -445,17 +444,4 @@ public class UserController extends BaseController {
 		map.put("banktype", userDo.getBanktype());
 		return Result.successResult("查询成功", map);
 	}
-
-	/*
-	 * @RequestMapping(value = "/updLogPass", method = RequestMethod.POST)
-	 * public Result<?> updLogPass() { try { Integer userId = getUserId();
-	 * String password = getString("password"); Assert.hasText(password,
-	 * "支付密码不能为空"); logger.info("修改用户登录密码，userId:" + userId); // 用户信息 UserDo
-	 * userDo = new UserDo(); userDo.setId(userId); // 登录密码加密 if
-	 * (StringUtils.isNotBlank(password)) { password =
-	 * DataEncrypt.encrypt(password); // userDo.setTwoPassword(password); }
-	 * return userService.update(userDo); } catch (Exception e) { return
-	 * Result.failureResult("用户密码修改失败"); } }
-	 * 
-	 */
 }

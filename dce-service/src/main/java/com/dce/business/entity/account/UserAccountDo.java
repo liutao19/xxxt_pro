@@ -33,8 +33,25 @@ public class UserAccountDo {
     private String seqId;
     
     private String relevantUser; //发生对象用户
+    
+    public UserAccountDo(){
+    	
+    }
 
-    public Integer getId() {
+    /**
+     * 常用参数的构造函数
+     * @param amount  金额
+     * @param userId  用户id
+     * @param accountType 账号类别
+     */
+    public UserAccountDo(BigDecimal amount, int userId,
+			String accountType) {
+		this.amount = amount;
+		this.userId = userId;
+		this.accountType = accountType;
+	}
+
+	public Integer getId() {
         return id;
     }
 

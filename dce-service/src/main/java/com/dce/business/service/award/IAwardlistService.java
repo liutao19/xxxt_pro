@@ -65,5 +65,14 @@ public interface IAwardlistService{
 	 * 
 	 */
 	Map<String,Object> conditionQueryAward(Map map);
+
+
+	/**
+	 * 根据购买者等级和购买数量查询奖励办法对应记录
+	 * @param userLevel
+	 * @param buyQty
+	 * @return
+	 */
+	public Awardlist getAwardConfigByQtyAndBuyerLevel(Byte userLevel, int buyQty);
 	
 }

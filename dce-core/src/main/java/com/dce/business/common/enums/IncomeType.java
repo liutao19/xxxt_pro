@@ -51,13 +51,18 @@ public enum IncomeType {
      */
     TYPE_AWARD_REFEREE(311, "推荐奖励"),
     /**
-     * 领导奖励
+     * 区域奖励
      */
     TYPE_AWARD_LEADER(321, "区域奖励"),
     /**
+     * 领导奖励
+     */
+    TYPE_AWARD_BUYER(331, "会员奖励"),
+    
+    /**
      * 量碰奖励
      */
-    TYPE_AWARD_TOUCH(331, "量碰奖励"),
+    TYPE_AWARD_TOUCH(3331, "量碰奖励"),
     /**
      * 互助奖励
      */

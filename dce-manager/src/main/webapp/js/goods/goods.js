@@ -187,6 +187,8 @@ function save_Goods(){
     // 获取框中的数据
    // var title = $("#editGoodsForm input[name='title']").val();
     var title = $("#editGoodsForm #title").val();
+    var goodsId = document.getElementById("goodsId").value;
+    var goodsUnit = document.getElementById("goodsUnit").value;
     var shopPrice =document.getElementById("shopPrice").value;
     var goodsDesc =document.getElementById("goodsDesc").value;
     var status =document.getElementById("status").value;
@@ -195,7 +197,9 @@ function save_Goods(){
     // 将数据添加至表单数据对象中
     obj.append("file", file);
     obj.append("title", title);
+    obj.append("goodsId", goodsId);
     obj.append("shopPrice", shopPrice);
+    obj.append("goodsUnit", goodsUnit);
     obj.append("goodsDesc", goodsDesc);
     obj.append("status", status);
     

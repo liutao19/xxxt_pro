@@ -1,5 +1,6 @@
 package com.dce.manager.action.notice;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
@@ -149,10 +152,30 @@ public class YsNoticeController extends BaseAction{
      */
     @RequestMapping("/saveYsNotice")
     @ResponseBody
-    public void saveYsNotice(NoticeDo noticeDo, 
+    public void saveYsNotice(NoticeDo noticeDo,  @RequestParam(value="file",required=false)MultipartFile file,
     							  HttpServletRequest request, 
     							  HttpServletResponse response) {
         logger.info("----saveYsNotice------");
+        
+        if(file!=null){
+        if (!file.isEmpty()) {
+			try {
+				// 文件保存路径
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "images/"
+						+ file.getOriginalFilename();
+				System.out.println(filePath);
+				// 转存文件
+				file.transferTo(new File(filePath));
+				
+				noticeDo.setImage(filePath);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+        }
+        
         try{
         	Integer id = noticeDo.getId();
             int i = 0;

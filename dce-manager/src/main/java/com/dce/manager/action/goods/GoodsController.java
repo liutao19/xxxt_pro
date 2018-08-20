@@ -157,7 +157,9 @@ public class GoodsController extends BaseAction {
 	public void saveGoods(CTGoodsDo CTGoodsDo, @RequestParam(value="file",required=false)MultipartFile file, HttpServletRequest request,
 			HttpServletResponse response) {
 		logger.info("----saveGoods------");
-
+		
+		
+		if(file!=null){
 		if (!file.isEmpty()) {
 			try {
 				// 文件保存路径
@@ -167,12 +169,27 @@ public class GoodsController extends BaseAction {
 				// 转存文件
 				file.transferTo(new File(filePath));
 				
+				
+				/*//图片路径
+				String filePath = "E:\\xx\\img";
+				//获取原始图片的拓展名 
+				String originalFilename = file.getOriginalFilename();
+				 //新的文件名字 
+				 String newFileName = UUID.randomUUID()+originalFilename;
+				 //封装上传文件位置的全路径 
+				 File targetFile = new File(filePath,newFileName);
+				 //把本地文件上传到封装上传文件位置的全路径
+				 file.transferTo(targetFile);*/
+				
+				
+				//存数据库
 				CTGoodsDo.setGoodsImg(filePath);
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
+		}
 		}
 
 		try {
@@ -203,25 +220,5 @@ public class GoodsController extends BaseAction {
 		logger.info("----end saveGoods--------");
 	}
 
-	/*
-	 * @RequestMapping("/upload") public void fileUpload(MultipartFile
-	 * file,CTGoodsDo CTGoodsDo, ModelMap map) throws IOException {
-	 * 
-	 *//**
-		 * 上传图片
-		 */
-	/*
-	 * //图片上传成功后，将图片的地址写到数据库 String filePath = "E:\\xx\\img";//保存图片的路径
-	 * //获取原始图片的拓展名 String originalFilename = file.getOriginalFilename();
-	 * //新的文件名字 String newFileName = UUID.randomUUID()+originalFilename;
-	 * //封装上传文件位置的全路径 File targetFile = new File(filePath,newFileName);
-	 * //把本地文件上传到封装上传文件位置的全路径 file.transferTo(targetFile);
-	 * CTGoodsDo.setGoodsImg(newFileName); System.out.println(newFileName);
-	 * 
-	 *//**
-		 * 保存商品
-		 *//*
-		 * goodsService.insertSelectiveService(CTGoodsDo); }
-		 */
 
 }

@@ -37,13 +37,21 @@
 				
 					<tr>	
 						<td align="right">
+							<label for="name">商品单位：</label>
+						</td>	
+						<td>
+								<input type="text" id="goodsUnit" name="goodsUnit" value="${goods.goodsUnit}"/>												
+						</td>						   
+					</tr>
+					
+						<tr>	
+						<td align="right">
 							<label for="name">商品价格：</label>
 						</td>	
 						<td>
 								<input type="text" id="shopPrice" name="shopPrice" value="${goods.shopPrice}"/>												
 						</td>						   
 					</tr>
-					
 					<tr>	
 						<td align="right">
 							<label for="name">商品内容：</label>

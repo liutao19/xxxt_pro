@@ -57,26 +57,33 @@ public interface AwardConfigService {
 
     /**
      * 用户升级方法
-     * 
+     * userid  购买者id
+     * count 数量
      */
     
-    int userUpgrade(Integer userid,int count);
+    Integer userUpgrade(Integer userid,int count);
     
     /**
      * 判断用户是否是否有资格升级为股东
+     * userid用户id（成为城市合伙人的推荐人id）
      */
     
     boolean  upgradePartner(Integer userid);
     
     /**
-     * 发放奖励方法
+     * 发放总奖励方法接口
+     * userid  购买者id
+     * count   数量
+     * addressid  地址id
      */
-    boolean   updateAward(int userid,int count,String area);
+    boolean  grantAward(int userid,int count,Integer addressid);
     /**
      * 商品区域奖方法
-     * area 区域
+     * addressid 地址id
+     * count 数量
+     * 
      */
-    boolean areaAward(String area,int count);
+    boolean areaAward(int addressid,int count);
     
     
     

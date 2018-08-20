@@ -37,7 +37,7 @@
 	</select>
 
 	<!-- 自定义多条件分页查询 -->
-	<select id="getAwardlistPage" parameterType="java.util.Map"
+	<select id="queryListPage" parameterType="java.util.Map"
 		resultMap="BaseResultMap">
 		SELECT *
 		FROM awardlist
@@ -84,8 +84,8 @@
 			<if test="buyQty != null">
 				AND buy_qty = #{buyQty}
 			</if>
-			<if test="page!=null and pageSize!=null">
-				limit #{page},#{pageSize}
+			<if test="currentPage!=null and pageSize!=null">
+				limit currentPage,pageSize
 			</if>
 		</trim>
 	</select>

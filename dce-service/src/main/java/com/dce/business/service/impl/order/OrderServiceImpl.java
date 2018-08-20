@@ -188,6 +188,7 @@ public class OrderServiceImpl implements IOrderService {
 		orderSendOut.setCreateTime(DateUtil.YYYY_MM_DD_MM_HH_SS.format(new Date()));
 		orderSendOut.setOperatorId(Long.valueOf(userId));
 		int i = orderSendOutService.addOrderSendout(orderSendOut);
+		
 		if(i <=0){
 			return 0;
 		}

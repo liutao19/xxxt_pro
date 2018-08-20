@@ -110,7 +110,7 @@ public class OrderController extends BaseAction {
 			if (StringUtils.isNotBlank(orderid)) {
 				// 先查询出订单
 				Order order = orderService.selectByPrimaryKey(Integer.valueOf(orderid));
-
+				logger.info("先查询出的订单------》》》》》"+order);
 				int i = 0;
 				if (order != null) {
 					// 更新订单状态发货

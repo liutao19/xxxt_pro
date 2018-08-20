@@ -3,7 +3,6 @@ package com.dce.business.actions.order;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,13 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
-import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
-import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
@@ -167,9 +164,6 @@ public class OrderController extends BaseController {
 
 		// 更新订单状态
 		orderService.updateByOrderCodeSelective(order);
-
-		// 记录到交易流水表中
-		accountService.addUserAccountDetail(order.getUserid(), order.getTotalprice(), "减少", 902);
 
 		return Result.successResult("测试", null);
 	}

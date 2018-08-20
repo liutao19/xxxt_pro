@@ -31,6 +31,7 @@ import com.dce.business.common.util.NumberUtil;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.message.NewsDo;
+import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ILoanDictService;
@@ -149,17 +150,15 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/alterpass", method = RequestMethod.POST)
-	public Result<?> alterUser() {
+	public Result<?> alterUser(UserDo userDo) {
 		try {
 			Integer userId = getUserId();
-			String userPassword = getString("userPassword");
-			logger.info("修改用户登录密码，userId:" + userId);
-			// 用户信息
-			UserDo userDo = new UserDo();
+			Assert.hasText(userDo.getUserPassword(),"修改的密码为空");
+			logger.info("修改用户登录密码的ID，userId:" + userId);
 			userDo.setId(userId);
 			// 登录密码加密
-			if (StringUtils.isNotBlank(userPassword)) {
-				userPassword = DataEncrypt.encrypt(userPassword);
+			if (StringUtils.isNotBlank(userDo.getUserPassword())) {
+				userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword()));
 			}
 			return userService.updateByPrimaryKeyLogPass(userDo);
 		} catch (Exception e) {
@@ -173,18 +172,16 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/updPayPass", method = RequestMethod.POST)
-	public Result<?> updPayPass() {
+	public Result<?> updPayPass(UserDo userDo) {
 		try {
 			Integer userId = getUserId();
-			String twoPassword = getString("twoPassword");
-			Assert.hasText(twoPassword, "支付密码不能为空");
+			Assert.hasText(userDo.getTwoPassword(), "支付密码不能为空");
 			logger.info("修改用户支付密码，userId:" + userId); // 更改支付密码的用户信息
 
-			UserDo userDo = new UserDo();
 			userDo.setId(userId);
 			// 支付密码加密
-			if (StringUtils.isNotBlank(twoPassword)) {
-				twoPassword = DataEncrypt.encrypt(twoPassword);
+			if (StringUtils.isNotBlank(userDo.getTwoPassword())) {
+				userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
 			}
 			return userService.updateByPrimaryKeyPayPass(userDo);
 		} catch (Exception e) {

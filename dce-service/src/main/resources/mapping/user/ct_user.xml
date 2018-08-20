@@ -1646,23 +1646,15 @@
 	<!-- 更改登录密码 -->
 	<update id="updateByPrimaryKeyLogPass" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
-		<set>
-			<if test="userPassword">
-				user_password = #{userPassword,jdbcType=VARCHAR}
-			</if>
-		</set>
-		where id = #{id,jdbcType=INTEGER}
+			set	user_password = #{userPassword}
+
+		where id = #{userId}
 	</update>
 
 	<!-- 更改支付密码 -->
 	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
-		update ct_user
-		<set>
-			<if test="twoPassword">
-				two_password = #{twoPassword,jdbcType=VARCHAR}
-			</if>
-		</set>
-		where id = #{id,jdbcType=INTEGER}
+		update ct_user set two_password = #{twoPassword}
+		where id = #{userId}
 	</update>
 
 	<!-- 自定义多条件查询 -->

@@ -30,6 +30,18 @@
 		from ct_withdrawals
 		where id = #{id,jdbcType=INTEGER}
 	</select>
+	<!-- 自定义查询 -->
+    <select id="select" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ct_withdrawals u
+        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+           <if test="withdrawalsId != null">  
+               u.id = #{withdrawalsId}
+           </if>
+           and u.withdraw_status!=1 and  process_status=2
+        </trim>
+    </select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from ct_withdrawals
 		where id = #{id,jdbcType=INTEGER}

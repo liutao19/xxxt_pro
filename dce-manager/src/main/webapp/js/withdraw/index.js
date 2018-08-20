@@ -62,7 +62,7 @@ $(function(){
 	 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +
 	 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 						}else if(row.process_status == "2"){
-	 							if(row.confirmed == "未到账"){
+	 							if(row.withdrawStatus == "未到账"){
 	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a> |'+
 		 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 							}

@@ -13,7 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @ContextConfiguration({ "classpath:config/applicationContext.xml","classpath:config/dispatcher-servlet.xml"})
 public class BaseTest extends AbstractTransactionalJUnit4SpringContextTests {
 	static {
-		System.setProperty("catalina.home", "E:/run_time/tomcat/apache-tomcat-7.0.62");
+		System.setProperty("catalina.home", "C:\java\apache-tomcat-8.0.39");
 	}
 
 	@Test

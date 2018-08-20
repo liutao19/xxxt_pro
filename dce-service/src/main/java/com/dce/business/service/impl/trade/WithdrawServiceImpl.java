@@ -108,7 +108,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
     private void check(Integer withdrawId) {
         Map<String, Object> params = new HashMap<>();
         params.put("withdrawalsId", withdrawId);
-        List<EthereumTransInfoDo> list = ethereumTransInfoDao.select(params);
+        List<WithdrawalsDo> list = withdrawDao.select(params);
         if (!CollectionUtils.isEmpty(list)) {
             throw new BusinessException("提现正在处理中，请勿重复操作");
         }

@@ -3,6 +3,7 @@ package com.dce.business.dao.trade;
 import java.util.List;
 import java.util.Map;
 
+import com.dce.business.entity.etherenum.EthereumTransInfoDo;
 import com.dce.business.entity.trade.WithdrawalsDo;
 
 public interface IWithdrawalsDao {
@@ -45,6 +46,8 @@ public interface IWithdrawalsDao {
 	 * @param withdrawId
 	 */
 	void auditWithdrawById4(WithdrawalsDo withdraw);
+	
+	List<WithdrawalsDo> select(Map<String, Object> params);
 	
 	int selectWithdrawCount(Map<String,Object> param);
 	

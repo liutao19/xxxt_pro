@@ -153,11 +153,11 @@ public class PayServiceImpl implements IPayService {
 		
 		
 
-		//账户校验
+		/*//账户校验
 		EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
 		if (ethereumAccountDo == null) {
 			return Result.failureResult("请先获取以太坊地址再提现");
-		}
+		}*/
 
 
 		//写提现表
@@ -180,7 +180,7 @@ public class PayServiceImpl implements IPayService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty) {
 
-		//判断系统设置是否可交易
+		/*//判断系统设置是否可交易
 		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 		if (ct == null || ct.getIs_tbstatus() == null || 0 == ct.getIs_tbstatus().intValue()) {
 			logger.info("提币状态设置关闭,当前不允许提币....");
@@ -191,17 +191,23 @@ public class PayServiceImpl implements IPayService {
 		EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
 		if (ethereumAccountDo == null) {
 			return Result.failureResult("请先获取以太坊地址再提现");
-		}
+		}*/
 
 		//判断开户是否已有24小时
-		if (ethereumAccountDo.getCreatetime() != null) {
+		/*if (ethereumAccountDo.getCreatetime() != null) {
 			Date date = DateUtil.getDate(ethereumAccountDo.getCreatetime(), 1);
 			if (date.after(new Date())) {
 				return Result.failureResult("获取以太坊地址24小时以后才可以提现");
 			}
+		}*/
+		//1、校验用户金额是否足够
+		UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);
+				
+		System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
+		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
+			return Result.failureResult("现金币账户余额不足");
 		}
-		
-		//判断平台中心账户余额是否足够
+		/*//判断平台中心账户余额是否足够
 		EthAccountPlatformDo platAccount = ethereumPlatformService.getPlatformAccount();
 		if(platAccount == null){
 			logger.info("提现未设置平台中心账户");
@@ -219,9 +225,10 @@ public class PayServiceImpl implements IPayService {
 		}
 		//4、调用以太坊接口，异步
 		EthereumAccountDo userAccount = ethereumService.getByUserId(userId);
-		Result<?> result = trans(userAccount, platAccount, ethQty , qty, 2, withdrawId);
+		*/
+		//Result<?> result = trans(userAccount, platAccount, ethQty , qty, 2, withdrawId);
 
-		return result;
+		return null;
 	}
 	
 	private Result<?> trans(EthereumAccountDo userAccount, EthAccountPlatformDo platAccount, BigDecimal amount, BigDecimal pointamount,

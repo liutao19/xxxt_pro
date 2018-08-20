@@ -30,13 +30,6 @@ public class AwardController extends BaseAction {
 	@Resource
 	private AwardLaterService awardLaterService;
 	
-	@RequestMapping(value = "/aaa", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean  aaa(){
-		awardConfigService.grantAward(39, 1, 1);
-		return false;
-	}
-	
-
 	@RequestMapping(value = "/selectAwardConfig", method = { RequestMethod.GET, RequestMethod.POST })
 	public List<Map<String, Object>> selectAwardConfig() {
 

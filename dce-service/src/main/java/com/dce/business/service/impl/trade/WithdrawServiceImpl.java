@@ -77,7 +77,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
         //同意支付
         if ("2".equals(auditResult)||"4".equals(auditResult)) {
             check(withdrawId); //重复性校验
-            result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount());
+            //result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount());
             if(result.isSuccess()){
             	result.setMsg("审核成功！");
             }

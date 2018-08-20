@@ -1,25 +1,40 @@
 package com.dce.business.actions.order;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeAppPayModel;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.common.pay.util.AlipayConfig;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
-import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
+import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
@@ -40,8 +55,6 @@ public class OrderController extends BaseController {
 	@Resource
 	private AccountRecordService accountRecordService;
 	@Resource
-	private ICTGoodsService ctGoodsService;
-	@Resource
 	private UserAdressService addressService;
 	@Resource
 	private IAccountService accountService;
@@ -49,6 +62,8 @@ public class OrderController extends BaseController {
 	private IBonusLogService bonusServiceLog;
 	@Resource
 	private IUserAccountDetailDao userAccountDetailDao;
+	@Resource
+	private ICTGoodsService ctGoodsService;
 
 	/**
 	 * 用户订单列表显示
@@ -88,55 +103,71 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
 	public Result<?> insertOrder(HttpServletRequest request) {
 
+		Integer userId = getUserId();
+
 		// 获取商品信息
 		String goods = request.getParameter("cart");
-		logger.info("用户选择的goods信息：" + goods);
 
-		// 将前台传过来的JSON数据解析为list集合
+		// 获取赠品信息
+		String premium = request.getParameter("premium");
+
+		// 获取地址id
+		String addressId = getString("addressId");
+
+		// 获取支付方式
+		String orderType = getString("orderType");
+		Order order = new Order();
+		order.setUserid(userId);
+		order.setAddress(addressId);
+		order.setOrdertype(Integer.valueOf(orderType));
+
+		logger.info("======用户选择的商品信息：" + goods + "=====获取的赠品信息：" + premium + "=====获取的地址id：" + addressId
+				+ "=====获取的支付方式：" + orderType);
+
+		// 将商品信息的JSON数据解析为list集合
 		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
 
-		// 保存订单和订单明显
-		Order order = saveOrder(chooseGoodsLst);
-		return Result.successResult("返回商品清单", order);
+		// 将赠品信息的JSON数据解析为list集合
+		List<OrderDetail> premiumList = convertGoodsFromJson(premium);
+
+		// 生成预付单，保存订单和订单明显
+		return orderService.saveOrder(premiumList, chooseGoodsLst, order);
 
 	}
 
+	
+
 	/**
-	 * 保存订单和订单明细
+	 * 支付宝支付成功后异步请求该接口
 	 * 
-	 * @param chooseGoodsLst
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
 	 */
-	private Order saveOrder(List<OrderDetail> chooseGoodsLst) {
-
-		// 获取用户id
-		Integer userId = this.getUserId();
-
-		// 产生订单编号
-		String orderCode = OrderCodeUtil.genOrderCode(userId);
-		logger.info("产生的订单编号------>>>" + orderCode);
-
-		Integer quantity = 0; // 商品总数量
-		BigDecimal totalprice = new BigDecimal(0); // 商品总价格
-		for (OrderDetail orderDetail : chooseGoodsLst) { // 循环遍历出商品信息，计算商品总价格和商品总数量
-			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
-			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
-			quantity += orderDetail.getQty();
-			totalprice = totalprice.multiply(BigDecimal.valueOf(orderDetail.getPrice()));
+	@RequestMapping(value = "/notify_url", method = RequestMethod.POST)
+	@ResponseBody
+	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		logger.info("==================支付宝异步返回支付结果开始");
+		// 1.从支付宝回调的request域中取值
+		// 获取支付宝返回的参数集合
+		Map<String, String[]> aliParams = request.getParameterMap();
+		// 用以存放转化后的参数集合
+		Map<String, String> conversionParams = new HashMap<String, String>();
+		for (Iterator<String> iter = aliParams.keySet().iterator(); iter.hasNext();) {
+			String key = iter.next();
+			String[] values = aliParams.get(key);
+			String valueStr = "";
+			for (int i = 0; i < values.length; i++) {
+				valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+			}
+			// 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+			// valueStr = new String(valueStr.getBytes("ISO-8859-1"), "uft-8");
+			conversionParams.put(key, valueStr);
 		}
-
-		// 添加订单
-		Order order = new Order();
-		order.setUserid(userId);
-		order.setOrdercode(orderCode); // 订单号
-		Date date = new Date();
-		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
-		order.setOrderstatus(0); // 未发货状态
-		order.setPaystatus(0); // 未支付状态
-		order.setQty(quantity); // 商品总数量
-		order.setTotalprice(totalprice); // 商品总价格
-		order.setOrderDetailList(chooseGoodsLst); // 订单明细
-
-		return orderService.buyOrder(order);
+		logger.info("==================返回参数集合：" + conversionParams);
+		String status = orderService.notify(conversionParams);
+		return status;
 	}
 
 	/**
@@ -164,6 +195,10 @@ public class OrderController extends BaseController {
 
 		// 更新订单状态
 		orderService.updateByOrderCodeSelective(order);
+
+		// 记录到交易流水表中
+		// accountService.addUserAccountDetail(order.getUserid(),
+		// order.getTotalprice(), "减少", 902);
 
 		return Result.successResult("测试", null);
 	}

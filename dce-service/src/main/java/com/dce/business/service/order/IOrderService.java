@@ -3,7 +3,9 @@ package com.dce.business.service.order;
 import java.util.List;
 import java.util.Map;
 
+import com.dce.business.common.result.Result;
 import com.dce.business.entity.order.Order;
+import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.page.PageDo;
 
 public interface IOrderService {
@@ -46,11 +48,22 @@ public interface IOrderService {
 	 * @return
 	 */
 	Order buyOrder(Order order);
+	
+	/**
+	 * 
+	 * @param chooseGoodsLst
+	 * @return
+	 */
+	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order);
 
 	// 根据主键id查询订单
 	Order selectByPrimaryKey(long orderId);
 
 	// 查询总业绩
 	Map<String, Object> selectSum(Map<String, Object> paraMap);
+	
+	public Result<String> getAlipayorderStr(Order order);
+	
+	public String notify(Map<String, String> conversionParams);
 
 }

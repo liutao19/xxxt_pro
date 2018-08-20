@@ -66,4 +66,11 @@ public interface IUserAccountDao {
 	 * @return
 	 */
 	public UserAccountDo selectAmountByAccountType(Map<String, Object> parameterMap);
+	
+	
+	/**
+     * 修改用户余额
+     * 提现申请
+     */
+    public int updateMoney(Map<String, Object> param);
 }

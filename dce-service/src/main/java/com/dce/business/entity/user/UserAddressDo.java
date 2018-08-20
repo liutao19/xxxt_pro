@@ -46,7 +46,17 @@ public class UserAddressDo {
 
     private String createtime;
 
-    public String getAddressDetails() {
+    private String updateTime;
+    
+    public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public String getAddressDetails() {
 		return addressDetails;
 	}
 

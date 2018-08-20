@@ -106,4 +106,16 @@ public class AwardlistServiceImpl implements IAwardlistService {
 		return awardlistDao.insertSelective(newAwardlistDo);
 	}
 
+	/**
+	 * 查询推荐人奖励金额
+	 */
+	@Override
+	public Map<String, Object> conditionQueryAward(Map map) {
+		if(map ==null){
+			logger.error("无条件判断");
+			return null;
+		}
+		return awardlistDao.conditionQueryAward(map);
+	}
+
 }

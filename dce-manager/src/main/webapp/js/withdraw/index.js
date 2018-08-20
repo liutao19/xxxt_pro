@@ -44,7 +44,16 @@ $(function(){
 	 				},
 	 				{field:"fee",title:"提现手续费",width:35,align:"center"},
 	 				{field:"withdrawStatus",title:"是否到账",width:30,align:"center"},
-	 				{field:"fack_receive",title:"到账以太坊金额",width:45,align:"center"},
+	 				{field:"type",title:"提现方式",width:45,align:"center",
+	 					formatter:function(value,row,index){
+	 						if(row.type == "1"){
+	 							return "支付宝";
+	 						}else if(row.type == "2"){
+	 							return "微信";
+	 						}
+	 					}
+	 				},
+	 				{field:"bank_no",title:"提现账号",width:45,align:"center"},
 	 				{field:"paymentDateStr",title:"到账日期",width:80,align:"center"},
 	 				
 	 				{field:"edit",title:"审核",width:80,align:"center",
@@ -53,7 +62,7 @@ $(function(){
 	 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +
 	 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 						}else if(row.process_status == "2"){
-	 							if(row.confirmed == "未到账"){
+	 							if(row.withdrawStatus == "未到账"){
 	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a> |'+
 		 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 							}

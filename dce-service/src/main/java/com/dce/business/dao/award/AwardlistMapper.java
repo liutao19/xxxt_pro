@@ -56,5 +56,12 @@ public interface AwardlistMapper {
      */
     List<Awardlist> queryListPage(Map map);
     
+    /**
+     * 查询奖励金额
+     * @param map
+     * @return
+     */
+    Map<String,Object> conditionQueryAward(Map map);
+    
     
 }

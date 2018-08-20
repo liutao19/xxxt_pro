@@ -135,16 +135,52 @@ function to_editysNews(id){
 	});
 }
 
+/**
+ * 保存更新
+ */
 function save_YsNews(){
-	var formdata = $("#editYsNewsForm").serialize();
+	/*var formdata = $("#editYsNewsForm").serialize();
 	console.info("formdata");
-	console.info(formdata);
+	console.info(formdata);*/
+	
+	var object =new FormData();
+	
+	//获取表单数据
+	var id=$("#id").val();
+	var title=$("#title").val();
+	var file=document.getElementById("image").files[0];
+	var content=$("#content").val();
+	var author=$("#author").val();
+	var topNews=$("#topNews").val();
+	var remark=$("#remark").val();
+	var status=$("#status").val();
+	var createDate=$("#createDate").val();
+	var createName=$("#createName").val();
+	var updateDate=$("#updateDate").val();
+	var updateName=$("#updateName").val();
+	 alert("file---->>"+file);
+	
+	 object.append("id",id);
+	object.append("title",title);
+	object.append("file",file);
+	object.append("content",content);
+	object.append("author",author);
+	object.append("topNews",topNews);
+	object.append("remark",remark);
+	object.append("status",status);
+	object.append("createDate",createDate);
+	object.append("createName",createName);
+	object.append("updateDate",updateDate);
+	object.append("updateName",updateName);
+
 	var  url =httpUrl+"/ysnews/saveYsNews.html?&rand=" + Math.random();
 	 $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 data:$("#editYsNewsForm").serialize(),
+		 data:object,
+		 processData: false,
+		 contentType : false,
 		 success: function(data){ 
 			 if(data.code ==="0"){
 				 $("#editYsNewsDiv").dialog("close");

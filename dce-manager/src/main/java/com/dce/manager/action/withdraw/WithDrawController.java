@@ -74,7 +74,7 @@ public class WithDrawController extends BaseAction {
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
 	}
-	  /**
+	 /**
      * 审批提现
      * @return
      */
@@ -82,6 +82,7 @@ public class WithDrawController extends BaseAction {
     public void auditWithdraw(HttpServletResponse response) {
         String withdrawId = getString("withdrawId");
         String auditResult = getString("auditResult");
+        
         Result<?> result = Result.successResult("操作成功", withdrawId);
         try {
         	result = withdrawService.auditWithdrawById(auditResult, Integer.valueOf(withdrawId));

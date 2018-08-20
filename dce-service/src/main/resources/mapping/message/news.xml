@@ -188,5 +188,8 @@
          order by create_date desc
 
 	</select>
+	<delete id="deleteById" parameterType="int" >
+		DELETE FROM t_ys_news WHERE id = #{id}
+	</delete>
 	
 </mapper>

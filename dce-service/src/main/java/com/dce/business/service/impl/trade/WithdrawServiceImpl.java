@@ -77,7 +77,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
         //同意支付
         if ("2".equals(auditResult)||"4".equals(auditResult)) {
             check(withdrawId); //重复性校验
-            result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount());
+            //result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount());
             if(result.isSuccess()){
             	result.setMsg("审核成功！");
             }
@@ -108,7 +108,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
     private void check(Integer withdrawId) {
         Map<String, Object> params = new HashMap<>();
         params.put("withdrawalsId", withdrawId);
-        List<EthereumTransInfoDo> list = ethereumTransInfoDao.select(params);
+        List<WithdrawalsDo> list = withdrawDao.select(params);
         if (!CollectionUtils.isEmpty(list)) {
             throw new BusinessException("提现正在处理中，请勿重复操作");
         }

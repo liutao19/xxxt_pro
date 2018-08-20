@@ -61,6 +61,6 @@ public interface IDistrictService{
 	/**
 	 * 删除
 	 */
-	public int deleteById(Integer id);
+	public int deleteById(Integer districtId);
 
 }

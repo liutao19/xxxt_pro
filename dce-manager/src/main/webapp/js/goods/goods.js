@@ -176,15 +176,40 @@ function deleteNotice(id){
  * 保存更新
  */
 function save_Goods(){
-	var formdata = $("#editGoodsForm").serialize();
-	console.info("formdata");
-	console.info(formdata);
+	//var formdata = $("#editGoodsForm").serialize();
+	//console.info("formdata");
+	//console.info(formdata);
 	var  url =httpUrl+"/goods/saveGoods.html?&rand=" + Math.random();
-	 $.ajax({   
+	
+	// 创建表单数据对象
+    var obj = new FormData();
+
+    // 获取框中的数据
+   // var title = $("#editGoodsForm input[name='title']").val();
+    var title = $("#editGoodsForm #title").val();
+    var goodsId = document.getElementById("goodsId").value;
+    var goodsUnit = document.getElementById("goodsUnit").value;
+    var shopPrice =document.getElementById("shopPrice").value;
+    var goodsDesc =document.getElementById("goodsDesc").value;
+    var status =document.getElementById("status").value;
+    var file = document.getElementById("goodsImg").files[0];
+
+    // 将数据添加至表单数据对象中
+    obj.append("file", file);
+    obj.append("title", title);
+    obj.append("goodsId", goodsId);
+    obj.append("shopPrice", shopPrice);
+    obj.append("goodsUnit", goodsUnit);
+    obj.append("goodsDesc", goodsDesc);
+    obj.append("status", status);
+    
+    $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 data:$("#editGoodsForm").serialize(),
+		 data:obj,
+		 processData: false,
+		 contentType : false,
 		 success: function(data){ 
 			 if(data.code ==="0"){
 				 $("#editGoodsDiv").dialog("close");

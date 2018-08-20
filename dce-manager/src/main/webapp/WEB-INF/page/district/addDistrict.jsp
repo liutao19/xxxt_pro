@@ -16,13 +16,13 @@
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
-					<input type="hidden" id="districtId" name="districtId" value="${district.districtid}"/>
+					<input type="hidden" id="districtId" name="districtId" value="${district.districtId}"/>
 					<tr>	
 						<td align="right">
 							<label for="name">distrctName</label>
 						</td>	
 						<td>
-								<input type="text" id="distrctName" name="distrctName" value="${district.distrctname}"/>												
+								<input type="text" id="distrctName" name="distrctName" value="${district.distrctName}"/>												
 						</td>						   
 					</tr>
 					<tr>	
@@ -38,7 +38,7 @@
 							<label for="name">districtStatus</label>
 						</td>	
 						<td>
-								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtstatus}"/>												
+								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtStatus}"/>												
 						</td>						   
 					</tr>
 		
@@ -53,6 +53,7 @@
 	<script type="text/javascript">
 		
     function district_submit(){
+    	alert($("#editDistrictForm").serialize());
     	$.ajax({ 
     			url: "<c:url value='/district/saveDistrict.html'/>", 
     			data: $("#editDistrictForm").serialize(),

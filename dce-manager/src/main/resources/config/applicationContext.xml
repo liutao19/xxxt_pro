@@ -47,6 +47,8 @@
         <property name="maxUploadSize" value="400000000"/>
     </bean>
     
+    
+    
     <bean id="exceptionHandler" class="com.dce.business.common.exception.DCEExceptionHandler"/> 
     <bean id="springBeanUtil" class="com.dce.business.common.util.SpringBeanUtil"></bean>
 

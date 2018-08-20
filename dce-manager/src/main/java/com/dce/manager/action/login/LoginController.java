@@ -10,12 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.common.result.Result;
 import com.dce.business.entity.secrety.UserInfos;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.secrety.IManagerUserService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.common.IResult;
@@ -113,6 +116,62 @@ public class LoginController extends BaseAction {
         }
     }
 
+	// /**
+	// * 新増会员
+	// *
+	// * @param response
+	// */
+	// @RequestMapping(value = "/addMember", method = { RequestMethod.GET,
+	// RequestMethod.POST })
+	// @ResponseBody
+	// public Result<?> addMember(HttpServletResponse response) {
+	//
+	// try {
+	// Integer userId = getUserId();// 用户ID insert
+	// String userName = getString("userName");// 用户名
+	// userDo.setUserName(userDo.getUserName().trim());// 判断注册用户名是否为空
+	// UserDo oldUser = getUser(userDo.getUserName());
+	// if (oldUser != null) {
+	// return Result.failureResult("用户已存在");
+	// }
+	// String password = getString("userPassword");// 密码
+	// String twoPassword = getString("twoPassword");// 支付密码
+	// String refereeUserMobile = getString("refereeUserMobile");// 推荐人
+	// String trueName = getString("trueName");// 姓名
+	// String mobile = getString("mobile");// 手机号码
+	// String idnumber = getString("idnumber");// 身份证号
+	// String banknumber = getString("banknumber");// 银行卡号
+	// String banktype = getString("banktype");// 银行卡开户行
+	// String sex = getString("sex");// 性别
+	// String userLevel = getString("userLevel");// 用户会员等级
+	// String isActivated = getString("isActivated");// 激活状态
+	// logger.info("用户信息，userId:" + userId);
+	//
+	// Assert.hasText(trueName, "姓名不能为空");
+	// Assert.hasText(mobile, "手机号码不能为空");
+	// Assert.hasText(idnumber, "身份证不能为空");
+	// Assert.hasText(sex, "性别不能为空");
+	// Assert.hasText(banktype, "开卡行不能为空");
+	// Assert.hasText(banknumber, "卡号不能为空");
+	//
+	// // 用户信息
+	// UserDo userDo = new UserDo();
+	// userDo.setId(userId);
+	// userDo.setTrueName(trueName);
+	// userDo.setIdnumber(idnumber);
+	// userDo.setSex(Integer.parseInt(sex));
+	// userDo.setBanknumber(banknumber);
+	// userDo.setBanktype(banktype);
+	//
+	// System.err.println("新増的用户信息-->>" + userDo);
+	//
+	// return userService.Authentication(userDo);
+	//
+	// } catch (Exception e) {
+	// return Result.failureResult("新增会员失败");
+	// }
+	// }
+    
     /**
      * 发送注册验证码
      *
@@ -120,47 +179,53 @@ public class LoginController extends BaseAction {
      * @param response
      * @return
      */
-    @RequestMapping(value = "/sendMobileCode")
-    public void sendMobileCode(HttpServletRequest request, HttpServletResponse response) {
-//        try {
-//            String username = request.getParameter("username");
-//
-//            logger.info("发送验证码, username:" + username);
-//
-//            if (StringUtils.isBlank(username)) {
-//                outPrint(response, toJSONString(ResultSupport.buildResult("2", "用户名不能为空")));
-//                return;
-//            }
-//
-//            //拿手机号
-//            ManagersDo user = managerUserService.getUser(username);
-//            if (user == null) {
-//                logger.info("用户不能为空");
-//                outPrint(response, toJSONString("用户不能为空"));
-//            }
-//            String mobile = user.getMobile();
-//            if (StringUtils.isBlank(mobile)) { //用户没有手机号
-//                outPrint(response, toJSONString(ResultSupport.buildErrorResult("该用户未绑定手机号码，请联系管理员")));
-//                return;
-//            }
-//            logger.info("手机号：" + mobile);
-//            // 调用短信发送接口
-//            String token = DigestUtils.md5Hex(mobile + Constants.SMS_PASS_KEY);
-//            String ip = GetReqParams.getIpAddr(request);
-//            String template = "sms_template_hehuayidai.ftl";
-//            IResult<Map<String, Object>> result = identifyCodeService.sendIdentifyCode(token, ip, mobile, SmsType.CL.name(), template);
-//            if (result.isSuccess()) {
-//                String endNum = mobile.substring(mobile.length() - 4, mobile.length());
-//                logger.info("手机尾号：" + endNum);
-//                result.setResultMessage("短信验证码已发到您尾号为(" + endNum + "）的手机，请注意查收！");
-//            } else if (!"-888".equals(result.getResultCode())) {
-//                logger.info(result.getResultMessage());
-//                result.setResultMessage("发送失败");
-//            }
-//            outPrint(response, toJSONString(result));
-//        } catch (Exception e) {
-//            logger.error("发送验证码错误", e);
-//            outPrint(response, toJSONString(ResultSupport.buildErrorResult("系统繁忙，请稍后再试")));
-//        }
-    }
+	@RequestMapping(value = "/sendMobileCode")
+	public void sendMobileCode(HttpServletRequest request, HttpServletResponse response) {
+		// try {
+		// String username = request.getParameter("username");
+		//
+		// logger.info("发送验证码, username:" + username);
+		//
+		// if (StringUtils.isBlank(username)) {
+		// outPrint(response, toJSONString(ResultSupport.buildResult("2",
+		// "用户名不能为空")));
+		// return;
+		// }
+		//
+		// //拿手机号
+		// ManagersDo user = managerUserService.getUser(username);
+		// if (user == null) {
+		// logger.info("用户不能为空");
+		// outPrint(response, toJSONString("用户不能为空"));
+		// }
+		// String mobile = user.getMobile();
+		// if (StringUtils.isBlank(mobile)) { //用户没有手机号
+		// outPrint(response,
+		// toJSONString(ResultSupport.buildErrorResult("该用户未绑定手机号码，请联系管理员")));
+		// return;
+		// }
+		// logger.info("手机号：" + mobile);
+		// // 调用短信发送接口
+		// String token = DigestUtils.md5Hex(mobile + Constants.SMS_PASS_KEY);
+		// String ip = GetReqParams.getIpAddr(request);
+		// String template = "sms_template_hehuayidai.ftl";
+		// IResult<Map<String, Object>> result =
+		// identifyCodeService.sendIdentifyCode(token, ip, mobile,
+		// SmsType.CL.name(), template);
+		// if (result.isSuccess()) {
+		// String endNum = mobile.substring(mobile.length() - 4,
+		// mobile.length());
+		// logger.info("手机尾号：" + endNum);
+		// result.setResultMessage("短信验证码已发到您尾号为(" + endNum + "）的手机，请注意查收！");
+		// } else if (!"-888".equals(result.getResultCode())) {
+		// logger.info(result.getResultMessage());
+		// result.setResultMessage("发送失败");
+		// }
+		// outPrint(response, toJSONString(result));
+		// } catch (Exception e) {
+		// logger.error("发送验证码错误", e);
+		// outPrint(response,
+		// toJSONString(ResultSupport.buildErrorResult("系统繁忙，请稍后再试")));
+		// }
+	}
 }

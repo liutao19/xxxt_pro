@@ -22,7 +22,6 @@ import com.dce.business.dao.district.regionalawardsMapper;
 import com.dce.business.dao.user.IUserDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.award.AwardConfig;
-import com.dce.business.entity.award.Awardlist;
 import com.dce.business.entity.district.District;
 import com.dce.business.entity.district.Regionalawards;
 import com.dce.business.entity.user.UserDo;

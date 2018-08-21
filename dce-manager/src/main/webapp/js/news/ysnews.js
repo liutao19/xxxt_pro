@@ -146,20 +146,23 @@ function save_YsNews(){
 	var object =new FormData();
 	
 	//获取表单数据
-	var id=$("#id").val();
-	var title=$("#title").val();
+	var id=document.getElementById("id").value;
+	var title=$("#editYsNewsForm #title").val();
 	var file=document.getElementById("image").files[0];
-	var content=$("#content").val();
-	var author=$("#author").val();
-	var topNews=$("#topNews").val();
-	var remark=$("#remark").val();
-	var status=$("#status").val();
-	var createDate=$("#createDate").val();
-	var createName=$("#createName").val();
-	var updateDate=$("#updateDate").val();
-	var updateName=$("#updateName").val();
-	 alert("file---->>"+file);
-	
+	var content=$("#editYsNewsForm #content").val();
+	var author=document.getElementById("author").value;
+	var topNews=$("#editYsNewsForm #topNews").combobox('getValue');
+	var remark=document.getElementById("remark").value;
+	var topNews=$("#editYsNewsForm #status").combobox('getValue');
+	var createDate=$("#editYsNewsForm #createDate").datebox('getValue');
+	var createName=$("#editYsNewsForm #createName").val();
+	var updateDate=$("#editYsNewsForm #updateDate").datebox('getValue');
+	var updateName=$("#editYsNewsForm #updateName").val();
+	/* alert("id---->>"+id+"---title---"+title+"----file--"+
+			 file+"---content---"+content+"---author----"+author+
+			 "----topNews----"+topNews+"----remark---"+remark+"----status---"
+			 +status+"----createDate---"+createDate+"---createName----"+createName+"----updateDate----"+updateDate+"-----updateName---"+updateName);
+	*/
 	 object.append("id",id);
 	object.append("title",title);
 	object.append("file",file);

@@ -19,7 +19,7 @@
 					<input type="hidden" id="districtId" name="districtId" value="${district.districtId}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">distrctName</label>
+							<label for="name">区域名称</label>
 						</td>	
 						<td>
 								<input type="text" id="distrctName" name="distrctName" value="${district.distrctName}"/>												
@@ -27,7 +27,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">userId</label>
+							<label for="name">用户id</label>
 						</td>	
 						<td>
 								<input type="text" id="userId" name="userId" value="${district.userId}"/>												
@@ -35,7 +35,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">districtStatus</label>
+							<label for="name">区域状态</label>
 						</td>	
 						<td>
 								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtStatus}"/>												

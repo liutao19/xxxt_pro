@@ -26,7 +26,7 @@
 		    top_news,
 		    remark,
 		    status,
-		    create_date as creatDate,
+		    create_date,
 		    create_name,
 		    update_date,
 		    update_name

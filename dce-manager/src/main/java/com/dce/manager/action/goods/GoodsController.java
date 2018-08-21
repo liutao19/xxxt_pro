@@ -163,7 +163,7 @@ public class GoodsController extends BaseAction {
 		if (!file.isEmpty()) {
 			try {
 				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + ""
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "src/main/webapp/images"
 						+ "/"
 						+ file.getOriginalFilename();
 				System.out.println(filePath);

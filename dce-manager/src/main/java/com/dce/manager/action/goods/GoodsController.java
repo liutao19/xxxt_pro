@@ -163,7 +163,7 @@ public class GoodsController extends BaseAction {
 		if (!file.isEmpty()) {
 			try {
 				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "src/main/webapp/images"
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "images"
 						+ "/"
 						+ file.getOriginalFilename();
 				System.out.println(filePath);
@@ -174,6 +174,7 @@ public class GoodsController extends BaseAction {
 				/*//图片路径
 				String filePath = "E:\\xx\\img";
 				//获取原始图片的拓展名 
+				 * ;
 				String originalFilename = file.getOriginalFilename();
 				 //新的文件名字 
 				 String newFileName = UUID.randomUUID()+originalFilename;

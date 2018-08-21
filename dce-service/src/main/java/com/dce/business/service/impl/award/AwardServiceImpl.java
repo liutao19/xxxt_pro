@@ -14,6 +14,14 @@ public class AwardServiceImpl implements IAwardService {
 	
 	private List<IAwardCalculator> awardCalculatorList;
 	
+	
+	
+
+	public void setAwardCalculatorList(List<IAwardCalculator> awardCalculatorList) {
+		this.awardCalculatorList = awardCalculatorList;
+	}
+
+
 	@Override
 	public void calcAward(Integer buyUserId, Integer buyQty, Long orderId) {
 		Assert.notNull(buyUserId, "购买者用户ID不能为空");

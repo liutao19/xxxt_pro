@@ -6,6 +6,8 @@
 
 package com.dce.business.service.grade;
 
+import java.util.List;
+
 /**
  * @author  huangzl QQ: 272950754
  * @version 1.0
@@ -43,6 +45,14 @@ public interface IGradeService{
 	 * @return
 	 */
 	public PageDo<Grade> getGradePage(Map<String, Object> param, PageDo<Grade> page);
+	
+	
+	/**
+	 * 多条件查询
+	 * @param param
+	 * @return
+	 */
+	public List<Grade> selectgreadname(Map<String, Object> param);
 	
 	
 	/**

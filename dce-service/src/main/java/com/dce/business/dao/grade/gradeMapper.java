@@ -23,4 +23,11 @@ public interface gradeMapper {
 	 * 多条件分页查询
 	 */
 	List<Grade> queryListPage(Map<String,Object> map);
+	
+	/**
+	 * 多条件查询
+	 * @param param
+	 * @return
+	 */
+	List<Grade> selectgreadname(Map<String, Object> param);
 }

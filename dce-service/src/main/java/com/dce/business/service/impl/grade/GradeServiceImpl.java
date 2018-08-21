@@ -89,4 +89,11 @@ public class GradeServiceImpl implements IGradeService {
 		return  gradeDao.deleteByPrimaryKey(id);		
 	}
 
+
+	@Override
+	public List<Grade> selectgreadname(Map<String, Object> param) {
+		// TODO Auto-generated method stub
+		return gradeDao.selectgreadname(param);
+	}
+
 }

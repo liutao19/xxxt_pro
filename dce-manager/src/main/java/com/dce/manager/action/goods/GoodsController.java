@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -50,6 +51,9 @@ public class GoodsController extends BaseAction {
 	// protected static final String DEFAULT_SORT_COLUMNS = null;
 	@Resource
 	private ICTGoodsService goodsService;
+
+	@Value("#{sysconfig['uploadPath']}")
+	private String uploadPath;
 
 	/**
 	 * 去列表页面
@@ -154,44 +158,36 @@ public class GoodsController extends BaseAction {
 	 */
 	@RequestMapping("/saveGoods")
 	@ResponseBody
-	public void saveGoods(CTGoodsDo CTGoodsDo, @RequestParam(value="file",required=false)MultipartFile file, HttpServletRequest request,
-			HttpServletResponse response) {
+	public void saveGoods(CTGoodsDo CTGoodsDo, @RequestParam(value = "file", required = false) MultipartFile file,
+			HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----saveGoods------");
-		
-		
-		if(file!=null){
-		if (!file.isEmpty()) {
-			try {
-				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "images"
-						+ "/"
-						+ file.getOriginalFilename();
-				System.out.println(filePath);
-				// 转存文件
-				file.transferTo(new File(filePath));
-				
-				
-				/*//图片路径
-				String filePath = "E:\\xx\\img";
-				//获取原始图片的拓展名 
-				 * ;
-				String originalFilename = file.getOriginalFilename();
-				 //新的文件名字 
-				 String newFileName = UUID.randomUUID()+originalFilename;
-				 //封装上传文件位置的全路径 
-				 File targetFile = new File(filePath,newFileName);
-				 //把本地文件上传到封装上传文件位置的全路径
-				 file.transferTo(targetFile);*/
-				
-				
-				//存数据库
-				CTGoodsDo.setGoodsImg(filePath); 
 
-			} catch (Exception e) {
-				e.printStackTrace();
+		if (file != null) {
+			if (!file.isEmpty()) {
+				try {
+					// 文件保存路径
+					String filePath = uploadPath + "/" + file.getOriginalFilename();
+					logger.debug(uploadPath);
+					// 转存文件
+					file.transferTo(new File(filePath));
+
+					/*
+					 * //图片路径 String filePath = "E:\\xx\\img"; //获取原始图片的拓展名 ;
+					 * String originalFilename = file.getOriginalFilename();
+					 * //新的文件名字 String newFileName =
+					 * UUID.randomUUID()+originalFilename; //封装上传文件位置的全路径 + File
+					 * targetFile = new File(filePath,newFileName);
+					 * //把本地文件上传到封装上传文件位置的全路径 file.transferTo(targetFile);
+					 */
+
+					// 存数据库
+					CTGoodsDo.setGoodsImg(filePath);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
-
-		}
 		}
 
 		try {
@@ -221,50 +217,44 @@ public class GoodsController extends BaseAction {
 		}
 		logger.info("----end saveGoods--------");
 	}
-	
+
 	/**
-     * 导出数据
-     *//*
-    @RequestMapping("/export")
-    public void export(HttpServletResponse response) throws IOException {
-        try {
-            Long time = System.currentTimeMillis();
-            GoodsExample example  = new GoodsExample();
-            String companyName = getString("searchPolicyName");
-          
-            if(StringUtils.isNotBlank(companyName)){
-                example.createCriteria().andPolicyNameLike(companyName);
-            }
-            String managerName = getString("searManagerName");
-            if(StringUtils.isNotBlank(managerName)){
-            	example.createCriteria().andManagerNameEqualTo(managerName);
-            }
-            List<GoodsDo> goodsLst = goodsService.selectGoods(example);
-            
-            String excelHead = "数据导出";
-            String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
-            List<String[]> excelheaderList = new ArrayList<String[]>();
-            String[] excelheader = { "保险公司名称", "保险公司简称", "联系人姓名", "联系人手机号码", "跟进单员", "合作状态", "记录状态" };
-            excelheaderList.add(0, excelheader);
-            String[] excelData = { "policyName", "shortName", "contactName", "contactPhone", "managerName", "partnerStatus", "status" };
-            HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, goodsLst);
-            response.setContentType("application/vnd.ms-excel;charset=utf-8");
-            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            wb.write(response.getOutputStream());
-            time = System.currentTimeMillis() - time;
-            logger.info("导出数据，导出耗时(ms)：" + time);
-        } catch (Exception e) {
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().println("下载失败");
-            logger.error("导出数据，Excel下载失败", e);
-            logger.error("导出数据异常", e);
-            throw new BusinessException("系统繁忙，请稍后再试");
-        } finally {
-            response.flushBuffer();
-        }
-
-    }*/
-
+	 * 导出数据
+	 *//*
+		 * @RequestMapping("/export") public void export(HttpServletResponse
+		 * response) throws IOException { try { Long time =
+		 * System.currentTimeMillis(); GoodsExample example = new
+		 * GoodsExample(); String companyName = getString("searchPolicyName");
+		 * 
+		 * if(StringUtils.isNotBlank(companyName)){
+		 * example.createCriteria().andPolicyNameLike(companyName); } String
+		 * managerName = getString("searManagerName");
+		 * if(StringUtils.isNotBlank(managerName)){
+		 * example.createCriteria().andManagerNameEqualTo(managerName); }
+		 * List<GoodsDo> goodsLst = goodsService.selectGoods(example);
+		 * 
+		 * String excelHead = "数据导出"; String date = new
+		 * SimpleDateFormat("yyyyMMddHHmmss").format(new Date()); String
+		 * fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
+		 * List<String[]> excelheaderList = new ArrayList<String[]>(); String[]
+		 * excelheader = { "保险公司名称", "保险公司简称", "联系人姓名", "联系人手机号码", "跟进单员",
+		 * "合作状态", "记录状态" }; excelheaderList.add(0, excelheader); String[]
+		 * excelData = { "policyName", "shortName", "contactName",
+		 * "contactPhone", "managerName", "partnerStatus", "status" };
+		 * HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData,
+		 * excelHead, goodsLst);
+		 * response.setContentType("application/vnd.ms-excel;charset=utf-8");
+		 * response.setHeader("Content-Disposition", "attachment;filename=" +
+		 * fileName); wb.write(response.getOutputStream()); time =
+		 * System.currentTimeMillis() - time; logger.info("导出数据，导出耗时(ms)：" +
+		 * time); } catch (Exception e) {
+		 * response.setContentType("text/html;charset=utf-8");
+		 * response.getWriter().println("下载失败"); logger.error("导出数据，Excel下载失败",
+		 * e); logger.error("导出数据异常", e); throw new
+		 * BusinessException("系统繁忙，请稍后再试"); } finally { response.flushBuffer();
+		 * }
+		 * 
+		 * }
+		 */
 
 }

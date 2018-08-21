@@ -336,6 +336,8 @@ public class UserController extends BaseController {
 			userDo.setSex(Integer.parseInt(sex));
 			userDo.setBanknumber(banknumber);
 			userDo.setBanktype(banktype);
+			//更改用户认证状态
+			userDo.setCertification(1);
 
 			System.out.println("用户信息----------》》》" + userDo);
 

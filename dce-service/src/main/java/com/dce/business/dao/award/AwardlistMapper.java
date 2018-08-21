@@ -62,6 +62,13 @@ public interface AwardlistMapper {
      * @return
      */
     Map<String,Object> conditionQueryAward(Map map);
+
+    /**
+     * 根据购买者等级和购买数量查询奖励记录
+     * @param para
+     * @return
+     */
+	Awardlist selectAwardByUserLevelAntBuyQty(Map<String, Object> para);
     
     
 }

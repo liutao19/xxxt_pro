@@ -4,16 +4,16 @@
 	<resultMap id="BaseResultMap" type="com.dce.business.entity.award.Awardlist">
 		<id column=" awardId" jdbcType="INTEGER" property="awardid" />
 		<result column="buyer_lecel" jdbcType="INTEGER" property="buyerLecel" />
-		<result column="p1_level0" jdbcType="DOUBLE" property="p1Level0" />
-		<result column="p1_level1" jdbcType="DOUBLE" property="p1Level1" />
-		<result column="p1_level2" jdbcType="DOUBLE" property="p1Level2" />
-		<result column="p1_level3" jdbcType="DOUBLE" property="p1Level3" />
-		<result column="p1_level4" jdbcType="DOUBLE" property="p1Level4" />
-		<result column="p2_level0" jdbcType="DOUBLE" property="p2Level0" />
-		<result column="p2_level1" jdbcType="DOUBLE" property="p2Level1" />
-		<result column="p2_level2" jdbcType="DOUBLE" property="p2Level2" />
-		<result column="p2_level3" jdbcType="DOUBLE" property="p2Level3" />
-		<result column="p2_level4" jdbcType="DOUBLE" property="p2Level4" />
+		<result column="p1_level0" jdbcType="VARCHAR" property="p1Level0" />
+		<result column="p1_level1" jdbcType="VARCHAR" property="p1Level1" />
+		<result column="p1_level2" jdbcType="VARCHAR" property="p1Level2" />
+		<result column="p1_level3" jdbcType="VARCHAR" property="p1Level3" />
+		<result column="p1_level4" jdbcType="VARCHAR" property="p1Level4" />
+		<result column="p2_level0" jdbcType="VARCHAR" property="p2Level0" />
+		<result column="p2_level1" jdbcType="VARCHAR" property="p2Level1" />
+		<result column="p2_level2" jdbcType="VARCHAR" property="p2Level2" />
+		<result column="p2_level3" jdbcType="VARCHAR" property="p2Level3" />
+		<result column="p2_level4" jdbcType="VARCHAR" property="p2Level4" />
 		<result column="buyer_award" jdbcType="VARCHAR" property="buyerAward" />
 		<result column="buy_qty" jdbcType="INTEGER" property="buyQty" />
 	</resultMap>
@@ -375,4 +375,14 @@
 		buy_qty = #{buyQty,jdbcType=INTEGER}
 		where " awardId" = #{awardid,jdbcType=INTEGER}
 	</update>
+	
+	<select id="selectAwardByUserLevelAntBuyQty"  parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from awardlist
+		<![CDATA[
+		where  	buyer_lecel = #{buyerLecel,jdbcType=INTEGER} and minQty >= #{buyQty} max_qty<= #{buyQty}
+		]]>
+	</select>
 </mapper>

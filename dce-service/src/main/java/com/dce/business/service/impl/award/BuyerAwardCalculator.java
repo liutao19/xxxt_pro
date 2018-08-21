@@ -15,7 +15,6 @@ import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
 import com.dce.business.service.user.IUserService;
-
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.award.Awardlist;
 
@@ -80,9 +79,22 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 	private void oneAward(int buyUserId, String[] bAwardLst) {
 		for(String oneAward : bAwardLst){
 			//奖励金额
-			BigDecimal wardAmount = getAmtByAwardNo(oneAward);
+			BigDecimal wardAmount = getAmtByAward(oneAward);
 			//奖励进入那个账户类型
-			String accountType = getAccountTypeByAwardNo(oneAward);
+			String accountType = getAccountTypeByAward(oneAward);
+			
+			//是否首次才能奖励
+			boolean isFirst = getIsFirstByAward(oneAward);
+			
+			
+			//仅首次才给的奖励
+			if(isFirst){
+				//给每个奖励一个编号，根据编号查询是否已经获取过该奖励
+				String awardNo = getAwardNoByAward(oneAward);
+				if(userIsFirst(buyUserId,awardNo,accountType) == false){
+					return;
+				}
+			}
 			
 			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId,accountType);
@@ -94,13 +106,56 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 	
 	
 	/**
+	 * 判断用户是否是 首次获取该奖励
+	 * @param buyUserId
+	 * @param awardNo
+	 * @return
+	 */
+	private boolean userIsFirst(int buyUserId, String awardNo,String accountType) {
+		UserAccountDo userAccount = accountService.selectUserAccount(buyUserId, accountType);
+		//TODO 判断是否存在
+		return false;
+	}
+
+
+	/**
 	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错
-	 * 配置格式： 1-wallet_travel-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
+	 * 配置格式： 1-wallet_travel-isFirst-A001-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
+	 * @param oneAward
+	 * @return
+	 */
+	private String getAwardNoByAward(String oneAward) {
+		String[] awds = oneAward.split("-");
+		if(awds.length<5){
+			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-005");
+		}
+		return awds[4].trim();
+	}
+
+
+	/**
+	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错
+	 * 配置格式： 1-wallet_travel-isFirst-A001-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
+	 * @param oneAward
+	 * @return
+	 */
+	private boolean getIsFirstByAward(String oneAward) {
+		String[] awds = oneAward.split("-");
+		if(awds.length<4){
+			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-005");
+		}
+		return "isFirst".equalsIgnoreCase(awds[3].trim());
+	}
+
+
+	/**
+	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错
+	 * 配置格式： 1-wallet_travel-isFirst-A001-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
 	 * 
 	 * @param oneAward
 	 * @return
 	 */
-	private BigDecimal getAmtByAwardNo(String oneAward) {
+	private BigDecimal getAmtByAward(String oneAward) {
 		String[] awds = oneAward.split("-");
 		if(awds.length<2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-003");
@@ -115,7 +170,7 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private String getAccountTypeByAwardNo(String oneAward) {
+	private String getAccountTypeByAward(String oneAward) {
 		String[] awds = oneAward.split("-");
 		if(awds.length<2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-004");

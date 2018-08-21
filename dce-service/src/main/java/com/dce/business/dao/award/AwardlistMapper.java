@@ -69,6 +69,5 @@ public interface AwardlistMapper {
      * @return
      */
 	Awardlist selectAwardByUserLevelAntBuyQty(Map<String, Object> para);
-    
-    
+	
 }

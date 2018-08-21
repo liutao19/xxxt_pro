@@ -88,7 +88,6 @@ public class DistrictController extends BaseAction {
 			 * model.addAttribute("statusList", statusList);
 			 */
 			pagination = PageDoUtil.getPageValue(pagination, page);
-			System.out.println(JSONObject.toJSON(pagination));
 			outPrint(response, JSONObject.toJSON(pagination));
 		} catch (Exception e) {
 			logger.error("查询清单异常", e);

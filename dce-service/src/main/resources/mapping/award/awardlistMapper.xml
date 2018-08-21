@@ -376,7 +376,7 @@
 		<include refid="Base_Column_List" />
 		from awardlist
 		<![CDATA[
-		where  	buyer_lecel = #{buyerLecel,jdbcType=INTEGER} and min_qty >= #{buyQty} max_qty<= #{buyQty}
+		where  	buyer_lecel = #{buyerLecel,jdbcType=INTEGER} and  max_qty>= #{buyQty} and min_qty<= #{buyQty}
 		]]>
 	</select>
   

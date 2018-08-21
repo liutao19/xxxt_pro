@@ -165,9 +165,15 @@ function to_editpath(id){
 }
 
 function save_Path(){
+	
+	
 	var formdata = $("#editPathForm").serialize();
 	console.info("formdata");
 	console.info(formdata);
+	if(formdata.linename==null || formdata.linename==""){
+		$.messager.alert("错误", "请填写路线名称");
+		return;
+	}
 	var  url =httpUrl+"/path/savePath.html?&rand=" + Math.random();
 	 $.ajax({   
 		 type: 'POST',

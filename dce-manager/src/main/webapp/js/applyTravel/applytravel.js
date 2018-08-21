@@ -1,4 +1,4 @@
-
+var basePath = "/dce-manager";
 $(function(){
 /*
  * #############################################search form
@@ -232,6 +232,19 @@ function reloadDataGrid()
 	$("tt_ApplyTravel").datagrid("reload");
 }
 
+
+
+/* ################***导出**begin*################### */
+function export_excel() {
+	// document.getElementById("exportExcel").disabled = true;
+	// document.getElementById("exportExcel").value = "正在导出";
+	var exportIframe = document.createElement('iframe');
+	exportIframe.src = httpUrl + "/applytravel/export.html";
+
+	exportIframe.style.display = 'none';
+	document.body.appendChild(exportIframe);
+}
+/* ################***导出**end*################### */
 
 
 

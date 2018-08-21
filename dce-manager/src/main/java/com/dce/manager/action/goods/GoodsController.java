@@ -163,7 +163,8 @@ public class GoodsController extends BaseAction {
 		if (!file.isEmpty()) {
 			try {
 				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "images/"
+				String filePath = request.getSession().getServletContext().getRealPath("/") + ""
+						+ "/"
 						+ file.getOriginalFilename();
 				System.out.println(filePath);
 				// 转存文件
@@ -183,7 +184,7 @@ public class GoodsController extends BaseAction {
 				
 				
 				//存数据库
-				CTGoodsDo.setGoodsImg(filePath);
+				CTGoodsDo.setGoodsImg(filePath); 
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -219,6 +220,50 @@ public class GoodsController extends BaseAction {
 		}
 		logger.info("----end saveGoods--------");
 	}
+	
+	/**
+     * 导出数据
+     *//*
+    @RequestMapping("/export")
+    public void export(HttpServletResponse response) throws IOException {
+        try {
+            Long time = System.currentTimeMillis();
+            GoodsExample example  = new GoodsExample();
+            String companyName = getString("searchPolicyName");
+          
+            if(StringUtils.isNotBlank(companyName)){
+                example.createCriteria().andPolicyNameLike(companyName);
+            }
+            String managerName = getString("searManagerName");
+            if(StringUtils.isNotBlank(managerName)){
+            	example.createCriteria().andManagerNameEqualTo(managerName);
+            }
+            List<GoodsDo> goodsLst = goodsService.selectGoods(example);
+            
+            String excelHead = "数据导出";
+            String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
+            List<String[]> excelheaderList = new ArrayList<String[]>();
+            String[] excelheader = { "保险公司名称", "保险公司简称", "联系人姓名", "联系人手机号码", "跟进单员", "合作状态", "记录状态" };
+            excelheaderList.add(0, excelheader);
+            String[] excelData = { "policyName", "shortName", "contactName", "contactPhone", "managerName", "partnerStatus", "status" };
+            HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, goodsLst);
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            wb.write(response.getOutputStream());
+            time = System.currentTimeMillis() - time;
+            logger.info("导出数据，导出耗时(ms)：" + time);
+        } catch (Exception e) {
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().println("下载失败");
+            logger.error("导出数据，Excel下载失败", e);
+            logger.error("导出数据异常", e);
+            throw new BusinessException("系统繁忙，请稍后再试");
+        } finally {
+            response.flushBuffer();
+        }
+
+    }*/
 
 
 }

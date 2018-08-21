@@ -13,6 +13,7 @@ import com.dce.business.common.util.Constants;
 import com.dce.business.dao.travel.TravelDoMapper;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.travel.TravelPathDo;
 import com.dce.business.service.travel.ITravelApplyService;
 
@@ -100,6 +101,34 @@ public class TravelServiceImpl implements ITravelApplyService {
 		// TODO Auto-generated method stub
 		logger.info("----updateapplyStateById----");
 		return travelApplyDao.updateapplyStateById(applyTravelid);
+	}
+
+
+	@Override
+	public List<TravelDo> selectByExample(TravelDoExample example) {
+		// TODO Auto-generated method stub
+		logger.info("----selectByExample----");
+		List<TravelDo> result = travelApplyDao.selectByExample(example);
+		
+		for(TravelDo travel : result){
+			if("0".equals(travel.getSex())){
+				travel.setSex("男");
+			}else if("1".equals(travel.getSex())){
+				travel.setSex("女");
+			}
+			if("0".equals(travel.getIsbeen())){
+				travel.setIsbeen("是");
+			}else if("1".equals(travel.getIsbeen())){
+				travel.setIsbeen("否");
+			}
+			if("0".equals(travel.getState())){
+				travel.setState("未通过");
+			}else if("1".equals(travel.getState())){
+				travel.setState("通过");
+			}
+		}
+		
+		return result;
 	}
 
 }

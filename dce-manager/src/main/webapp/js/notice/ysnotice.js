@@ -75,7 +75,15 @@ $(function() {
 				field : "topNotice",
 				title : "是否置顶",
 				width : 180,
-				align : "center"
+				align : "center",
+				formatter:function(value,row,index){
+						if(row.topNotice == "0"){
+							return "是";
+						}else if(row.topNotice == "1"){
+							return "否";
+						}
+				}
+				
 			},
 			{
 				field : "remark",
@@ -239,13 +247,27 @@ function save_YsNotice() {
 	var obj = new FormData();
 
 	// 获取框中的数据
-	var title = $("#editYsNoticeForm #title").val();
 	var id = document.getElementById("id").value;
+	var title = $("#editYsNoticeForm #title").val();
 	var content = document.getElementById("content").value;
-	var topNotice = document.getElementById("topNotice").value;
+	var topNotice = $('#topNotice').combobox('getValue');
+	alert(topNotice);
 	var remark = document.getElementById("remark").value;
 	var file = document.getElementById("image").files[0];
-
+	if(title == null || title == ""){
+		$.messager.alert("错误", "请填写公告标题");
+		return;
+	}
+	if(content == null || content == ""){
+		$.messager.alert("错误", "请填写公告内容");
+		return;
+	}
+	if(topNotice == null || topNotice == ""){
+		$.messager.alert("错误", "请选择写公告是否置顶");
+		return;
+	}
+	
+	
 	// 将数据添加至表单数据对象中
 	obj.append("file", file);
 	obj.append("id",id);

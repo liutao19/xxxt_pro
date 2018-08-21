@@ -191,8 +191,25 @@ function save_Goods(){
     var goodsUnit = document.getElementById("goodsUnit").value;
     var shopPrice =document.getElementById("shopPrice").value;
     var goodsDesc =document.getElementById("goodsDesc").value;
-    var status =document.getElementById("status").value;
+    var status =$("#editGoodsForm #status").combobox('getValue');
     var file = document.getElementById("goodsImg").files[0];
+    if(title == null || title == ""){
+		$.messager.alert("错误", "请填写商品名称");
+		return;
+	}
+    if(goodsUnit == null || goodsUnit == ""){
+		$.messager.alert("错误", "请填写商品单位");
+		return;
+	}
+    if(shopPrice == null || shopPrice == ""){
+		$.messager.alert("错误", "请填写商品价格");
+		return;
+	}
+    if(goodsDesc == null || goodsDesc == ""){
+		$.messager.alert("错误", "请填写商品内容");
+		return;
+	}
+    
 
     // 将数据添加至表单数据对象中
     obj.append("file", file);
@@ -227,6 +244,9 @@ function reloadDataGrid()
 {
 	$("tt_Goods").datagrid("reload");
 }
+
+
+
 
 
 

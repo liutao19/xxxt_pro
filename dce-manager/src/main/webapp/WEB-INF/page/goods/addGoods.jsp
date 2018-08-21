@@ -66,7 +66,7 @@
 							<label for="name">商品上架状态·：</label>
 						</td>
 						<td>
-							<select id="status" class="easyui-combobox" name="status" style="width: 150px;">
+							<select id="status" class="easyui-combobox"  style="width: 150px;">
 									<option value="0" <c:if test="${goods.status==0}">selected="selected"</c:if> >未上架</option>
 									<option value="1" <c:if test="${goods.status==1}">selected="selected"</c:if>>已上架</option>
 							</select>

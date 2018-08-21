@@ -5,15 +5,14 @@
  */
 
 package com.dce.business.service.impl.award;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dce.business.common.util.Constants;
@@ -21,6 +20,8 @@ import com.dce.business.dao.award.AwardlistMapper;
 import com.dce.business.entity.award.Awardlist;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.award.IAwardlistService;
+
+import org.springframework.transaction.annotation.Propagation;
 
 /**
  * @author  huangzl QQ: 272950754
@@ -119,10 +120,8 @@ public class AwardlistServiceImpl implements IAwardlistService {
 
 	@Override
 	public Awardlist getAwardConfigByQtyAndBuyerLevel(Byte userLevel, int buyQty) {
-		Map<String,Object> para = new HashMap<String,Object>();
-		para.put("buyerLecel", userLevel);
-		para.put("buyQty", buyQty);
-		return awardlistDao.selectAwardByUserLevelAntBuyQty(para);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -27,7 +27,9 @@ public interface AlipaymentOrderMapper {
 	int updateByExample(@Param("record") AlipaymentOrder record, @Param("example") AlipaymentOrderExample example);
 
 	int updateByPrimaryKeySelective(AlipaymentOrder record);
-	
+
+	int updateByPrimaryKey(AlipaymentOrder record);
+
 	AlipaymentOrder selectByOrderCode(String orderCode);
 
 }

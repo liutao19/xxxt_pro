@@ -258,6 +258,12 @@
 			<if test="buyQty != null">
 				AND buy_qty = #{buyQty}
 			</if>
+			<if test="minQty != null">
+				AND min_qty = #{minQty},
+			</if>
+			<if test="maxQty != null">
+				AND max_qty = #{maxQty},
+			</if>
 			<if test="currentPage!=null and pageSize!=null">
 				limit currentPage,pageSize
 			</if>
@@ -351,6 +357,12 @@
 			</if>
 			<if test="buyQty != null">
 				AND buy_qty = #{buyQty}
+			</if>
+			<if test="minQty != null">
+				AND min_qty = #{minQty},
+			</if>
+			<if test="maxQty != null">
+				AND max_qty = #{maxQty},
 			</if>
 		</trim>
 

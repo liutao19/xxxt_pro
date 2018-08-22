@@ -91,19 +91,6 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">创建时间</label>
-						</td>	
-						<td>
-								<input type="text" 
-								id="createtime" 
-								name="createtime" 
-								value="<fmt:formatDate value="${applytravel.createtime}" pattern="yyyy-MM-dd"/>"
-								class="easyui-datebox" size="14" data-options="editable : true"  
-								/>
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
 							<label for="name">申请状态</label>
 						</td>	
 						<td>

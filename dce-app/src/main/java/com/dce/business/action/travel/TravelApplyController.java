@@ -64,13 +64,13 @@ public class TravelApplyController extends BaseController {
     	String people = getString("people") == null ? "" : getString("people");
     	
     	travel.setUserid(userId);
-    	travel.setSex(Integer.parseInt(sex));//性别(0/1 男/女)
+    	travel.setSex(sex);//性别(0/1 男/女)
     	travel.setNation(nation);
     	travel.setIdentity(identity);
     	travel.setPhone(phone);
     	travel.setAddress(address);
     	travel.setPathid(Integer.parseInt(pathid));
-    	travel.setIsbeen(Integer.parseInt(isBenn)); //是否去过该路线 0是/1否
+    	travel.setIsbeen(isBenn); //是否去过该路线 0是/1否
     	travel.setPeople(Integer.parseInt(people));
     	
     	

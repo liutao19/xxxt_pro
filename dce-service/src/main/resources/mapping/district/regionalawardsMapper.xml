@@ -11,7 +11,7 @@
 
 	<sql id="Base_Column_List">
 
-		rewardsAreaId, rewardBalance, " algebra"
+		rewardsAreaId, rewardBalance,algebra
 	</sql>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
@@ -34,12 +34,12 @@
 		<if test="rewardsareaid!=null">
 			and rewardsAreaId =#{rewardsareaid,jdbcType=INTEGER}
 		</if>
-		<if test="algebra!=null">
+		 <if test="algebra!=null">
 			and algebra =#{algebra,jdbcType=INTEGER}
-		</if>
+		</if> 
 
-		<if test="page!=null and pageSize!=null">
-		 limit #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+		<if test="currentPage!=null and pageSize!=null">
+		 limit currentPage,pageSize
 		</if>
 
 
@@ -56,7 +56,7 @@
 	<insert id="insert" parameterType="com.dce.business.entity.district.Regionalawards">
 
 		insert into regionalawards
-		(rewardsAreaId, rewardBalance, " algebra"
+		(rewardsAreaId, rewardBalance, algebra
 		)
 		values
 		(#{rewardsareaid,jdbcType=INTEGER}, #{rewardbalance,jdbcType=DOUBLE},
@@ -73,7 +73,7 @@
 				rewardBalance,
 			</if>
 			<if test="algebra != null">
-				" algebra",
+			 algebra,
 			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -97,7 +97,7 @@
 				rewardBalance = #{rewardbalance,jdbcType=DOUBLE},
 			</if>
 			<if test="algebra != null">
-				" algebra" = #{algebra,jdbcType=INTEGER},
+				algebra = #{algebra,jdbcType=INTEGER},
 			</if>
 		</set>
 		where rewardsAreaId = #{rewardsareaid,jdbcType=INTEGER}
@@ -107,8 +107,7 @@
 		update
 		regionalawards
 		set rewardBalance = #{rewardbalance,jdbcType=DOUBLE},
-		"
-		algebra" = #{algebra,jdbcType=INTEGER}
+		algebra = #{algebra,jdbcType=INTEGER}
 		where rewardsAreaId =
 		#{rewardsareaid,jdbcType=INTEGER}
 	</update>

@@ -63,8 +63,14 @@ public class WithDrawController extends BaseController {
     	
     	map.put("userId", getString("userId"));
     	
-    	System.out.println("list----->>"+withdrawService.getWithdrawRecords(map));
+    	List<Map<String,Object>>maps=withdrawService.getWithdrawRecords(map);
     	
-    	return Result.successResult("查询成功", withdrawService.getWithdrawRecords(map));		
+    	if(maps==null){
+    		
+    		return Result.failureResult("查询失败");
+    	}
+    	
+    	
+    	return Result.successResult("查询成功", maps);		
     }
 }

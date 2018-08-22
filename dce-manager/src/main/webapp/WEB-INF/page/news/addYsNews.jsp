@@ -54,7 +54,10 @@
 							<label for="name">置顶新闻</label>
 						</td>	
 						<td>
-								<input type="text" id="topNews" name="topNews" value="${ysnews.topNews}"/>												
+						<select id="topNews" class="easyui-combobox" name="topNews" style="width: 150px;">
+									<option value="0" <c:if test="${ysnews.topNews==0}">selected="selected"</c:if> >待置顶</option>
+									<option value="1" <c:if test="${ysnews.topNews==1}">selected="selected"</c:if>>置顶</option>
+							</select>
 						</td>						   
 					</tr>
 					<tr>	
@@ -70,7 +73,10 @@
 							<label for="name">状态</label>
 						</td>	
 						<td>
-								<input type="text" id="status" name="status" value="${ysnews.status}"/>												
+						<select id="status" class="easyui-combobox" name="status" style="width: 150px;">
+									<option value="0" <c:if test="${ysnews.status==0}">selected="selected"</c:if> >待发布</option>
+									<option value="1" <c:if test="${ysnews.status==1}">selected="selected"</c:if>>已发布</option>
+							</select>
 						</td>						   
 					</tr>
 					<tr>	
@@ -117,11 +123,11 @@
 						</td>						   
 					</tr>
 		
-				<tr>
+				<!-- <tr>
 					<td colspan="2">
 						<input id="submitButton" name="submitButton" type="button" onclick="ysnews_submit();"  value="提交" />	
 					</td>
-				<tr>			 
+				<tr>	 -->		 
 			</table>	   
 		</div>	
 	</form>

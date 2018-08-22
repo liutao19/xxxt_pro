@@ -39,7 +39,7 @@ public class NoticeController {
 
         logger.info("查询公告.....");
         
-        //查出广告列表
+        //查出公告列表
         List<NoticeDo> noticeList = noticeService.selectNoticeList();
         List<Map<String, Object>> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(noticeList)) {
@@ -48,6 +48,7 @@ public class NoticeController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("id", message.getId());
                 map.put("title", message.getTitle());
+                map.put("topNotice", message.getTopNotice());
                 map.put("content", message.getContent());
                 map.put("create_date", message.getCreateDate());
                 map.put("image", message.getImage());

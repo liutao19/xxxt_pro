@@ -3,6 +3,9 @@ package com.dce.business.service.order;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
@@ -54,7 +57,7 @@ public interface IOrderService {
 	 * @param chooseGoodsLst
 	 * @return
 	 */
-	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order);
+	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order, HttpServletRequest request, HttpServletResponse response);
 
 	// 根据主键id查询订单
 	Order selectByPrimaryKey(long orderId);
@@ -65,5 +68,11 @@ public interface IOrderService {
 	public Result<String> getAlipayorderStr(Order order);
 	
 	public String notify(Map<String, String> conversionParams);
+	
+	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order) throws Exception;
+	
+	public Result<?> alipayQuery(String outTradeNo);
+	
+	public int orderPay(String orderCode, String gmtPayment);
 
 }

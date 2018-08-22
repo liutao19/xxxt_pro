@@ -5,6 +5,7 @@
  */
 
 package com.dce.business.service.impl.award;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,6 +117,15 @@ public class AwardlistServiceImpl implements IAwardlistService {
 			return null;
 		}
 		return awardlistDao.conditionQueryAward(map);
+	}
+
+	@Override
+	public Awardlist getAwardConfigByQtyAndBuyerLevel(Byte userLevel, int buyQty) {
+		// TODO Auto-generated method stub
+		Map<String,Object> map=new HashMap<String, Object>();
+		map.put("userLevel", userLevel);
+		map.put("buyQty", buyQty);
+		return awardlistDao.selectAwardByUserLevelAntBuyQty(map);
 	}
 
 }

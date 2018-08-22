@@ -26,6 +26,7 @@ import com.dce.business.common.util.OrderCodeUtil;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
+import com.dce.business.service.grade.IGradeService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserParentService;
 import com.dce.business.service.user.IUserService;
@@ -49,6 +50,8 @@ public class MemberAcountController extends BaseController {
 	
 	@Resource
 	private IUserParentService userParentService;
+	@Resource
+	private IGradeService gradeService;
 	
 
 	
@@ -84,7 +87,7 @@ public class MemberAcountController extends BaseController {
 			 Map<String,Object> map =new HashMap<String,Object>();
 				List<Map<String, Object>> maplist =new ArrayList<>();
 				
-				if(j==0){
+				/*if(j==0){
 					level="普通用户";	
 				}else if(j==1){
 					level="会员";
@@ -94,9 +97,12 @@ public class MemberAcountController extends BaseController {
 					level="城市合伙人";
 				}else if(j==4){
 					level="股东";
-				}
+				}*/
 				
-				map.put("user_level", level);
+				Map<String,Object>param=new HashMap<String,Object>();
+				param.put("grade_mark", j);
+				
+				map.put("user_level", gradeService.selectgreadname(param).get(j).getGradeName());
 					
 		for(int i=0;i<list.size();i++){
 			

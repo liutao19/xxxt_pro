@@ -80,6 +80,7 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 		for(String oneAward : bAwardLst){
 			//奖励金额
 			BigDecimal wardAmount = getAmtByAward(oneAward);
+			
 			//奖励进入那个账户类型
 			String accountType = getAccountTypeByAward(oneAward);
 			

@@ -39,7 +39,7 @@ public class WXPayConfig {
     /**
      * 常量固定值
      */
-   // public static final String GRANT_TYPE="client_credential";
+    public static final String GRANT_TYPE="client_credential";
     /**
      * 获取预支付id的接口url
      */
@@ -47,12 +47,9 @@ public class WXPayConfig {
     /**
      * 微信服务器回调通知url
      */
-    public static String NOTIFY_URL="http://www.58xxjt.com/app/tenpay/notify";
+    public static String NOTIFY_URL="http://www.58xxjt.com/order/tenpay/notify";
     
-  	public static String PARTNER = "1900000109";//财付通商户号
-  	public static String PARTNER_KEY = "8934e7d15453e97507ef794cf7b0519d";//商户号对应的密钥
   	public static String TOKENURL = "https://api.weixin.qq.com/cgi-bin/token";//获取access_token对应的url
-  	public static String GRANT_TYPE = "client_credential";//常量固定值 
   	public static String EXPIRE_ERRCODE = "42001";//access_token失效后请求返回的errcode
   	public static String FAIL_ERRCODE = "40001";//重复获取导致上一次获取的access_token失效,返回错误码
   	public static String GATEURL = "https://api.weixin.qq.com/pay/genprepay?access_token=";//获取预支付id的接口url

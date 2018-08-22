@@ -9,16 +9,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.DataDecrypt;
+import com.dce.business.entity.message.NewsDo;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.page.Pagination;
+import com.dce.business.entity.trade.WithdrawalsDo;
+import com.dce.business.service.account.IPayService;
+import com.dce.business.service.impl.account.PayServiceImpl;
 import com.dce.business.service.trade.IWithdrawService;
 import com.dce.manager.action.BaseAction;
 
@@ -28,6 +35,8 @@ public class WithDrawController extends BaseAction {
 
 	@Resource
     private IWithdrawService withdrawService;
+	@Resource
+	private IPayService payService;
 	
 	@RequestMapping("/index")
 	public String index() {
@@ -94,5 +103,39 @@ public class WithDrawController extends BaseAction {
             result = Result.failureResult("提现错误");
         }
         outPrint(response, JSON.toJSONString(result));
+    }
+    
+    /**
+     * 查看转账详情
+     * @return 
+     * @return
+     */
+    @RequestMapping(value = "/queryWithdraw")
+    public String queryWithdraw(HttpServletResponse response,ModelMap modelMap) {
+        String withdrawId = getString("withdrawId");
+        System.out.println(withdrawId);
+        try {
+			if (StringUtils.isNotBlank(withdrawId)) {
+				WithdrawalsDo withdraws = withdrawService.selectByPrimaryKey(Integer.parseInt(withdrawId));
+				if (null != withdraws) {
+					System.out.println(DataDecrypt.decrypt(withdraws.getOrderId()));
+					System.out.println(DataDecrypt.decrypt(withdraws.getOutbizno()));
+					withdraws.setOrderId(DataDecrypt.decrypt(withdraws.getOrderId()));
+					withdraws.setOutbizno(DataDecrypt.decrypt(withdraws.getOutbizno()));
+					Trans trans=payService.withdraw(withdraws);
+					System.out.println("getArrival_time_end:"+trans.getArrival_time_end());
+					System.out.println("getFail_reason:"+trans.getFail_reason());
+					System.out.println("getOrder_fee:"+trans.getOrder_fee());
+					System.out.println("getOrder_id:"+trans.getOrder_id());
+					System.out.println("getOut_biz_no:"+trans.getOut_biz_no());
+					System.out.println("getPay_date:"+trans.getPay_date());
+					modelMap.addAttribute("queryWithdraw", trans);
+				}
+			}
+			return "withdraw/viewWithDraw";
+		} catch (Exception e) {
+			logger.error("跳转到数据字典编辑页面异常", e);
+			throw new BusinessException("系统繁忙，请稍后再试");
+		}
     }
 }

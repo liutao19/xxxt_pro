@@ -121,9 +121,11 @@ public class AwardlistServiceImpl implements IAwardlistService {
 
 	@Override
 	public Awardlist getAwardConfigByQtyAndBuyerLevel(Byte userLevel, int buyQty) {
-		// TODO Auto-generated method stub
+		if( null== userLevel){
+			userLevel=0;
+		}
 		Map<String,Object> map=new HashMap<String, Object>();
-		map.put("userLevel", userLevel);
+		map.put("buyerLecel", userLevel);
 		map.put("buyQty", buyQty);
 		return awardlistDao.selectAwardByUserLevelAntBuyQty(map);
 	}

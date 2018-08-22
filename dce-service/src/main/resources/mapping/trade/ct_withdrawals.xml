@@ -5,12 +5,12 @@
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="withdraw_date" jdbcType="BIGINT" property="withdrawDate" />
 		<result column="amount" jdbcType="DECIMAL" property="amount" />
-		<result column="fack_receive" jdbcType="DECIMAL" property="fackReceive" />
+		<result column="order_id" jdbcType="VARCHAR" property="orderId" />
 		<result column="payment_date" jdbcType="BIGINT" property="paymentDate" />
 		<result column="confirm_date" jdbcType="BIGINT" property="confirmDate" />
 		<result column="userid" jdbcType="INTEGER" property="userid" />
 		<result column="fee" jdbcType="DECIMAL" property="fee" />
-		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="out_biz_no" jdbcType="VARCHAR" property="outbizno" />
 		<result column="bank" jdbcType="VARCHAR" property="bank" />
 		<result column="bank_content" jdbcType="VARCHAR" property="bankContent" />
 		<result column="bank_no" jdbcType="VARCHAR" property="bankNo" />
@@ -21,8 +21,8 @@
 		<result column="remark" jdbcType="VARCHAR" property="remark" />
 	</resultMap>
 	<sql id="Base_Column_List">
-		id, withdraw_date, amount, fack_receive, payment_date, confirm_date, userid, fee,
-		name, bank, bank_content, bank_no, process_status, type, money_type,withdraw_status, remark
+		id, withdraw_date, amount, order_id, payment_date, confirm_date, userid, fee,
+		out_biz_no, bank, bank_content, bank_no, process_status, type, money_type,withdraw_status, remark
 	</sql>
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 		select
@@ -39,7 +39,7 @@
            <if test="withdrawalsId != null">  
                u.id = #{withdrawalsId}
            </if>
-           and u.withdraw_status!=1 and  process_status=2
+           and u.withdraw_status=1 and  process_status=2
         </trim>
     </select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -48,14 +48,14 @@
 	</delete>
 	<insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.trade.WithdrawalsDo"
 		useGeneratedKeys="true">
-		insert into ct_withdrawals (withdraw_date, amount, fack_receive,
+		insert into ct_withdrawals (withdraw_date, amount, order_id,
 		payment_date, confirm_date, userid,
-		fee, name, bank, bank_content,
+		fee, out_biz_no, bank, bank_content,
 		bank_no, process_status, type,
 		money_type, remark)
-		values (#{withdrawDate,jdbcType=BIGINT}, #{amount,jdbcType=DECIMAL}, #{fackReceive,jdbcType=DECIMAL},
+		values (#{withdrawDate,jdbcType=BIGINT}, #{amount,jdbcType=DECIMAL}, #{orderId,jdbcType=VARCHAR},
 		#{paymentDate,jdbcType=BIGINT}, #{confirmDate,jdbcType=BIGINT}, #{userid,jdbcType=INTEGER},
-		#{fee,jdbcType=DECIMAL}, #{name,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
+		#{fee,jdbcType=DECIMAL}, #{outbizno,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
 		#{bankNo,jdbcType=VARCHAR}, #{processStatus,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
 		#{moneyType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
 	</insert>
@@ -69,8 +69,8 @@
 			<if test="amount != null">
 				amount,
 			</if>
-			<if test="fackReceive != null">
-				fack_receive,
+			<if test="orderId != null">
+				order_Id,
 			</if>
 			<if test="paymentDate != null">
 				payment_date,
@@ -84,8 +84,8 @@
 			<if test="fee != null">
 				fee,
 			</if>
-			<if test="name != null">
-				name,
+			<if test="outbizno != null">
+				out_biz_no,
 			</if>
 			<if test="bank != null">
 				bank,
@@ -116,8 +116,8 @@
 			<if test="amount != null">
 				#{amount,jdbcType=DECIMAL},
 			</if>
-			<if test="fackReceive != null">
-				#{fackReceive,jdbcType=DECIMAL},
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
 			</if>
 			<if test="paymentDate != null">
 				#{paymentDate,jdbcType=BIGINT},
@@ -131,8 +131,8 @@
 			<if test="fee != null">
 				#{fee,jdbcType=DECIMAL},
 			</if>
-			<if test="name != null">
-				#{name,jdbcType=VARCHAR},
+			<if test="outbizno != null">
+				#{outbizno,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
 				#{bank,jdbcType=VARCHAR},
@@ -166,8 +166,8 @@
 			<if test="amount != null">
 				amount = #{amount,jdbcType=DECIMAL},
 			</if>
-			<if test="fackReceive != null">
-				fack_receive = #{fackReceive,jdbcType=DECIMAL},
+			<if test="orderId != null">
+				order_Id = #{orderId,jdbcType=VARCHAR},
 			</if>
 			<if test="paymentDate != null">
 				payment_date = #{paymentDate,jdbcType=BIGINT},
@@ -181,8 +181,8 @@
 			<if test="fee != null">
 				fee = #{fee,jdbcType=DECIMAL},
 			</if>
-			<if test="name != null">
-				name = #{name,jdbcType=VARCHAR},
+			<if test="outbizno != null">
+				out_biz_no = #{outbizno,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
 				bank = #{bank,jdbcType=VARCHAR},
@@ -208,16 +208,34 @@
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	</update>
+	<update id="updateWithDrawStatus" parameterType="com.dce.business.entity.trade.WithdrawalsDo">
+		update ct_withdrawals
+		<set>
+			<if test="withdraw_status != null">
+				withdraw_status = #{withdraw_status,jdbcType=VARCHAR},
+			</if>
+			<if test="paymentDate != null">
+				payment_date = #{paymentDate,jdbcType=BIGINT},
+			</if>
+			<if test="orderId != null">
+				order_Id = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="outbizno != null">
+				out_biz_no = #{outbizno,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.trade.WithdrawalsDo">
 		update ct_withdrawals
 		set withdraw_date = #{withdrawDate,jdbcType=BIGINT},
 		amount = #{amount,jdbcType=DECIMAL},
-		fack_receive = #{fackReceive,jdbcType=DECIMAL},
+		order_Id = #{orderId,jdbcType=VARCHAR},
 		payment_date = #{paymentDate,jdbcType=BIGINT},
 		confirm_date = #{confirmDate,jdbcType=BIGINT},
 		userid = #{userid,jdbcType=INTEGER},
 		fee = #{fee,jdbcType=DECIMAL},
-		name = #{name,jdbcType=VARCHAR},
+		out_biz_no = #{outbizno,jdbcType=VARCHAR},
 		bank = #{bank,jdbcType=VARCHAR},
 		bank_content = #{bankContent,jdbcType=VARCHAR},
 		bank_no = #{bankNo,jdbcType=VARCHAR},
@@ -306,8 +324,8 @@
 			<if test="amount != null">
 				amount = #{amount,jdbcType=DECIMAL},
 			</if>
-			<if test="fackReceive != null">
-				fack_receive = #{fackReceive,jdbcType=DECIMAL},
+			<if test="orderId != null">
+				order_Id = #{orderId,jdbcType=VARCHAR},
 			</if>
 			<if test="paymentDate != null">
 				payment_date = #{paymentDate,jdbcType=BIGINT},
@@ -321,8 +339,8 @@
 			<if test="fee != null">
 				fee = #{fee,jdbcType=DECIMAL},
 			</if>
-			<if test="name != null">
-				name = #{name,jdbcType=VARCHAR},
+			<if test="outbizno != null">
+				out_biz_no = #{outbizno,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
 				bank = #{bank,jdbcType=VARCHAR},
@@ -359,8 +377,8 @@
 			<if test="amount != null">
 				amount = #{amount,jdbcType=DECIMAL},
 			</if>
-			<if test="fackReceive != null">
-				fack_receive = #{fackReceive,jdbcType=DECIMAL},
+			<if test="orderId != null">
+				order_Id = #{orderId,jdbcType=VARCHAR},
 			</if>
 			<if test="paymentDate != null">
 				payment_date = #{paymentDate,jdbcType=BIGINT},
@@ -374,8 +392,8 @@
 			<if test="fee != null">
 				fee = #{fee,jdbcType=DECIMAL},
 			</if>
-			<if test="name != null">
-				name = #{name,jdbcType=VARCHAR},
+			<if test="outbizno != null">
+				out_biz_no = #{outbizno,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
 				bank = #{bank,jdbcType=VARCHAR},
@@ -413,8 +431,8 @@
 			<if test="amount != null">
 				amount = #{amount,jdbcType=DECIMAL},
 			</if>
-			<if test="fackReceive != null">
-				fack_receive = #{fackReceive,jdbcType=DECIMAL},
+			<if test="orderId != null">
+				order_Id = #{orderId,jdbcType=VARCHAR},
 			</if>
 			<if test="paymentDate != null">
 				payment_date = #{paymentDate,jdbcType=BIGINT},
@@ -428,8 +446,8 @@
 			<if test="fee != null">
 				fee = #{fee,jdbcType=DECIMAL},
 			</if>
-			<if test="name != null">
-				name = #{name,jdbcType=VARCHAR},
+			<if test="outbizno != null">
+				out_biz_no = #{outbizno,jdbcType=VARCHAR},
 			</if>
 			<if test="bank != null">
 				bank = #{bank,jdbcType=VARCHAR},
@@ -439,9 +457,6 @@
 			</if>
 			<if test="bankNo != null">
 				bank_no = #{bankNo,jdbcType=VARCHAR},
-			</if>
-			<if test="processStatus != null">
-				process_status = #{processStatus,jdbcType=VARCHAR},
 			</if>
 			<if test="type != null">
 				type = #{type,jdbcType=VARCHAR},

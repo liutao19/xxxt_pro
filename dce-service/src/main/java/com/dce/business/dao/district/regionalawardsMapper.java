@@ -57,4 +57,9 @@ public interface regionalawardsMapper {
      * @return
      */
     List<Regionalawards>  queryListPage(Map<String,Object> map);
+    
+    /**
+     * 多条件查询
+     */
+    List<Regionalawards> selectByPrimaryKeySelective(Regionalawards record);
 }

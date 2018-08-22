@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.trade.WithdrawalsDo;
 
 public interface IWithdrawService {
 
@@ -24,6 +25,9 @@ public interface IWithdrawService {
      */
     Result<?> auditWithdrawById(String auditResult,Integer withdrawId);
     
+  
+ 
+    
     int selectWithdrawCount(Map<String,Object> param);
     
     /**
@@ -39,4 +43,11 @@ public interface IWithdrawService {
      * @return
      */
     Long selectWithDrawTotallAmount(Map<String,Object> param);
+
+    /**
+     * 查询提现记录
+     * @param withdrawId
+     * @return
+     */
+	WithdrawalsDo selectByPrimaryKey(Integer withdrawId);
 }

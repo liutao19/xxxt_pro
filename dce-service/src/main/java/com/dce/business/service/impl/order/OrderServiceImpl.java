@@ -70,6 +70,9 @@ public class OrderServiceImpl implements IOrderService {
 	private ICTGoodsService ctGoodsService;
 	@Resource
 	private AlipaymentOrderService alipaymentOrderService;
+	/*
+	 * @Resource private IAwardCalculator awardCalculator;
+	 */
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -118,15 +121,6 @@ public class OrderServiceImpl implements IOrderService {
 	public int insertOrder(Order order) {
 		// 订单明细表插入数据
 		return orderDao.insertSelective(order);
-	}
-
-	/**
-	 * 根据id查询订单
-	 */
-	@Override
-	public Order selectByPrimaryKey(long orderId) {
-
-		return orderDao.selectByPrimaryKey(orderId);
 	}
 
 	/**
@@ -184,30 +178,36 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	private Double countPremiumPriceSpread(List<OrderDetail> premiumList) {
 
-		if (premiumList.isEmpty()) {
-			return 0.0;
-		}
-
 		double price = 40.0; // 每盒差价
 		double totalprice = 0; // 总差价
 
-		// 当赠品为男版或者女版时
-		if (premiumList.size() <= 1) {
-			if (premiumList.get(0).getOrderid() == 1001) { // 男版
-				totalprice = 0;
-			} else { // 女版差价
-				totalprice = premiumList.get(0).getQty() * price;
-			}
+		if (premiumList.isEmpty() || premiumList.size() == 0) {
+			return totalprice;
+		}
 
-			// 当赠品为混合版时
-		} else {
-			for (int j = 0; j < premiumList.size(); j++) {
-				// 计算出需补的差价
-				if (premiumList.get(j + 1).getPrice() > premiumList.get(j).getPrice()) {
-					totalprice = premiumList.get(j).getQty() * price;
+		// 赠品是鹿无忧时
+		for (OrderDetail premium : premiumList) {
+			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
+				// 一、当赠品为男版或者女版时
+				if (premiumList.size() <= 1) {
+					if (premiumList.get(0).getOrderid() == 1001) { // 男版
+						totalprice = 0;
+					} else { // 女版差价
+						totalprice = premiumList.get(0).getQty() * price;
+					}
+
+					// 二、当赠品为混合版时
+				} else {
+					for (int j = 0; j < premiumList.size(); j++) {
+						// 计算出需补的差价
+						if (premiumList.get(j).getGoodsId() == 1002) {
+							totalprice = premiumList.get(j).getQty() * price;
+						}
+					}
 				}
 			}
 		}
+
 		return totalprice;
 	}
 
@@ -216,7 +216,8 @@ public class OrderServiceImpl implements IOrderService {
 	 * 
 	 * @param chooseGoodsLst
 	 */
-	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order, HttpServletRequest request, HttpServletResponse response) {
+	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
+			HttpServletRequest request, HttpServletResponse response) {
 
 		// 选择的商品信息为空
 		if (chooseGoodsLst.size() == 0) {
@@ -241,12 +242,15 @@ public class OrderServiceImpl implements IOrderService {
 			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 			quantity += orderDetail.getQty(); // 商品总数量
-			totalprice = totalprice.multiply(BigDecimal.valueOf(orderDetail.getPrice())); // 商品总价格
+			logger.info("商品单价---------》》》》》》》》》" + orderDetail.getPrice());
+			totalprice = totalprice.add(BigDecimal.valueOf(orderDetail.getPrice())); // 商品总价格
+			logger.info("商品总金额---------》》》》》》》》》" + totalprice);
 		}
 
 		if (priceSpread != 0) { // 总金额加上赠品需要补的差价
-			totalprice = totalprice.multiply(BigDecimal.valueOf(priceSpread));
+			totalprice = totalprice.add(BigDecimal.valueOf(priceSpread));
 		}
+		logger.info("=============差价：" + priceSpread);
 
 		// 创建订单
 		order.setOrdercode(orderCode); // 订单号
@@ -258,10 +262,13 @@ public class OrderServiceImpl implements IOrderService {
 		order.setTotalprice(totalprice); // 商品总价格
 		order.setOrderDetailList(chooseGoodsLst); // 订单明细
 
+		// 插入订单
+		orderDao.insertSelective(order);
+
 		// 判断支付方式，生成预支付订单
 		if (order.getOrdertype() == 1) { // 微信支付
 			try {
-				return getWXPayStr(request,response,buyOrder(order));
+				return getWXPayStr(request, response, buyOrder(order));
 			} catch (Exception e) {
 				logger.info("获取微信预支付订单出错");
 				e.printStackTrace();
@@ -271,8 +278,8 @@ public class OrderServiceImpl implements IOrderService {
 			return getAlipayorderStr(buyOrder(order));
 
 		}
-			logger.debug("===========获取支付方式失败，生成预支付订单失败！！！！");
-			return Result.failureResult("获取支付方式失败，生成预支付订单失败");
+		logger.debug("===========获取支付方式失败，生成预支付订单失败！！！！");
+		return Result.failureResult("获取支付方式失败，生成预支付订单失败");
 	}
 
 	/**
@@ -317,17 +324,13 @@ public class OrderServiceImpl implements IOrderService {
 			// 订单明细
 			model.setBody(order.getOrderDetailList().toString());
 
-			/*
-			 * 设置未付款支付宝交易的超时时间，一旦超时，该笔交易就会自动被关闭。当用户进入支付宝收银台页面（不包括登录页面），
-			 * 会触发即刻创建支付宝交易，此时开始计时。
-			 * 取值范围：1m～15d。m-分钟，h-小时，d-天，1c-当天（1c-当天的情况下，无论交易何时创建，都在0点关闭）
-			 * model.setTimeoutExpress(AlipayConfig.timeoutExpress);
-			 */
-
+			// 设置未付款支付宝交易的超时时间，一旦超时，该笔交易就会自动被关闭。当用户进入支付宝收银台页面（不包括登录页面），
+			// 会触发即刻创建支付宝交易，此时开始计时。
+			model.setTimeoutExpress(AlipayConfig.timeoutExpress);
 			// 【必填】商户订单号
 			model.setOutTradeNo(order.getOrdercode());
 			// 【必填】支付金额
-			//model.setTotalAmount(order.getTotalprice().toString());
+			// model.setTotalAmount(order.getTotalprice().toString());
 			model.setTotalAmount("0.01");
 			// 【必填】销售产品码，商家和支付宝签约的产品码，为固定值QUICK_MSECURITY_PAY
 			model.setProductCode("QUICK_MSECURITY_PAY");
@@ -370,7 +373,6 @@ public class OrderServiceImpl implements IOrderService {
 			logger.info("==================验签失败 ！");
 			e.printStackTrace();
 		}
-
 		// 对验签进行处理
 		if (signVerified) {
 			// 验签通过
@@ -445,8 +447,12 @@ public class OrderServiceImpl implements IOrderService {
 					// 支付成功，更新订单表状态
 					orderPay(outTradeNo, gmtPayment);
 
+					// 计算奖励金
+					// AwardCalculator.doAward(buyUserId, buyQty, orderId);
+
 					if (returnResult > 0) {
 						return "success";
+
 					} else {
 						return "fail";
 					}
@@ -530,6 +536,7 @@ public class OrderServiceImpl implements IOrderService {
 
 	/**
 	 * 微信生成预支付订单
+	 * 
 	 * @param request
 	 * @param response
 	 * @return
@@ -541,7 +548,7 @@ public class OrderServiceImpl implements IOrderService {
 		// 获取生成预支付订单的请求类
 		PrepayIdRequestHandler prepayReqHandler = new PrepayIdRequestHandler(request, response);
 		BigDecimal totalFee = order.getTotalprice();
-		logger.info("======获取订单的总金额====="+totalFee);
+		logger.info("======获取订单的总金额=====" + totalFee);
 		// 测试时，每次支付一分钱，微信支付所传的金额是以分为单位的，因此实际开发中需要x100
 		int total_fee = Integer.valueOf(totalFee.multiply(new BigDecimal(100)).toString());
 		logger.info("total_fee:" + total_fee);
@@ -557,7 +564,8 @@ public class OrderServiceImpl implements IOrderService {
 		String timestamp = WXUtil.getTimeStamp();
 		prepayReqHandler.setParameter("time_start", timestamp);
 		// 测试时，每次支付一分钱，上线之后需要放开此代码
-		//prepayReqHandler.setParameter("total_fee", String.valueOf(total_fee));
+		// prepayReqHandler.setParameter("total_fee",
+		// String.valueOf(total_fee));
 		prepayReqHandler.setParameter("total_fee", "1");
 		prepayReqHandler.setParameter("trade_type", "APP");
 		/**
@@ -571,30 +579,30 @@ public class OrderServiceImpl implements IOrderService {
 			// 创建微信订单支付记录
 			AlipaymentOrder alipaymentOrder = new AlipaymentOrder();
 			alipaymentOrder.setRemark("微信支付");
-			alipaymentOrder.setTotalamount(new BigDecimal(total_fee/100));
+			alipaymentOrder.setTotalamount(new BigDecimal(total_fee / 100));
 			alipaymentOrder.setCreatetime(DateUtil.dateToString(new Date()));
 			alipaymentOrder.setOrdercode(out_trade_no);
 			alipaymentOrder.setOrderid(order.getOrderid());
-			alipaymentOrder.setOrderstatus(0); 
-			
+			alipaymentOrder.setOrderstatus(0);
+
 			alipaymentOrderService.createAlipayMentOrder(alipaymentOrder);
 			String signs = "appid=" + WXPayConfig.APP_ID + "&noncestr=" + nonce_str + "&package=Sign=WXPay&partnerid="
 					+ WXPayConfig.PARTNER_ID + "&prepayid=" + prepayid + "&timestamp=" + timestamp + "&key="
 					+ WXPayConfig.APP_KEY;
-			
+
 			map.put("code", 0);
 			map.put("info", "success");
 			map.put("prepayid", prepayid);
-			//签名方式与上面类似
+			// 签名方式与上面类似
 			map.put("sign", MD5Util.MD5Encode(signs, "utf8").toUpperCase());
 			map.put("appid", WXPayConfig.APP_ID);
 			map.put("timestamp", timestamp); // 等于请求prepayId时的time_start
 			map.put("noncestr", nonce_str); // 与请求prepayId时值一致
 			map.put("package", "Sign=WXPay"); // 固定常量
 			map.put("partnerid", WXPayConfig.PARTNER_ID);
-			return Result.successResult("获取微信预支付订单成功",map.toString());
+			return Result.successResult("获取微信预支付订单成功", map.toString());
 		} else {
-			
+
 			return Result.failureResult("获取prepayid失败");
 		}
 	}
@@ -632,12 +640,12 @@ public class OrderServiceImpl implements IOrderService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Order buyOrder(Order order) {
 
-		// 插入订单
-		orderDao.insertSelective(order);
+		// 获取订单对象
+		Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
 
 		// 插入订单明细
 		for (OrderDetail orderDetail : order.getOrderDetailLst()) {
-			orderDetail.setOrderid(order.getOrderid());
+			orderDetail.setOrderid(oldOrder.getOrderid());
 			orderDetailDao.insertSelective(orderDetail);
 		}
 

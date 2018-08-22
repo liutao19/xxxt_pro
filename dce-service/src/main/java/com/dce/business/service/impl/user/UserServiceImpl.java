@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.exception.BusinessException;
@@ -792,7 +793,7 @@ public class UserServiceImpl implements IUserService {
 		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
 		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
-		// 信息加密处理		
+		// 信息加密处理
 		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
 		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
 		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
@@ -819,7 +820,6 @@ public class UserServiceImpl implements IUserService {
 		logger.info("用户信息:banktype=" + userDo.getBanktype());
 		// 修改会员
 		int result = userDao.updateByPrimaryKeySelective(userDo);
-
 
 		return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
 	}

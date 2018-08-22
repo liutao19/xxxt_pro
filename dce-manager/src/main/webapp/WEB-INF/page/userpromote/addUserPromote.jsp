@@ -12,39 +12,47 @@
 <body>
 
 <!-- 内容 -->
-<form id="editRegionalawardsForm" method="post" action="<c:url value='regionalawards/saveRegionalawards.html'/>"> 
+<form id="editUserPromoteForm" method="post" action="<c:url value='userpromote/saveUserPromote.html'/>"> 
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
-					<input type="hidden" id="rewardsareaid" name="rewardsareaid" value="${regionalawards.rewardsareaid}"/>
+					<input type="hidden" id="promoteId" name="promoteId" value="${userpromote.promoteId}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">区域奖励金额</label>
+							<label for="name">userLevel</label>
 						</td>	
 						<td>
-								<input type="text" id="rewardbalance" name="rewardbalance" value="${regionalawards.rewardbalance}"/>												
+								<input type="text" id="userLevel" name="userLevel" value="${userpromote.userLevel}"/>												
 						</td>						   
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name"> 推荐代数</label>
+							<label for="name">promoteLevel</label>
 						</td>	
 						<td>
-								<input type="text" id="algebra" name="algebra" value="${regionalawards.algebra}"/>												
+								<input type="text" id="promoteLevel" name="promoteLevel" value="${userpromote.promoteLevel}"/>												
 						</td>						   
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name"> 备注</label>
+							<label for="name">minQty</label>
 						</td>	
 						<td>
-								<input type="text" id="remark" name="remark" value="${regionalawards.remark}"/>												
+								<input type="text" id="minQty" name="minQty" value="${userpromote.minQty}"/>												
+						</td>						   
+					</tr>
+					<tr>	
+						<td align="right">
+							<label for="name">maxQty</label>
+						</td>	
+						<td>
+								<input type="text" id="maxQty" name="maxQty" value="${userpromote.maxQty}"/>												
 						</td>						   
 					</tr>
 		
 				<tr>
 					<td colspan="2">
-						<input id="submitButton" name="submitButton" type="button" onclick="regionalawards_submit();"  value="提交" />	
+						<input id="submitButton" name="submitButton" type="button" onclick="userpromote_submit();"  value="提交" />	
 					</td>
 				<tr>			 
 			</table>	   
@@ -52,11 +60,10 @@
 	</form>
 	<script type="text/javascript">
 		
-    function regionalawards_submit(){
-    	alert("data---->>"+$("#editRegionalawardsForm").serialize());
+    function userpromote_submit(){
     	$.ajax({ 
-    			url: "<c:url value='/regionalawards/saveRegionalawards.html'/>", 
-    			data: $("#editRegionalawardsForm").serialize(),
+    			url: "<c:url value='/userpromote/saveUserPromote.html'/>", 
+    			data: $("#editUserPromoteForm").serialize(),
     			type:"post",
     			dataType:"json",
     			success: function(ret){
@@ -65,7 +72,7 @@
     	   	 				           '是否继续添加？', 
     	   	 				           function(r){
 						   	   			   if(r==false){
-						   	   				$("#editRegionalawardsDiv").dialog("close");
+						   	   				$("#editUserPromoteDiv").dialog("close");
 						   	   			   }
     	   						});
     	   	 		}else{

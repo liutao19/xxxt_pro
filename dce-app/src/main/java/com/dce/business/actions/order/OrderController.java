@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,16 +19,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jdom2.JDOMException;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
+import com.dce.business.common.util.JSONUtils;
 import com.dce.business.common.wxPay.util.XMLUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
@@ -40,6 +46,7 @@ import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.impl.order.AlipaymentOrderService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.UserAdressService;
+import com.google.gson.Gson;
 
 @RestController
 @RequestMapping("order")
@@ -101,32 +108,45 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
 	public Result<?> insertOrder(HttpServletRequest request, HttpServletResponse response) {
 
-		Integer userId = getUserId();
+		// JSONObject jsonStr = JSONObject.fromObject(jsonString);
+		//
+		// // 获取用户id
+		// int userId = (int) jsonStr.get("userId");
+		// // 获取支付方式
+		// int orderType = (int) jsonStr.get("orderType");
+		// // 获取地址id
+		// String addressId = jsonStr.getString("addressId");
+		
+		
 
-		// 获取商品信息
-		String goods = request.getParameter("cart");
+		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
+		String premium = request.getParameter("premium") == null ? "" : request.getParameter("premium");
+		
+		// Integer userId = getUserId();
+		String userId = getString("userId") == null ? "" : request.getParameter("userId");
+		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
+		String orderType = getString("orderType") == null ? "" : request.getParameter("orderType");
 
-		// 获取赠品信息
-		String premium = request.getParameter("premium");
+		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
 
-		// 获取地址id
-		String addressId = getString("addressId");
+			return Result.failureResult("获取userId、addressId、orderType、cart为空！");
+		}
 
-		// 获取支付方式
-		String orderType = getString("orderType");
 		Order order = new Order();
-		order.setUserid(userId);
+		order.setUserid(Integer.valueOf(userId));
 		order.setAddress(addressId);
 		order.setOrdertype(Integer.valueOf(orderType));
-
-		logger.info("======用户选择的商品信息：" + goods + "=====获取的赠品信息：" + premium + "=====获取的地址id：" + addressId
-				+ "=====获取的支付方式：" + orderType);
+		
+		System.err.println("获取的商品信息-------》》》》》"+goods);
 
 		// 将商品信息的JSON数据解析为list集合
 		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
 
 		// 将赠品信息的JSON数据解析为list集合
 		List<OrderDetail> premiumList = convertGoodsFromJson(premium);
+
+		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====获取的赠品信息：" + premiumList + "=====获取的地址id：" + addressId
+				+ "=====获取的支付方式：" + orderType + "=====用户id：" + userId);
 
 		// 生成预付单，保存订单和订单明显
 		return orderService.saveOrder(premiumList, chooseGoodsLst, order, request, response);
@@ -174,7 +194,7 @@ public class OrderController extends BaseController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "/app/tenpay/notify")
+	@RequestMapping(value = "/tenpay/notify")
 	public void getnotify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		logger.info("微信支付回调");
 		PrintWriter writer = response.getWriter();
@@ -195,7 +215,7 @@ public class OrderController extends BaseController {
 			 * 解析微信通知返回的信息
 			 */
 			map = XMLUtil.doXMLParse(result);
-			
+
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		}
@@ -205,19 +225,20 @@ public class OrderController extends BaseController {
 			if (map.get("result_code").equals("SUCCESS")) {
 				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(map.get("out_trade_no"));
 				logger.info("订单号：" + Long.valueOf(map.get("out_trade_no")));
-				logger.info("交易创建时间-----》》》alipaymentOrder.getGmtcreatetime："+alipaymentOrder.getGmtcreatetime());
-				
+				logger.info("交易创建时间-----》》》alipaymentOrder.getGmtcreatetime：" + alipaymentOrder.getGmtcreatetime());
+
 				// 判断通知是否已处理，若已处理，则不予处理
 				if (alipaymentOrder.getGmtcreatetime() == null) {
 					logger.info("通知微信后台");
 					alipaymentOrder.setOrderstatus(2);
 					alipaymentOrder.setNotifytime(DateUtil.dateToString(new Date()));
-					//更新交易记录状态
+					// 更新交易记录状态
 					alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
-					
-					//支付成功处理
-					orderService.orderPay(alipaymentOrder.getOrdercode(),alipaymentOrder.getCreatetime());
-					
+
+					// 支付成功处理
+					orderService.orderPay(alipaymentOrder.getOrdercode(), alipaymentOrder.getCreatetime());
+
+					// 处理业务完毕，将业务结果通知给微信
 					String notifyStr = XMLUtil.setXML("SUCCESS", "");
 					writer.write(notifyStr);
 					writer.flush();
@@ -249,9 +270,30 @@ public class OrderController extends BaseController {
 	 * @return
 	 */
 	private List<OrderDetail> convertGoodsFromJson(String goods) {
-		if (StringUtils.isBlank(goods)) {
-			throw new BusinessException("请选择商品");
+		
+		List<OrderDetail> orderList = new ArrayList<OrderDetail>();
+		JSONArray json = JSONArray.fromObject(goods);
+		for(int i=0; i<json.size(); i++){
+			OrderDetail orderDetail = new OrderDetail();
+			JSONObject obj = JSONObject.fromObject(json.get(i));
+			orderDetail.setGoodsId(Integer.valueOf(obj.getString("goodsId")));
+			orderDetail.setQty(Integer.valueOf(obj.getString("qty")));
+			orderDetail.setPrice(Double.valueOf(obj.getString("price")));
+			orderList.add(orderDetail);
 		}
-		return (List<OrderDetail>) JSONArray.parse(goods);
+
+		/*List<OrderDetail> goodsList = new ArrayList<OrderDetail>();
+		Gson gson = new Gson();
+		goodsList = (List<OrderDetail>) gson.fromJson(goodsStr, OrderDetail.class);
+		return goodsList;*/
+		return orderList;
 	}
+
+	/*
+	 * private List<OrderDetail> convertGoodsFromJson(String goods) {
+	 * 
+	 * if (StringUtils.isBlank(goods)) { return Collections.EMPTY_LIST; } return
+	 * (List<OrderDetail>) JSONArray.parse(goods); }
+	 */
+
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -77,6 +80,7 @@ public class UserController extends BaseAction {
 
 	/**
 	 * 报单总计
+	 * 
 	 * @param pagination
 	 * @param request
 	 * @param response
@@ -138,6 +142,7 @@ public class UserController extends BaseAction {
 
 	/**
 	 * 修改用户等级
+	 * 
 	 * @param response
 	 */
 	@RequestMapping(value = "/activityUser", method = { RequestMethod.GET, RequestMethod.POST })
@@ -186,10 +191,12 @@ public class UserController extends BaseAction {
 		modelMap.addAttribute("userId", userId);
 		return "/user/orgtree";
 	}
-/**
- * 查看直推树
- * @param response
- */
+
+	/**
+	 * 查看直推树
+	 * 
+	 * @param response
+	 */
 	@RequestMapping(value = "/listMyRef", method = RequestMethod.POST)
 	@ResponseBody
 	public void listMyRef(HttpServletResponse response) {
@@ -249,16 +256,71 @@ public class UserController extends BaseAction {
 	 */
 	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
+	public Result<?> memberSdmin(@Valid UserDo userDo, BindingResult bindingResult, HttpServletResponse response) {
+		try {
+			logger.info("新增会员");
+			// 参数校验
+			if (bindingResult.hasErrors()) {
+				List<ObjectError> errors = bindingResult.getAllErrors();
+				logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
+				return Result.failureResult(errors.get(0).getDefaultMessage());
+			}
+
+			Result<?> result = userService.reg(userDo);
+
+			logger.info("新增会员结果:" + JSON.toJSONString(result));
+			return result;
+			//
+			// userDo.setId(userDo.getId());
+			// Result<?> flag = Result.failureResult("信息修改失败!");
+			// if (userDo.getId() != 0) {// 判断用户id是否为空
+			//
+			// logger.info("空单用户修改,只改变用户信息:userId=" + userDo.getId() +
+			// ",userName=" + userDo.getUserName());
+			// flag = userService.update(userDo);
+			// } else {
+			// logger.info("非空单用户修改,只改变用户信息:userId=" + userDo.getId() +
+			// ",userName=" + userDo.getUserName());
+			//
+			// }
+			// logger.info("修改结果:" + JSON.toJSONString(flag));
+			//
+			// outPrint(response, JSON.toJSONString(flag));
+		} catch (BusinessException e) {
+			logger.info("充值报错BusinessException:", e);
+			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+		} catch (Exception e) {
+			logger.info("充值报错Exception:", e);
+			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+		}
+		return null;
+
+	}
+
+	/**
+	 * 修改用户信息
+	 * 
+	 * @param response
+	 */
+	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
 	public void saveEdit(HttpServletResponse response) {
 
-		String userId = getString("userId");
-		String userName = getString("userName");
-		String trueName = getString("trueName");
-		String mobile = getString("mobile");
-		String login_password = getString("login_password");
-		String seconde_password = getString("seconde_password");
-		String userLevel = getString("userLevel");
-		String isBlankOrder = getString("isBlankOrder");
+		String userId = getString("userId");// 用户id
+		String userName = getString("userName");// 用户名
+		String trueName = getString("trueName");// 用户真实姓名
+		String mobile = getString("mobile");// 用户手机号
+		String login_password = getString("login_password");// 登录密码
+		String seconde_password = getString("seconde_password");// 支付密码
+		String userLevel = getString("userLevel");// 用户等级
+		// String isBlankOrder = getString("isBlankOrder");// 是否空单
+		String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
+		String isActivated = getString("isActivated");// 激活状态
+		String certification = getString("certification");// 认证状态
+		String sex = getString("sex"); // 性别
+		String idnumber = getString("idnumber");// 身份证号
+		String banknumber = getString("banknumber");// 银行卡号
+		String banktype = getString("banktype");// 银行卡的开户行
 
 		logger.info("修改用户信息:userId=" + userId);
 		logger.info("修改用户信息:userName=" + userName);
@@ -267,46 +329,81 @@ public class UserController extends BaseAction {
 		logger.info("修改用户信息:login_password=" + login_password);
 		logger.info("修改用户信息:seconde_password=" + seconde_password);
 		logger.info("修改用户信息:userLevel=" + userLevel);
-		logger.info("修改用户信息:isBlankOrder=" + isBlankOrder);
+		// logger.info("修改用户信息:isBlankOrder=" + isBlankOrder);
+		logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
+		logger.info("修改用户信息:isActivated=" + isActivated);
+		logger.info("修改用户信息:certification=" + certification);
+		logger.info("修改用户信息:sex=" + sex);
+		logger.info("修改用户信息:idunmber=" + idnumber);
+		logger.info("修改用户信息:banknumber=" + banknumber);
+		logger.info("修改用户信息:banktype=" + banktype);
 
-		if (StringUtils.isBlank(isBlankOrder)) {
-			outPrint(response, JSON.toJSONString(Result.failureResult("请选择是否空单用户!")));
-			return;
-		}
+		// if (StringUtils.isBlank(isBlankOrder)) {
+		// outPrint(response,
+		// JSON.toJSONString(Result.failureResult("请选择是否空单用户!")));
+		// return;
+		// }
 
 		UserDo user = new UserDo();
-		if (StringUtils.isBlank(userId)) {
+		if (StringUtils.isBlank(userId)) {//
 			outPrint(response, JSON.toJSONString(Result.failureResult("请选择要修改的用户!")));
 			return;
 		}
-
+		// 新增或编辑重复的用户名
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("userName", userName);
+		List<UserDo> list = userService.selectUser(params);
+		if (CollectionUtils.isEmpty(list)) {
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户不存在!")));
+			return;
+		}
 		if (StringUtils.isNotBlank(userLevel)) {
-			user.setUserLevel(Byte.parseByte(userLevel));
+			user.setUserLevel(Byte.parseByte(userLevel)); // 等级
 		}
 		if (StringUtils.isNotBlank(trueName)) {
-			user.setTrueName(trueName);
-			;
+			user.setTrueName(trueName);// 姓名
 		}
 		if (StringUtils.isNotBlank(mobile)) {
-			user.setMobile(mobile);
-			;
+			user.setMobile(mobile); // 手机号
 		}
 		if (StringUtils.isNotBlank(login_password)) {
-			user.setUserPassword(DataEncrypt.encrypt(login_password));
+			user.setUserPassword(DataEncrypt.encrypt(login_password));// 登录密码
 		}
 		if (StringUtils.isNotBlank(seconde_password)) {
-			user.setTwoPassword(DataEncrypt.encrypt(seconde_password));
-			;
+			user.setTwoPassword(DataEncrypt.encrypt(seconde_password));// 支付密码
+		}
+		if (StringUtils.isNotBlank(refereeUserMobile)) {
+			user.setRefereeUserMobile(refereeUserMobile);// 推荐人
+		}
+		if (StringUtils.isNotBlank(isActivated)) {
+			user.setIsActivated(Integer.parseInt(isActivated));// 激活状态
+		}
+		if (StringUtils.isNotBlank(certification)) {
+			user.setCertification(Integer.valueOf(certification));// 认证状态
+		}
+		if (StringUtils.isNotBlank(sex)) {
+			user.setSex(Integer.valueOf(sex));// 性别
+		}
+		if (StringUtils.isNotBlank(idnumber)) {
+			user.setIdnumber(idnumber);// 身份证
+		}
+		if (StringUtils.isNotBlank(banknumber)) {
+			user.setBanknumber(banknumber);// 银行卡号
+		}
+		if (StringUtils.isNotBlank(banktype)) {
+			user.setBanktype(banktype);// 开户行
 		}
 
 		try {
 			user.setId(Integer.parseInt(userId));
 			Result<?> flag = Result.failureResult("信息修改失败!");
-			if ("1".equals(isBlankOrder)) {
+			if (StringUtils.isNotBlank(userId)) {// 判断用户id是否为空
+
 				logger.info("空单用户修改,只改变用户信息:userId=" + userId + ",userName=" + userName);
 				flag = userService.update(user);
 			} else {
 				logger.info("非空单用户修改,只改变用户信息:userId=" + userId + ",userName=" + userName);
+
 			}
 			logger.info("修改结果:" + JSON.toJSONString(flag));
 
@@ -320,7 +417,6 @@ public class UserController extends BaseAction {
 		}
 
 	}
-
 
 	/**
 	 * 活动

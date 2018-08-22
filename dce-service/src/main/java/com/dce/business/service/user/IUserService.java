@@ -11,6 +11,13 @@ import com.dce.business.entity.user.UserParentDo;
 
 public interface IUserService {
 
+    /**
+     * 用户个人信息修改
+     * @param userDo
+     * @return
+     */
+    Result<?> update(UserDo userDo);
+	
     /** 
      * 根据用户名查用户
      * @param userName
@@ -32,6 +39,13 @@ public interface IUserService {
      */
     Result<?> reg(UserDo userDo);
 
+    /**
+     * 新増会员
+     * @param userDo
+     * @return
+     */
+    Result<?> addUserInfo(UserDo userDo);
+    
     /**
      * 模糊查询用户 
      * @param userName
@@ -62,13 +76,6 @@ public interface IUserService {
 
     List<UserDo> selectUser(Map<String, Object> params);
 
-    /**
-     * 用户个人信息修改
-     * @param userDo
-     * @return
-     */
-    Result<?> update(UserDo userDo);
-    
     /**
      * 用户登录密码修改
      * @param userDo

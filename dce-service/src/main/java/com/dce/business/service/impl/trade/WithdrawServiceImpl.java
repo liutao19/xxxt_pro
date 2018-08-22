@@ -15,6 +15,7 @@ import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.enums.MessageType;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.Constants;
 import com.dce.business.dao.etherenum.IEthereumTransInfoDao;
@@ -74,15 +75,11 @@ public class WithdrawServiceImpl implements IWithdrawService {
         withdraw.setProcessStatus(auditResult);
         withdraw.setConfirmDate(new Date().getTime()/1000);
         
-        //同意支付
-        if ("2".equals(auditResult)||"4".equals(auditResult)) {
-            check(withdrawId); //重复性校验
-            //result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount());
-            if(result.isSuccess()){
-            	result.setMsg("审核成功！");
-            }
+        //审核通过同意
+        if ("2".equals(auditResult)) {
+            
         } else if ("3".equals(auditResult)) {
-            // 返还美元点
+            // 返还钱数
             UserAccountDo updateAccount = new UserAccountDo();
             updateAccount.setAccountType(AccountType.wallet_money.getAccountType());
             updateAccount.setAmount(withdrawDo.getAmount());
@@ -91,6 +88,16 @@ public class WithdrawServiceImpl implements IWithdrawService {
            
             addMessage(withdrawDo.getUserid(), withdrawDo.getAmount());
             
+        }
+        //提现操作
+        else if("4".equals(auditResult)){
+        	check(withdrawId); //重复性校验
+        	if(withdrawDo.getType().equals("1")){
+                result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo());
+        	}
+            if(result.isSuccess()){
+            	result.setMsg("提现成功！");
+            }
         }
         
         //更新
@@ -153,4 +160,13 @@ public class WithdrawServiceImpl implements IWithdrawService {
 		
 		return withdrawDao.selectWithDrawTotallAmount(param);
 	}
+
+	
+	@Override
+	public WithdrawalsDo selectByPrimaryKey(Integer withdrawId) {
+		// TODO Auto-generated method stub
+		return withdrawDao.selectByPrimaryKey(withdrawId);
+	}
+	
+	
 }

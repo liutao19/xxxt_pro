@@ -63,8 +63,9 @@ $(function(){
 	 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 						}else if(row.process_status == "2"){
 	 							if(row.withdrawStatus == "未到账"){
-	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a> |'+
-		 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
+	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">提现</a>';
+	 							}else{
+	 								return '<a href="javascript:void(0);"  onclick="to_viewTrans('+row.id+');">查看进展</a>';
 	 							}
 	 						}
 		 				}
@@ -163,9 +164,94 @@ function reloadDataGrid()
 	$("#withDrawTable").datagrid("reload");
 }
 
+
+/**
+ * 查看转账详情
+ * @param id
+ */
+
+function to_viewTrans(withdrawId){
+	var url = httpUrl+"/withdraw/queryWithdraw.html?&withdrawId="+withdrawId;
+	$('#editDiv').dialog({
+		title: "查看转账详情",
+		width: 760,
+		height: 500,
+		closed: false,
+		closable:false,
+		cache: false,
+		href: url,
+		modal: true,
+		toolbar:[
+				{
+					iconCls:"icon-no",text:"关闭",
+					handler:function(){
+						$("#editDiv").dialog("close");
+				}
+		}]
+	});
+}
+/**
+ * 查看转账详情
+ */
+function save_YsNews(){
+	/*var formdata = $("#editYsNewsForm").serialize();
+	console.info("formdata");
+	console.info(formdata);*/
+	
+	var object =new FormData();
+	
+	//获取表单数据
+	var id=$("#id").val();
+	var title=$("#title").val();
+	var file=document.getElementById("image").files[0];
+	var content=$("#content").val();
+	var author=$("#author").val();
+	var topNews=$("#topNews").val();
+	var remark=$("#remark").val();
+	var status=$("#status").val();
+	var createDate=$("#createDate").val();
+	var createName=$("#createName").val();
+	var updateDate=$("#updateDate").val();
+	var updateName=$("#updateName").val();
+	 alert("file---->>"+file);
+	
+	 object.append("id",id);
+	object.append("title",title);
+	object.append("file",file);
+	object.append("content",content);
+	object.append("author",author);
+	object.append("topNews",topNews);
+	object.append("remark",remark);
+	object.append("status",status);
+	object.append("createDate",createDate);
+	object.append("createName",createName);
+	object.append("updateDate",updateDate);
+	object.append("updateName",updateName);
+
+	var  url =httpUrl+"/ysnews/saveYsNews.html?&rand=" + Math.random();
+	 $.ajax({   
+		 type: 'POST',
+		 dataType: 'json',
+		 url: url,  
+		 data:object,
+		 processData: false,
+		 contentType : false,
+		 success: function(data){ 
+			 if(data.code ==="0"){
+				 $("#editYsNewsDiv").dialog("close");
+				 $('tt_YsNews').datagrid('reload');
+				 $.messager.alert("提示","操作成功","info");
+			 }else{
+				 $.messager.alert("提示","操作失败","error");
+			 }   
+		 } 
+	});
+}
+
+
 function auditWithdraw(withdrawId, optType){
 	
-	var msg = optType=='2'?'审核通过':optType=='3'?'审核拒绝':'重做'; 
+	var msg = optType=='2'?'审核通过':optType=='3'?'审核拒绝':'提现'; 
 	$.messager.confirm("确认", "确认" + msg + "？", function (r) {  
         if (r) {  
         	$.ajax({

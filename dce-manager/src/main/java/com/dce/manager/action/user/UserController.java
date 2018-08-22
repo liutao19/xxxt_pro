@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -250,51 +249,49 @@ public class UserController extends BaseAction {
 	}
 
 	/**
-	 * 修改用户信息
+	 * 会员管理
 	 * 
+	 * @param userDo
+	 * @param bindingResult
 	 * @param response
+	 * @return
 	 */
 	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public Result<?> memberSdmin(@Valid UserDo userDo, BindingResult bindingResult, HttpServletResponse response) {
+
+		String userId = getString("userId");// 用户id
+		Result<?> result = null;
 		try {
-			logger.info("新增会员");
-			// 参数校验
-			if (bindingResult.hasErrors()) {
-				List<ObjectError> errors = bindingResult.getAllErrors();
-				logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
-				return Result.failureResult(errors.get(0).getDefaultMessage());
+			if (StringUtils.isNotBlank(userId)) {
+
+				if (bindingResult.hasErrors()) {// 参数校验
+					List<ObjectError> errors = bindingResult.getAllErrors();
+					logger.info("修改信息，参数校验错误：" + JSON.toJSONString(errors));
+					return Result.failureResult(errors.get(0).getDefaultMessage());
+				}
+				result = userService.update(userDo);
+				logger.info("用户注册结果:" + JSON.toJSONString(result));
+			} else {
+				// 新增会员
+				if (bindingResult.hasErrors()) {// 参数校验
+					List<ObjectError> errors = bindingResult.getAllErrors();
+					logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
+					return Result.failureResult(errors.get(0).getDefaultMessage());
+				}
+
+				result = userService.addUserInfo(userDo);
+				logger.info("用户注册结果:" + JSON.toJSONString(result));
+				return Result.successResult("新增会员成功");
 			}
-
-			Result<?> result = userService.reg(userDo);
-
-			logger.info("新增会员结果:" + JSON.toJSONString(result));
-			return result;
-			//
-			// userDo.setId(userDo.getId());
-			// Result<?> flag = Result.failureResult("信息修改失败!");
-			// if (userDo.getId() != 0) {// 判断用户id是否为空
-			//
-			// logger.info("空单用户修改,只改变用户信息:userId=" + userDo.getId() +
-			// ",userName=" + userDo.getUserName());
-			// flag = userService.update(userDo);
-			// } else {
-			// logger.info("非空单用户修改,只改变用户信息:userId=" + userDo.getId() +
-			// ",userName=" + userDo.getUserName());
-			//
-			// }
-			// logger.info("修改结果:" + JSON.toJSONString(flag));
-			//
-			// outPrint(response, JSON.toJSONString(flag));
 		} catch (BusinessException e) {
 			logger.info("充值报错BusinessException:", e);
-			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户激活失败!")));
 		} catch (Exception e) {
 			logger.info("充值报错Exception:", e);
-			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户激活失败!")));
 		}
-		return null;
-
+		return result;
 	}
 
 	/**

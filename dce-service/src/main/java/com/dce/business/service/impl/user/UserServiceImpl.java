@@ -132,28 +132,6 @@ public class UserServiceImpl implements IUserService {
 		return result > 0 ? Result.successResult("注册成功!") : Result.failureResult("注册失败");
 	}
 
-	/**
-	 * 新増会员（需维护账户关系与推荐人关系）
-	 */
-
-	/**
-	 * 修改用户信息（后台）
-	 */
-	@Override
-	public Result<?> update(UserDo userDo) {
-		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改用户信息参数错误!");
-		}
-
-		int flag = userDao.updateByPrimaryKeySelective(userDo);
-		if (flag > 0) {
-			return Result.successResult("修改成功");
-		} else {
-
-			return Result.failureResult("修改失败");
-		}
-	}
-
 	// 维护賬戶
 	private void maintainUserAccount(Integer userId) {
 		String[] accountTypes = new String[] { AccountType.wallet_money.name(), AccountType.wallet_active.name(),
@@ -792,4 +770,57 @@ public class UserServiceImpl implements IUserService {
 		return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
 	}
 
+	/**
+	 * 修改用户信息（后台）
+	 */
+	@Override
+	public Result<?> update(UserDo userDo) {
+
+		UserDo ref = null;
+
+		// 判断新增用户名是否为空
+		userDo.setUserName(userDo.getUserName().trim());
+		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
+		if (oldUser != null) {
+			logger.info("用户已存在");
+			return Result.failureResult("用户已存在");
+		}
+
+		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
+		userDo.setId(userDo.getId());// 用户id
+		userDo.setUserLevel(userDo.getUserLevel()); // 等级
+		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
+		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
+		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
+		// 信息加密处理		
+		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
+		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
+		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
+		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
+		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
+		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+
+		// 修改的会员信息
+		logger.info("用户信息:userId=" + userDo.getId());
+		logger.info("用户信息:userName=" + userDo.getUserName());
+		logger.info("用户信息:trueName=" + userDo.getUserName());
+		logger.info("用户信息:mobile=" + userDo.getMobile());
+		logger.info("用户信息:login_password=" + userDo.getUserPassword());
+		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());
+		logger.info("用户信息:userLevel=" + userDo.getUserLevel());
+		logger.info("用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
+		logger.info("用户信息:isActivated=" + userDo.getIsActivated());
+		logger.info("用户信息:certification=" + userDo.getCertification());
+		logger.info("用户信息:sex=" + userDo.getSex());
+		logger.info("用户信息:idunmber=" + userDo.getIdnumber());
+		logger.info("用户信息:banknumber=" + userDo.getBanknumber());
+		logger.info("用户信息:banktype=" + userDo.getBanktype());
+		// 修改会员
+		int result = userDao.updateByPrimaryKeySelective(userDo);
+
+
+		return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
+	}
 }

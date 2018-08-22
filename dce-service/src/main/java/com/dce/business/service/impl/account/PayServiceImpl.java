@@ -218,8 +218,8 @@ public class PayServiceImpl implements IPayService {
 		request.setBizContent("{" +
 		"\"out_biz_no\":"+orderId+","+
 		"\"payee_type\":\"ALIPAY_LOGONID\"," +
-		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
-		"\"amount\":"+qty+"," +
+		"\"payee_account\":\"1422842397@qq.com\"," +
+		"\"amount\":"+0.01+"," +
 		"\"remark\":\"转账备注\"" +
 		"}");
 		AlipayFundTransToaccountTransferResponse response = null;
@@ -482,6 +482,7 @@ public class PayServiceImpl implements IPayService {
 		Trans trans=new Trans();
 		try {
 			response = alipayClient.execute(request);
+			String status = null;
 			if(response.isSuccess()){
 				System.out.println("调用成功");
 				trans.setArrival_time_end(response.getArrivalTimeEnd());
@@ -490,6 +491,19 @@ public class PayServiceImpl implements IPayService {
 				trans.setOrder_id(response.getOrderId());
 				trans.setOut_biz_no(response.getOutBizNo());
 				trans.setPay_date(response.getPayDate());
+				if(response.getStatus().equals("SUCCESS")){
+					status="成功";
+				}
+				else if(response.getStatus().equals("FAIL")){
+					status=response.getFailReason();
+				}
+				else if(response.getStatus().equals("DEALING")){
+					status="处理中";
+				}
+				else if(response.getStatus().equals("REFUND")){
+					status="退票";
+				}
+				trans.setStatus(status);
 			} else {
 				System.out.println("调用失败");
 			}

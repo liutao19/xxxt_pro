@@ -775,6 +775,7 @@ public class UserServiceImpl implements IUserService {
 	 * 修改用户信息（后台）
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> update(UserDo userDo) {
 
 		UserDo ref = null;

@@ -256,7 +256,7 @@ public class UserController extends BaseAction {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/memberAdmin", method = { RequestMethod.POST })
 	@ResponseBody
 	public Result<?> memberSdmin(@Valid UserDo userDo, BindingResult bindingResult, HttpServletResponse response) {
 

@@ -390,7 +390,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 				Map<String, Object> maps = new HashMap<>();
 				maps.put("algebra", 0);
 				List<Regionalawards> regional = regionlDao.queryListPage(maps);
-				Double sum = regional.get(0).getRewardbalance() * count;
+				int sum = Integer.valueOf(regional.get(0).getRewardbalance()) * count;
 				// 获取账户当前余额
 				UserAccountDo accont = new UserAccountDo();
 				// 相加之后余额
@@ -431,7 +431,7 @@ public class AwardConfigServiceImpl implements AwardConfigService {
 					Map<String, Object> mapstwo = new HashMap<>();
 					mapstwo.put("algebra", 1);
 					List<Regionalawards> regionaltwo = regionlDao.queryListPage(mapstwo);
-					Double sumtwo = regionaltwo.get(0).getRewardbalance() * count;
+					int sumtwo = Integer.valueOf(regionaltwo.get(0).getRewardbalance()) * count;
 					// 获取账户当前余额
 					UserAccountDo acconttwo = new UserAccountDo();
 					// 相加之后余额

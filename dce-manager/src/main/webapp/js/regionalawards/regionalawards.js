@@ -70,7 +70,7 @@ $(function() {
 				align : "left",
 				formatter : function(value, row, index) {
 					var str = '<a href="javascript:void(0);" onclick="to_editregionalawards(\''
-							+ row.id + '\');">编辑</a>';
+							+ row.rewardsareaid + '\');">编辑</a>';
 					return str;
 				}
 			} ] ];

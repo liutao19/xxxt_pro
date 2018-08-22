@@ -7,11 +7,9 @@
 package com.dce.manager.action.goods;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -163,7 +161,7 @@ public class GoodsController extends BaseAction {
 		if (!file.isEmpty()) {
 			try {
 				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "src/main/webapp/images"
+				String filePath = request.getSession().getServletContext().getRealPath("/") + "images"
 						+ "/"
 						+ file.getOriginalFilename();
 				System.out.println(filePath);

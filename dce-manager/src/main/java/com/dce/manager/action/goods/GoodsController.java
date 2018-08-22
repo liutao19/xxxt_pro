@@ -7,9 +7,11 @@
 package com.dce.manager.action.goods;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -159,37 +161,6 @@ public class GoodsController extends BaseAction {
 	public void saveGoods(CTGoodsDo CTGoodsDo, @RequestParam(value = "file", required = false) MultipartFile file,
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----saveGoods------");
-<<<<<<< HEAD
-		
-		
-		if(file!=null){
-		if (!file.isEmpty()) {
-			try {
-				// 文件保存路径
-				String filePath = request.getSession().getServletContext().getRealPath("/") + "images"
-						+ "/"
-						+ file.getOriginalFilename();
-				System.out.println(filePath);
-				// 转存文件
-				file.transferTo(new File(filePath));
-				
-				
-				/*//图片路径
-				String filePath = "E:\\xx\\img";
-				//获取原始图片的拓展名 
-				String originalFilename = file.getOriginalFilename();
-				 //新的文件名字 
-				 String newFileName = UUID.randomUUID()+originalFilename;
-				 //封装上传文件位置的全路径 
-				 File targetFile = new File(filePath,newFileName);
-				 //把本地文件上传到封装上传文件位置的全路径
-				 file.transferTo(targetFile);*/
-				
-				
-				//存数据库
-				CTGoodsDo.setGoodsImg(filePath); 
-=======
->>>>>>> 0097de051f957b0db9cd3aae02496ece4b6c765f
 
 		if (file != null) {
 			if (!file.isEmpty()) {

@@ -2,7 +2,9 @@ package com.dce.business.service.account;
 
 import java.math.BigDecimal;
 
+import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
+import com.dce.business.entity.trade.WithdrawalsDo;
 
 public interface IPayService {
 	/** 
@@ -21,8 +23,9 @@ public interface IPayService {
 	 * @param qty
 	 * @return  
 	 */
-	Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty);
-
+	Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo);
+	
+	Trans withdraw(WithdrawalsDo withdraw);
 	/**
 	 * 提现 
 	 * @param userId

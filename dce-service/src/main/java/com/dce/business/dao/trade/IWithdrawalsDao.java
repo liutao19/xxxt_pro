@@ -18,6 +18,8 @@ public interface IWithdrawalsDao {
     int updateByPrimaryKeySelective(WithdrawalsDo record);
 
     int updateByPrimaryKey(WithdrawalsDo record);
+    
+    int updateWithDrawStatus(WithdrawalsDo record);
 
     /**
      * 查询提现记录
@@ -54,4 +56,5 @@ public interface IWithdrawalsDao {
 	List<Map<String,Object>> selectWithDrawByPage(Map<String,Object> param);
 	
 	Long selectWithDrawTotallAmount(Map<String,Object> param);
+	
 }

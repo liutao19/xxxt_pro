@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 
 import com.dce.business.service.award.IAwardService;
 
-@Service("awardCalculator")
+
 public class AwardServiceImpl implements IAwardService {
 
 	private final static Logger logger = LoggerFactory.getLogger(AwardServiceImpl.class);

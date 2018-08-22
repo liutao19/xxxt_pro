@@ -81,6 +81,7 @@ public class UserPromoteController extends BaseAction{
            /*  List<CommonComboxConstants> statusList = CommonComboxConstants.getStatusList();
             model.addAttribute("statusList", statusList);*/
             pagination = PageDoUtil.getPageValue(pagination, page);
+            System.err.println("数据---"+JSONObject.toJSON(pagination));
             outPrint(response, JSONObject.toJSON(pagination));
         }catch(Exception e){
             logger.error("查询清单异常",e);

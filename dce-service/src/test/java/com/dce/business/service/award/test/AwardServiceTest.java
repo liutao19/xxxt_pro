@@ -4,6 +4,7 @@ package com.dce.business.service.award.test;
 import javax.annotation.Resource;
 
 import org.junit.Test;
+import org.springframework.test.annotation.Rollback;
 
 import com.dce.business.dao.user.IUserRefereeDao;
 import com.dce.business.service.award.IAwardService;
@@ -17,10 +18,10 @@ public class AwardServiceTest extends BaseTest {
     private IUserRefereeDao userreferee;
     
     @Test
-   // @Rollback(false)
+    @Rollback(false)
     public void testCalcAward() {
     	Integer buyQty = 5;
-		Long orderId = 10L;
+		Integer orderId = 5;
 		Integer buyUserId =710;
 		awardService.calcAward(buyUserId , buyQty, orderId);
     }

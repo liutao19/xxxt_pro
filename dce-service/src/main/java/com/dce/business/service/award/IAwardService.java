@@ -13,5 +13,5 @@ public interface IAwardService {
 	 * @param orderId   购买订单
 	 * @return
 	 */
-	public void calcAward(Integer buyUserId, Integer buyQty, Long orderId);
+	public void calcAward(Integer buyUserId, Integer buyQty, Integer orderId);
 }

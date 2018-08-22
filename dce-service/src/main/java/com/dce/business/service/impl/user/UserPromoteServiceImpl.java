@@ -6,6 +6,7 @@
 
 package com.dce.business.service.impl.user;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.util.Constants;
 import com.dce.business.dao.user.IUserPromoteDo;
 import com.dce.business.entity.page.PageDo;
-import com.dce.business.entity.user.userPromoteDo;
+import com.dce.business.entity.user.UserPromoteDo;
 import com.dce.business.service.user.IUserPromoteService;
 
 /**
@@ -41,7 +42,7 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 * @parameter id
 	 */
 	@Override
-	public userPromoteDo getById(Integer id){
+	public UserPromoteDo getById(Integer id){
 		
 	  return userPromoteDao.selectByPrimaryKey(id);
 	}
@@ -53,7 +54,7 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public int updateUserPromoteById(userPromoteDo newUserPromoteDo){
+	public int updateUserPromoteById(UserPromoteDo newUserPromoteDo){
 		logger.debug("updateUserPromote(userPromoteDo: "+newUserPromoteDo);
 		return  userPromoteDao.updateByPrimaryKeySelective(newUserPromoteDo);		
 	}
@@ -63,7 +64,7 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public int addUserPromote(userPromoteDo newUserPromoteDo){
+	public int addUserPromote(UserPromoteDo newUserPromoteDo){
 		logger.debug("addUserPromote: "+newUserPromoteDo);
 		return userPromoteDao.insertSelective(newUserPromoteDo);
 	}
@@ -74,10 +75,10 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 * @param page
 	 * @return
 	 */
-	public PageDo<userPromoteDo> getUserPromotePage(Map<String, Object> param, PageDo<userPromoteDo> page){
+	public PageDo<UserPromoteDo> getUserPromotePage(Map<String, Object> param, PageDo<UserPromoteDo> page){
 		logger.info("----getUserPromotePage----"+param);
         param.put(Constants.MYBATIS_PAGE, page);
-        List<userPromoteDo> list =  userPromoteDao.queryListPage(param);
+        List<UserPromoteDo> list =  userPromoteDao.queryListPage(param);
         page.setModelList(list);
         return page;
 	}
@@ -95,9 +96,12 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 * 根据用户等级和购买的数量，判断用户升级的等级
 	 */
 	@Override
-	public userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty) {
+	public UserPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty) {
+		Map<String,Object> map=new HashMap<>();
+		map.put("userLevel", userLevel);
+		map.put("buyQty", buyQty);
 		
-		return userPromoteDao.selectUserLevelAntBuyQty(userLevel,buyQty);
+		return userPromoteDao.selectUserLevelAntBuyQty(map);
 	}
 	
 

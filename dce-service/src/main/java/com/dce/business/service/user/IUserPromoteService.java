@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.dce.business.entity.page.PageDo;
-import com.dce.business.entity.user.userPromoteDo;
+import com.dce.business.entity.user.UserPromoteDo;
 
 
 public interface IUserPromoteService{
@@ -26,17 +26,17 @@ public interface IUserPromoteService{
 	 * 根据ID 查询
 	 * @parameter id
 	 */
-	public userPromoteDo getById(Integer id);
+	public UserPromoteDo getById(Integer id);
 	
 	/**
 	 * 更新
 	 */
-	public int  updateUserPromoteById(userPromoteDo newUserPromoteDo);
+	public int  updateUserPromoteById(UserPromoteDo newUserPromoteDo);
 	
 	/**
 	 * 新增
 	 */
-	public int addUserPromote(userPromoteDo newUserPromoteDo);
+	public int addUserPromote(UserPromoteDo newUserPromoteDo);
 	
 	/**
 	 * 分页查询
@@ -44,7 +44,7 @@ public interface IUserPromoteService{
 	 * @param page
 	 * @return
 	 */
-	public PageDo<userPromoteDo> getUserPromotePage(Map<String, Object> param, PageDo<userPromoteDo> page);
+	public PageDo<UserPromoteDo> getUserPromotePage(Map<String, Object> param, PageDo<UserPromoteDo> page);
 	
 	
 	/**
@@ -55,5 +55,5 @@ public interface IUserPromoteService{
 	/**
 	 * 根据用户等级和购买的数量，判断用户升级的等级
 	 */
-	userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
+	UserPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
 }

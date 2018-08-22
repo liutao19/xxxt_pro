@@ -3,7 +3,7 @@ package com.dce.business.dao.user;
 import java.util.List;
 import java.util.Map;
 
-import com.dce.business.entity.user.userPromoteDo;
+import com.dce.business.entity.user.UserPromoteDo;
 
 
 public interface IUserPromoteDo {
@@ -13,27 +13,27 @@ public interface IUserPromoteDo {
     int deleteByPrimaryKey(Integer promoteId);
 
   
-    int insert(userPromoteDo record);
+    int insert(UserPromoteDo record);
 
     
-    int insertSelective(userPromoteDo record);
+    int insertSelective(UserPromoteDo record);
 
   
-    userPromoteDo selectByPrimaryKey(Integer promoteId);
+    UserPromoteDo selectByPrimaryKey(Integer promoteId);
 
   
 
-    int updateByPrimaryKeySelective(userPromoteDo record);
+    int updateByPrimaryKeySelective(UserPromoteDo record);
 
    
-    int updateByPrimaryKey(userPromoteDo record);
+    int updateByPrimaryKey(UserPromoteDo record);
     
     /**
      * 分页多条件查询
      * @param map
      * @return
      */
-    List<userPromoteDo>  queryListPage(Map<String,Object> map);
+    List<UserPromoteDo>  queryListPage(Map<String,Object> map);
     
     
     
@@ -42,5 +42,5 @@ public interface IUserPromoteDo {
      * @param map
      * @return
      */
-    userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
+    UserPromoteDo selectUserLevelAntBuyQty(Map<String,Object> map);
 }

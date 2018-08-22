@@ -68,7 +68,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Long orderId) {/*
+	public void doAward(int buyUserId, int buyQty, Integer orderId) {
 		Assert.notNull(buyUserId, "购买者用户ID不能为空");
 		Assert.notNull(buyQty, "购买数量不能为空");
 		Assert.notNull(orderId, "购买订单ID不能为空");
@@ -99,7 +99,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		if (user != null) {
 			Map<String, Object> maps = gainAward(buyUserId, 0, buyQty);
 			// 多种奖励办法以;分隔
-			String buyerAward = (String) maps.get("money");
+			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
 			oneAward((int) maps.get("userId"), bAwardLst);
 		}
@@ -108,12 +108,12 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
 			// 多种奖励办法以;分隔
-			String buyerAward = (String) maps.get("money");
+			String buyerAward =  maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
-			oneAward((int) maps.get("userId"), bAwardLst);
+			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst);
 		}
 
-	*/}
+	}
 
 	/**
 	 * 逐个奖励处理
@@ -127,7 +127,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			BigDecimal wardAmount = getAmtByAward(oneAward);
 
 			// 奖励进入那个账户类型
-			String accountType = getAccountTypeByAward(oneAward);
+			String accountType ="wallet_money";
 			
 			if (wardAmount.compareTo(BigDecimal.ZERO) > 0) {
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
@@ -151,7 +151,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		if (resfor == 0) {
 			Regionalawards region = new Regionalawards();
 			region.setAlgebra(0);
-			regions = (Regionalawards) regionalawardsService.selectByPrimaryKeySelective(region);
+			regions = regionalawardsService.selectByPrimaryKeySelective(region).get(0);
 			maps.put("userId", userId);
 			maps.put("money", Integer.valueOf(regions.getRewardbalance()) * count);
 		}
@@ -164,20 +164,6 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 	}
 
-	/**
-	 * 根据配置 用 - 分隔 ，配置进什么账户类型，如果没有配置报错 配置格式： 1-wallet_travel-4人港澳游 表示 1次，旅游账户 奖励
-	 * 4人港澳游 ， wallet_travel 查看{@link AccountType}
-	 * 
-	 * @param oneAward
-	 * @return
-	 */
-	private String getAccountTypeByAward(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if (awds.length < 2) {
-			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-004");
-		}
-		return awds[1];
-	}
 
 	/**
 	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错 配置格式： 1-wallet_travel-isFirst-A001-4人港澳游
@@ -188,9 +174,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 */
 	private BigDecimal getAmtByAward(String oneAward) {
 		String[] awds = oneAward.split("-");
-		if (awds.length < 2) {
-			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-003");
-		}
+		
 		return new BigDecimal(awds[0].trim());
 	}
 
@@ -208,10 +192,10 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			// 防止空指针
 			if (user != null) {
 				// 判断用户是否为城市合伙人
-				if (user.getUserLevel() == 3) {
+				if (user.getUserLevel() >= 3) {
 					Regionalawards region = new Regionalawards();
 					region.setAlgebra(1);
-					region = (Regionalawards) regionalawardsService.selectByPrimaryKeySelective(region);
+					region =  regionalawardsService.selectByPrimaryKeySelective(region).get(0);
 					maps.put("userId", user.getId());
 					maps.put("money", Integer.valueOf(region.getRewardbalance()) * count);
 					return maps;

@@ -11,10 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.entity.user.UserDo;
-import com.dce.business.entity.user.userPromoteDo;
+import com.dce.business.entity.user.UserPromoteDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
 import com.dce.business.service.user.IUserPromoteService;
@@ -54,13 +55,13 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Long orderId) {
+	public void doAward(int buyUserId, int buyQty, Integer orderId) {
 		
 		//获取购买者信息
 		UserDo  buyer = userService.getUser(buyUserId);
 		
 		// 得到奖励记录
-		userPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((int)buyer.getUserLevel(),buyQty);
+		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((int)buyer.getUserLevel(),buyQty);
 		
 		if(promote == null){
 			throw new BusinessException("找不到购买者对应的升级办法，请检查 办法的配置","error-buyerAward-001");
@@ -87,12 +88,13 @@ public class RefereeUpgrade implements IAwardCalculator {
 	private void onepromote(byte buyUserId, String[] bAwardLst,UserDo  buyer) {
 		for(String onepromote : bAwardLst){
 			//用户要升级的等级
-			String promoteLevel=getAccountTypeByAwardNo(onepromote);
+			String promoteLevel=onepromote;
 			
 			if(buyUserId<Byte.valueOf(promoteLevel)){
 				UserDo userDo=new UserDo();
+				userDo.setId(buyer.getId());
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
-				userService.update(userDo);
+				System.err.println(JSON.toJSON(userService.update(userDo)));
 			}
 			
 			if(Byte.valueOf(promoteLevel)==3){
@@ -120,6 +122,13 @@ public class RefereeUpgrade implements IAwardCalculator {
 			return;
 		}
 		
+		UserDo userDo=new UserDo();
+		userDo.setId(buyer.getRefereeid());
+		userDo.setUserLevel((byte)(buyer.getUserLevel()+1));
+		System.err.println(JSON.toJSON(userService.update(userDo)));
+		
+		
+		
 	}
 	
 	
@@ -131,12 +140,6 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private String getAccountTypeByAwardNo(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if(awds.length<2){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-004");
-		}
-		return awds[1];
-	}
+	
 
 }

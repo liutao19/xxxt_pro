@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dce.business.dao.user.IUserPromoteDo">
-	<resultMap id="BaseResultMap" type="com.dce.business.entity.user.userPromoteDo">
+	<resultMap id="BaseResultMap" type="com.dce.business.entity.user.UserPromoteDo">
 
 		<id column="promote_id" jdbcType="INTEGER" property="promoteId" />
 		<result column="user_level" jdbcType="INTEGER" property="userLevel" />
@@ -28,7 +28,7 @@
 		where promote_id = #{promoteId,jdbcType=INTEGER}
 	</delete>
 
-	<insert id="insert" parameterType="com.dce.business.entity.user.userPromoteDo">
+	<insert id="insert" parameterType="com.dce.business.entity.user.UserPromoteDo">
 
 		insert into ct_user_promote (promote_id, user_level, promote_level,
 		min_qty, max_qty)
@@ -36,7 +36,7 @@
 		#{promoteLevel,jdbcType=INTEGER},
 		#{minQty,jdbcType=INTEGER}, #{maxQty,jdbcType=INTEGER})
 	</insert>
-	<insert id="insertSelective" parameterType="com.dce.business.entity.user.userPromoteDo">
+	<insert id="insertSelective" parameterType="com.dce.business.entity.user.UserPromoteDo">
 
 		insert into ct_user_promote
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -75,7 +75,7 @@
 		</trim>
 	</insert>
 
-	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.userPromoteDo">
+	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserPromoteDo">
 
 		update ct_user_promote
 		<set>
@@ -94,7 +94,7 @@
 		</set>
 		where promote_id = #{promoteId,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.userPromoteDo">
+	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserPromoteDo">
 
 		update ct_user_promote
 		set user_level = #{userLevel,jdbcType=INTEGER},

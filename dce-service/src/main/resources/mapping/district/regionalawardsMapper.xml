@@ -119,7 +119,9 @@
 		<if test="algebra!=null">
 			and algebra =#{algebra,jdbcType=INTEGER}
 		</if>
-
+		<if test="rewardbalance != null">
+			and rewardBalance =#{rewardbalance,jdbcType=VARCHAR}
+		</if>
 		<if test="currentPage!=null and pageSize!=null">
 			limit currentPage,pageSize
 		</if>

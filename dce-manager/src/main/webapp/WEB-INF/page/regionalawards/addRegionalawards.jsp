@@ -16,21 +16,29 @@
 		<div>
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
-					<input type="hidden" id="rewardsAreaId" name="rewardsAreaId" value="${regionalawards.rewardsAreaId}"/>
+					<input type="hidden" id="rewardsareaid" name="rewardsareaid" value="${regionalawards.rewardsareaid}"/>
 					<tr>	
 						<td align="right">
-							<label for="name">rewardBalance</label>
+							<label for="name">区域奖励金额</label>
 						</td>	
 						<td>
-								<input type="text" id="rewardBalance" name="rewardBalance" value="${regionalawards.rewardBalance}"/>												
+								<input type="text" id="rewardbalance" name="rewardbalance" value="${regionalawards.rewardbalance}"/>												
 						</td>						   
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name"> algebra</label>
+							<label for="name"> 推荐代数</label>
 						</td>	
 						<td>
-								<input type="text" id=" algebra" name=" algebra" value="${regionalawards. algebra}"/>												
+								<input type="text" id="algebra" name="algebra" value="${regionalawards.algebra}"/>												
+						</td>						   
+					</tr>
+					<tr>	
+						<td align="right">
+							<label for="name"> 备注</label>
+						</td>	
+						<td>
+								<input type="text" id="remark" name="remark" value="${regionalawards.remark}"/>												
 						</td>						   
 					</tr>
 		
@@ -45,6 +53,7 @@
 	<script type="text/javascript">
 		
     function regionalawards_submit(){
+    	alert("data---->>"+$("#editRegionalawardsForm").serialize());
     	$.ajax({ 
     			url: "<c:url value='/regionalawards/saveRegionalawards.html'/>", 
     			data: $("#editRegionalawardsForm").serialize(),

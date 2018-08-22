@@ -6,6 +6,8 @@
 
 package com.dce.business.service.district;
 
+import java.util.List;
+
 /**
  * @author  huangzl QQ: 272950754
  * @version 1.0
@@ -57,4 +59,9 @@ public interface IRegionalawardsService{
 	 * 删除
 	 */
 	public int deleteById(Integer id);
+	
+	/**
+	 * 多条件查询
+	 */
+	List<Regionalawards> selectByPrimaryKeySelective(Regionalawards newRegionalawardsDo);
 }

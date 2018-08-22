@@ -51,6 +51,7 @@ public class BuyerUpgrade implements IAwardCalculator {
 	@Override
 	public void doAward(int buyUserId, int buyQty, Long orderId) {
 		
+		//获取用户信息
 		UserDo  buyer = userService.getUser(buyUserId);
 		
 		// 得到奖励记录

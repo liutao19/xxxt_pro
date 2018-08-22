@@ -118,4 +118,10 @@ public class RegionalawardsServiceImpl implements IRegionalawardsService {
 		return regionalawardsDao.insertSelective(newRegionalawardsDo);
 	}
 
+	@Override
+	public List<Regionalawards> selectByPrimaryKeySelective(Regionalawards newRegionalawardsDo) {
+		
+		return regionalawardsDao.selectByPrimaryKeySelective(newRegionalawardsDo);
+	}
+
 }

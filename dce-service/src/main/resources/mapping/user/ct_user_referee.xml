@@ -10,25 +10,30 @@
 	<sql id="Base_Column_List">
 		id, userid, refereeid, distance
 	</sql>
-	<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
 		select
 		<include refid="Base_Column_List" />
 		from ct_user_referee
 		where id = #{id,jdbcType=INTEGER}
 	</select>
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-		delete from ct_user_referee
+		delete from
+		ct_user_referee
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.user.UserRefereeDo"
+	<insert id="insert" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.user.UserRefereeDo"
 		useGeneratedKeys="true">
-		insert into ct_user_referee (userid, refereeid, distance
+		insert into ct_user_referee (userid, refereeid,
+		distance
 		)
 		values (#{userid,jdbcType=INTEGER},
 		#{refereeid,jdbcType=INTEGER}, #{distance,jdbcType=INTEGER}
 		)
 	</insert>
-	<insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.dce.business.entity.user.UserRefereeDo"
+	<insert id="insertSelective" keyColumn="id" keyProperty="id"
+		parameterType="com.dce.business.entity.user.UserRefereeDo"
 		useGeneratedKeys="true">
 		insert into ct_user_referee
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -70,9 +75,11 @@
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.user.UserRefereeDo">
-		update ct_user_referee
+		update
+		ct_user_referee
 		set userid = #{userid,jdbcType=INTEGER},
-		refereeid = #{refereeid,jdbcType=INTEGER},
+		refereeid =
+		#{refereeid,jdbcType=INTEGER},
 		distance = #{distance,jdbcType=INTEGER}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
@@ -97,72 +104,79 @@
 			</if>
 		</trim>
 	</select>
-	
-	<select id="listMyRef" parameterType="Map" resultType="Map">			
-		SELECT 	
-	        CONCAT(b.true_name,'[',b.user_name,']') AS user_name,
-			b.total_performance,
-			b.referee_number,
-			b.user_level,
-			b.reg_time,
-			a.userid,
-			a.refereeid
-			FROM 
-			 `ct_user_referee` a LEFT JOIN  ct_user b ON a.userid =b.id 
-			 
-			 <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-	           <if test="refereeId != null">  
-	               a.refereeid = #{refereeId}
-	           </if>	          
-	           <if test="distance != null">  
-	               and <![CDATA[ a.distance <= #{distance} ]]>
-	           </if>	          
-	        </trim> 
-	        order by a.distance
-	        LIMIT #{startRow},#{pageSize}  
-			 
+
+	<select id="listMyRef" parameterType="Map" resultType="Map">
+		SELECT
+		CONCAT(b.true_name,'[',b.user_name,']') AS user_name,
+		b.total_performance,
+		b.referee_number,
+		b.user_level,
+		b.reg_time,
+		a.userid,
+		a.refereeid
+		FROM
+		`ct_user_referee` a LEFT JOIN ct_user b ON a.userid =b.id
+
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="refereeId != null">
+				a.refereeid = #{refereeId}
+			</if>
+			<if test="distance != null">
+				and <![CDATA[ a.distance <= #{distance} ]]>
+			</if>
+		</trim>
+		order by a.distance
+		LIMIT #{startRow},#{pageSize}
+
 	</select>
-	
-	
+
+
 	<select id="selectMyGroup" parameterType="Map" resultType="Map">
-	
-	SELECT
-	 		b.user_name AS user_name,
-			IFNULL((SELECT amount FROM ct_user_account WHERE accountType='current' AND userId=b.id),0) AS currentAmount,
-			IFNULL((SELECT amount FROM ct_user_account WHERE accountType='point' AND userId=b.id),0) AS pointAmount,
-			IFNULL((SELECT amount FROM ct_user_account WHERE accountType='original' AND userId=b.id),0) AS originalAmount,
-			(SELECT CONCAT(true_name,'[',user_name,']') FROM ct_user WHERE id=b.refereeid) AS refereeName,
-			(SELECT CONCAT(true_name,'[',user_name,']') FROM ct_user WHERE id=b.parentid) AS parentidName,
-	        b.balance_dongjie,
-			b.activation_time,
-			(SELECT `name` FROM t_loan_dict_dtl WHERE dictId=1 AND `code`=b.user_level) AS levelName			
-		
-			FROM 
-			 `ct_user_referee` a LEFT JOIN  ct_user b ON a.userid =b.id 
-			 
-			 <trim prefix="WHERE" prefixOverrides="AND |OR "> 
-	           <if test="refereeId != null">  
-	               a.refereeid = #{refereeId}
-	           </if>	          
-	           <if test="distance != null">  
-	               and <![CDATA[ a.distance <= #{distance} ]]>
-	           </if>
-	           <if test="startTime != null">  
-	               and <![CDATA[ b.reg_time >= #{startTime} ]]>
-	           </if>
-	           <if test="endTime != null">  
-	               and <![CDATA[ b.reg_time <= #{endTime} ]]>
-	           </if>
-	           <if test='isActivity == "1"'>  
-	               and <![CDATA[ b.baodan_amount is not null ]]>
-	           </if>
-	           <if test='isActivity == "2"'>  
-	               and <![CDATA[ b.baodan_amount is null ]]>
-	           </if>	          
-	        </trim> 
-	        order by a.distance
-	        LIMIT #{offset},#{rows}  
-			 
+
+		SELECT
+		b.user_name AS user_name,
+		IFNULL((SELECT amount FROM ct_user_account WHERE accountType='current' AND
+		userId=b.id),0) AS currentAmount,
+		IFNULL((SELECT amount FROM ct_user_account WHERE accountType='point' AND
+		userId=b.id),0) AS pointAmount,
+		IFNULL((SELECT amount FROM ct_user_account WHERE accountType='original' AND
+		userId=b.id),0) AS originalAmount,
+		(SELECT CONCAT(true_name,'[',user_name,']') FROM ct_user WHERE
+		id=b.refereeid) AS refereeName,
+		(SELECT CONCAT(true_name,'[',user_name,']') FROM ct_user WHERE id=b.parentid)
+		AS parentidName,
+		b.balance_dongjie,
+		b.activation_time,
+		(SELECT `name` FROM t_loan_dict_dtl WHERE dictId=1 AND `code`=b.user_level)
+		AS levelName
+
+		FROM
+		`ct_user_referee` a LEFT JOIN ct_user b ON a.userid =b.id
+
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="refereeId != null">
+				a.refereeid = #{refereeId}
+			</if>
+			<if test="distance != null">
+				and <![CDATA[ a.distance <= #{distance} ]]>
+			</if>
+			<if test="startTime != null">
+				and <![CDATA[ b.reg_time >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null">
+				and <![CDATA[ b.reg_time <= #{endTime} ]]>
+			</if>
+			<if test='isActivity == "1"'>
+				and <![CDATA[ b.baodan_amount is not null ]]>
+			</if>
+			<if test='isActivity == "2"'>
+				and <![CDATA[ b.baodan_amount is null ]]>
+			</if>
+		</trim>
+		order by a.distance
+		LIMIT #{offset},#{rows}
+
 	</select>
-	
+
+
 </mapper>

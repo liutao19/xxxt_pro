@@ -337,9 +337,9 @@
 		SELECT
 		<include refid="Base_Column_List"></include>
 		FROM ct_user_account
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		<where>
 			<if test="userId != null">
-				AND userId = #{userId}
+				userId = #{userId}
 			</if>
 			<if test="id != null">
 				AND id = #{orderStatus}
@@ -350,22 +350,8 @@
 			<if test="amount != null">
 				AND orderType = #{orderType}
 			</if>
-			<if test="totalConsumeAmount != null">
-				AND user_name = #{userName}
-			</if>
-			<if test="totalInocmeAmount != null">
-				AND totalInocmeAmount = #{totalInocmeAmount}
-			</if>
-			<if test="incomeAmount != null">
-				AND incomeAmount = #{incomeAmount}
-			</if>
-			<if test="consumeAmount != null">
-				AND consumeAmount = #{consumeAmount}
-			</if>
-			<if test="withdrawTotalDeposit != null">
-				AND withdrawTotalDeposit = #{withdrawTotalDeposit}
-			</if>
-		</trim>
+		</where>
+		order by updateTime desc limit 0,1
 	</select>
 	<select id="sumAccount" parameterType="java.util.Map" resultMap="BaseResultMap">
 		SELECT SUM(amount) AS amount, accountType FROM ct_user_account GROUP

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -17,10 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.request.AlipayFundTransOrderQueryRequest;
+import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
+import com.alipay.api.response.AlipayFundTransOrderQueryResponse;
+import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.enums.IncomeType;
+import com.dce.business.common.pay.util.AlipayConfig;
+import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DataDecrypt;
 import com.dce.business.common.util.DataEncrypt;
@@ -33,6 +43,7 @@ import com.dce.business.entity.dict.CtCurrencyDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.etherenum.EthAccountPlatformDo;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
+import com.dce.business.entity.etherenum.EthereumTransInfoDo;
 import com.dce.business.entity.trade.WithdrawalsDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
@@ -69,7 +80,6 @@ public class PayServiceImpl implements IPayService {
 	private IUserParentDao userParentDao;
 	@Resource
 	private ITransOutDailyService transOutDailyService;
-
 	
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -187,63 +197,77 @@ public class PayServiceImpl implements IPayService {
 	}
 
 	/**
-	 * 审批提现
+	 * 提现
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty) {
+	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo) {
+		Result<?> result = Result.successResult("审核成功!") ;
+		Map<String,String> resultMap=new HashMap<String,String>();
 
-		/*//判断系统设置是否可交易
-		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
-		if (ct == null || ct.getIs_tbstatus() == null || 0 == ct.getIs_tbstatus().intValue()) {
-			logger.info("提币状态设置关闭,当前不允许提币....");
-			return Result.failureResult("当前系统不允许提币!");
-		}
-
-		//以太坊账户校验
-		EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
-		if (ethereumAccountDo == null) {
-			return Result.failureResult("请先获取以太坊地址再提现");
-		}*/
-
-		//判断开户是否已有24小时
-		/*if (ethereumAccountDo.getCreatetime() != null) {
-			Date date = DateUtil.getDate(ethereumAccountDo.getCreatetime(), 1);
-			if (date.after(new Date())) {
-				return Result.failureResult("获取以太坊地址24小时以后才可以提现");
-			}
-		}*/
 		//1、校验用户金额是否足够
-		UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);
-				
-		System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
+		/*UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);			
+		//System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
-			return Result.failureResult("现金币账户余额不足");
+			return Result.failureResult("账户余额不足");
+		}*/
+		WithdrawalsDo withdraw=new WithdrawalsDo();
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
+		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+		String orderId=getOrderIdByUUId();
+		request.setBizContent("{" +
+		"\"out_biz_no\":"+orderId+","+
+		"\"payee_type\":\"ALIPAY_LOGONID\"," +
+		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+		"\"amount\":"+qty+"," +
+		"\"remark\":\"转账备注\"" +
+		"}");
+		AlipayFundTransToaccountTransferResponse response = null;
+		try {
+			response = alipayClient.execute(request);
+			if("10000".equals(response.getCode())){
+				result.setMsg("转账成功");
+				withdraw.setWithdraw_status("1"); 
+				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
+				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
+				withdraw.setPaymentDate((new Date()).getTime() / 1000);
+				EthereumTransInfoDo trans=new EthereumTransInfoDo();
+				/*trans.setUserid(userId);      //用户id
+				trans.setActualamount(response);     //转出金额
+				trans.setActualgas(actualgas);
+				trans.setAmount(qty.toString());
+				trans.setConfirmed(confirmed);
+				trans.setCreatetime(createtime);
+				trans.setFromaccount(fromaccount);    //转出地址
+				trans.setGas(gas);
+				trans.setGaslimit(gaslimit);
+				trans.setHash(hash);
+				trans.setType(2);*/
+				trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
+			}else{
+				withdraw.setWithdraw_status("0"); 
+				return Result.failureResult(response.getSubMsg());
+			}
+			withdraw.setId(withdrawId);
+			withdrawDao.updateWithDrawStatus(withdraw);
+		} catch (AlipayApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return Result.failureResult(response.getSubMsg());
 		}
-		/*//判断平台中心账户余额是否足够
-		EthAccountPlatformDo platAccount = ethereumPlatformService.getPlatformAccount();
-		if(platAccount == null){
-			logger.info("提现未设置平台中心账户");
-			return Result.failureResult("平台中心账户未设置");
-		}
-		BigDecimal ethQty = point2Eth(qty,2);
-		BigDecimal centEthQty = BigDecimal.ZERO;
-		Map<String, String> map = ethereumService.getBalance(platAccount.getAccount());
-		if (map != null) {
-			centEthQty = new BigDecimal(map.get("balance"));
-		}
-		if(centEthQty.compareTo(ethQty) <= 0){
-			logger.info("中心账户:" + platAccount.getAccount() + " 以太坊余额不足");
-			return Result.failureResult("中心账户:" + platAccount.getAccount() + " 以太坊余额不足");
-		}
-		//4、调用以太坊接口，异步
-		EthereumAccountDo userAccount = ethereumService.getByUserId(userId);
-		*/
-		//Result<?> result = trans(userAccount, platAccount, ethQty , qty, 2, withdrawId);
-
-		return null;
+		return result;
 	}
-	
+	public static String getOrderIdByUUId() {  
+	    int machineId = 1;//最大支持1-9个集群机器部署  
+		int hashCodeV = UUID.randomUUID().toString().hashCode();  
+		if(hashCodeV < 0) {//有可能是负数  
+		hashCodeV = - hashCodeV;  
+		}  
+		// 0 代表前面补充0       
+		// 4 代表长度为4       
+		// d 代表参数为正数型  
+		return machineId+String.format("%015d", hashCodeV);  
+	}  
 	private Result<?> trans(EthereumAccountDo userAccount, EthAccountPlatformDo platAccount, BigDecimal amount, BigDecimal pointamount,
 			Integer type, Integer withdrawId) {
 		logger.info("PayServiceImpl.trans");
@@ -446,5 +470,35 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		return Result.successResult(null);
+	}
+	
+	public Trans withdraw(WithdrawalsDo withdraw){
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);		AlipayFundTransOrderQueryRequest request = new AlipayFundTransOrderQueryRequest();
+		request.setBizContent("{" +
+		"\"out_biz_no\":"+withdraw.getOutbizno()+"," +
+		"\"order_id\":"+withdraw.getOrderId()+"," +
+		"  }");
+		AlipayFundTransOrderQueryResponse response;
+		Trans trans=new Trans();
+		try {
+			response = alipayClient.execute(request);
+			if(response.isSuccess()){
+				System.out.println("调用成功");
+				trans.setArrival_time_end(response.getArrivalTimeEnd());
+				trans.setFail_reason(response.getFailReason());
+				trans.setOrder_fee(response.getOrderFee());
+				trans.setOrder_id(response.getOrderId());
+				trans.setOut_biz_no(response.getOutBizNo());
+				trans.setPay_date(response.getPayDate());
+			} else {
+				System.out.println("调用失败");
+			}
+		} catch (AlipayApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return trans;
+
 	}
 }

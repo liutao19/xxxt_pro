@@ -9,9 +9,17 @@ public class WithdrawalsDo {
 
     private BigDecimal amount;
 
-    private BigDecimal fackReceive;
+    private String  orderId;
     
-    private String withdraw_status;
+    public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	private String withdraw_status;
 
     private Long paymentDate;
 
@@ -21,9 +29,17 @@ public class WithdrawalsDo {
 
     private BigDecimal fee;
 
-    private String name;
+    private String outbizno;
 
-    private String bank;
+    public String getOutbizno() {
+		return outbizno;
+	}
+
+	public void setOutbizno(String outbizno) {
+		this.outbizno = outbizno;
+	}
+
+	private String bank;
 
     private String bankContent;
 
@@ -64,13 +80,7 @@ public class WithdrawalsDo {
         this.amount = amount;
     }
 
-    public BigDecimal getFackReceive() {
-        return fackReceive;
-    }
-
-    public void setFackReceive(BigDecimal fackReceive) {
-        this.fackReceive = fackReceive;
-    }
+   
 
 
 	public Long getWithdrawDate() {
@@ -118,14 +128,7 @@ public class WithdrawalsDo {
         this.fee = fee;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    
     public String getBank() {
         return bank;
     }
@@ -181,23 +184,23 @@ public class WithdrawalsDo {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-
+    
 	@Override
 	public String toString() {
 		return "WithdrawalsDo [id=" + id + ", withdrawDate=" + withdrawDate
-				+ ", amount=" + amount + ", fackReceive=" + fackReceive
+				+ ", amount=" + amount + ", orderId=" + orderId
 				+ ", paymentDate=" + paymentDate + ", confirmDate="
 				+ confirmDate + ", userid=" + userid + ", fee=" + fee
-				+ ", name=" + name + ", bank=" + bank + ", bankContent="
+				+ ", outbizno=" + outbizno + ", bank=" + bank + ", bankContent="
 				+ bankContent + ", bankNo=" + bankNo + ", processStatus="
 				+ processStatus + ", type=" + type + ", moneyType=" + moneyType
 				+ ", remark=" + remark + ", getId()=" + getId()
-				+ ", getAmount()=" + getAmount() + ", getFackReceive()="
-				+ getFackReceive() + ", getWithdrawDate()=" + getWithdrawDate()
+				+ ", getAmount()=" + getAmount() + ", getOrderId()="
+				+ getOrderId() + ", getWithdrawDate()=" + getWithdrawDate()
 				+ ", getPaymentDate()=" + getPaymentDate()
 				+ ", getConfirmDate()=" + getConfirmDate() + ", getUserid()="
-				+ getUserid() + ", getFee()=" + getFee() + ", getName()="
-				+ getName() + ", getBank()=" + getBank()
+				+ getUserid() + ", getFee()=" + getFee() + ", getOutbizno()="
+				+ getOutbizno() + ", getBank()=" + getBank()
 				+ ", getBankContent()=" + getBankContent() + ", getBankNo()="
 				+ getBankNo() + ", getProcessStatus()=" + getProcessStatus()
 				+ ", getType()=" + getType() + ", getMoneyType()="

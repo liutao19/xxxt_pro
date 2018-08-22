@@ -1,12 +1,15 @@
 package com.dce.manager.action.news;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +33,8 @@ import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.message.INewsService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @Controller
 @RequestMapping("/ysnews")
@@ -55,11 +60,11 @@ public class YsNewsController extends BaseAction {
 		try {
 			PageDo<NewsDo> page = PageDoUtil.getPage(pagination);
 			String companyName = getString("searchPolicyName");
-			String title=getString("title");
-			String startDate=getString("startDate");
-			String endDate=getString("endDate");
-			String updateName=getString("updateName");
-			String createName=getString("createName");
+			String title = getString("title");
+			String startDate = getString("startDate");
+			String endDate = getString("endDate");
+			String updateName = getString("updateName");
+			String createName = getString("createName");
 			Map<String, Object> param = new HashMap<String, Object>();
 			if (StringUtils.isNotBlank(companyName)) {
 				param.put("policyName", companyName);
@@ -70,7 +75,7 @@ public class YsNewsController extends BaseAction {
 				param.put("managerName", managerName);
 				model.addAttribute("searManagerName", managerName);
 			}
-			
+
 			if (StringUtils.isNotBlank(startDate)) {
 				param.put("startDate", startDate);
 			}
@@ -86,7 +91,7 @@ public class YsNewsController extends BaseAction {
 			if (StringUtils.isNotBlank(createName)) {
 				param.put("createName", createName);
 			}
-			
+
 			page = ysNewsService.getYsNewsPage(param, page);
 			List<NewsDo> list = page.getModelList();
 
@@ -131,55 +136,80 @@ public class YsNewsController extends BaseAction {
 	 */
 	@RequestMapping("/saveYsNews")
 	@ResponseBody
-	public void saveYsNews(NewsDo ysnewsDo, @RequestParam(value="file",required=false)MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
-		
-		logger.info("----saveYsNews---------"+file);
-		
-		if(file!=null){
-		if(!file.isEmpty()){
-			try {
-			// 文件保存路径
-			String filePath = request.getSession().getServletContext().getRealPath("/") + "images/"
-					+ file.getOriginalFilename();
-			
-			System.err.println("文件地址----》》"+filePath);
-			
-			System.out.println(filePath);
-			// 转存文件
-				file.transferTo(new File(filePath));
-				
-				ysnewsDo.setImage(filePath);
-				
-				
-			} catch (IllegalStateException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public void saveYsNews(NewsDo ysnewsDo, @RequestParam(value = "file", required = false) MultipartFile file,
+			HttpServletRequest request, HttpServletResponse response) {
+
+		logger.info("----saveYsNews---------" + file);
+		String filePath="";
+		if (file != null) {
+			if (!file.isEmpty()) {
+				try {
+					// 文件保存路径
+					 filePath = request.getSession().getServletContext().getRealPath("/") + "images/"
+							+ file.getOriginalFilename();
+
+					System.err.println("文件地址----》》" + filePath);
+
+					System.out.println(filePath);
+					// 转存文件
+					file.transferTo(new File(filePath));
+
+					ysnewsDo.setImage(filePath);
+
+				} catch (IllegalStateException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
-			
-		}
 		}
 		try {
 			Integer id = ysnewsDo.getId();
-			String img=ysnewsDo.getImage();
+			String img = ysnewsDo.getImage();
 
-			System.err.println("id---->>"+id);
+			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
+			
+			// 图片压缩
+			Picture_Compression(filePath,filePath,300,300);
 
 			if (i <= 0) {
 				outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
 				return;
 			}
 			outPrint(response, this.toJSONString(Result.successResult("操作成功")));
+			
+			
+			
 		} catch (Exception e) {
 			logger.error("保存更新失败", e);
 			outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
 		}
 		logger.info("----end saveYsNews--------");
+	}
+	
+	/**
+	 * 图片压缩
+	 * @param oldpath
+	 * @param newspath
+	 * @param withd
+	 * @param height
+	 */
+	public void Picture_Compression(String oldpath,String newspath,int withd,int height){
+		
+		try {
+			
+			Thumbnails.of(oldpath).size(withd,height).toFile(newspath);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -201,4 +231,5 @@ public class YsNewsController extends BaseAction {
 		}
 	}
 
+	
 }

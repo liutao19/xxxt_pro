@@ -1,22 +1,18 @@
+var basePath="/dce-manager";
 $(function() {
 	/*
 	 * #############################################search form
 	 * begin#################################
 	 */
 
-	$("#searchregionalawardsForm #searchButton").on(
-			"click",
-			function() {
-				$("#tt_Regionalawards").datagrid(
-						'load',
-						{
-							'searchStr' : $(
-									"#searchregionalawardsForm #searchStr")
-									.val(),
-							'searchCodeStr' : $(
-									"#searchregionalawardsForm #searchCodeStr")
-									.val()
-						});
+	$("#searchregionalawardsForm #searchButton").on("click",function() {
+		alert(document.getElementById("rewardbalance").value+"****"+document.getElementById("algebra").value);
+		        var dataUrl = basePath+"/regionalawards/listRegionalawards.html";
+		        $("#tt_Regionalawards").datagrid('options').url = dataUrl;
+				$("#tt_Regionalawards").datagrid('load',{
+					'rewardbalance':document.getElementById("rewardbalance").value,
+					'algebra':document.getElementById("algebra").value	
+							});
 			});
 
 	$("#searchregionalawardsForm #resetButton").on("click", function() {
@@ -53,24 +49,31 @@ $(function() {
 			},
 			{
 				field : "rewardbalance",
-				title : "编码",
+				title : "区域奖励金额",
 				width : 180,
 				align : "center"
 			},
 			{
 				field : "algebra",
-				title : "编码",
+				title : "推荐代数",
+				width : 180,
+				align : "center"
+			},
+			{
+				field : "remark",
+				title : "备注",
 				width : 180,
 				align : "center"
 			},
 			{
 				field : "操作",
 				title : "操作",
-				width : 80,
+				width : 180,
 				align : "left",
 				formatter : function(value, row, index) {
 					var str = '<a href="javascript:void(0);" onclick="to_editregionalawards(\''
-							+ row.id + '\');">编辑</a>';
+							+ row.rewardsareaid + '\');">编辑</a>   <a href="javascript:void(0);" onclick="deleteRegionalawards(\''
+							+ row.rewardsareaid + '\');">删除</a>';
 					return str;
 				}
 			} ] ];
@@ -140,7 +143,7 @@ function to_addregionalawards() {
  * @param id
  */
 function to_editregionalawards(id) {
-
+	alert("id-------" + id);
 	var url = httpUrl + "/regionalawards/addRegionalawards.html?&rand="
 			+ Math.random() + "&id=" + id;
 	$('#editRegionalawardsDiv').dialog({
@@ -163,6 +166,34 @@ function to_editregionalawards(id) {
 				$("#editRegionalawardsDiv").dialog("close");
 			}
 		} ]
+	});
+}
+
+/**
+ * 删除
+ */
+
+function deleteRegionalawards(id) {
+	if (!id) {
+		$.messager.alert("id", "id不能为空");
+		return;
+	}
+	$.messager.confirm("区域奖励", "确认删除该奖励吗，删除后不可恢复", function(r) {
+		if (r) {
+			$.ajax({
+				url : httpUrl + "/regionalawards/deleteRegionalawards.html?id=" + id,
+				type : "post",
+				data : {},
+				success : function(data) {
+					if (data.ret == 1) {
+						$.messager.alert("区域奖励", "删除成功");
+						$('#tableGrid').datagrid('reload');
+					} else {
+						$.messager.alert("区域奖励", "删除失败，请稍后再试");
+					}
+				}
+			});
+		}
 	});
 }
 

@@ -59,9 +59,6 @@ public interface IOrderService {
 	 */
 	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order, HttpServletRequest request, HttpServletResponse response);
 
-	// 根据主键id查询订单
-	Order selectByPrimaryKey(long orderId);
-
 	// 查询总业绩
 	Map<String, Object> selectSum(Map<String, Object> paraMap);
 	

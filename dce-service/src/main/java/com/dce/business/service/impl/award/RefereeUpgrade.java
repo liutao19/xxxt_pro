@@ -1,6 +1,9 @@
 package com.dce.business.service.impl.award;
 
-import java.math.BigDecimal;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -8,16 +11,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
-import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.entity.user.UserDo;
+import com.dce.business.entity.user.UserPromoteDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
+import com.dce.business.service.user.IUserPromoteService;
 import com.dce.business.service.user.IUserService;
 
-import com.dce.business.entity.account.UserAccountDo;
-import com.dce.business.entity.award.Awardlist;
 
 
 /**
@@ -39,6 +42,9 @@ public class RefereeUpgrade implements IAwardCalculator {
 	// 账户
 	@Resource
 	private IAccountService accountService;
+	
+	@Resource
+	private IUserPromoteService userPromoteService;
 
 	/**
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
@@ -49,65 +55,84 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Long orderId) {
+	public void doAward(int buyUserId, int buyQty, Integer orderId) {
 		
+		//获取购买者信息
 		UserDo  buyer = userService.getUser(buyUserId);
 		
 		// 得到奖励记录
-		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),buyQty);
+		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((int)buyer.getUserLevel(),buyQty);
 		
-		if(award == null){
-			throw new BusinessException("找不到购买者对应的奖励办法，请检查奖励办法的配置","error-buyerAward-001");
+		if(promote == null){
+			throw new BusinessException("找不到购买者对应的升级办法，请检查 办法的配置","error-buyerAward-001");
 		}
 		
-		String buyerAward = award.getBuyerAward();
+		String buyerAward = promote.getPromoteLevel().toString();
 		if(StringUtils.isBlank(buyerAward)){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-002");
 		}
 		
 		//多种奖励办法以;分隔
 		String[]  bAwardLst = buyerAward.split(";");
-		oneAward(buyUserId,bAwardLst);
+		onepromote(buyer.getUserLevel(),bAwardLst,buyer);
 		
 	}
 
 	
 	/**
-	 * 逐个奖励处理
+	 * 升级处理
 	 * @param buyUserId
 	 * @param bAwardLst
+	 * @param buyer
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst) {
-		for(String oneAward : bAwardLst){
-			//奖励金额
-			BigDecimal wardAmount = getAmtByAwardNo(oneAward);
-			//奖励进入那个账户类型
-			String accountType = getAccountTypeByAwardNo(oneAward);
+	private void onepromote(byte buyUserId, String[] bAwardLst,UserDo  buyer) {
+		for(String onepromote : bAwardLst){
+			//用户要升级的等级
+			String promoteLevel=onepromote;
 			
-			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
-				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId,accountType);
-				//账户对象增加金额
-				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_BUYER);
+			if(buyUserId<Byte.valueOf(promoteLevel)){
+				UserDo userDo=new UserDo();
+				userDo.setId(buyer.getId());
+				userDo.setUserLevel(Byte.valueOf(promoteLevel));
+				System.err.println(JSON.toJSON(userService.update(userDo)));
 			}
+			
+			if(Byte.valueOf(promoteLevel)==3){
+				shareholder(buyer);
+			}
+			
+			
 		}
 	}
 	
 	
 	/**
-	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错
-	 * 配置格式： 1-wallet_travel-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
-	 * 
-	 * @param oneAward
-	 * @return
+	 * 升级为股东处理
 	 */
-	private BigDecimal getAmtByAwardNo(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if(awds.length<2){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-003");
+	
+	public void shareholder(UserDo buyer){
+		// 获取推荐人推荐城市合伙人的个数
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userLevel", 3);
+		map.put("refereeid", buyer.getRefereeid());
+		List<UserDo> listuser = userService.selectUser(map);
+		
+		if(listuser==null|listuser.size()<5){
+			logger.error("推荐城市合伙人少于5个，不能升级为城市合伙人");
+			return;
 		}
-		return new BigDecimal(awds[0].trim());
+		
+		UserDo userDo=new UserDo();
+		userDo.setId(buyer.getRefereeid());
+		userDo.setUserLevel((byte)(buyer.getUserLevel()+1));
+		System.err.println(JSON.toJSON(userService.update(userDo)));
+		
+		
+		
 	}
-
+	
+	
+	
 	/**
 	 * 根据配置 用 - 分隔 ，配置进什么账户类型，如果没有配置报错
 	 * 配置格式： 1-wallet_travel-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
@@ -115,12 +140,6 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private String getAccountTypeByAwardNo(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if(awds.length<2){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-buyerAward-004");
-		}
-		return awds[1];
-	}
+	
 
 }

@@ -95,7 +95,7 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 	 * 根据用户等级和购买的数量，判断用户升级的等级
 	 */
 	@Override
-	public userPromoteDo selectUserLevelAntBuyQty(Byte userLevel, int buyQty) {
+	public userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty) {
 		
 		return userPromoteDao.selectUserLevelAntBuyQty(userLevel,buyQty);
 	}

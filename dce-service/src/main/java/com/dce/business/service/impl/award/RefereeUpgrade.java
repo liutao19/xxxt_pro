@@ -1,6 +1,10 @@
 package com.dce.business.service.impl.award;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,11 +56,11 @@ public class RefereeUpgrade implements IAwardCalculator {
 	@Override
 	public void doAward(int buyUserId, int buyQty, Long orderId) {
 		
-		//获取用户信息
+		//获取购买者信息
 		UserDo  buyer = userService.getUser(buyUserId);
 		
 		// 得到奖励记录
-		userPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((byte)1,buyQty);
+		userPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((int)buyer.getUserLevel(),buyQty);
 		
 		if(promote == null){
 			throw new BusinessException("找不到购买者对应的升级办法，请检查 办法的配置","error-buyerAward-001");
@@ -69,17 +73,18 @@ public class RefereeUpgrade implements IAwardCalculator {
 		
 		//多种奖励办法以;分隔
 		String[]  bAwardLst = buyerAward.split(";");
-		onepromote(buyer.getUserLevel(),bAwardLst);
+		onepromote(buyer.getUserLevel(),bAwardLst,buyer);
 		
 	}
 
 	
 	/**
-	 * 逐个升级处理
+	 * 升级处理
 	 * @param buyUserId
 	 * @param bAwardLst
+	 * @param buyer
 	 */
-	private void onepromote(byte buyUserId, String[] bAwardLst) {
+	private void onepromote(byte buyUserId, String[] bAwardLst,UserDo  buyer) {
 		for(String onepromote : bAwardLst){
 			//用户要升级的等级
 			String promoteLevel=getAccountTypeByAwardNo(onepromote);
@@ -89,7 +94,32 @@ public class RefereeUpgrade implements IAwardCalculator {
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
 				userService.update(userDo);
 			}
+			
+			if(Byte.valueOf(promoteLevel)==3){
+				shareholder(buyer);
+			}
+			
+			
 		}
+	}
+	
+	
+	/**
+	 * 升级为股东处理
+	 */
+	
+	public void shareholder(UserDo buyer){
+		// 获取推荐人推荐城市合伙人的个数
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userLevel", 3);
+		map.put("refereeid", buyer.getRefereeid());
+		List<UserDo> listuser = userService.selectUser(map);
+		
+		if(listuser==null|listuser.size()<5){
+			logger.error("推荐城市合伙人少于5个，不能升级为城市合伙人");
+			return;
+		}
+		
 	}
 	
 	

@@ -42,5 +42,5 @@ public interface IUserPromoteDo {
      * @param map
      * @return
      */
-    userPromoteDo selectUserLevelAntBuyQty(Byte userLevel, int buyQty);
+    userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
 }

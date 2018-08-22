@@ -68,16 +68,23 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Long orderId) {
+	public void doAward(int buyUserId, int buyQty, Long orderId) {/*
 		Assert.notNull(buyUserId, "购买者用户ID不能为空");
 		Assert.notNull(buyQty, "购买数量不能为空");
 		Assert.notNull(orderId, "购买订单ID不能为空");
 
 		// 获取订单信息
-		Order order = orderService.selectByPrimaryKey(orderId);
+		Order order = orderService.selectByPrimaryKey(Integer.parseInt(String.valueOf(orderId)));
 
+		if(order==null){
+			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-003");
+		}
 		// 获取地址信息
 		UserAddressDo useraddress = userAdressService.selectByPrimaryKey(order.getAddressid());
+		if(useraddress==null){
+			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-003");
+		}
+
 
 		// 获取区域代表信息
 		Map<String, Object> map = new HashMap<>();
@@ -85,8 +92,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		List<UserDo> user = userService.selectUserCondition(map);
 
 		if (user == null) {
-			logger.error("此区域无代理,结束奖励");
-			return;
+			throw new BusinessException("此区域无代理,结束奖励");
 		}
 
 		// 获取奖励记录
@@ -107,7 +113,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			oneAward((int) maps.get("userId"), bAwardLst);
 		}
 
-	}
+	*/}
 
 	/**
 	 * 逐个奖励处理
@@ -122,7 +128,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 			// 奖励进入那个账户类型
 			String accountType = getAccountTypeByAward(oneAward);
-
+			
 			if (wardAmount.compareTo(BigDecimal.ZERO) > 0) {
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
 				// 账户对象增加金额

@@ -55,5 +55,5 @@ public interface IUserPromoteService{
 	/**
 	 * 根据用户等级和购买的数量，判断用户升级的等级
 	 */
-	userPromoteDo selectUserLevelAntBuyQty(Byte userLevel, int buyQty);
+	userPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
 }

@@ -43,6 +43,7 @@ import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.service.account.IAccountService;
+import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.goods.ICTGoodsService;
@@ -70,9 +71,8 @@ public class OrderServiceImpl implements IOrderService {
 	private ICTGoodsService ctGoodsService;
 	@Resource
 	private AlipaymentOrderService alipaymentOrderService;
-	/*
-	 * @Resource private IAwardCalculator awardCalculator;
-	 */
+	@Resource
+	private IAwardService awardService;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -172,6 +172,64 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
+	 * 支付成功，更新订单状态，计算奖励处理
+	 * 
+	 * @return
+	 */
+	public int orderPay(String orderCode, String gmtPayment) {
+		int i = 0;
+
+		try {
+			// 根据订单编号查询出订单
+			Order order = orderDao.selectByOrderCode(orderCode);
+			logger.info("根据订单编号查询出的订单：" + orderCode);
+			// 付款状态为已支付
+			order.setPaystatus(1);
+			// 支付成功
+			order.setAlipayStatus(1);
+			// 支付时间
+			order.setPaytime(gmtPayment);
+			// 更新表
+			i = orderDao.updateByOrderCodeSelective(order);
+			
+			//计算奖励
+			//awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
+
+			// 记录到交易流水表中
+			// accountService.addUserAccountDetail(order.getUserid(),
+			// order.getTotalprice(), "减少", 902);
+
+		} catch (Exception e) {
+			logger.debug("支付成功，更新订单状态失败！！！");
+			e.printStackTrace();
+		}
+		return i;
+	}
+
+	/**
+	 * 下单处理
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Order buyOrder(Order order) {
+
+		try {
+			// 获取订单对象
+			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
+
+			// 插入订单明细
+			for (OrderDetail orderDetail : order.getOrderDetailLst()) {
+				orderDetail.setOrderid(oldOrder.getOrderid());
+				orderDetailDao.insertSelective(orderDetail);
+			}
+		} catch (Exception e) {
+			logger.debug("插入订单明细失败！！！");
+			e.printStackTrace();
+		}
+		return order;
+	}
+
+	/**
 	 * 计算赠品的差价
 	 * 
 	 * @return
@@ -207,7 +265,6 @@ public class OrderServiceImpl implements IOrderService {
 				}
 			}
 		}
-
 		return totalprice;
 	}
 
@@ -235,6 +292,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 产生订单编号
 		String orderCode = OrderCodeUtil.genOrderCode(order.getUserid());
+		logger.info("商户自行产生的订单号=====》》》" + orderCode);
 
 		Integer quantity = 0; // 商品总数量
 		BigDecimal totalprice = new BigDecimal(0); // 商品总价格
@@ -242,7 +300,6 @@ public class OrderServiceImpl implements IOrderService {
 			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 			quantity += orderDetail.getQty(); // 商品总数量
-			logger.info("商品单价---------》》》》》》》》》" + orderDetail.getPrice());
 			totalprice = totalprice.add(BigDecimal.valueOf(orderDetail.getPrice())); // 商品总价格
 			logger.info("商品总金额---------》》》》》》》》》" + totalprice);
 		}
@@ -250,7 +307,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (priceSpread != 0) { // 总金额加上赠品需要补的差价
 			totalprice = totalprice.add(BigDecimal.valueOf(priceSpread));
 		}
-		logger.info("=============差价：" + priceSpread);
+		logger.info("需要补的赠品差价========》》》：" + priceSpread);
 
 		// 创建订单
 		order.setOrdercode(orderCode); // 订单号
@@ -266,7 +323,9 @@ public class OrderServiceImpl implements IOrderService {
 		orderDao.insertSelective(order);
 
 		// 判断支付方式，生成预支付订单
-		if (order.getOrdertype() == 1) { // 微信支付
+		if (order.getOrdertype() == 1) {
+
+			// 微信支付
 			try {
 				return getWXPayStr(request, response, buyOrder(order));
 			} catch (Exception e) {
@@ -274,12 +333,12 @@ public class OrderServiceImpl implements IOrderService {
 				e.printStackTrace();
 			}
 
-		} else if (order.getOrdertype() == 2) { // 支付宝支付
+			// 支付宝支付
+		} else if (order.getOrdertype() == 2) {
 			return getAlipayorderStr(buyOrder(order));
-
 		}
-		logger.debug("===========获取支付方式失败，生成预支付订单失败！！！！");
-		return Result.failureResult("获取支付方式失败，生成预支付订单失败");
+		logger.debug("===========获取支付方式失败，生成预支付订单失败！！！");
+		return Result.failureResult("获取支付方式失败，生成预支付订单失败！");
 	}
 
 	/**
@@ -345,7 +404,7 @@ public class OrderServiceImpl implements IOrderService {
 			AlipayTradeAppPayResponse ali_response = alipayClient.sdkExecute(ali_request); // 返回支付宝订单信息(预处理)
 			// 可以直接给客户端请求，无需再做处理
 			orderString = ali_response.getBody();
-			alipaymentOrderService.createAlipayMentOrder(alipaymentOrder);// 创建新的商户支付宝订单
+			alipaymentOrderService.createAlipayMentOrder(alipaymentOrder);// 创建新的商户支付宝订单记录
 
 		} catch (AlipayApiException e) {
 			logger.debug("生成支付宝预付单失败！！！！");
@@ -367,7 +426,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 调用SDK验证签名
 			signVerified = AlipaySignature.rsaCheckV1(conversionParams, AlipayConfig.ALIPAY_PUBLIC_KEY,
-					AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);
+					AlipayConfig.CHARSET);
 
 		} catch (AlipayApiException e) {
 			logger.info("==================验签失败 ！");
@@ -387,9 +446,6 @@ public class OrderServiceImpl implements IOrderService {
 			String gmtClose = conversionParams.get("gmt_close");// 交易结束时间
 			String tradeNo = conversionParams.get("trade_no");// 支付宝的交易号
 			String outTradeNo = conversionParams.get("out_trade_no");// 获取商户之前传给支付宝的订单号（商户系统的唯一订单号）
-			// String outBizNo = conversionParams.get("out_biz_no");//
-			// 商户业务号(商户业务ID，主要是退款通知中返回退款申请的流水号)
-			String buyerLogonId = conversionParams.get("buyer_logon_id");// 买家支付宝账号
 			String sellerId = conversionParams.get("seller_id");// 卖家支付宝用户号
 			String sellerEmail = conversionParams.get("seller_email");// 卖家支付宝账号
 			String totalAmount = conversionParams.get("total_amount");// 订单金额:本次交易支付的订单金额，单位为人民币（元）
@@ -398,19 +454,25 @@ public class OrderServiceImpl implements IOrderService {
 			String buyerPayAmount = conversionParams.get("buyer_pay_amount");// 付款金额:用户在交易中支付的金额
 			String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
 
-			// 支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）
-			AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo); // 查询出对应的支付宝订单记录
+			logger.info("需要校验的参数=======》》》out_trade_no：" + outTradeNo + "======》》》total_amount：" + totalAmount
+					+ "=====》》》seller_id：" + sellerId + "=====》》》app_id：" + appId);
 
-			if (alipaymentOrder != null && totalAmount.equals(alipaymentOrder.getTotalamount().toString())
+			// 支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）
+			Order order = orderDao.selectByOrderCode(outTradeNo); // 查询出对应的订单记录
+			logger.info("根据支付宝的通知信息查询出对应的订单信息===========》》》" + order);
+
+			// 目前测试中totalAmount.equals(order.getTotalprice())，totalAmount先暂时设置为0.01
+			if (order != null && totalAmount.equals("0.01") && sellerId.equals(AlipayConfig.seller_id)
 					&& AlipayConfig.APPID.equals(appId)) {
-				// 修改数据库支付宝订单表(因为要保存每次支付宝返回的信息到数据库里，以便以后查证)
+
+				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo);
+				// 修改数据库支付宝订单记录(因为要保存每次支付宝返回的信息到数据库里，以便以后查证)
 				alipaymentOrder.setNotifytime(notifyTime);
 				alipaymentOrder.setGmtcreatetime(gmtPayment);
 				alipaymentOrder.setGmtrefundtime(gmtRefund);
 				alipaymentOrder.setCreatetime(gmtCreate);
 				alipaymentOrder.setGmtclosetime(gmtClose);
 				alipaymentOrder.setTradeno(tradeNo);
-				alipaymentOrder.setBuyerlogonid(buyerLogonId);
 				alipaymentOrder.setSelleremail(sellerEmail);
 				alipaymentOrder.setSellerid(sellerId);
 				alipaymentOrder.setReceptamount(new BigDecimal(receiptAmount));
@@ -421,36 +483,34 @@ public class OrderServiceImpl implements IOrderService {
 				{
 				case "TRADE_FINISHED": // 交易结束并不可退款
 					alipaymentOrder.setOrderstatus(3);
-					;
 					break;
 				case "TRADE_SUCCESS": // 交易支付成功
 					alipaymentOrder.setOrderstatus(2);
-					;
 					break;
 				case "TRADE_CLOSED": // 未付款交易超时关闭或支付完成后全额退款
 					alipaymentOrder.setOrderid(1);
-					;
 					break;
 				case "WAIT_BUYER_PAY": // 交易创建并等待买家付款
 					alipaymentOrder.setOrderstatus(0);
-					;
 					break;
 				default:
 					break;
 				}
-
 				logger.info("======支付宝交易状态======》》》：" + tradeStatus);
-				int returnResult = alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder); // 更新交易表中状态
+				// 更新支付记录表中的状态
+				int returnResult = alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
 
-				if (tradeStatus.equals("TRADE_SUCCESS")) { // 只处理支付成功的订单
+				// 只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功
+				if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
 
 					// 支付成功，更新订单表状态
-					orderPay(outTradeNo, gmtPayment);
+					int updateOrderResult = orderPay(outTradeNo, gmtPayment);
 
 					// 计算奖励金
 					// AwardCalculator.doAward(buyUserId, buyQty, orderId);
 
-					if (returnResult > 0) {
+					// 当订单表和交易记录表都更新成功才返回success给支付宝
+					if (returnResult > 0 && updateOrderResult > 0) {
 						return "success";
 
 					} else {
@@ -460,12 +520,12 @@ public class OrderServiceImpl implements IOrderService {
 					return "fail";
 				}
 			} else {
-				logger.info("==================支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
+				logger.info("==========支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
 				return "fail";
 			}
-
-		} else { // 验签不通过
-			logger.info("==================验签不通过 ！");
+			// 验签不通过
+		} else {
+			logger.info("============验签不通过 ！");
 			return "fail";
 		}
 	}
@@ -544,37 +604,44 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order)
 			throws Exception {
+		
+		//判断订单金额是否有误
+		if(Integer.valueOf(order.getTotalprice().toString())<0){
+			return Result.failureResult("订单金额有误，生成微信预支付订单失败！");
+		}
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		// 获取生成预支付订单的请求类
 		PrepayIdRequestHandler prepayReqHandler = new PrepayIdRequestHandler(request, response);
 		BigDecimal totalFee = order.getTotalprice();
-		logger.info("======获取订单的总金额=====" + totalFee);
+		logger.info("======获取封装的订单总金额=====" + totalFee);
 		// 测试时，每次支付一分钱，微信支付所传的金额是以分为单位的，因此实际开发中需要x100
 		int total_fee = Integer.valueOf(totalFee.multiply(new BigDecimal(100)).toString());
-		logger.info("total_fee:" + total_fee);
+		logger.info("=========》》》total_fee:" + total_fee);
 		prepayReqHandler.setParameter("appid", WXPayConfig.APP_ID);
 		prepayReqHandler.setParameter("body", WXPayConfig.BODY);
 		prepayReqHandler.setParameter("mch_id", WXPayConfig.MCH_ID);
 		String nonce_str = WXUtil.getNonceStr();
-		prepayReqHandler.setParameter("nonce_str", nonce_str);
-		prepayReqHandler.setParameter("notify_url", WXPayConfig.NOTIFY_URL);
+		prepayReqHandler.setParameter("nonce_str", nonce_str); // 随机字符串
+		prepayReqHandler.setParameter("notify_url", WXPayConfig.NOTIFY_URL); // 接收微信支付异步通知回调地址
 		String out_trade_no = order.getOrdercode();
-		prepayReqHandler.setParameter("out_trade_no", out_trade_no);
-		prepayReqHandler.setParameter("spbill_create_ip", request.getRemoteAddr());
+		prepayReqHandler.setParameter("out_trade_no", out_trade_no); // 订单号
+		prepayReqHandler.setParameter("spbill_create_ip", request.getRemoteAddr()); // 终端IP，即用户端实际ip
 		String timestamp = WXUtil.getTimeStamp();
-		prepayReqHandler.setParameter("time_start", timestamp);
+		prepayReqHandler.setParameter("time_start", timestamp); // 交易起始时间
+		prepayReqHandler.setParameter("trade_type", "APP"); //交易类型
 		// 测试时，每次支付一分钱，上线之后需要放开此代码
 		// prepayReqHandler.setParameter("total_fee",
 		// String.valueOf(total_fee));
 		prepayReqHandler.setParameter("total_fee", "1");
-		prepayReqHandler.setParameter("trade_type", "APP");
-		/**
-		 * 注意签名（sign）的生成方式，具体见官方文档（传参都要参与生成签名，且参数名按照字典序排序，最后接上APP_KEY,转化成大写）
-		 */
+
+		// 注意签名（sign）的生成方式，具体见官方文档（传参都要参与生成签名，且参数名按照字典序排序，最后接上APP_KEY,转化成大写）
 		prepayReqHandler.setParameter("sign", prepayReqHandler.createSHA1Sign());
 		prepayReqHandler.setGateUrl(WXPayConfig.GATEURL);
+		//提交预支付订单，获取prepay_id
 		String prepayid = prepayReqHandler.sendPrepay();
-		// 若获取prepayid成功，将相关信息返回客户端
+		
+		// 若获取prepay_id（预支付交易会话标识）成功，将相关信息返回客户端
 		if (prepayid != null && !prepayid.equals("")) {
 			// 创建微信订单支付记录
 			AlipaymentOrder alipaymentOrder = new AlipaymentOrder();
@@ -584,8 +651,10 @@ public class OrderServiceImpl implements IOrderService {
 			alipaymentOrder.setOrdercode(out_trade_no);
 			alipaymentOrder.setOrderid(order.getOrderid());
 			alipaymentOrder.setOrderstatus(0);
-
 			alipaymentOrderService.createAlipayMentOrder(alipaymentOrder);
+			
+			//重新生成签名，将数据传输给APP
+			//参与签名的字段名为appid，partnerid，prepayid，nonce_str，timestamp，package。注意：package的值格式为Sign=WXPay
 			String signs = "appid=" + WXPayConfig.APP_ID + "&noncestr=" + nonce_str + "&package=Sign=WXPay&partnerid="
 					+ WXPayConfig.PARTNER_ID + "&prepayid=" + prepayid + "&timestamp=" + timestamp + "&key="
 					+ WXPayConfig.APP_KEY;
@@ -602,63 +671,8 @@ public class OrderServiceImpl implements IOrderService {
 			map.put("partnerid", WXPayConfig.PARTNER_ID);
 			return Result.successResult("获取微信预支付订单成功", map.toString());
 		} else {
-
-			return Result.failureResult("获取prepayid失败");
+			return Result.failureResult("获取prepayid失败，生成微信预支付订单失败");
 		}
-	}
-
-	/**
-	 * 支付成功，更新订单状态
-	 * 
-	 * @return
-	 */
-	public int orderPay(String orderCode, String gmtPayment) {
-
-		// 根据订单编号查询出订单
-		Order order = orderDao.selectByOrderCode(orderCode);
-		logger.info("根据订单编号查询出的订单：" + orderCode);
-		order.setPaystatus(1); // 付款状态为已支付
-		order.setAlipayStatus(1); // 支付成功
-		order.setPaytime(gmtPayment); // 支付时间
-
-		// 更新订单状态
-		orderDao.updateByOrderCodeSelective(order);
-
-		// 调用奖励计算
-
-		// 记录到交易流水表中
-		// accountService.addUserAccountDetail(order.getUserid(),
-		// order.getTotalprice(), "减少", 902);
-
-		return 0;
-	}
-
-	/**
-	 * 下单处理
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Order buyOrder(Order order) {
-
-		// 获取订单对象
-		Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
-
-		// 插入订单明细
-		for (OrderDetail orderDetail : order.getOrderDetailLst()) {
-			orderDetail.setOrderid(oldOrder.getOrderid());
-			orderDetailDao.insertSelective(orderDetail);
-		}
-
-		// test 这里不计算明细，后期加上
-		/*
-		 * order.setAwardDetailLst(order.getOrderDetailLst()); if
-		 * (order.getAwardDetailLst() != null) {
-		 * 
-		 * for (OrderDetail orderDetail : order.getAwardDetailLst()) {
-		 * orderDetail.setOrderid(order.getOrderid());
-		 * orderDetailDao.insertSelective(orderDetail); } }
-		 */
-		return order;
 	}
 
 	// 更新订单状态发货
@@ -676,7 +690,6 @@ public class OrderServiceImpl implements IOrderService {
 		if (i <= 0) {
 			return 0;
 		}
-
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
 

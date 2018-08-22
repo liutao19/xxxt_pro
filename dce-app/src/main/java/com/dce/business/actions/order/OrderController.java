@@ -137,7 +137,7 @@ public class OrderController extends BaseController {
 	}
 
 	/**
-	 * 支付宝支付异步通知请求该接口
+	 * 支付宝支付异步通知该接口
 	 * 
 	 * @param request
 	 * @param response
@@ -167,19 +167,22 @@ public class OrderController extends BaseController {
 		}
 		logger.info("==================返回参数集合：" + conversionParams);
 		String status = orderService.notify(conversionParams);
+
+		logger.info("===========》》》》》验签结果：" + status);
 		return status;
 	}
 
 	/**
-	 * 接收微信支付成功通知
+	 * 接收微信支付回调通知
 	 * 
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/tenpay/notify")
 	public void getnotify(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		logger.info("微信支付回调");
+		logger.info("===============微信支付回调===========");
 		PrintWriter writer = response.getWriter();
 		InputStream inStream = request.getInputStream();
 		ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
@@ -191,27 +194,29 @@ public class OrderController extends BaseController {
 		outSteam.close();
 		inStream.close();
 		String result = new String(outSteam.toByteArray(), "utf-8");
-		logger.info("微信支付通知结果：" + result);
+		logger.info("======微信支付通知结果：" + result);
 		Map<String, String> map = null;
 		try {
-			/**
-			 * 解析微信通知返回的信息
-			 */
+			// 解析微信通知返回的信息
 			map = XMLUtil.doXMLParse(result);
 
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		}
-		System.out.println("=========:" + result);
-		// 若支付成功，则告知微信服务器收到通知
-		if (map.get("return_code").equals("SUCCESS")) {
-			if (map.get("result_code").equals("SUCCESS")) {
-				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(map.get("out_trade_no"));
-				logger.info("订单号：" + Long.valueOf(map.get("out_trade_no")));
-				logger.info("交易创建时间-----》》》alipaymentOrder.getGmtcreatetime：" + alipaymentOrder.getGmtcreatetime());
+		// 根据微信返回的订单号查询出是否存在该订单
+		Order order = orderService.selectByOrderCode(map.get("out_trade_no"));
+		System.out.println("根据微信通知查询出来的订单=========:" + order);
 
-				// 判断通知是否已处理，若已处理，则不予处理
-				if (alipaymentOrder.getGmtcreatetime() == null) {
+		String notifyStr = "";
+
+		// 验证签名通过并且返回的订单的金额与商户金额相同
+		if (order.getTotalprice().equals(map.get("total_fee"))) {
+			if (map.get("result_code").equals("SUCCESS")) {
+				// 若支付成功，则告知微信服务器收到通知
+				if (map.get("return_code").equals("SUCCESS")) {
+					AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(map.get("out_trade_no"));
+					logger.info("==========订单号：" + Long.valueOf(map.get("out_trade_no")));
+
 					logger.info("通知微信后台");
 					alipaymentOrder.setOrderstatus(2);
 					alipaymentOrder.setNotifytime(DateUtil.dateToString(new Date()));
@@ -222,13 +227,18 @@ public class OrderController extends BaseController {
 					orderService.orderPay(alipaymentOrder.getOrdercode(), alipaymentOrder.getCreatetime());
 
 					// 处理业务完毕，将业务结果通知给微信
-					String notifyStr = XMLUtil.setXML("SUCCESS", "");
-					writer.write(notifyStr);
-					writer.flush();
-					writer.close();
+					notifyStr = XMLUtil.setXML("SUCCESS", "OK");
+
+				} else {
+					notifyStr = XMLUtil.setXML("FAIL", "获取微信支付通知结果为FAIL");
 				}
 			}
+		} else {
+			notifyStr = XMLUtil.setXML("FAIL", "签名和金额验证失败");
 		}
+		writer.write(notifyStr);
+		writer.flush();
+		writer.close();
 	}
 
 	/**
@@ -252,6 +262,7 @@ public class OrderController extends BaseController {
 	 * @param goods
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private List<OrderDetail> convertGoodsFromJson(String goods) {
 
 		if (StringUtils.isBlank(goods)) {

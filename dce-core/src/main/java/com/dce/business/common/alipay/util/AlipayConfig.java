@@ -10,7 +10,7 @@ public class AlipayConfig {
 
 	public static String APPID = "2018080960938624";
 	
-	// 合作身份者ID
+	// 商户支付宝用户号
 	public static String seller_id = "2088231284681737";
 
 	// 私钥 pkcs8格式

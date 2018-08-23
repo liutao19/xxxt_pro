@@ -171,12 +171,12 @@
 <body>
 <div class="login">
     <div  class="logo" style="float:left;width:400px;">
-     	<font style="color:#FFFFFF;font-size:32px;">ATBT后台管理系统</font>
+     	<font style="color:#FFFFFF;font-size:35px;font-family: serif;font-weight: bold;">湘信后台管理系统</font>
     </div>
 <%--     <img src="<c:url value='/images/login_logo.png'/>" class="logo"> --%>
     <div class="login-wapper">
-        <div class="login-head">
-            	让开发更简单 ATBT
+        <div class="login-head" style="color: gray;">
+            	湘信集团
         </div>
         <form method="post"  id="submitForm">
         <div class="form">
@@ -207,7 +207,7 @@
         </div>
         </form>
     </div>
-    <p style="position: absolute;">Powered by ATBT v1.0.2 Copyright © ATBT All rights reserved.</p>
+    <p style="position: absolute;">Powered by CW v1.0.2 Copyright © CW All rights reserved.</p>
 </div>
 </body>
 </html>

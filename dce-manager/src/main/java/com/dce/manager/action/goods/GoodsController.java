@@ -58,7 +58,12 @@ public class GoodsController extends BaseAction {
 
 	@Value("#{sysconfig['uploadPath']}")
 	private String uploadPath;
+	
+	//http://localhost:8080/dce-app/mall/img.do?filePath=
+	@Value("#{sysconfig['readImgUrl']}")
+	private String readImgUrl;
 
+		
 	/**
 	 * 去列表页面
 	 * 
@@ -166,40 +171,31 @@ public class GoodsController extends BaseAction {
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----saveGoods------");
 
-		if (file != null ) {
+		if (file != null) {
 			if (!file.isEmpty()) {
 				try {
 					// 文件保存路径
 					String filePath = uploadPath + "/" + file.getOriginalFilename();
 					logger.debug(uploadPath);
-					
+
 					// 转存文件
 					file.transferTo(new File(filePath));
-					
-					/*
-					 * size(width,height) 若图片横比200小，高比300小，不变
-					 * 若图片横比200小，高比300大，高缩小到300，图片比例不变 若图片横比200大，高比300小，横缩小到200，图片比例不变
-					 * 若图片横比200大，高比300大，图片按比例缩小，横为200或高为300
-					 */
-					//Thumbnails.of("E:/xx/img/img.jpg").size(200, 300).toFile("E:/xx/img/img.jpg");
-					
-					//定死大小 不会根据比列压缩
+
+					// 定死大小 不会根据比列压缩
 					Thumbnails.of(filePath).size(200, 300).keepAspectRatio(false).toFile(filePath);
-					
+
 					// 存数据库
-					CTGoodsDo.setGoodsImg(filePath);
+					CTGoodsDo.setGoodsImg(getReadImgUrl(filePath));
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
-				
 			}
 		}
 
 		try {
-			
-			
+
 			Integer id = CTGoodsDo.getGoodsId();
 
 			int i = 0;
@@ -225,6 +221,18 @@ public class GoodsController extends BaseAction {
 			outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
 		}
 		logger.info("----end saveGoods--------");
+	}
+
+	/**
+	 * 读取图片的url	
+	 * @param filePath
+	 * @return
+	 */
+	private String getReadImgUrl(String filePath) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(readImgUrl);
+		sb.append(filePath);
+		return sb.toString();
 	}
 
 	/**

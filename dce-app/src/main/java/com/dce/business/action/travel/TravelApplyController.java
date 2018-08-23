@@ -72,7 +72,7 @@ public class TravelApplyController extends BaseController {
     	travel.setPathid(Integer.parseInt(pathid));
     	travel.setIsbeen(isBenn); //是否去过该路线 0是/1否
     	travel.setPeople(Integer.parseInt(people));
-    	
+    	travel.setState("1");
     	
     	
     	Result<?> result = travelApplyService.travelApply(travel);

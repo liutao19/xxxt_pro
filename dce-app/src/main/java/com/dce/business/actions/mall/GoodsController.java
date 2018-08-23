@@ -1,11 +1,16 @@
 package com.dce.business.actions.mall;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,7 +18,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
@@ -147,20 +155,37 @@ public class GoodsController extends BaseController {
 		return Result.successResult("查询成功", addressDo);
 	}
 	
-/*	@RequestMapping(value = "/product/buy", method = {RequestMethod.POST})
-	public Result<?> buy(){
-		
-		String productId = getString("productId");
-		String addressId = getString("addressId");
-		String qty = getString("qty");
-		
-		logger.info("购买商品: 商品id=" + productId + ",购买数量=" + qty + ",addressId=" + addressId);
-		
-		OrderDo order = new OrderDo();
-		order.setGoodsId(Long.parseLong(productId));
-		order.setQty(new BigDecimal(qty));
-		order.setUserId(getUserId());
-		
-		return ctGoodsService.buyGoods(order,StringUtils.isBlank(addressId)?null:Integer.parseInt(addressId));
-	}*/
+	
+	/**
+	 * IO流读取图片
+	 * @param filePath
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/img", method = {RequestMethod.GET})
+	
+	public void saveGoods(HttpServletRequest request,HttpServletResponse response) throws IOException {
+		ServletOutputStream out = null;
+		FileInputStream ips = null;
+		try {
+			String filePath = this.getString("filePath");
+			ips = new FileInputStream(filePath);
+			response.setContentType("image/png");
+			out = response.getOutputStream();
+			//读取文件流
+			int len = 0;
+			byte[] buffer = new byte[1024 * 10];
+			while ((len = ips.read(buffer)) != -1){
+				out.write(buffer,0,len);
+			}
+			out.flush();
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			out.close();
+			ips.close();
+		}
+		 
+	 }
 }

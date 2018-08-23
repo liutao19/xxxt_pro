@@ -74,15 +74,15 @@ $(function(){
 								{field:"state",title:"是否通过",width:80,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
-				 							return "未通过";
-				 						}else if(row.state == "1"){
 				 							return "通过";
+				 						}else if(row.state == "1"){
+				 							return "未通过";
 				 						}
 				 					}
 								},
 								{field:"操作",title:"操作",width:100,align:"left",
 				 					formatter:function(value,row,index){
-				 					  var str= '<a href="javascript:void(0);" onclick="to_editapplyTravel(\''+row.id+'\');">编辑</a> <a href="javascript:void(0);" onclick="agree_applyTravel(\''+row.id+'\');">同意申請</a>';
+				 					  var str= '<a href="javascript:void(0);" onclick="to_editapplyTravel(\''+row.id+'\');">编辑</a> <a href="javascript:void(0);" onclick="agree_applyTravel(\''+row.id+'\');">同意申请</a>';
 				 					  return str;
 				 					}
 				 				}	 				

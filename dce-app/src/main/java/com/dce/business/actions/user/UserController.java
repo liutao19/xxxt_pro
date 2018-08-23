@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -153,7 +154,7 @@ public class UserController extends BaseController {
 	public Result<?> alterUser(UserDo userDo) {
 		try {
 			Integer userId = getUserId();
-			Assert.hasText(userDo.getUserPassword(),"修改的密码为空");
+			Assert.hasText(userDo.getUserPassword(), "修改的密码为空");
 			logger.info("修改用户登录密码的ID，userId:" + userId);
 			userDo.setId(userId);
 			// 登录密码加密
@@ -331,13 +332,34 @@ public class UserController extends BaseController {
 			// 用户信息
 			UserDo userDo = new UserDo();
 			userDo.setId(userId);
+			userDo.setMobile(mobile);
 			userDo.setTrueName(trueName);
 			userDo.setIdnumber(idnumber);
 			userDo.setSex(Integer.parseInt(sex));
 			userDo.setBanknumber(banknumber);
 			userDo.setBanktype(banktype);
-			//更改用户认证状态
+			// 更改用户认证状态
 			userDo.setCertification(1);
+
+			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
+
+			// 手机号验证
+			if (!p.matcher(mobile).matches()) {
+
+				return Result.failureResult("手机号码错误");
+			}
+
+			// 身份号验证
+			if (isLegal(idnumber) == 0) {
+
+				return Result.failureResult("该身份证号不合法");
+			}
+			//银行卡号校验
+			if(!checkBankCard(banknumber)){
+				
+				return Result.failureResult("该银行卡号不合法");
+				
+			}
 
 			System.out.println("用户信息----------》》》" + userDo);
 
@@ -348,6 +370,72 @@ public class UserController extends BaseController {
 		}
 	}
 
+	/**
+	 * 检验身份证是否合法
+	 * 
+	 * @return 1-合法；0-不合法
+	 */
+	public int isLegal(String idnumber) {
+		int a = 0;
+		int sum = 0;
+		char checkBit[] = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
+		int[] add = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+		char[] stringArr = idnumber.toCharArray();
+		for (int i = 0; i < 17; i++) {
+			sum += add[i] * (stringArr[i] - '0');
+		}
+		if (stringArr[17] == checkBit[sum % 11]) {
+			a = 1;
+		}
+		return a;
+	}
+
+	/*
+	 * 校验过程： 1、从卡号最后一位数字开始，逆向将奇数位(1、3、5等等)相加。
+	 * 2、从卡号最后一位数字开始，逆向将偶数位数字，先乘以2（如果乘积为两位数，将个位十位数字相加，即将其减去9），再求和。
+	 * 3、将奇数位总和加上偶数位总和，结果应该可以被10整除。
+	 */
+	/**
+	 * 校验银行卡卡号
+	 */
+	public static boolean checkBankCard(String bankCard) {
+		if (bankCard.length() < 15 || bankCard.length() > 19) {
+			return false;
+		}
+		char bit = getBankCardCheckCode(bankCard.substring(0, bankCard.length() - 1));
+		if (bit == 'N') {
+			return false;
+		}
+		return bankCard.charAt(bankCard.length() - 1) == bit;
+	}
+
+	/**
+	 * 从不含校验位的银行卡卡号采用 Luhm 校验算法获得校验位
+	 * 
+	 * @param nonCheckCodeBankCard
+	 * @return
+	 */
+	public static char getBankCardCheckCode(String nonCheckCodeBankCard) {
+		if (nonCheckCodeBankCard == null || nonCheckCodeBankCard.trim().length() == 0
+				|| !nonCheckCodeBankCard.matches("\\d+")) {
+			// 如果传的不是数据返回N
+			return 'N';
+		}
+		char[] chs = nonCheckCodeBankCard.trim().toCharArray();
+		int luhmSum = 0;
+		for (int i = chs.length - 1, j = 0; i >= 0; i--, j++) {
+			int k = chs[i] - '0';
+			if (j % 2 == 0) {
+				k *= 2;
+				k = k / 10 + k % 10;
+			}
+			luhmSum += k;
+		}
+		return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
+	}
+
+	
+	
 	@RequestMapping(value = "toLevel", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView tosetLevel() {
 		ModelAndView mv = new ModelAndView("jjzd/set_user_level");

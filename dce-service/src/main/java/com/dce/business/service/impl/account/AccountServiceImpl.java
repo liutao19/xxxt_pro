@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,8 @@ import com.dce.business.service.user.IUserStaticService;
  */
 @Service("accountService")
 public class AccountServiceImpl implements IAccountService {
+	private final static Logger logger = Logger.getLogger(AccountServiceImpl.class);
+
 	@Resource
 	private IUserAccountDao userAccountDao;
 	@Resource
@@ -473,10 +476,15 @@ public class AccountServiceImpl implements IAccountService {
 	 * @return
 	 */
 	public BigDecimal getUserAmount(Integer userId) {
+
 		String accountType = AccountType.wallet_money.getAccountType();
+
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("userId", userId);
 		param.put("accountType", accountType);
+		logger.info("获取的参数---------》》》》》" + param);
+
+		logger.info("获取的用户账户记录--------》》》》》" + selectAmountByAccountType(param));
 		return selectAmountByAccountType(param).getAmount();
 	}
 
@@ -526,11 +534,11 @@ public class AccountServiceImpl implements IAccountService {
 		return list.get(0);
 	}
 
-	//余额修改，提现申请
+	// 余额修改，提现申请
 	@Override
 	public int updateMoney(Map<String, Object> param) {
 		// TODO Auto-generated method stub
-		if(param==null){
+		if (param == null) {
 			return 0;
 		}
 		return userAccountDao.updateMoney(param);

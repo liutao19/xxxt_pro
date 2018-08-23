@@ -1,6 +1,9 @@
 package com.dce.business.common.wxPay.util;
 
+import java.util.Date;
 import java.util.Random;
+
+import com.dce.business.common.util.DateUtil;
 
 public class WXUtil {
 	
@@ -10,6 +13,7 @@ public class WXUtil {
 	}
 
 	public static String getTimeStamp() {
-		return String.valueOf(System.currentTimeMillis() / 1000);
+		return DateUtil.YYYYMMDDHHMMSS.format(new Date());
 	}
+	
 }

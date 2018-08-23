@@ -14,6 +14,6 @@ public interface IAwardCalculator  {
 	 * @param orderId   购买订单
 	 * @return
 	 */
-	public void doAward(int buyUserId, int buyQty, Long orderId);
+	public void doAward(int buyUserId, int buyQty, Integer orderId);
 	
 }

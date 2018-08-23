@@ -30,10 +30,10 @@
 		regionalawards
 		where rewardsAreaId = #{rewardsareaid,jdbcType=INTEGER}
 	</delete>
-	<insert id="insert"
-		parameterType="com.dce.business.entity.district.Regionalawards">
+	<insert id="insert" parameterType="com.dce.business.entity.district.Regionalawards">
 
-		insert into regionalawards (rewardsAreaId,
+		insert into regionalawards
+		(rewardsAreaId,
 		rewardBalance, algebra,
 		remark)
 		values
@@ -42,8 +42,7 @@
 		#{algebra,jdbcType=INTEGER},
 		#{remark,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective"
-		parameterType="com.dce.business.entity.district.Regionalawards">
+	<insert id="insertSelective" parameterType="com.dce.business.entity.district.Regionalawards">
 
 		insert into regionalawards
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -76,8 +75,7 @@
 		</trim>
 	</insert>
 
-	<update id="updateByPrimaryKeySelective"
-		parameterType="com.dce.business.entity.district.Regionalawards">
+	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.district.Regionalawards">
 
 		update regionalawards
 		<set>
@@ -93,17 +91,19 @@
 		</set>
 		where rewardsAreaId = #{rewardsareaid,jdbcType=INTEGER}
 	</update>
-	<update id="updateByPrimaryKey"
-		parameterType="com.dce.business.entity.district.Regionalawards">
+	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.district.Regionalawards">
 
-		update regionalawards
+		update
+		regionalawards
 		set rewardBalance =
 		#{rewardbalance,jdbcType=VARCHAR},
 		algebra =
 		#{algebra,jdbcType=INTEGER},
-		remark = #{remark,jdbcType=VARCHAR}
+		remark =
+		#{remark,jdbcType=VARCHAR}
 		where
-		rewardsAreaId = #{rewardsareaid,jdbcType=INTEGER}
+		rewardsAreaId =
+		#{rewardsareaid,jdbcType=INTEGER}
 	</update>
 
 	<!-- 自定义多条件分页查询 -->
@@ -119,10 +119,29 @@
 		<if test="algebra!=null">
 			and algebra =#{algebra,jdbcType=INTEGER}
 		</if>
-
+		<if test="rewardbalance != null">
+			and rewardBalance =#{rewardbalance,jdbcType=VARCHAR}
+		</if>
 		<if test="currentPage!=null and pageSize!=null">
 			limit currentPage,pageSize
 		</if>
+	</select>
+
+
+	<select id="selectByPrimaryKeySelective" parameterType="com.dce.business.entity.district.Regionalawards"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from regionalawards
+		where 0=0
+		<if test="rewardsareaid!=null">
+			and rewardsAreaId =#{rewardsareaid,jdbcType=INTEGER}
+		</if>
+		<if test="algebra!=null">
+			and algebra =#{algebra,jdbcType=INTEGER}
+		</if>
+
+
 	</select>
 
 </mapper>

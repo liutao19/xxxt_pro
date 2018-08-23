@@ -5,8 +5,6 @@ import java.util.List;
 import com.dce.business.entity.user.UserAddressDo;
 
 public interface UserAdressService {
-
-
 	
 	/**
 	 * 按主键删除收货地址

@@ -6,6 +6,7 @@
 
 package com.dce.manager.action.goods;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +39,8 @@ import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * @author huangzl QQ: 272950754
@@ -162,24 +166,19 @@ public class GoodsController extends BaseAction {
 			HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----saveGoods------");
 
-		if (file != null) {
+		if (file != null ) {
 			if (!file.isEmpty()) {
 				try {
 					// 文件保存路径
 					String filePath = uploadPath + "/" + file.getOriginalFilename();
 					logger.debug(uploadPath);
+					
 					// 转存文件
 					file.transferTo(new File(filePath));
-
-					/*
-					 * //图片路径 String filePath = "E:\\xx\\img"; //获取原始图片的拓展名 ;
-					 * String originalFilename = file.getOriginalFilename();
-					 * //新的文件名字 String newFileName =
-					 * UUID.randomUUID()+originalFilename; //封装上传文件位置的全路径 + File
-					 * targetFile = new File(filePath,newFileName);
-					 * //把本地文件上传到封装上传文件位置的全路径 file.transferTo(targetFile);
-					 */
-
+					
+					//压缩图片 -
+					Thumbnails.of(filePath).size(200, 300).toFile(filePath);
+					
 					// 存数据库
 					CTGoodsDo.setGoodsImg(filePath);
 
@@ -187,10 +186,13 @@ public class GoodsController extends BaseAction {
 					e.printStackTrace();
 				}
 
+				
 			}
 		}
 
 		try {
+			
+			
 			Integer id = CTGoodsDo.getGoodsId();
 
 			int i = 0;

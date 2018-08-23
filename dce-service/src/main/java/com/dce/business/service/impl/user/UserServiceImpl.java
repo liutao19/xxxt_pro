@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.exception.BusinessException;
@@ -79,44 +80,47 @@ public class UserServiceImpl implements IUserService {
 		return list.get(0);
 	}
 
+	/**
+	 * 前端：用户注册
+	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> reg(UserDo userDo) {
-		//推荐用户
+		// 推荐用户
 		UserDo ref = null;
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
-			
+
 			Map<String, Object> params = new HashMap<String, Object>();
-			
+
 			params.put("mobile", userDo.getRefereeUserMobile());
-			
+
 			List<UserDo> refUserLst = this.selectMobile(params);
 			if (refUserLst == null || refUserLst.size() < 1) {
 				return Result.failureResult("推荐人不存在");
 			}
 			ref = refUserLst.get(0);
 		}
-		
+
 		// 判断注册用户名是否为空
-		userDo.setUserName(userDo.getUserName().trim());	
+		userDo.setUserName(userDo.getUserName().trim());
 		UserDo oldUser = getUser(userDo.getUserName());
 		if (oldUser != null) {
 			return Result.failureResult("用户已存在");
 		}
 
 		if (ref != null) {
-			userDo.setRefereeid(ref.getId());
-			userDo.setParentid(ref.getId());
+			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
+			userDo.setParentid(ref.getId());// 获取上级id
 		}
 		// 密码加密处理
 		userDo.setRegTime(new Date().getTime());
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); 
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword()));
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
 
 		// 用户注册
 		int result = userDao.insertSelective(userDo);
 
-		if(ref != null){
+		if (ref != null) {
 			// 维护父节点关系
 			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
 			// 维护推荐人关系
@@ -131,21 +135,18 @@ public class UserServiceImpl implements IUserService {
 
 	// 维护賬戶
 	private void maintainUserAccount(Integer userId) {
-		String[] accountTypes = new String[] { AccountType.wallet_money.name(), 
-											   AccountType.wallet_active.name(),
-											   AccountType.wallet_goods.name(), 
-											   AccountType.wallet_travel.name() };
-		//新增账号
-		for(String accountType : accountTypes){
+		String[] accountTypes = new String[] { AccountType.wallet_money.name(), AccountType.wallet_active.name(),
+				AccountType.wallet_goods.name(), AccountType.wallet_travel.name() };
+		// 新增账号
+		for (String accountType : accountTypes) {
 			UserAccountDo record = new UserAccountDo();
 			record.setAccountType(accountType);
 			record.setAmount(BigDecimal.ZERO);
 			record.setUserId(userId);
 			record.setUpdateTime(new Date());
-			userAccountDao.insertSelective(record );
+			userAccountDao.insertSelective(record);
 		}
 	}
-
 
 	@Override
 	public UserDo getUser(Integer userId) {
@@ -167,7 +168,7 @@ public class UserServiceImpl implements IUserService {
 		userParentDo.setParentid(parentId);
 		userParentDo.setUserid(userId);
 		userParentDo.setDistance(1);
-		userParentDo.setPosition(lr.toString());
+		// userParentDo.setPosition(lr.toString());
 		userParentDo.setNetwork(null);
 		userParentDo.setLrDistrict(lr);
 		userParentDao.insertSelective(userParentDo);
@@ -292,24 +293,6 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	/**
-	 * 修改用户信息
-	 */
-	@Override
-	public Result<?> update(UserDo userDo) {
-		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改用户信息参数错误!");
-		}
-
-		int flag = userDao.updateByPrimaryKeySelective(userDo);
-		if (flag > 0) {
-			return Result.successResult("修改成功");
-		} else {
-
-			return Result.failureResult("修改失败");
-		}
-	}
-
-	/**
 	 * 支付密码
 	 */
 	@Override
@@ -317,7 +300,7 @@ public class UserServiceImpl implements IUserService {
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改用户支付密码错误!");
 		}
-		Map<String, Object> params =new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userDo.getId());
 		params.put("twoPassword", userDo.getTwoPassword());
 		int flag = userDao.updateByPrimaryKeyPayPass(params);
@@ -334,11 +317,11 @@ public class UserServiceImpl implements IUserService {
 	 */
 	@Override
 	public Result<?> updateByPrimaryKeyLogPass(UserDo userDo) {
-		System.out.println("xiugaidenglumima"+userDo.getUserPassword());
+		System.out.println("xiugaidenglumima" + userDo.getUserPassword());
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("修改登录密码错误!");
 		}
-		Map<String, Object> params =new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userDo.getId());
 		params.put("userPassword", userDo.getUserPassword());
 		int flag = userDao.updateByPrimaryKeyLogPass(params);
@@ -693,7 +676,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public List<UserDo> selectUserCondition(Map<String, Object> map) {
-		
+
 		return userDao.selectUserCondition(map);
 	}
 
@@ -705,4 +688,140 @@ public class UserServiceImpl implements IUserService {
 		return userDao.selectMobile(params);
 	}
 
+	/**
+	 * 新增会员（需维护账户关系与推荐人关系）
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Result<?> addUserInfo(UserDo userDo) {
+		UserDo ref = null;
+
+		// 判断新增用户名是否为空
+		userDo.setUserName(userDo.getUserName().trim());
+		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
+		if (oldUser != null) {
+			logger.info("用户已存在");
+			return Result.failureResult("用户已存在");
+		}
+
+		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
+		userDo.setId(userDo.getId());// 用户id
+		userDo.setUserLevel(userDo.getUserLevel()); // 等级
+		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
+		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
+		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
+		// 信息加密处理
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
+		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
+		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
+		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
+		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
+		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+
+		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
+		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
+
+			Map<String, Object> params = new HashMap<String, Object>();
+
+			params.put("mobile", DataEncrypt.encrypt(userDo.getRefereeUserMobile()));
+
+			List<UserDo> refUserLst = this.selectMobile(params);
+			if (refUserLst == null || refUserLst.size() < 1) {
+				return Result.failureResult("推荐人不存在");
+			}
+			ref = refUserLst.get(0);
+		}
+		// 维护推荐人关系
+		if (ref != null) {
+			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
+			userDo.setParentid(ref.getId());// 获取上级id
+		}
+
+		// 新增的会员信息
+		logger.info("用户信息:userId=" + userDo.getId());
+		logger.info("用户信息:userName=" + userDo.getUserName());
+		logger.info("用户信息:trueName=" + userDo.getUserName());
+		logger.info("用户信息:mobile=" + userDo.getMobile());
+		logger.info("用户信息:login_password=" + userDo.getUserPassword());
+		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());
+		logger.info("用户信息:userLevel=" + userDo.getUserLevel());
+		// logger.info("用户信息:isBlankOrder=" + isBlankOrder);
+		logger.info("用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
+		logger.info("用户信息:isActivated=" + userDo.getIsActivated());
+		logger.info("用户信息:certification=" + userDo.getCertification());
+		logger.info("用户信息:sex=" + userDo.getSex());
+		logger.info("用户信息:idunmber=" + userDo.getIdnumber());
+		logger.info("用户信息:banknumber=" + userDo.getBanknumber());
+		logger.info("用户信息:banktype=" + userDo.getBanktype());
+
+		// 新增会员
+		int result = userDao.insertSelective(userDo);
+
+		if (ref != null) {
+			// 维护父节点关系
+			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+			// 维护推荐人关系
+			maintainUserReferee(userDo.getId(), ref.getId());
+		}
+
+		// 维护賬戶
+		maintainUserAccount(userDo.getId());
+
+		return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
+	}
+
+	/**
+	 * 修改用户信息（后台）
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Result<?> update(UserDo userDo) {
+
+		UserDo ref = null;
+
+		// 判断新增用户名是否为空
+		userDo.setUserName(userDo.getUserName().trim());
+		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
+		if (oldUser != null) {
+			logger.info("用户已存在");
+			return Result.failureResult("用户已存在");
+		}
+
+		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
+		userDo.setId(userDo.getId());// 用户id
+		userDo.setUserLevel(userDo.getUserLevel()); // 等级
+		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
+		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
+		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
+		// 信息加密处理
+		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
+		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
+		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
+		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
+		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
+		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+
+		// 修改的会员信息
+		logger.info("用户信息:userId=" + userDo.getId());
+		logger.info("用户信息:userName=" + userDo.getUserName());
+		logger.info("用户信息:trueName=" + userDo.getUserName());
+		logger.info("用户信息:mobile=" + userDo.getMobile());
+		logger.info("用户信息:login_password=" + userDo.getUserPassword());
+		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());
+		logger.info("用户信息:userLevel=" + userDo.getUserLevel());
+		logger.info("用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
+		logger.info("用户信息:isActivated=" + userDo.getIsActivated());
+		logger.info("用户信息:certification=" + userDo.getCertification());
+		logger.info("用户信息:sex=" + userDo.getSex());
+		logger.info("用户信息:idunmber=" + userDo.getIdnumber());
+		logger.info("用户信息:banknumber=" + userDo.getBanknumber());
+		logger.info("用户信息:banktype=" + userDo.getBanktype());
+		// 修改会员
+		int result = userDao.updateByPrimaryKeySelective(userDo);
+
+		return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
+	}
 }

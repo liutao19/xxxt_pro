@@ -271,6 +271,7 @@
 		#{certification,jdbcType=INTEGER},#{district,jdbcType=VARCHAR},#{refereeUserMobile,jdbcType=VARCHAR})
 	</insert>
 
+	<!-- 后台：新增会员 -->
 	<insert id="insertSelective" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">
 		insert into ct_user
@@ -851,6 +852,7 @@
 		</trim>
 	</insert>
 
+	<!-- 后台：编辑用户信息 -->
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserDo">
 		update ct_user
 		<set>
@@ -1645,15 +1647,17 @@
 
 	<!-- 更改登录密码 -->
 	<update id="updateByPrimaryKeyLogPass" parameterType="com.dce.business.entity.user.UserDo">
-		update ct_user
-			set	user_password = #{userPassword}
+		update
+		ct_user
+		set user_password = #{userPassword}
 
 		where id = #{userId}
 	</update>
 
 	<!-- 更改支付密码 -->
 	<update id="updateByPrimaryKeyPayPass" parameterType="com.dce.business.entity.user.UserDo">
-		update ct_user set two_password = #{twoPassword}
+		update
+		ct_user set two_password = #{twoPassword}
 		where id = #{userId}
 	</update>
 

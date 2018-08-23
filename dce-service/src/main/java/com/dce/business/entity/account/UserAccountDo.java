@@ -156,4 +156,14 @@ public class UserAccountDo {
 	public void setRelevantUser(String relevantUser) {
 		this.relevantUser = relevantUser;
 	}
+
+	@Override
+	public String toString() {
+		return "UserAccountDo [id=" + id + ", userId=" + userId + ", accountType=" + accountType + ", amount=" + amount
+				+ ", totalConsumeAmount=" + totalConsumeAmount + ", totalInocmeAmount=" + totalInocmeAmount
+				+ ", incomeAmount=" + incomeAmount + ", consumeAmount=" + consumeAmount + ", withdrawTotalDeposit="
+				+ withdrawTotalDeposit + ", updateTime=" + updateTime + ", remark=" + remark + ", seqId=" + seqId
+				+ ", relevantUser=" + relevantUser + "]";
+	}
+	
 }

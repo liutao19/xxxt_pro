@@ -30,155 +30,100 @@ import com.dce.manager.util.ResponseUtils;
 public class LoginController extends BaseAction {
 
 	@Resource
-    private IManagerUserService managerUserService;
-	
-    @RequestMapping(value = "/welcome", method = RequestMethod.GET)
-    public String printWelcome(ModelMap model, Principal principal) {
+	private IManagerUserService managerUserService;
 
-        String name = principal.getName();
+	@RequestMapping(value = "/welcome", method = RequestMethod.GET)
+	public String printWelcome(ModelMap model, Principal principal) {
 
-        model.addAttribute("username", name);
-        model.addAttribute("message", "Spring Security Custom Form example");
-        return "/login/hello";
+		String name = principal.getName();
 
-    }
+		model.addAttribute("username", name);
+		model.addAttribute("message", "Spring Security Custom Form example");
+		return "/login/hello";
 
-    @RequestMapping("accessDenied")
-    public String accessDenied() {
-        return "/login/accessDenied";
-    }
+	}
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(ModelMap model) {
-        return "/login/login";
-    }
+	@RequestMapping("accessDenied")
+	public String accessDenied() {
+		return "/login/accessDenied";
+	}
 
-    /**
-     * 登录成功
-     */
-    @RequestMapping(value = "/loginsuccess", method = RequestMethod.GET)
-    public void loginSuccess(HttpServletResponse response) {
-        IResult<?> result = ResultSupport.buildSuccessResult(null);
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String login(ModelMap model) {
+		return "/login/login";
+	}
 
-        outPrint(response, toJSONString(result));
-    }
+	/**
+	 * 登录成功
+	 */
+	@RequestMapping(value = "/loginsuccess", method = RequestMethod.GET)
+	public void loginSuccess(HttpServletResponse response) {
+		IResult<?> result = ResultSupport.buildSuccessResult(null);
 
-    /**
-     * 登录失败
-     * @param response
-     */
-    @RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
-    public void loginerror(HttpServletResponse response) {
-        String errorMsg = "登录失败";
-        //获取异常信息
-        Object exception = getRequest().getSession().getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
-        if (exception instanceof BadCredentialsException) {
-            errorMsg = ((BadCredentialsException) exception).getMessage();
-        }
-        IResult<?> result = ResultSupport.buildErrorResult(errorMsg);
-        outPrint(response, toJSONString(result));
-    }
+		outPrint(response, toJSONString(result));
+	}
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public String logout(HttpServletRequest request, ModelMap model) {
-        removeUserInfosWhenLogout();
-        request.getSession().invalidate();
-        return "/login/login";
+	/**
+	 * 登录失败
+	 * 
+	 * @param response
+	 */
+	@RequestMapping(value = "/loginfailed", method = RequestMethod.GET)
+	public void loginerror(HttpServletResponse response) {
+		String errorMsg = "登录失败";
+		// 获取异常信息
+		Object exception = getRequest().getSession().getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+		if (exception instanceof BadCredentialsException) {
+			errorMsg = ((BadCredentialsException) exception).getMessage();
+		}
+		IResult<?> result = ResultSupport.buildErrorResult(errorMsg);
+		outPrint(response, toJSONString(result));
+	}
 
-    }
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(HttpServletRequest request, ModelMap model) {
+		removeUserInfosWhenLogout();
+		request.getSession().invalidate();
+		return "/login/login";
 
-    @ResponseBody
-    @RequestMapping("resetLoginUserPwd")
-    public void resetLoginUserPwd(HttpServletRequest request, HttpServletResponse response) {
-        try{
-            String oldPassword = getString("oldPassword");
-            String newPassword = getString("newPassword");
-            String newPasswordAgain = getString("newPasswordAgain");
-            //旧密码、新密码都不能为空，确认密码必须等于新密码
-            if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword) || StringUtils.isBlank(newPasswordAgain)
-                    || !newPassword.equals(newPasswordAgain)) {
-                ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
-                return;
-            }
-            UserInfos currentUser = getUserInfos();
-            int userId = currentUser.getUserId();
-            int ret = managerUserService.resetCurrentUserPwd(userId, oldPassword, newPassword);
-            if (ret > 0) {
-               
-            	ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
-            }else{
-            	
-            	ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
-            }
-        }catch(Exception e){
-           logger.error("用户重置密码异常",e);
-           throw new BusinessException("系统繁忙，请稍后再试");
-        }
-    }
+	}
 
-	// /**
-	// * 新増会员
-	// *
-	// * @param response
-	// */
-	// @RequestMapping(value = "/addMember", method = { RequestMethod.GET,
-	// RequestMethod.POST })
-	// @ResponseBody
-	// public Result<?> addMember(HttpServletResponse response) {
-	//
-	// try {
-	// Integer userId = getUserId();// 用户ID insert
-	// String userName = getString("userName");// 用户名
-	// userDo.setUserName(userDo.getUserName().trim());// 判断注册用户名是否为空
-	// UserDo oldUser = getUser(userDo.getUserName());
-	// if (oldUser != null) {
-	// return Result.failureResult("用户已存在");
-	// }
-	// String password = getString("userPassword");// 密码
-	// String twoPassword = getString("twoPassword");// 支付密码
-	// String refereeUserMobile = getString("refereeUserMobile");// 推荐人
-	// String trueName = getString("trueName");// 姓名
-	// String mobile = getString("mobile");// 手机号码
-	// String idnumber = getString("idnumber");// 身份证号
-	// String banknumber = getString("banknumber");// 银行卡号
-	// String banktype = getString("banktype");// 银行卡开户行
-	// String sex = getString("sex");// 性别
-	// String userLevel = getString("userLevel");// 用户会员等级
-	// String isActivated = getString("isActivated");// 激活状态
-	// logger.info("用户信息，userId:" + userId);
-	//
-	// Assert.hasText(trueName, "姓名不能为空");
-	// Assert.hasText(mobile, "手机号码不能为空");
-	// Assert.hasText(idnumber, "身份证不能为空");
-	// Assert.hasText(sex, "性别不能为空");
-	// Assert.hasText(banktype, "开卡行不能为空");
-	// Assert.hasText(banknumber, "卡号不能为空");
-	//
-	// // 用户信息
-	// UserDo userDo = new UserDo();
-	// userDo.setId(userId);
-	// userDo.setTrueName(trueName);
-	// userDo.setIdnumber(idnumber);
-	// userDo.setSex(Integer.parseInt(sex));
-	// userDo.setBanknumber(banknumber);
-	// userDo.setBanktype(banktype);
-	//
-	// System.err.println("新増的用户信息-->>" + userDo);
-	//
-	// return userService.Authentication(userDo);
-	//
-	// } catch (Exception e) {
-	// return Result.failureResult("新增会员失败");
-	// }
-	// }
-    
-    /**
-     * 发送注册验证码
-     *
-     * @param request
-     * @param response
-     * @return
-     */
+	@ResponseBody
+	@RequestMapping("resetLoginUserPwd")
+	public void resetLoginUserPwd(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String oldPassword = getString("oldPassword");
+			String newPassword = getString("newPassword");
+			String newPasswordAgain = getString("newPasswordAgain");
+			// 旧密码、新密码都不能为空，确认密码必须等于新密码
+			if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(newPassword)
+					|| StringUtils.isBlank(newPasswordAgain) || !newPassword.equals(newPasswordAgain)) {
+				ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+				return;
+			}
+			UserInfos currentUser = getUserInfos();
+			int userId = currentUser.getUserId();
+			int ret = managerUserService.resetCurrentUserPwd(userId, oldPassword, newPassword);
+			if (ret > 0) {
+
+				ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+			} else {
+
+				ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+			}
+		} catch (Exception e) {
+			logger.error("用户重置密码异常", e);
+			throw new BusinessException("系统繁忙，请稍后再试");
+		}
+	}
+
+	/**
+	 * 发送注册验证码
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = "/sendMobileCode")
 	public void sendMobileCode(HttpServletRequest request, HttpServletResponse response) {
 		// try {

@@ -9,7 +9,7 @@
 <jsp:include page="../common_easyui_cus.jsp"></jsp:include>
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/icons.css'/>" />
 <script type="text/javascript" src="<c:url value='/js/common/js/jquery-easyui-1.4.1/extension/jquery-easyui-datagridview/datagrid-detailview.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/js/regionalawards/regionalawards.js?v='/>"></script>
+<script type="text/javascript" src="<c:url value='/js/userpromote/userpromote.js?v='/>"></script>
 <style type="text/css">
 .tdfont{
 	font-size: 12px;
@@ -20,16 +20,14 @@
 
 <div id="body" region="center" > 
   <!-- 查询条件区域 -->
-	<div id="search_areaRegionalawards"  class="easyui-panel" >
+	<div id="search_areaUserPromote"  class="easyui-panel" >
 		<div id="conditon" >
-			<form id="searchregionalawardsForm" style="margin-top:7px;margin-left:5px;" >
+			<form id="searchuserPromoteForm" style="margin-top:7px;margin-left:5px;" >
 			      <table border="0">
 			        <tr>
-			          <td class="tdfont">区域奖励金额:
-			          	<input type="text" size="14" id="rewardbalance" name="rewardbalance" placeholder="奖励金额" >
-			          </td>
-			          <td class="tdfont">推荐代数:
-			          	<input type="text" size="14" id="algebra" name="algebra" placeholder="推荐代数" >
+			          <td class="tdfont">查询条件:
+			          	<input type="text" size="14" id="searchStr" name="searchStr" placeholder="字典名称" >
+			          	<input type="text" size="14" id="searchCodeStr" name="searchCodeStr" placeholder="字典编码" >
 			          </td>
 			          <td >
 			              <a  href="javascript:void(0)" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a> 
@@ -43,11 +41,11 @@
 	</div>
   
   	<!-- 数据表格区域 -->
-  <div id="tt_Regionalawards"></div>
+  <div id="tt_UserPromote"></div>
   
 </div>
 
-  <div id="editRegionalawardsDiv"></div>  
+  <div id="editUserPromoteDiv"></div>  
 </body>
 
 </html>

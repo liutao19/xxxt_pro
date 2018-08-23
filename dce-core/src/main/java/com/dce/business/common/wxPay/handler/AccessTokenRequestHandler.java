@@ -73,7 +73,7 @@ public class AccessTokenRequestHandler extends RequestHandler {
 		wxReqHandler.setParameter("noncestr", WXUtil.getNonceStr());
 		wxReqHandler.setParameter("package", WXPayConfig.packageValue);
 		wxReqHandler.setParameter("timestamp", WXUtil.getTimeStamp());
-		wxReqHandler.setParameter("traceid", WXPayConfig.traceid);
+		//wxReqHandler.setParameter("traceid", WXPayConfig.traceid);
 
 		// 生成支付签名
 		String sign = wxReqHandler.createSHA1Sign();

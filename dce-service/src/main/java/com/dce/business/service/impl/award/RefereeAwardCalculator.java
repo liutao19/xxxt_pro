@@ -111,7 +111,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			
 			if(StringUtils.isBlank(oneAward)){return;}
 			//解析单个奖励配置
-			String[] awds = oneAward.split("-");
+			String[] awds = oneAward.split(",");
 			//计算奖励金额
 			BigDecimal wardAmount = getAmtByAward(awds,order);
 			//获取奖励账户
@@ -196,7 +196,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		
 		Map<String, Object> map = new HashMap<String,Object>();
 		map.put("n", order.getQty());
-		return new BigDecimal((Float)GroovyParse.executeScript(formula, map));
+		return new BigDecimal(String.valueOf(GroovyParse.executeScript(formula, map)));
 	}
 
 	/**

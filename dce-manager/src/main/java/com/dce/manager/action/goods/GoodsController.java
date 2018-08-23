@@ -176,8 +176,15 @@ public class GoodsController extends BaseAction {
 					// 转存文件
 					file.transferTo(new File(filePath));
 					
-					//压缩图片 -
-					Thumbnails.of(filePath).size(200, 300).toFile(filePath);
+					/*
+					 * size(width,height) 若图片横比200小，高比300小，不变
+					 * 若图片横比200小，高比300大，高缩小到300，图片比例不变 若图片横比200大，高比300小，横缩小到200，图片比例不变
+					 * 若图片横比200大，高比300大，图片按比例缩小，横为200或高为300
+					 */
+					//Thumbnails.of("E:/xx/img/img.jpg").size(200, 300).toFile("E:/xx/img/img.jpg");
+					
+					//定死大小 不会根据比列压缩
+					Thumbnails.of(filePath).size(200, 300).keepAspectRatio(false).toFile(filePath);
 					
 					// 存数据库
 					CTGoodsDo.setGoodsImg(filePath);

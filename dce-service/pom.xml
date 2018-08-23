@@ -13,6 +13,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<groovy.version>2.3.3</groovy.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -86,6 +87,14 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- groovy 脚本-->
+		<dependency>
+		    <groupId>org.codehaus.groovy</groupId>
+		    <artifactId>groovy</artifactId>
+		    <version>${groovy.version}</version>
+		</dependency>
+		
 		
 	</dependencies>
 

@@ -478,7 +478,7 @@
 		status,
 		createTime,
 		goodsimg
-		from ct_goods limit #{offset},#{rows}
+		from ct_goods where status=1 limit #{offset},#{rows}
 
 	</select>
 

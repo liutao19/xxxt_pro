@@ -1,5 +1,6 @@
 package com.dce.business.actions.account;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,9 +56,18 @@ public class AccountRecordController extends BaseController {
 			map.put("seqId", userAccountDetail.getSeqId());
 			accountlist.add(map);
 		}
+		logger.info("======获取的交易流水记录======》》》"+accountlist);
 		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("balance", accountService.getUserAmount(userId)); //当前用户的账户余额
+		BigDecimal balance = accountService.getUserAmount(userId);
+		map.put("balance", balance); //当前用户的账户余额
 		map.put("data", accountlist);
+		
+		// 查询当前账户的最新总余额失败
+		if(balance.compareTo(BigDecimal.ZERO) == 0){
+			map.put("code", "1");
+			map.put("msg", "获取当前账户的最新总余额失败");
+			return map;
+		}
 		map.put("code", "0");
 		map.put("msg", "获取交易流水记录成功");
 		

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dce.business.actions.common.BaseController;
+import com.dce.business.common.alipay.util.AlipayConfig;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.wxPay.util.XMLUtil;
@@ -165,7 +166,9 @@ public class OrderController extends BaseController {
 			// valueStr = new String(valueStr.getBytes("ISO-8859-1"), "uft-8");
 			conversionParams.put(key, valueStr);
 		}
-		logger.info("==================返回参数集合：" + conversionParams);
+		logger.info("==================支付宝返回参数集合：" + conversionParams);
+		logger.info("==================原本的参数ALIPAY_PUBLIC_KEY：" + AlipayConfig.ALIPAY_PUBLIC_KEY+"\tCHARSET："+AlipayConfig.CHARSET);
+		
 		String status = orderService.notify(conversionParams);
 
 		logger.info("===========》》》》》验签结果：" + status);

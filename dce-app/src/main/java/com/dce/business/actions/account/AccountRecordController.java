@@ -46,7 +46,7 @@ public class AccountRecordController extends BaseController {
 		
 		if(list.isEmpty() || list.size() ==0){
 			map.put("code", "0");
-			map.put("msg", "该用户交易流水记录为空");
+			map.put("msg", "用户交易流水记录为空");
 			map.put("data", "");
 			return map;
 		}

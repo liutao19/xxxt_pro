@@ -7,6 +7,9 @@ import com.dce.business.entity.user.UserDo;
 
 public interface IUserDao {
 
+	// 下单购买商品之后，用户状态激活
+	int updateUserStatus(Integer id);
+
 	int deleteByPrimaryKey(Integer id);
 
 	/**

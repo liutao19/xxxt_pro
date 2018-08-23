@@ -158,6 +158,15 @@ function save_YsNews(){
 	var createName=$("#editYsNewsForm #createName").val();
 	var updateDate=$("#editYsNewsForm #updateDate").datebox('getValue');
 	var updateName=$("#editYsNewsForm #updateName").val();
+	
+	if($.isEmptyObject(title)){
+		$.messager.alert("新闻标题","不能为空");
+	}else if($.isEmptyObject(content)){
+		$.messager.alert("内容","不能为空");
+	}else if($.isEmptyObject(createName)){
+		$.messager.alert("创建人","不能为空");
+	}
+	
 	/* alert("id---->>"+id+"---title---"+title+"----file--"+
 			 file+"---content---"+content+"---author----"+author+
 			 "----topNews----"+topNews+"----remark---"+remark+"----status---"

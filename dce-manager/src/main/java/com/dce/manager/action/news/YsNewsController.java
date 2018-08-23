@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -167,16 +168,24 @@ public class YsNewsController extends BaseAction {
 			Integer id = ysnewsDo.getId();
 			String img = ysnewsDo.getImage();
 
+			Assert.hasText(ysnewsDo.getTitle(), "标题不能为空");
+			Assert.hasText(ysnewsDo.getContent(), "内容不能为空");
+			Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
+
 			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
+				Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
 			
-			// 图片压缩
-			Picture_Compression(filePath,filePath,300,300);
+			if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
+				// 图片压缩
+				Picture_Compression(filePath,filePath,300,300);
+			}
+			
 
 			if (i <= 0) {
 				outPrint(response, this.toJSONString(Result.failureResult("操作失败")));

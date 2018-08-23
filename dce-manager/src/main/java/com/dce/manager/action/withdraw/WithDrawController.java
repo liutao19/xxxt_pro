@@ -118,8 +118,6 @@ public class WithDrawController extends BaseAction {
 			if (StringUtils.isNotBlank(withdrawId)) {
 				WithdrawalsDo withdraws = withdrawService.selectByPrimaryKey(Integer.parseInt(withdrawId));
 				if (null != withdraws) {
-					System.out.println(DataDecrypt.decrypt(withdraws.getOrderId()));
-					System.out.println(DataDecrypt.decrypt(withdraws.getOutbizno()));
 					withdraws.setOrderId(DataDecrypt.decrypt(withdraws.getOrderId()));
 					withdraws.setOutbizno(DataDecrypt.decrypt(withdraws.getOutbizno()));
 					Trans trans=payService.withdraw(withdraws);

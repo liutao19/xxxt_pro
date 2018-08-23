@@ -25,16 +25,18 @@ import com.alipay.api.request.AlipayFundTransOrderQueryRequest;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.response.AlipayFundTransOrderQueryResponse;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
+import com.dce.business.common.alipay.util.AlipayConfig;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.enums.IncomeType;
-import com.dce.business.common.pay.util.AlipayConfig;
+
 import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DataDecrypt;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.DateUtil;
+import com.dce.business.dao.etherenum.IEthereumTransInfoDao;
 import com.dce.business.dao.trade.IWithdrawalsDao;
 import com.dce.business.dao.user.IUserDao;
 import com.dce.business.dao.user.IUserParentDao;
@@ -54,6 +56,7 @@ import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.third.IEthereumPlatformService;
 import com.dce.business.service.third.IEthereumService;
+import com.dce.business.service.third.IEthereumTransInfoService;
 import com.dce.business.service.user.IUserService;
 
 @Service("payService")
@@ -80,7 +83,8 @@ public class PayServiceImpl implements IPayService {
 	private IUserParentDao userParentDao;
 	@Resource
 	private ITransOutDailyService transOutDailyService;
-	
+	@Resource
+	private IEthereumTransInfoDao etherenumTranInfodao;	
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> recharge(Integer userId, String password, BigDecimal qty) {
@@ -218,9 +222,9 @@ public class PayServiceImpl implements IPayService {
 		request.setBizContent("{" +
 		"\"out_biz_no\":"+orderId+","+
 		"\"payee_type\":\"ALIPAY_LOGONID\"," +
-		"\"payee_account\":\"1422842397@qq.com\"," +
-		"\"amount\":"+0.01+"," +
-		"\"remark\":\"转账备注\"" +
+		"\"payee_account\":\"13378068577\"," +
+		"\"amount\":"+0.1+"," +
+		"\"remark\":\"提现\"" +
 		"}");
 		AlipayFundTransToaccountTransferResponse response = null;
 		try {
@@ -232,18 +236,17 @@ public class PayServiceImpl implements IPayService {
 				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
 				withdraw.setPaymentDate((new Date()).getTime() / 1000);
 				EthereumTransInfoDo trans=new EthereumTransInfoDo();
-				/*trans.setUserid(userId);      //用户id
-				trans.setActualamount(response);     //转出金额
-				trans.setActualgas(actualgas);
-				trans.setAmount(qty.toString());
-				trans.setConfirmed(confirmed);
-				trans.setCreatetime(createtime);
-				trans.setFromaccount(fromaccount);    //转出地址
-				trans.setGas(gas);
-				trans.setGaslimit(gaslimit);
-				trans.setHash(hash);
-				trans.setType(2);*/
+				trans.setUserid(userId);      //用户id
+				trans.setActualamount(qty.toString());     //转出金额
+
+				trans.setAmount(qty.toString());    //转出金额
+
+				trans.setCreatetime(new Date());
+
+				trans.setStatus("true");      //状态
+				trans.setType(2);      //类型
 				trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
+				etherenumTranInfodao.insertSelective(trans);
 			}else{
 				withdraw.setWithdraw_status("0"); 
 				return Result.failureResult(response.getSubMsg());

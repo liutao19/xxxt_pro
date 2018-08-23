@@ -52,7 +52,7 @@
 		select
 		<include refid="Base_Column_List"></include>
 		from ct_order
-		where orderCode = #{orderCode,jdbcType=VARCHAR}
+		where orderCode = #{ordercode,jdbcType=VARCHAR}
 	</select>
 
 	<!-- 获取当前用户所有的订单 -->
@@ -278,7 +278,7 @@
 		update ct_order
 		<set>
 			<if test="ordercode != null">
-				orderCode = #{ordercode,jdbcType=VARCHAR},
+				ordercode = #{ordercode,jdbcType=VARCHAR},
 			</if>
 			<if test="userid != null">
 				userId = #{userid,jdbcType=INTEGER},
@@ -329,7 +329,7 @@
 				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
 			</if>
 		</set>
-		where orderCode = #{orderCode,jdbcType=INTEGER}
+		where ordercode = #{ordercode,jdbcType=INTEGER}
 	</update>
 
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.order.Order">

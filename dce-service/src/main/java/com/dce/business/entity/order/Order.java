@@ -49,42 +49,6 @@ public class Order {
 
 	private Long price;
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getTrueName() {
-		return trueName;
-	}
-
-	public void setTrueName(String trueName) {
-		this.trueName = trueName;
-	}
-
-	public List<OrderDetail> getOrderDetailList() {
-		return orderDetailList;
-	}
-
-	public void setOrderDetailList(List<OrderDetail> orderDetailList) {
-		this.orderDetailList = orderDetailList;
-	}
-
-	public Integer getAlipayStatus() {
-		return alipayStatus;
-	}
-
-	public void setAlipayStatus(Integer alipayStatus) {
-		this.alipayStatus = alipayStatus;
-	}
-
-	public List<OrderDetail> getOrderDetailLst() {
-		return orderDetailList;
-	}
-
 	public Integer getOrderid() {
 		return orderid;
 	}
@@ -113,8 +77,8 @@ public class Order {
 		return qty;
 	}
 
-	public void setQty(Integer qty2) {
-		this.qty = qty2;
+	public void setQty(Integer qty) {
+		this.qty = qty;
 	}
 
 	public BigDecimal getTotalprice() {
@@ -173,6 +137,54 @@ public class Order {
 		this.ordertype = ordertype;
 	}
 
+	public Integer getAddressid() {
+		return addressid;
+	}
+
+	public void setAddressid(Integer addressid) {
+		this.addressid = addressid;
+	}
+
+	public Integer getAlipayStatus() {
+		return alipayStatus;
+	}
+
+	public void setAlipayStatus(Integer alipayStatus) {
+		this.alipayStatus = alipayStatus;
+	}
+
+	public List<OrderDetail> getOrderDetailList() {
+		return orderDetailList;
+	}
+
+	public void setOrderDetailList(List<OrderDetail> orderDetailList) {
+		this.orderDetailList = orderDetailList;
+	}
+
+	public List<OrderDetail> getAwardDetailLst() {
+		return awardDetailLst;
+	}
+
+	public void setAwardDetailLst(List<OrderDetail> awardDetailLst) {
+		this.awardDetailLst = awardDetailLst;
+	}
+
+	public String getTrueName() {
+		return trueName;
+	}
+
+	public void setTrueName(String trueName) {
+		this.trueName = trueName;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public Long getMatchorderid() {
 		return matchorderid;
 	}
@@ -213,30 +225,15 @@ public class Order {
 		this.price = price;
 	}
 
-	public Integer getAddressid() {
-		return addressid;
-	}
-
-	public void setAddressid(Integer addressid) {
-		this.addressid = addressid;
-	}
-
-	public List<OrderDetail> getAwardDetailLst() {
-		return awardDetailLst;
-	}
-
-	public void setAwardDetailLst(List<OrderDetail> awardDetailLst) {
-		this.awardDetailLst = awardDetailLst;
-	}
-
 	@Override
 	public String toString() {
 		return "Order [orderid=" + orderid + ", ordercode=" + ordercode + ", userid=" + userid + ", qty=" + qty
 				+ ", totalprice=" + totalprice + ", recaddress=" + recaddress + ", createtime=" + createtime
 				+ ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime + ", ordertype="
-				+ ordertype + ", matchorderid=" + matchorderid + ", salqty=" + salqty + ", accounttype=" + accounttype
-				+ ", goodsid=" + goodsid + ", price=" + price + ", addressid=" + addressid + ", alipayStatus="
-				+ alipayStatus + ", orderDetailLst=" + orderDetailList + ", awardDetailLst=" + awardDetailLst + "]";
+				+ ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus + ", orderDetailList="
+				+ orderDetailList + ", awardDetailLst=" + awardDetailLst + ", trueName=" + trueName + ", address="
+				+ address + ", matchorderid=" + matchorderid + ", salqty=" + salqty + ", accounttype=" + accounttype
+				+ ", goodsid=" + goodsid + ", price=" + price + "]";
 	}
 
 }

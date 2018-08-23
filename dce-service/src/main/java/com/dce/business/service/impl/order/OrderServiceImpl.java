@@ -176,20 +176,21 @@ public class OrderServiceImpl implements IOrderService {
 	 * 
 	 * @return
 	 */
-	public int orderPay(String orderCode, String gmtPayment) {
+	public int orderPay(String ordercode, String gmtPayment) {
 		int i = 0;
 
 		try {
 			// 根据订单编号查询出订单
-			Order order = orderDao.selectByOrderCode(orderCode);
-			logger.info("根据订单编号查询出的订单：" + orderCode);
+			Order order = orderDao.selectByOrderCode(ordercode);
+			logger.info("根据订单编号查询出的订单：" + ordercode);
 			// 付款状态为已支付
 			order.setPaystatus(1);
-			// 支付成功
+			// 支付宝返回的支付结果成功
 			order.setAlipayStatus(1);
 			// 支付时间
 			order.setPaytime(gmtPayment);
-			// 更新表
+			//order.setOrdercode(ordercode);
+			// 更新订单表状态
 			i = orderDao.updateByOrderCodeSelective(order);
 			
 			//计算奖励
@@ -218,7 +219,7 @@ public class OrderServiceImpl implements IOrderService {
 			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
 
 			// 插入订单明细
-			for (OrderDetail orderDetail : order.getOrderDetailLst()) {
+			for (OrderDetail orderDetail : order.getOrderDetailList()) {
 				orderDetail.setOrderid(oldOrder.getOrderid());
 				orderDetailDao.insertSelective(orderDetail);
 			}
@@ -426,7 +427,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 调用SDK验证签名
 			signVerified = AlipaySignature.rsaCheckV1(conversionParams, AlipayConfig.ALIPAY_PUBLIC_KEY,
-					AlipayConfig.CHARSET);
+					AlipayConfig.CHARSET,AlipayConfig.SIGNTYPE);
 
 		} catch (AlipayApiException e) {
 			logger.info("==================验签失败 ！");

@@ -703,13 +703,11 @@ public class UserServiceImpl implements IUserService {
 			logger.info("用户已存在");
 			return Result.failureResult("用户已存在");
 		}
-
+		
 		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
-		userDo.setId(userDo.getId());// 用户id
-		userDo.setUserLevel(userDo.getUserLevel()); // 等级
-		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
-		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
-		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
+		userDo.setIsActivated(1);// 激活状态
+		userDo.setCertification(1);// 认证状态
+
 		// 信息加密处理
 		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
 		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
@@ -718,6 +716,10 @@ public class UserServiceImpl implements IUserService {
 		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
 		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
 		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+		
+		userDo.setId(userDo.getId());// 用户id
+		userDo.setUserLevel(userDo.getUserLevel()); // 等级
+		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
 
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
@@ -746,7 +748,6 @@ public class UserServiceImpl implements IUserService {
 		logger.info("用户信息:login_password=" + userDo.getUserPassword());
 		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());
 		logger.info("用户信息:userLevel=" + userDo.getUserLevel());
-		// logger.info("用户信息:isBlankOrder=" + isBlankOrder);
 		logger.info("用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
 		logger.info("用户信息:isActivated=" + userDo.getIsActivated());
 		logger.info("用户信息:certification=" + userDo.getCertification());

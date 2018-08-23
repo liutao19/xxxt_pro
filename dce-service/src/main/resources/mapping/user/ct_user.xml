@@ -272,7 +272,7 @@
 	</insert>
 
 	<!-- 下单购买商品之后，用户状态激活 -->
-	<update id="updateUserStatus" parameterType="java.lang.Integer">
+	<update id="updateUserStatus" parameterType="map">
 		update ct_user
 		<set>
 			<if test="isActivated != null">

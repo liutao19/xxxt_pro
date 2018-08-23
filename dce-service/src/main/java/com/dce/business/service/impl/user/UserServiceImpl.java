@@ -862,8 +862,8 @@ public class UserServiceImpl implements IUserService {
 	 * 下单购买商品之后，用户状态激活
 	 */
 	@Override
-	public int updateUserStatus(Integer id) {
+	public int updateUserStatus(Map<String, Object> params) {
 		
-		return userDao.updateUserStatus(id);
+		return userDao.updateUserStatus(params);
 	}
 }

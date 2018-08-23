@@ -205,7 +205,10 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》订单表更新失败");
 			}
 			// 激活用户状态
-			int j = userService.updateUserStatus(order.getUserid());
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("id", order.getUserid());
+			map.put("isActivated", 1);
+			int j = userService.updateUserStatus(map);
 			if (j <= 0) {
 				updateOrder = false;
 				logger.info("==========》》》》》用户状态激活失败");
@@ -708,5 +711,5 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
-
+	
 }

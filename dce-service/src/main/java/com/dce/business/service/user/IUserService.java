@@ -186,6 +186,6 @@ public interface IUserService {
 	List<UserDo> selectUserCondition(Map<String, Object> map);
 
 	// 下单购买商品之后，用户状态激活
-	int updateUserStatus(Integer id);
+	int updateUserStatus(Map<String, Object> params);
 
 }

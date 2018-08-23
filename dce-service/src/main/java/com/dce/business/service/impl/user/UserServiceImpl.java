@@ -857,4 +857,13 @@ public class UserServiceImpl implements IUserService {
 
 		return result > 0 ? Result.successResult("serviceImpl：修改成功!") : Result.failureResult("serviceInpl：修改失败");
 	}
+
+	/**
+	 * 下单购买商品之后，用户状态激活
+	 */
+	@Override
+	public int updateUserStatus(Integer id) {
+		
+		return userDao.updateUserStatus(id);
+	}
 }

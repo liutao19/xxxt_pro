@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.entity.account.UserAccountDetailDo;
@@ -47,7 +48,7 @@ public class AccountRecordController extends BaseController {
 		if(list.isEmpty() || list.size() ==0){
 			map.put("code", "0");
 			map.put("msg", "用户交易流水记录为空");
-			map.put("data", "");
+			map.put("data", new JSONArray());
 			return map;
 		}
 		
@@ -73,7 +74,7 @@ public class AccountRecordController extends BaseController {
 		if(balance.compareTo(BigDecimal.ZERO) == 0){
 			map.put("code", "0");
 			map.put("msg", "获取当前账户的总余额为0");
-			map.put("data", "");
+			map.put("data", new JSONArray());
 			return map;
 		}
 		map.put("code", "0");

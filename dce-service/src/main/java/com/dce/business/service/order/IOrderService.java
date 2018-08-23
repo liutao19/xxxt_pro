@@ -70,6 +70,6 @@ public interface IOrderService {
 	
 	public Result<?> alipayQuery(String outTradeNo);
 	
-	public int orderPay(String orderCode, String gmtPayment);
+	public boolean orderPay(String orderCode, String gmtPayment);
 
 }

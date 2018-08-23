@@ -74,6 +74,11 @@ public interface IUserService {
      */
     void updateTouched(BigDecimal touchedAmount, int userId);
 
+    /**
+     * 修改用户等级
+     * @param params
+     * @return
+     */
     List<UserDo> selectUser(Map<String, Object> params);
 
     /**

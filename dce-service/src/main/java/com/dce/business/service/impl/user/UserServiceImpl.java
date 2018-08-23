@@ -747,23 +747,21 @@ public class UserServiceImpl implements IUserService {
 			logger.info("用户已存在");
 			return Result.failureResult("用户已存在");
 		}
-		
+
 		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
 		userDo.setIsActivated(1);// 激活状态
 		userDo.setCertification(1);// 认证状态
 
-		// 信息加密处理
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
-		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
-		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
-		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
-		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
-		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
-		
 		userDo.setId(userDo.getId());// 用户id
 		userDo.setUserLevel(userDo.getUserLevel()); // 等级
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
+		userDo.setUserPassword(userDo.getUserPassword()); // 登录密码
+		userDo.setTwoPassword(userDo.getTwoPassword()); // 支付密码
+		userDo.setIdnumber(userDo.getIdnumber());// 身份证
+		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
+		userDo.setBanktype(userDo.getBanktype());// 开户行
+		userDo.setTrueName(userDo.getUserName());// 姓名
+		userDo.setMobile(userDo.getMobile()); // 手机号
 
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
@@ -830,14 +828,14 @@ public class UserServiceImpl implements IUserService {
 		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
 		// 信息加密字段处理
-		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
-		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
-		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
-		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
-		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
-		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+		userDo.setRefereeUserMobile(userDo.getRefereeUserMobile());// 推荐人
+		userDo.setUserPassword(userDo.getUserPassword()); // 登录密码
+		userDo.setTwoPassword(userDo.getTwoPassword()); // 支付密码
+		userDo.setIdnumber(userDo.getIdnumber());// 身份证
+		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
+		userDo.setBanktype(userDo.getBanktype());// 开户行
+		userDo.setTrueName(userDo.getUserName());// 姓名
+		userDo.setMobile(userDo.getMobile()); // 手机号
 
 		// 修改的会员信息
 		logger.info("用户信息:userId=" + userDo.getId());

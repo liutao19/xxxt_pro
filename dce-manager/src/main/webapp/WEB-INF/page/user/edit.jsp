@@ -97,14 +97,6 @@
 			</select></td>
 		</tr>
 		<tr>
-			<td>设置是否空单:</td>
-			<td><select class="easyui-combobox" id="isBlankOrder"
-				name="isBlankOrder" style="width: 140px;" style="height:30px;">
-					<option value="1" selected="selected">空单</option>
-					<option value="2">非空单</option>
-			</select></td>
-		</tr>
-		<tr>
 			<td colspan='2' style="word-wrap: break-word; word-break: break-all;"><font
 				color="red">注：<br>1.当设置为空单时,不会对用户的业绩做修改。<br>2.当设置为非空单时,如果用户原先没有业绩则会产生业绩,如果用户原来有业绩,但等级发生了变化则业绩做相应等级的变化调整
 			</font></td>

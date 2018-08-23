@@ -189,7 +189,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 */
 	private BigDecimal getAmtByAward(String[] awds,Order order) {
 		
-		if(awds.length<2){
+		if(awds.length<=2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-003");
 		}
 		String formula = awds[0].trim();
@@ -207,7 +207,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * @return
 	 */
 	private String getAccountTypeByAward(String[] awds) {
-		if(awds.length<2){
+		if(awds.length<=2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-004");
 		}
 		return awds[1];

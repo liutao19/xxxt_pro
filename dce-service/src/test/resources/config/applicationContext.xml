@@ -33,7 +33,7 @@
         class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="locations">
             <list>
-                <value>file:${catalina.home}/conf/xx.properties</value>
+                <value>file:${catalina.home}/conf/dce.properties</value>
             </list>
         </property>
     </bean>

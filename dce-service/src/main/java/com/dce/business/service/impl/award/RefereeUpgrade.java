@@ -60,8 +60,13 @@ public class RefereeUpgrade implements IAwardCalculator {
 		//获取购买者信息
 		UserDo  buyer = userService.getUser(buyUserId);
 		
+		if(buyer.getUserLevel()==4){
+			logger.error("此用戶為以是最高等级");
+			return;
+		}
+		
 		// 得到奖励记录
-		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((int)buyer.getUserLevel(),buyQty);
+		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((Integer.valueOf(buyer.getUserLevel())),buyQty);
 		
 		if(promote == null){
 			throw new BusinessException("找不到购买者对应的升级办法，请检查 办法的配置","error-buyerAward-001");
@@ -94,7 +99,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 				UserDo userDo=new UserDo();
 				userDo.setId(buyer.getId());
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
-				System.err.println(JSON.toJSON(userService.update(userDo)));
+				userService.update(userDo);
 			}
 			
 			if(Byte.valueOf(promoteLevel)==3){

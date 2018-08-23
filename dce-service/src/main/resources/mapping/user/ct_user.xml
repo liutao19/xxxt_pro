@@ -271,6 +271,17 @@
 		#{certification,jdbcType=INTEGER},#{district,jdbcType=VARCHAR},#{refereeUserMobile,jdbcType=VARCHAR})
 	</insert>
 
+	<!-- 下单购买商品之后，用户状态激活 -->
+	<update id="updateUserStatus" parameterType="map">
+		update ct_user
+		<set>
+			<if test="isActivated != null">
+				isActivated = #{isActivated,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
 	<!-- 后台：新增会员 -->
 	<insert id="insertSelective" keyColumn="id" keyProperty="id"
 		parameterType="com.dce.business.entity.user.UserDo" useGeneratedKeys="true">

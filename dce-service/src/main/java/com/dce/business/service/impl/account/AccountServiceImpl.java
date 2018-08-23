@@ -165,7 +165,7 @@ public class AccountServiceImpl implements IAccountService {
 			throw new BusinessException("余额不足");
 		}
 
-		updateUserAmountDetail(amount, type, userId, accountType, userAccountDo.getRemark(), userAccountDo.getSeqId(),
+		updateUserAmountDetail(amount, type, userId, accountType, userAccountDo.getRemark(),userAccountDo.getSeqId(),
 				userAccountDo.getRelevantUser());
 
 		return result;

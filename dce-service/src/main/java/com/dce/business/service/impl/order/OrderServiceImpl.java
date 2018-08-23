@@ -49,6 +49,7 @@ import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.order.IOrderSendoutService;
 import com.dce.business.service.order.IOrderService;
+import com.dce.business.service.user.IUserService;
 
 @Service("orderService")
 public class OrderServiceImpl implements IOrderService {
@@ -73,6 +74,8 @@ public class OrderServiceImpl implements IOrderService {
 	private AlipaymentOrderService alipaymentOrderService;
 	@Resource
 	private IAwardService awardService;
+	@Resource
+	private IUserService userService;
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -176,34 +179,53 @@ public class OrderServiceImpl implements IOrderService {
 	 * 
 	 * @return
 	 */
-	public int orderPay(String orderCode, String gmtPayment) {
-		int i = 0;
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public boolean orderPay(String ordercode, String gmtPayment) {
+
+		boolean flag = false; // 返回业务处理最终结果
+		boolean updateOrder = false;
+		boolean updateUser = false;
 
 		try {
 			// 根据订单编号查询出订单
-			Order order = orderDao.selectByOrderCode(orderCode);
-			logger.info("根据订单编号查询出的订单：" + orderCode);
+			Order order = orderDao.selectByOrderCode(ordercode);
+			logger.info("根据订单编号查询出的订单：" + ordercode);
 			// 付款状态为已支付
 			order.setPaystatus(1);
-			// 支付成功
+			// 支付宝返回的支付结果成功
 			order.setAlipayStatus(1);
 			// 支付时间
 			order.setPaytime(gmtPayment);
-			// 更新表
-			i = orderDao.updateByOrderCodeSelective(order);
-			
-			//计算奖励
-			//awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
+
+			logger.info("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
+			// 更新订单表状态
+			int i = orderDao.updateByOrderCodeSelective(order);
+			if (i <= 0) {
+				updateOrder = false;
+				logger.info("==========》》》》》订单表更新失败");
+			}
+			// 激活用户状态
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("id", order.getUserid());
+			map.put("isActivated", 1);
+			int j = userService.updateUserStatus(map);
+			if (j <= 0) {
+				updateOrder = false;
+				logger.info("==========》》》》》用户状态激活失败");
+			}
+			// 计算奖励
+			awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
 
 			// 记录到交易流水表中
 			// accountService.addUserAccountDetail(order.getUserid(),
 			// order.getTotalprice(), "减少", 902);
 
 		} catch (Exception e) {
-			logger.debug("支付成功，更新订单状态失败！！！");
+			logger.info("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
 			e.printStackTrace();
 		}
-		return i;
+		flag = updateOrder && updateUser;
+		return flag;
 	}
 
 	/**
@@ -218,7 +240,7 @@ public class OrderServiceImpl implements IOrderService {
 			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
 
 			// 插入订单明细
-			for (OrderDetail orderDetail : order.getOrderDetailLst()) {
+			for (OrderDetail orderDetail : order.getOrderDetailList()) {
 				orderDetail.setOrderid(oldOrder.getOrderid());
 				orderDetailDao.insertSelective(orderDetail);
 			}
@@ -426,7 +448,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 调用SDK验证签名
 			signVerified = AlipaySignature.rsaCheckV1(conversionParams, AlipayConfig.ALIPAY_PUBLIC_KEY,
-					AlipayConfig.CHARSET);
+					AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);
 
 		} catch (AlipayApiException e) {
 			logger.info("==================验签失败 ！");
@@ -503,14 +525,11 @@ public class OrderServiceImpl implements IOrderService {
 				// 只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功
 				if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
 
-					// 支付成功，更新订单表状态
-					int updateOrderResult = orderPay(outTradeNo, gmtPayment);
+					// 支付成功，逻辑业务处理
+					boolean updateOrderResult = orderPay(outTradeNo, gmtPayment);
 
-					// 计算奖励金
-					// AwardCalculator.doAward(buyUserId, buyQty, orderId);
-
-					// 当订单表和交易记录表都更新成功才返回success给支付宝
-					if (returnResult > 0 && updateOrderResult > 0) {
+					// 逻辑业务处理成功才返回success给支付宝
+					if (returnResult > 0 && updateOrderResult) {
 						return "success";
 
 					} else {
@@ -604,12 +623,12 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order)
 			throws Exception {
-		
-		//判断订单金额是否有误
-		if(Integer.valueOf(order.getTotalprice().toString())<0){
+
+		// 判断订单金额是否有误
+		if (Integer.valueOf(order.getTotalprice().toString()) < 0) {
 			return Result.failureResult("订单金额有误，生成微信预支付订单失败！");
 		}
-		
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		// 获取生成预支付订单的请求类
 		PrepayIdRequestHandler prepayReqHandler = new PrepayIdRequestHandler(request, response);
@@ -629,7 +648,7 @@ public class OrderServiceImpl implements IOrderService {
 		prepayReqHandler.setParameter("spbill_create_ip", request.getRemoteAddr()); // 终端IP，即用户端实际ip
 		String timestamp = WXUtil.getTimeStamp();
 		prepayReqHandler.setParameter("time_start", timestamp); // 交易起始时间
-		prepayReqHandler.setParameter("trade_type", "APP"); //交易类型
+		prepayReqHandler.setParameter("trade_type", "APP"); // 交易类型
 		// 测试时，每次支付一分钱，上线之后需要放开此代码
 		// prepayReqHandler.setParameter("total_fee",
 		// String.valueOf(total_fee));
@@ -638,9 +657,9 @@ public class OrderServiceImpl implements IOrderService {
 		// 注意签名（sign）的生成方式，具体见官方文档（传参都要参与生成签名，且参数名按照字典序排序，最后接上APP_KEY,转化成大写）
 		prepayReqHandler.setParameter("sign", prepayReqHandler.createSHA1Sign());
 		prepayReqHandler.setGateUrl(WXPayConfig.GATEURL);
-		//提交预支付订单，获取prepay_id
+		// 提交预支付订单，获取prepay_id
 		String prepayid = prepayReqHandler.sendPrepay();
-		
+
 		// 若获取prepay_id（预支付交易会话标识）成功，将相关信息返回客户端
 		if (prepayid != null && !prepayid.equals("")) {
 			// 创建微信订单支付记录
@@ -652,9 +671,9 @@ public class OrderServiceImpl implements IOrderService {
 			alipaymentOrder.setOrderid(order.getOrderid());
 			alipaymentOrder.setOrderstatus(0);
 			alipaymentOrderService.createAlipayMentOrder(alipaymentOrder);
-			
-			//重新生成签名，将数据传输给APP
-			//参与签名的字段名为appid，partnerid，prepayid，nonce_str，timestamp，package。注意：package的值格式为Sign=WXPay
+
+			// 重新生成签名，将数据传输给APP
+			// 参与签名的字段名为appid，partnerid，prepayid，nonce_str，timestamp，package。注意：package的值格式为Sign=WXPay
 			String signs = "appid=" + WXPayConfig.APP_ID + "&noncestr=" + nonce_str + "&package=Sign=WXPay&partnerid="
 					+ WXPayConfig.PARTNER_ID + "&prepayid=" + prepayid + "&timestamp=" + timestamp + "&key="
 					+ WXPayConfig.APP_KEY;
@@ -692,5 +711,5 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
-
+	
 }

@@ -182,7 +182,7 @@ public class UserServiceImpl implements IUserService {
 			up.setUserid(userId);
 			up.setParentid(temp.getParentid());
 			up.setDistance(temp.getDistance() + 1);
-			//up.setPosition(getPosition(temp.getPosition(), lr));
+			// up.setPosition(getPosition(temp.getPosition(), lr));
 			up.setNetwork(null);
 			up.setLrDistrict(temp.getLrDistrict());
 			userParentDao.insertSelective(up);
@@ -646,6 +646,50 @@ public class UserServiceImpl implements IUserService {
 			return Result.failureResult("认证用户信息参数错误!");
 		}
 
+		UserDo user = userDao.selectByPrimaryKey(userDo.getId());
+
+		// 用户状态验证
+		if (user.getCertification() == 1) {
+
+			return Result.failureResult("该用户已认证");
+		}
+
+		// 手机号验证
+		if (userDo.getMobile() != null) {
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("mobile", userDo.getMobile());
+
+			List<UserDo> user1 = userDao.selectUserCondition(map);
+
+			if (!user1.isEmpty()) {
+
+				if (user1.get(0).getId() != userDo.getId()) {
+
+					return Result.failureResult("该手机号已存在");
+				}
+			}
+		}
+
+		// 身份证号验证
+		if (userDo.getIdnumber() != null) {
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("idnumber", userDo.getIdnumber());
+
+			List<UserDo> user1 = userDao.selectUserCondition(map);
+
+			if (!user1.isEmpty()) {
+
+				if (user1.get(0).getId() != userDo.getId()) {
+
+					return Result.failureResult("该身份证号已存在");
+
+				}
+			}
+
+		}
+
 		int flag = userDao.updateByPrimaryKeySelective(userDo);
 		if (flag > 0) {
 			return Result.successResult("认证成功");
@@ -705,19 +749,19 @@ public class UserServiceImpl implements IUserService {
 		}
 
 		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
+		userDo.setIsActivated(1);// 激活状态
+		userDo.setCertification(1);// 认证状态
+
 		userDo.setId(userDo.getId());// 用户id
 		userDo.setUserLevel(userDo.getUserLevel()); // 等级
-		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
-		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
-		// 信息加密处理
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
-		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
-		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
-		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
-		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
-		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+		userDo.setUserPassword(userDo.getUserPassword()); // 登录密码
+		userDo.setTwoPassword(userDo.getTwoPassword()); // 支付密码
+		userDo.setIdnumber(userDo.getIdnumber());// 身份证
+		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
+		userDo.setBanktype(userDo.getBanktype());// 开户行
+		userDo.setTrueName(userDo.getUserName());// 姓名
+		userDo.setMobile(userDo.getMobile()); // 手机号
 
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
@@ -746,7 +790,6 @@ public class UserServiceImpl implements IUserService {
 		logger.info("用户信息:login_password=" + userDo.getUserPassword());
 		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());
 		logger.info("用户信息:userLevel=" + userDo.getUserLevel());
-		// logger.info("用户信息:isBlankOrder=" + isBlankOrder);
 		logger.info("用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
 		logger.info("用户信息:isActivated=" + userDo.getIsActivated());
 		logger.info("用户信息:certification=" + userDo.getCertification());
@@ -778,31 +821,21 @@ public class UserServiceImpl implements IUserService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> update(UserDo userDo) {
 
-		UserDo ref = null;
-
-		// 判断新增用户名是否为空
-		userDo.setUserName(userDo.getUserName().trim());
-		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
-		if (oldUser != null) {
-			logger.info("用户已存在");
-			return Result.failureResult("用户已存在");
-		}
-
-		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
-		userDo.setId(userDo.getId());// 用户id
+		userDo.setId(userDo.getId()); // 用户id
+		userDo.setUserName(userDo.getUserName()); // 用户名
 		userDo.setUserLevel(userDo.getUserLevel()); // 等级
 		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
 		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
-		// 信息加密处理
-		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
-		userDo.setIdnumber(DataEncrypt.encrypt(userDo.getIdnumber()));// 身份证
-		userDo.setBanknumber(DataEncrypt.encrypt(userDo.getBanknumber()));// 银行卡号
-		userDo.setBanktype(DataEncrypt.encrypt(userDo.getBanktype()));// 开户行
-		userDo.setTrueName(DataEncrypt.encrypt(userDo.getUserName()));// 姓名
-		userDo.setMobile(DataEncrypt.encrypt(userDo.getMobile())); // 手机号
+		// 信息加密字段处理
+		userDo.setRefereeUserMobile(userDo.getRefereeUserMobile());// 推荐人
+		userDo.setUserPassword(userDo.getUserPassword()); // 登录密码
+		userDo.setTwoPassword(userDo.getTwoPassword()); // 支付密码
+		userDo.setIdnumber(userDo.getIdnumber());// 身份证
+		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
+		userDo.setBanktype(userDo.getBanktype());// 开户行
+		userDo.setTrueName(userDo.getUserName());// 姓名
+		userDo.setMobile(userDo.getMobile()); // 手机号
 
 		// 修改的会员信息
 		logger.info("用户信息:userId=" + userDo.getId());
@@ -822,6 +855,15 @@ public class UserServiceImpl implements IUserService {
 		// 修改会员
 		int result = userDao.updateByPrimaryKeySelective(userDo);
 
-		return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
+		return result > 0 ? Result.successResult("serviceImpl：修改成功!") : Result.failureResult("serviceInpl：修改失败");
+	}
+
+	/**
+	 * 下单购买商品之后，用户状态激活
+	 */
+	@Override
+	public int updateUserStatus(Map<String, Object> params) {
+		
+		return userDao.updateUserStatus(params);
 	}
 }

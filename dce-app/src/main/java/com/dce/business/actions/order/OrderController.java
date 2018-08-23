@@ -77,11 +77,15 @@ public class OrderController extends BaseController {
 
 		List<Order> orderLitst = orderService.selectByUesrIdOneToMany(userId);
 		logger.info("获取当前用户的所有订单:" + orderLitst);
+		
+		if(orderLitst.size() == 0 || orderLitst.isEmpty()){
+			return Result.successResult("当前用户订单为空");
+		}
 
 		// 设置商品名称
 		for (Order order : orderLitst) {
-			if (order.getOrderDetailLst() != null) {
-				for (OrderDetail orderDetail : order.getOrderDetailLst()) {
+			if (order.getOrderDetailList() != null) {
+				for (OrderDetail orderDetail : order.getOrderDetailList()) {
 					long id = Long.valueOf(orderDetail.getGoodsId());
 					logger.info("获取订单里面的商品id：" + orderDetail.getGoodsId());
 
@@ -113,7 +117,7 @@ public class OrderController extends BaseController {
 
 		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
 
-			return Result.failureResult("获取userId、addressId、orderType、cart为空！");
+			return Result.failureResult("获取userId、addressId、orderType、cart参数为空！");
 		}
 
 		Order order = new Order();
@@ -253,6 +257,9 @@ public class OrderController extends BaseController {
 	public Result<?> queryOrderByOutTradeNo() {
 
 		String outTradeNo = getString("outTradeNo") == null ? "" : getString("outTradeNo");
+		if(outTradeNo == ""){
+			Result.failureResult("支付宝订单参数outTradeNo为空！");
+		}
 		logger.info("========获取的订单号======：" + outTradeNo);
 
 		return orderService.alipayQuery(outTradeNo);
@@ -269,6 +276,7 @@ public class OrderController extends BaseController {
 	private List<OrderDetail> convertGoodsFromJson(String goods) {
 
 		if (StringUtils.isBlank(goods)) {
+			logger.info("解析的商品集合为空======》》》》");
 			return Collections.EMPTY_LIST;
 		}
 

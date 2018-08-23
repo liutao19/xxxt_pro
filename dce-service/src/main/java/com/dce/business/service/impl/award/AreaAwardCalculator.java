@@ -74,7 +74,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		Assert.notNull(orderId, "购买订单ID不能为空");
 
 		// 获取订单信息
-		Order order = orderService.selectByPrimaryKey(Integer.parseInt(String.valueOf(orderId)));
+		Order order = orderService.selectByPrimaryKey(orderId);
 
 		if(order==null){
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");

@@ -182,7 +182,7 @@ public class UserServiceImpl implements IUserService {
 			up.setUserid(userId);
 			up.setParentid(temp.getParentid());
 			up.setDistance(temp.getDistance() + 1);
-			//up.setPosition(getPosition(temp.getPosition(), lr));
+			// up.setPosition(getPosition(temp.getPosition(), lr));
 			up.setNetwork(null);
 			up.setLrDistrict(temp.getLrDistrict());
 			userParentDao.insertSelective(up);
@@ -644,6 +644,50 @@ public class UserServiceImpl implements IUserService {
 
 		if (userDo == null || userDo.getId() == null) {
 			return Result.failureResult("认证用户信息参数错误!");
+		}
+
+		UserDo user = userDao.selectByPrimaryKey(userDo.getId());
+
+		// 用户状态验证
+		if (user.getCertification() == 1) {
+
+			return Result.failureResult("该用户已认证");
+		}
+
+		// 手机号验证
+		if (userDo.getMobile() != null) {
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("mobile", userDo.getMobile());
+
+			List<UserDo> user1 = userDao.selectUserCondition(map);
+
+			if (!user1.isEmpty()) {
+
+				if (user1.get(0).getId() != userDo.getId()) {
+
+					return Result.failureResult("该手机号已存在");
+				}
+			}
+		}
+
+		// 身份证号验证
+		if (userDo.getIdnumber() != null) {
+
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("idnumber", userDo.getIdnumber());
+
+			List<UserDo> user1 = userDao.selectUserCondition(map);
+
+			if (!user1.isEmpty()) {
+
+				if (user1.get(0).getId() != userDo.getId()) {
+
+					return Result.failureResult("该身份证号已存在");
+
+				}
+			}
+
 		}
 
 		int flag = userDao.updateByPrimaryKeySelective(userDo);

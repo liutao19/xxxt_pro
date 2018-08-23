@@ -182,7 +182,7 @@ public class UserServiceImpl implements IUserService {
 			up.setUserid(userId);
 			up.setParentid(temp.getParentid());
 			up.setDistance(temp.getDistance() + 1);
-			up.setPosition(getPosition(temp.getPosition(), lr));
+			// up.setPosition(getPosition(temp.getPosition(), lr));
 			up.setNetwork(null);
 			up.setLrDistrict(temp.getLrDistrict());
 			userParentDao.insertSelective(up);

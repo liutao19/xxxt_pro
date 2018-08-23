@@ -77,26 +77,28 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		Order order = orderService.selectByPrimaryKey(Integer.parseInt(String.valueOf(orderId)));
 
 		if(order==null){
-			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-003");
+			throw new BusinessException("无效的订单ID", "error-buyerAward-003");
 		}
 		// 获取地址信息
 		UserAddressDo useraddress = userAdressService.selectByPrimaryKey(order.getAddressid());
 		if(useraddress==null){
-			throw new BusinessException("区域对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-buyerAward-003");
+			logger.warn("订单地址ID无效");
+			return;
 		}
 
 
 		// 获取区域代表信息
 		Map<String, Object> map = new HashMap<>();
 		map.put("district", useraddress.getAddress());
-		List<UserDo> user = userService.selectUserCondition(map);
+		List<UserDo> userLst = userService.selectUserCondition(map);
 
-		if (user == null) {
-			throw new BusinessException("此区域无代理,结束奖励");
+		if (userLst == null || userLst.size()<1) {
+			logger.warn("此区域无代理,结束奖励");
+			return;
 		}
 
 		// 获取奖励记录
-		if (user != null) {
+		if (userLst != null) {
 			Map<String, Object> maps = gainAward(buyUserId, 0, buyQty);
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
@@ -104,7 +106,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			oneAward((int) maps.get("userId"), bAwardLst);
 		}
 
-		UserDo usertwo = userService.getUser(user.get(0).getRefereeid());
+		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
 			// 多种奖励办法以;分隔
@@ -124,13 +126,13 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	private void oneAward(int buyUserId, String[] bAwardLst) {
 		for (String oneAward : bAwardLst) {
 			// 奖励金额
-			BigDecimal wardAmount = getAmtByAward(oneAward);
+			Integer wardAmount = getAmtByAward(oneAward);
 
 			// 奖励进入那个账户类型
 			String accountType ="wallet_money";
 			
-			if (wardAmount.compareTo(BigDecimal.ZERO) > 0) {
-				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
+			if (wardAmount.intValue() > 0) {
+				UserAccountDo accont = new UserAccountDo(new BigDecimal(wardAmount), buyUserId, accountType);
 				// 账户对象增加金额
 				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_BUYER);
 			}
@@ -153,7 +155,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			region.setAlgebra(0);
 			regions = regionalawardsService.selectByPrimaryKeySelective(region).get(0);
 			maps.put("userId", userId);
-			maps.put("money", Integer.valueOf(regions.getRewardbalance()) * count);
+			maps.put("money", getAmtByAward(regions.getRewardbalance()) * count);
 		}
 
 		if (resfor == 1) {
@@ -172,10 +174,10 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private BigDecimal getAmtByAward(String oneAward) {
+	private Integer getAmtByAward(String oneAward) {
 		String[] awds = oneAward.split("-");
 		
-		return new BigDecimal(awds[0].trim());
+		return new Integer(awds[0].trim());
 	}
 
 	// 推荐人id count 数量

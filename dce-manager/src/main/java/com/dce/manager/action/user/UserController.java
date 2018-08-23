@@ -264,14 +264,13 @@ public class UserController extends BaseAction {
 		Result<?> result = null;
 		try {
 			if (StringUtils.isNotBlank(userId)) {
-
 				if (bindingResult.hasErrors()) {// 参数校验
 					List<ObjectError> errors = bindingResult.getAllErrors();
 					logger.info("修改信息，参数校验错误：" + JSON.toJSONString(errors));
 					return Result.failureResult(errors.get(0).getDefaultMessage());
 				}
 				result = userService.update(userDo);
-				logger.info("用户注册结果:" + JSON.toJSONString(result));
+				logger.info("用户修改结果:" + JSON.toJSONString(result));
 			} else {
 				// 新增会员
 				if (bindingResult.hasErrors()) {// 参数校验
@@ -282,7 +281,6 @@ public class UserController extends BaseAction {
 
 				result = userService.addUserInfo(userDo);
 				logger.info("用户注册结果:" + JSON.toJSONString(result));
-				return Result.successResult("新增会员成功");
 			}
 		} catch (BusinessException e) {
 			logger.info("充值报错BusinessException:", e);

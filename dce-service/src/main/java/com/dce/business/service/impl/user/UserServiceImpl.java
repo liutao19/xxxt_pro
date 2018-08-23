@@ -182,7 +182,7 @@ public class UserServiceImpl implements IUserService {
 			up.setUserid(userId);
 			up.setParentid(temp.getParentid());
 			up.setDistance(temp.getDistance() + 1);
-			//up.setPosition(getPosition(temp.getPosition(), lr));
+			// up.setPosition(getPosition(temp.getPosition(), lr));
 			up.setNetwork(null);
 			up.setLrDistrict(temp.getLrDistrict());
 			userParentDao.insertSelective(up);
@@ -778,23 +778,13 @@ public class UserServiceImpl implements IUserService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> update(UserDo userDo) {
 
-		UserDo ref = null;
-
-		// 判断新增用户名是否为空
-		userDo.setUserName(userDo.getUserName().trim());
-		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
-		if (oldUser != null) {
-			logger.info("用户已存在");
-			return Result.failureResult("用户已存在");
-		}
-
-		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
-		userDo.setId(userDo.getId());// 用户id
+		userDo.setId(userDo.getId()); // 用户id
+		userDo.setUserName(userDo.getUserName()); // 用户名
 		userDo.setUserLevel(userDo.getUserLevel()); // 等级
 		userDo.setIsActivated(userDo.getIsActivated());// 激活状态
 		userDo.setCertification(Integer.valueOf(userDo.getCertification()));// 认证状态
 		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
-		// 信息加密处理
+		// 信息加密字段处理
 		userDo.setRefereeUserMobile(DataEncrypt.encrypt(userDo.getRefereeUserMobile()));// 推荐人
 		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
 		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
@@ -822,6 +812,6 @@ public class UserServiceImpl implements IUserService {
 		// 修改会员
 		int result = userDao.updateByPrimaryKeySelective(userDo);
 
-		return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
+		return result > 0 ? Result.successResult("serviceImpl：修改成功!") : Result.failureResult("serviceInpl：修改失败");
 	}
 }

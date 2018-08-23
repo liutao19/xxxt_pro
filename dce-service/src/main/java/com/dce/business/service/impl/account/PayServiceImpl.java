@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -146,6 +147,14 @@ public class PayServiceImpl implements IPayService {
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
+		int nm=qty.intValue()%100;
+		
+		System.err.println("整提----》》》"+nm);
+		
+		if(nm!=0){
+			return Result.failureResult("只能整100整100的提");
+		}
+		
 		
 		if(qty.intValue()<100){
 			return Result.failureResult("提现金额不能小于100");

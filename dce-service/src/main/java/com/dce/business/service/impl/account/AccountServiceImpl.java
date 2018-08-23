@@ -482,10 +482,14 @@ public class AccountServiceImpl implements IAccountService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("userId", userId);
 		param.put("accountType", accountType);
-		logger.info("获取的参数---------》》》》》" + param);
+		logger.info("账户查询的参数---------》》》》》" + param);
 
-		logger.info("获取的用户账户记录--------》》》》》" + selectAmountByAccountType(param));
-		return selectAmountByAccountType(param).getAmount();
+		UserAccountDo userAccount = selectAmountByAccountType(param);
+		logger.info("获取的最新的用户账户记录--------》》》》》" + userAccount);
+		if(userAccount != null){
+			return userAccount.getAmount();
+		}
+		return new BigDecimal("0");
 	}
 
 	/**

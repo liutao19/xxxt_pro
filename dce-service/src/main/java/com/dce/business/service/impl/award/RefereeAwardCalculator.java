@@ -1,6 +1,8 @@
 package com.dce.business.service.impl.award;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -13,9 +15,12 @@ import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.award.Awardlist;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
+import com.dce.business.service.groovy.GroovyParse;
+import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserService;
 
 /**
@@ -37,6 +42,9 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	// 账户
 	@Resource
 	private IAccountService accountService;
+	
+	@Resource
+	private IOrderService orderService;
 
 	/**
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
@@ -50,6 +58,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	public void doAward(int buyUserId, int buyQty, Integer orderId) {
 		
 		UserDo  buyer = userService.getUser(buyUserId);
+		
+		Order order = orderService.selectByPrimaryKey(orderId);
 		
 		//获取推荐人
 		UserDo ref1 = userService.getUser( buyer.getRefereeid());
@@ -74,7 +84,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String awardConf = getAwardConfByRefLevel(ref1.getUserLevel(),1,award);
 			//多种奖励办法以;分隔
 			String[]  bAwardLst = awardConf.split(";");
-			oneAward(ref1.getId(), bAwardLst);
+			oneAward(ref1.getId(), bAwardLst,order);
 		}
 		
 		//推荐人为空，下一个
@@ -82,7 +92,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String awardConf = getAwardConfByRefLevel(ref2.getUserLevel(),2,award);
 			//多种奖励办法以;分隔
 			String[]  bAwardLst = awardConf.split(";");
-			oneAward(ref2.getId(), bAwardLst);
+			oneAward(ref2.getId(), bAwardLst,order);
 		}
 		
 		
@@ -95,11 +105,17 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * @param buyUserId
 	 * @param bAwardLst
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst) {
+	private void oneAward(int buyUserId, String[] bAwardLst,Order order) {
+		
 		for(String oneAward : bAwardLst){
-			//奖励金额
-			BigDecimal wardAmount = getAmtByAwardNo(oneAward);
-			String accountType = getAccountTypeByAwardNo(oneAward);
+			
+			if(StringUtils.isBlank(oneAward)){return;}
+			//解析单个奖励配置
+			String[] awds = oneAward.split(",");
+			//计算奖励金额
+			BigDecimal wardAmount = getAmtByAward(awds,order);
+			//获取奖励账户
+			String accountType = getAccountTypeByAward(awds);
 			
 			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId,accountType);
@@ -171,12 +187,16 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private BigDecimal getAmtByAwardNo(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if(awds.length<2){
+	private BigDecimal getAmtByAward(String[] awds,Order order) {
+		
+		if(awds.length<=2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-003");
 		}
-		return new BigDecimal(awds[0].trim());
+		String formula = awds[0].trim();
+		
+		Map<String, Object> map = new HashMap<String,Object>();
+		map.put("n", order.getQty());
+		return new BigDecimal(String.valueOf(GroovyParse.executeScript(formula, map)));
 	}
 
 	/**
@@ -186,9 +206,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * @param oneAward
 	 * @return
 	 */
-	private String getAccountTypeByAwardNo(String oneAward) {
-		String[] awds = oneAward.split("-");
-		if(awds.length<2){
+	private String getAccountTypeByAward(String[] awds) {
+		if(awds.length<=2){
 			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-004");
 		}
 		return awds[1];

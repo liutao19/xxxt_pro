@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.Constants;
 import com.dce.business.dao.travel.TravelDoMapper;
+import com.dce.business.dao.user.IUserDao;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.travel.TravelDo;
 import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.travel.TravelPathDo;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.travel.ITravelApplyService;
 
 @Service("travelApplyService")
@@ -25,15 +27,29 @@ public class TravelServiceImpl implements ITravelApplyService {
 	@Resource
 	private TravelDoMapper travelApplyDao;
 	
+	@Resource
+	private IUserDao userDao;
+	
 	/**
 	 * 查看所有
 	 */
 	@Override
 	public Result<?> travelApply(TravelDo travelDo) {
 		logger.info("----travelApply----");
-		int result = travelApplyDao.insertSelective(travelDo);
-
-		return result > 0 ? Result.successResult("申请成功!") : Result.failureResult("系统繁忙");
+		
+		int id = travelDo.getUserid();
+		
+		UserDo user = userDao.selectByPrimaryKey(id);
+		
+		if(user.getUserLevel()==1&& travelDo.getPeople()>2){
+			return Result.failureResult("用户等级为会员,只能申请1-2人同行");
+		}else{
+			int result = travelApplyDao.insertSelective(travelDo);
+			
+			return result > 0 ? Result.successResult("申请成功!") : Result.failureResult("系统繁忙");
+		}
+		
+		
 	}
 	
 

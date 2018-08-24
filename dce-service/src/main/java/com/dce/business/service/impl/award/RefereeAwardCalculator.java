@@ -114,7 +114,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String accountType = getAccountTypeByAward(awds);
 			
 			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
-				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId,accountType);
+				UserAccountDo accont = new UserAccountDo(wardAmount,buyUserId,accountType);
 				//账户对象增加金额
 				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
 			}

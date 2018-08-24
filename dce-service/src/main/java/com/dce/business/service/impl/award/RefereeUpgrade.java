@@ -118,7 +118,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userLevel", 3);
 		map.put("refereeid", buyer.getRefereeid());
-		List<UserDo> listuser = userService.selectUser(map);
+		List<UserDo> listuser = userService.selectUserCondition(map);
 		
 		if(listuser==null|listuser.size()<5){
 			logger.error("推荐城市合伙人少于5个，不能升级为城市合伙人");

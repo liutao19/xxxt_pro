@@ -138,7 +138,7 @@ $(function() {
  * @param id
  */
 function to_adduserPromote() {
-	to_edit('');
+	to_edituserPromote("");
 }
 /**
  * 编辑

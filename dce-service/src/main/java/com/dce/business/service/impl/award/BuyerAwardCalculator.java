@@ -113,6 +113,7 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 	private boolean userIsFirst(int buyUserId, String awardNo,String accountType) {
 		UserAccountDo userAccount = accountService.selectUserAccount(buyUserId, accountType);
 		//TODO 判断是否存在
+		
 		return false;
 	}
 

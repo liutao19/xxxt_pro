@@ -81,6 +81,32 @@ public class UserPromoteController extends BaseAction{
            /*  List<CommonComboxConstants> statusList = CommonComboxConstants.getStatusList();
             model.addAttribute("statusList", statusList);*/
             pagination = PageDoUtil.getPageValue(pagination, page);
+           
+            for(UserPromoteDo promote:pagination.getDatas()){
+            	if(promote.getUserLevel().equals("0")){
+            		promote.setUserLevel("普通用戶");
+            	}else if(promote.getUserLevel().equals("1")){
+            		promote.setUserLevel("会员用戶");
+            	}else if (promote.getUserLevel().equals("2")){
+            		promote.setUserLevel("VIP用戶");
+            	}else if (promote.getUserLevel().equals("3")){
+            		promote.setUserLevel("城市合伙人用戶");
+            	}else if (promote.getUserLevel().equals("4")){
+            		promote.setUserLevel("股东");
+            	}
+            	
+            	if(promote.getPromoteLevel().equals("0")){
+            		promote.setPromoteLevel("普通用戶");
+            	}else if(promote.getPromoteLevel().equals("1")){
+            		promote.setPromoteLevel("会员用戶");
+            	}else if (promote.getPromoteLevel().equals("2")){
+            		promote.setPromoteLevel("VIP用戶");
+            	}else if (promote.getPromoteLevel().equals("3")){
+            		promote.setPromoteLevel("城市合伙人用戶");
+            	}else if (promote.getPromoteLevel().equals("4")){
+            		promote.setPromoteLevel("股东");
+            	}
+            }
             System.err.println("数据---"+JSONObject.toJSON(pagination));
             outPrint(response, JSONObject.toJSON(pagination));
         }catch(Exception e){
@@ -102,6 +128,31 @@ public class UserPromoteController extends BaseAction{
         try{
             if(StringUtils.isNotBlank(id)){
                 UserPromoteDo userpromoteDo = userPromoteService.getById(Integer.valueOf(id));
+                if(userpromoteDo.getUserLevel().equals("0")){
+                	userpromoteDo.setUserLevel("普通用戶");
+            	}else if(userpromoteDo.getUserLevel().equals("1")){
+            		userpromoteDo.setUserLevel("会员用戶");
+            	}else if (userpromoteDo.getUserLevel().equals("2")){
+            		userpromoteDo.setUserLevel("VIP用戶");
+            	}else if (userpromoteDo.getUserLevel().equals("3")){
+            		userpromoteDo.setUserLevel("城市合伙人用戶");
+            	}else if (userpromoteDo.getUserLevel().equals("4")){
+            		userpromoteDo.setUserLevel("股东");
+            	}
+            	
+            	if(userpromoteDo.getPromoteLevel().equals("0")){
+            		userpromoteDo.setPromoteLevel("普通用戶");
+            	}else if(userpromoteDo.getPromoteLevel().equals("1")){
+            		userpromoteDo.setPromoteLevel("会员用戶");
+            	}else if (userpromoteDo.getPromoteLevel().equals("2")){
+            		userpromoteDo.setPromoteLevel("VIP用戶");
+            	}else if (userpromoteDo.getPromoteLevel().equals("3")){
+            		userpromoteDo.setPromoteLevel("城市合伙人用戶");
+            	}else if (userpromoteDo.getPromoteLevel().equals("4")){
+            		userpromoteDo.setPromoteLevel("股东");
+            	}
+                
+                
                 if(null != userpromoteDo){
                     modelMap.addAttribute("userpromote", userpromoteDo);
                 }
@@ -135,7 +186,7 @@ public class UserPromoteController extends BaseAction{
             if (id != null && id.intValue()>0) {
             	userpromoteDo.setPromoteId(userId);
             //	userpromoteDo.setUpdateTime(new Date());
-                i = userPromoteService.updateUserPromoteById(userpromoteDo);
+                i = userPromoteService.updataCount(userpromoteDo);
             } else {
             	userpromoteDo.setPromoteId(userId);
             //	userpromoteDo.setCreateTime(new Date());

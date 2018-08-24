@@ -103,6 +103,14 @@ public class UserPromoteServiceImpl implements IUserPromoteService {
 		
 		return userPromoteDao.selectUserLevelAntBuyQty(map);
 	}
+
+
+
+	@Override
+	public int updataCount(UserPromoteDo record) {
+		// TODO Auto-generated method stub
+		return userPromoteDao.updataCount(record);
+	}
 	
 
 

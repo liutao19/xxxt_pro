@@ -69,7 +69,8 @@ public class RefereeUpgrade implements IAwardCalculator {
 		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((Integer.valueOf(buyer.getUserLevel())),buyQty);
 		
 		if(promote == null){
-			throw new BusinessException("找不到购买者对应的升级办法，请检查 办法的配置","error-buyerAward-001");
+			logger.error("用户购买数量无法升级");
+			return;
 		}
 		
 		String buyerAward = promote.getPromoteLevel().toString();

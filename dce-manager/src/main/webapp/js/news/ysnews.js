@@ -43,9 +43,9 @@ $(function(){
 								{field:"remark",title:"备注",width:180,align:"center"},
 								{field:"status",title:"状态",width:180,align:"center"},
 								{field:"createDate",title:"创建日期",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"createName",title:"创建人",width:180,align:"center"},
+								//{field:"createName",title:"创建人",width:180,align:"center"},
 								{field:"updateDate",title:"修改日期",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"updateName",title:"修改人",width:180,align:"center"},
+								//{field:"updateName",title:"修改人",width:180,align:"center"},
 					{field:"操作",title:"操作",width:180,align:"center",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>  <a href="javascript:void(0);" onclick="deleteNotice(\''+row.id+'\');">删除</a>';
@@ -113,7 +113,7 @@ function to_editysNews(id){
 	
 	var url = httpUrl+"/ysnews/addYsNews.html?&rand=" + Math.random()+"&id="+id;
 	$('#editYsNewsDiv').dialog({
-		title: "新增",
+		title: "修改",
 		width: 760,
 		height: 500,
 		closed: false,
@@ -168,10 +168,11 @@ function save_YsNews(){
 	}else if($.isEmptyObject(author)){
 		$.messager.alert("提示","作者不能为空");
 		return false;
-	}else if($.isEmptyObject(createName)){
+	}
+	/*else if($.isEmptyObject(createName)){
 		$.messager.alert("提示","创建人不能为空");
 		return false;
-	}
+	}*/
 	
 	//校验上传的是否是图片
 	/*if($.isEmptyObject(file)){
@@ -181,12 +182,13 @@ function save_YsNews(){
 	
 	//校验姓名
 	checkName(author);
-	checkName(createName);
-	checkName(updateName);
 	
-	if(!checkName(author)||!checkName(createName)||!checkName(updateName)){
+	//checkName(createName);
+	//checkName(updateName);
+	
+	/*if(!checkName(author)||!checkName(createName)||!checkName(updateName)){
 		return false;
-	}
+	}*/
 	
 	/* alert("id---->>"+id+"---title---"+title+"----file--"+
 			 file+"---content---"+content+"---author----"+author+
@@ -202,9 +204,9 @@ function save_YsNews(){
 	object.append("remark",remark);
 	object.append("status",status);
 	object.append("createDate",createDate);
-	object.append("createName",createName);
+	//object.append("createName",createName);
 	object.append("updateDate",updateDate);
-	object.append("updateName",updateName);
+	//object.append("updateName",updateName);
 
 	var  url =httpUrl+"/ysnews/saveYsNews.html?&rand=" + Math.random();
 	 $.ajax({   

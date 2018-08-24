@@ -66,7 +66,7 @@ public class MemberAcountController extends BaseController {
 		int userId=getUserId();
 		String user_level=getString("user_level");
 		
-		Assert.hasText("userId","用户id不能为空");
+		Assert.hasText("userId","用户不存在");
 				
 		Map<String,Object> params = new HashMap<String,Object>();
 		

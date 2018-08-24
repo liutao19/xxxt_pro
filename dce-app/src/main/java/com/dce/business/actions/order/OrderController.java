@@ -175,13 +175,13 @@ public class OrderController extends BaseController {
 			logger.info("==================原本的参数ALIPAY_PUBLIC_KEY：" + AlipayConfig.ALIPAY_PUBLIC_KEY+"\tCHARSET："+AlipayConfig.CHARSET);
 			
 			String status = orderService.notify(conversionParams);
-	
 			logger.info("===========》》》》》验签结果：" + status);
+			
 		}catch(Exception e ){
 			logger.error("支付宝异步返回支付结果处理失败", e);
 			ret = "fail";
-		}finally{
 			
+		}finally{
 			return ret;
 		}
 	}

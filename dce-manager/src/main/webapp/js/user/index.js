@@ -38,7 +38,7 @@ $(function() {
 	var toolbar_tt = [ {
 		iconCls : 'icon-edit',
 		text : '新增会员',
-		handler : addVipr
+		handler : editVip
 	}, {
 		iconCls : 'icon-edit',
 		text : '查看推荐人',
@@ -140,7 +140,7 @@ $(function() {
 			},
 			{
 				field : "certification",
-				title : "激活状态",
+				title : "认证状态",
 				width : 80,
 				align : "center",
 				formatter : function(value, row, index) {
@@ -148,9 +148,9 @@ $(function() {
 						return "";
 					}
 					if (value == "1") {
-						return "已激活";
+						return "已认证";
 					} else {
-						return "未激活";
+						return "未认证";
 					}
 				}
 			},
@@ -192,7 +192,7 @@ $(function() {
 							&& row.certification != 1) {
 						href = href
 								+ ' <a href="javascript:void(0);"  onclick="baoKongDan('
-								+ row.id + ');">激活</a>';
+								+ row.id + ');">认证</a>';
 					}
 
 					return href;
@@ -304,7 +304,7 @@ function to_lock(userId, optType) {
 				success : function(ret) {
 					if (ret.code == 0) {
 						$.messager.alert("成功", msg + "成功");
-						reloadDataGrid();
+						reloadDataGrid(); // 重新加载数据网格
 					} else {
 						$.messager.alert("失败", ret.msg);
 					}
@@ -319,7 +319,7 @@ function baoKongDan(id) {
 
 	var url = basePath + "/user/toActivity.html?userId=" + id;
 	$('#activityUserDiv').dialog({
-		title : "用户激活",
+		title : "用户认证",
 		width : 400,
 		height : 500,
 		closed : false,
@@ -342,10 +342,9 @@ function baoKongDan(id) {
 
 }
 
-function addVipr() {
-	return;
-	var url = basePath + "/user/edit.html?userId=" + id;
-	$('#editLevelDiv').dialog({
+function editVip() {
+	var url = basePath + "/user/vipAdmin.html";
+	$('#newVipDiv').dialog({
 		title : "新增一个会员",
 		width : 400,
 		height : 500,
@@ -357,14 +356,58 @@ function addVipr() {
 		toolbar : [ {
 			iconCls : "icon-save",
 			text : "保存",
-			handler : save_edit
+			handler : save_vip
 		}, {
 			iconCls : "icon-no",
 			text : "关闭",
 			handler : function() {
-				$("#editLevelDiv").dialog("close");
+				$("#newVipDiv").dialog("close");
 			}
 		} ]
+	});
+}
+/**
+ * 把页面新増会员的数据传到后台
+ */
+function save_vip() {
+	var userName = $("#vip_user_login_name").val();
+	var userPassword = $("#vip_user_login_password").val();
+	var twoPassword = $("#vip_user_two_password").val;
+	var refereeUserMobile = $("#vip_user_refereeUserMobile").val();
+	var trueName = $("#vip_trueName").val();
+	var mobile = $("#vip_user_mobile").val();
+	var idnumber = $("#vip_user_idnumber").val();
+	var banknumber = $("#vip_user_banknumber").val;
+	var banktype = $("#vip_user_banktype").val;
+	var sex = $("#vip_change_sex").combobox('getValue');
+	var userLevel = $("#vip_change_level").combobox('getValue');
+
+	$.ajax({
+		url : basePath + "/user/memberAdmin.html",
+		type : "post",
+		dataType : 'json',
+		data : {
+			"userName" : userName,
+			"userPassword" : userPassword,
+			"twoPassword" : twoPassword,
+			"refereeUserMobile" : refereeUserMobile,
+			"trueName" : trueName,
+			"mobile" : mobile,
+			"idnumber" : idnumber,
+			"banknumber" : banknumber,
+			"banktype" : banktype,
+			"sex" : sex,
+			"userLevel" : userLevel
+		},
+		success : function(ret) {
+			if (ret.code == 0) {
+				$.messager.alert("成功", ret.msg);
+				$("#newVipDiv").dialog("close");
+				reloadDataGrid();// 重新加载数据网格
+			} else {
+				$.messager.alert("失败", ret.msg);
+			}
+		}
 	});
 }
 
@@ -397,17 +440,21 @@ function editUser() {
 	});
 }
 /**
- * 把页面数据传到后台
+ * 把页面修改的数据传到后台
  */
 function save_edit() {
 	var userId = $("#change_level_userId").val();
-	var trueName = $("#edit_true_name").val();
-	var userName = $("#edit_true_userName").val();
+	var userName = $("#edit_user_login_name").val();
+	var userPassword = $("#edit_user_login_password").val();
+	var twoPassword = $("#edit_user_two_password").val;
+	var refereeUserMobile = $("#edit_user_refereeUserMobile").val();
+	var trueName = $("#edit_trueName").val();
 	var mobile = $("#edit_user_mobile").val();
-	var login_password = $("#edit_user_login_password").val();
-	var seconde_password = $("#edit_user_seconde_password").val();
-	var userLevel = $("#change_level").combobox('getValue');
-	var isBlankOrder = $("#isBlankOrder").combobox('getValue');
+	var idnumber = $("#edit_user_idnumber").val();
+	var banknumber = $("#edit_user_banknumber").val;
+	var banktype = $("#edit_user_banktype").val;
+	var sex = $("#edit_change_sex").combobox('getValue');
+	var userLevel = $("#edit_change_level").combobox('getValue');
 
 	$.ajax({
 		url : basePath + "/user/saveEdit.html",
@@ -416,24 +463,32 @@ function save_edit() {
 		data : {
 			"userId" : userId,
 			"userName" : userName,
+			"userPassword" : userPassword,
+			"twoPassword" : twoPassword,
+			"refereeUserMobile" : refereeUserMobile,
 			"trueName" : trueName,
 			"mobile" : mobile,
-			"login_password" : login_password,
-			"seconde_password" : seconde_password,
-			"isBlankOrder" : isBlankOrder,
+			"idnumber" : idnumber,
+			"banknumber" : banknumber,
+			"banktype" : banktype,
+			"sex" : sex,
 			"userLevel" : userLevel
 		},
 		success : function(ret) {
 			if (ret.code == 0) {
 				$.messager.alert("成功", ret.msg);
 				$("#editLevelDiv").dialog("close");
-				reloadDataGrid();
+				reloadDataGrid();// 重新加载数据网格
 			} else {
 				$.messager.alert("失败", ret.msg);
 			}
 		}
 	});
 }
+
+/**
+ * 认证（激活）
+ */
 function save_activity() {
 	var userId = $("#change_level_userId").val();
 	var userLevel = $("#change_level").combobox('getValue');
@@ -450,14 +505,14 @@ function save_activity() {
 			if (ret.code == 0) {
 				$.messager.alert("成功", ret.msg);
 				$("#activityUserDiv").dialog("close");
-				reloadDataGrid();
+				reloadDataGrid();// 重新加载数据网格
 			} else {
 				$.messager.alert("失败", ret.msg);
 			}
 		}
 	});
 }
-
+// 重新加载数据网格
 function reloadDataGrid() {
 	$("#usertable").datagrid("reload");
 }

@@ -143,7 +143,7 @@ function to_addregionalawards() {
  * @param id
  */
 function to_editregionalawards(id) {
-	alert("id-------" + id);
+	// alert("id-------" + id);
 	var url = httpUrl + "/regionalawards/addRegionalawards.html?&rand="
 			+ Math.random() + "&id=" + id;
 	$('#editRegionalawardsDiv').dialog({
@@ -197,7 +197,37 @@ function deleteRegionalawards(id) {
 	});
 }
 
+
+// 保存更新
 function save_Regionalawards() {
+	var rewardbalance=$("#editRegionalawardsForm #rewardbalance").val();
+	var algebra=$("#editRegionalawardsForm #algebra").val();
+	var flag="";
+	 var reg = /^[1-9]\d*$/;
+	    	
+	// 参数为空校验
+	if($.isEmptyObject(rewardbalance)){
+		$.messager.alert("提示","区域奖励不能为空");
+		return flag=false;
+	}
+	
+	if($.isEmptyObject(algebra)){
+		$.messager.alert("提示","推荐代数不能为空");
+		return flag=false;
+	}
+	
+	if (!reg.test(rewardbalance)) {
+    	$.messager.alert("提示", "区域奖励金额请填写整数", "error");
+    	return flag=false;
+
+    }
+	
+	if (!reg.test(algebra)) {
+    	$.messager.alert("提示", "推荐代数请填写整数", "error");
+    	return flag=false;
+
+    }
+	
 	var formdata = $("#editRegionalawardsForm").serialize();
 	console.info("formdata");
 	console.info(formdata);
@@ -225,6 +255,8 @@ function reloadDataGrid() {
 }
 
 /* ##########################公用方法##begin############################ */
+
+
 
 
 

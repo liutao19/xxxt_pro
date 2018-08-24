@@ -355,11 +355,11 @@ public class UserController extends BaseController {
 				return Result.failureResult("该身份证号不合法");
 			}
 			//银行卡号校验
-			if(!checkBankCard(banknumber)){
+			/*if(!checkBankCard(banknumber)){
 				
 				return Result.failureResult("该银行卡号不合法");
 				
-			}
+			}*/
 
 			System.out.println("用户信息----------》》》" + userDo);
 

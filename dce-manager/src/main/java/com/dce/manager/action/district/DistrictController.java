@@ -136,6 +136,7 @@ public class DistrictController extends BaseAction {
 		try {
 			Integer id = districtDo.getDistrictId();
 			Long userId = new Long(this.getUserId());
+			districtDo.setDistrictStatus(1);
 
 			int i = 0;
 			if (id != null && id.intValue() > 0) {

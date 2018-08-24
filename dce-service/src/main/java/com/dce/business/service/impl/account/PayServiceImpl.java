@@ -247,7 +247,6 @@ public class PayServiceImpl implements IPayService {
 				EthereumTransInfoDo trans=new EthereumTransInfoDo();
 				trans.setUserid(userId);      //用户id
 				trans.setActualamount(qty.toString());     //转出金额
-
 				trans.setAmount(qty.toString());    //转出金额
 
 				trans.setCreatetime(new Date());

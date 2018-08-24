@@ -103,6 +103,9 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
+			if(maps==null){
+				return;
+			}
 			// 多种奖励办法以;分隔
 			String buyerAward =  maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
@@ -153,7 +156,6 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		}
 
 		if (resfor == 1) {
-
 			maps = twentyAward(userService.getUser(userId).getRefereeid(), count);
 		}
 		return maps;
@@ -183,7 +185,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			// 查询推荐人信息
 			UserDo user = userService.getUser(id);
 			if (user == null) {
-				throw new BusinessException("该区域的推荐人无推荐人", "error-buyerAward-003");
+				logger.error("该区域的推荐人无推荐人");
+				return null;
 			}
 			// 防止空指针
 			if (user != null) {
@@ -198,6 +201,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 				} else {
 					// 如果该用户没有推荐人，则终止循环不派送20元奖励
 					if (user.getRefereeid() == null || user.getRefereeid() == 0) {
+						logger.error("该用户无推荐人为城市合伙人，不派发20元奖励");
 						return null;
 					}
 					// 递归循环，直到找到城市合伙人

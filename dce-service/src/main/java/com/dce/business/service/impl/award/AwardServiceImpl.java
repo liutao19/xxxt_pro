@@ -16,11 +16,10 @@ import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserService;
 
-
 public class AwardServiceImpl implements IAwardService {
 
 	private final static Logger logger = LoggerFactory.getLogger(AwardServiceImpl.class);
-	
+
 	private List<IAwardCalculator> awardCalculatorList;
 	
 	@Resource
@@ -62,5 +61,5 @@ public class AwardServiceImpl implements IAwardService {
 		}
 		logger.info("计算奖励结束 购买者ID:"+buyUserId+" 订单id"+orderId);
 	}
-	
+
 }

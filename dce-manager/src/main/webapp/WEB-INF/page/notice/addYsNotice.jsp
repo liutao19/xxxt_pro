@@ -24,7 +24,7 @@
 						value="${ysnotice.title}" /></td>
 				</tr>
 				<tr>
-					<td align="right"><label for="name">图片地址</label></td>
+					<td align="right"><label for="name">图片</label></td>
 					<td><input type="file" id="image" value="${ysnotice.image}" />
 					</td>
 				</tr>

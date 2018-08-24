@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (order == null) {
 			return 0;
 		}
-		return orderDao.updateByPrimaryKey(order);
+		return orderDao.updateByPrimaryKeySelective(order);
 	}
 
 	@Override
@@ -214,7 +214,7 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》用户状态激活失败");
 			}
 			// 计算奖励
-			awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
+			awardService.calcAward(order.getUserid(), order.getOrderid());
 
 			// 记录到交易流水表中
 			// accountService.addUserAccountDetail(order.getUserid(),

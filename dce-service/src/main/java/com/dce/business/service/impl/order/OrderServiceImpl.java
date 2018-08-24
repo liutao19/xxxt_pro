@@ -569,7 +569,10 @@ public class OrderServiceImpl implements IOrderService {
 		// 更新支付记录表中的状态 
 		
 		//这里update状态需要做控制
-		alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
+		int ret = alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
+		if(ret<1){
+			throw new BusinessException("更新支付流水失败，无效状态"+alipaymentOrder);
+		}
 	}
 
 	/**

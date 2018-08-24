@@ -334,11 +334,6 @@ public class OrderServiceImpl implements IOrderService {
 		order.setPaystatus(0); // 未支付状态
 		order.setQty(quantity); // 商品总数量
 		order.setTotalprice(totalprice); // 商品总价格
-		/*
-		 * newOrder.setAddress(order.getAddress()); //地址
-		 * newOrder.setUserid(order.getUserid());
-		 * order.setOrdertype(order.getOrdertype());
-		 */
 		order.setOrderDetailList(chooseGoodsLst); // 订单明细
 
 		// 插入订单

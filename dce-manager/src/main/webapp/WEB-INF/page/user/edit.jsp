@@ -18,7 +18,7 @@
 	<table style="margin-left: 10px; margin-right: 10px;">
 		<tr>
 			<td>用户名:</td>
-			<td><input id="edit_true_userName" class="easyui-validatebox"
+			<td><input id="edit_user_login_name" class="easyui-validatebox"
 				type="text" name="userName" readonly="readonly"
 				value="${user.userName }" style="height: 30px;" /></td>
 		</tr>
@@ -30,7 +30,7 @@
 		</tr>
 		<tr>
 			<td>支付密码:</td>
-			<td><input id="edit_user_seconde_password"
+			<td><input id="edit_user_two_password"
 				class="easyui-validatebox" type="text" name="trueName"
 				value="${user.twoPassword }" style="height: 30px;" /></td>
 		</tr>
@@ -72,7 +72,7 @@
 		</tr>
 		<tr>
 			<td>用户性别:</td>
-			<td><select class="easyui-combobox" id="change_sex"
+			<td><select class="easyui-combobox" id="edit_change_sex"
 				name="levelType" style="width: 140px;" style="height:30px;">
 					<option value="">--请选择用户性别--</option>
 					<option value="1"
@@ -83,7 +83,7 @@
 		</tr>
 		<tr>
 			<td>会员等级:</td>
-			<td><select class="easyui-combobox" id="change_level"
+			<td><select class="easyui-combobox" id="edit_change_level"
 				name="levelType" style="width: 140px;" style="height:30px;">
 					<option value="">--请选择用户级别--</option>
 					<option value="0"
@@ -98,8 +98,7 @@
 		</tr>
 		<tr>
 			<td colspan='2' style="word-wrap: break-word; word-break: break-all;"><font
-				color="red"><br>
-				<br></font></td>
+				color="red"><br> <br></font></td>
 		</tr>
 	</table>
 

@@ -204,7 +204,7 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》订单表更新失败");
 			}
 			// 激活用户状态
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", order.getUserid());
 			map.put("isActivated", 1);
 			int j = userService.updateUserStatus(map);
@@ -326,22 +326,24 @@ public class OrderServiceImpl implements IOrderService {
 		logger.info("需要补的赠品差价========》》》：" + priceSpread);
 
 		// 创建订单
-		Order newOrder = new Order();
-		newOrder.setOrdercode(orderCode); // 订单号
+		// Order newOrder = new Order();
+		order.setOrdercode(orderCode); // 订单号
 		Date date = new Date();
-		newOrder.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
-		newOrder.setOrderstatus(0); // 未发货状态
-		newOrder.setPaystatus(0); // 未支付状态
-		newOrder.setQty(quantity); // 商品总数量
-		newOrder.setTotalprice(totalprice); // 商品总价格
-		newOrder.setAddress(order.getAddress()); //地址
-		newOrder.setUserid(order.getUserid());
-		newOrder.setOrdertype(order.getOrdertype());
-		newOrder.setOrderDetailList(chooseGoodsLst); // 订单明细
+		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
+		order.setOrderstatus(0); // 未发货状态
+		order.setPaystatus(0); // 未支付状态
+		order.setQty(quantity); // 商品总数量
+		order.setTotalprice(totalprice); // 商品总价格
+		/*
+		 * newOrder.setAddress(order.getAddress()); //地址
+		 * newOrder.setUserid(order.getUserid());
+		 * order.setOrdertype(order.getOrdertype());
+		 */
+		order.setOrderDetailList(chooseGoodsLst); // 订单明细
 
 		// 插入订单
 		orderDao.insertSelective(order);
-		logger.debug("==========》》》》》插入的订单信息："+order);
+		logger.debug("==========》》》》》插入的订单信息：" + order);
 
 		// 判断支付方式，生成预支付订单
 		if (order.getOrdertype() == 1) {
@@ -708,5 +710,5 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
-	
+
 }

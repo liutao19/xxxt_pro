@@ -239,16 +239,19 @@ public class UserController extends BaseAction {
 		outPrint(response, JSON.toJSONString(Result.successResult("我的推荐", userList)));
 	}
 
-	@RequestMapping(value = "/edit", method = { RequestMethod.GET, RequestMethod.POST })
-	public String edit(ModelMap model) {
-		String userId = getString("userId");
-		UserDo user = userService.getUser(Integer.parseInt(userId));
-		user.setUserPassword(DataDecrypt.decrypt(user.getUserPassword()));
-		user.setTwoPassword(DataDecrypt.decrypt(user.getTwoPassword()));
-		model.put("user", user);
-		return "/user/edit";
-	}
+	// @RequestMapping(value = "/vipAdmin", method = { RequestMethod.GET,
+	// RequestMethod.POST })
+	// public String vipAdmin(ModelMap modelVip) {
+	//
+	// return "/user/vipAdmin";
+	// }
 
+	@RequestMapping("/vipAdmin")
+	public String vipAdmin() {
+		return "/user/vipAdmin";
+		
+	}
+	
 	/**
 	 * 会员管理
 	 * 
@@ -259,22 +262,30 @@ public class UserController extends BaseAction {
 	 */
 	@RequestMapping(value = "/memberAdmin", method = { RequestMethod.POST })
 	@ResponseBody
-	public Result<?> memberSdmin(@Valid UserDo userDo, BindingResult bindingResult) {
+	public void memberAdmin(@Valid UserDo userDo, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
 
-		String userId = getString("userId");// 用户id
 		Result<?> result = null;
-		if (StringUtils.isNotBlank(userId)) {
-			// 新增会员
-			if (bindingResult.hasErrors()) {// 参数校验
-				List<ObjectError> errors = bindingResult.getAllErrors();
-				logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
-				return Result.failureResult(errors.get(0).getDefaultMessage());
-			}
-
-			result = userService.addUserInfo(userDo);
-			logger.info("用户新增结果:" + JSON.toJSONString(result));
+		// 新增会员
+		if (bindingResult.hasErrors()) {// 参数校验
+			List<ObjectError> errors = bindingResult.getAllErrors();
+			logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
+			Result.failureResult(errors.get(0).getDefaultMessage());
+			return;
 		}
-		return result;
+
+		result = userService.addUserInfo(userDo);
+		logger.info("用户新增结果:" + JSON.toJSONString(result));
+		return;
+	}
+
+	@RequestMapping(value = "/edit", method = { RequestMethod.GET, RequestMethod.POST })
+	public String edit(ModelMap model) {
+		String userId = getString("userId");
+		UserDo user = userService.getUser(Integer.parseInt(userId));
+		user.setUserPassword(DataDecrypt.decrypt(user.getUserPassword()));
+		user.setTwoPassword(DataDecrypt.decrypt(user.getTwoPassword()));
+		model.put("user", user);
+		return "/user/edit";
 	}
 
 	/**
@@ -290,12 +301,10 @@ public class UserController extends BaseAction {
 		String userName = getString("userName");// 用户名
 		String trueName = getString("trueName");// 用户真实姓名
 		String mobile = getString("mobile");// 用户手机号
-		String login_password = getString("login_password");// 登录密码
-		String seconde_password = getString("seconde_password");// 支付密码
+		String userPassword = getString("userPassword");// 登录密码
+		String twoPassword = getString("twoPassword");// 支付密码
 		String userLevel = getString("userLevel");// 用户等级
 		String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
-		String isActivated = getString("isActivated");// 激活状态
-		String certification = getString("certification");// 认证状态
 		String sex = getString("sex"); // 性别
 		String idnumber = getString("idnumber");// 身份证号
 		String banknumber = getString("banknumber");// 银行卡号
@@ -305,12 +314,10 @@ public class UserController extends BaseAction {
 		logger.info("修改用户信息:userName=" + userName);
 		logger.info("修改用户信息:trueName=" + trueName);
 		logger.info("修改用户信息:mobile=" + mobile);
-		logger.info("修改用户信息:login_password=" + login_password);
-		logger.info("修改用户信息:seconde_password=" + seconde_password);
+		logger.info("修改用户信息:login_password=" + userPassword);
+		logger.info("修改用户信息:seconde_password=" + twoPassword);
 		logger.info("修改用户信息:userLevel=" + userLevel);
 		logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
-		logger.info("修改用户信息:isActivated=" + isActivated);
-		logger.info("修改用户信息:certification=" + certification);
 		logger.info("修改用户信息:sex=" + sex);
 		logger.info("修改用户信息:idunmber=" + idnumber);
 		logger.info("修改用户信息:banknumber=" + banknumber);
@@ -336,58 +343,28 @@ public class UserController extends BaseAction {
 			user.setTrueName(trueName);// 姓名
 		}
 		if (StringUtils.isNotBlank(mobile)) {
-			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
-
-			// 手机号验证
-			if (!p.matcher(mobile).matches()) {
-
-				Result.failureResult("手机号码错误");
-				return;
-			} else {
-				user.setMobile(mobile); // 手机号
-			}
+			user.setMobile(mobile); // 手机号
 		}
-		if (StringUtils.isNotBlank(login_password)) {
-			user.setUserPassword(DataEncrypt.encrypt(login_password));// 登录密码
+		if (StringUtils.isNotBlank(userPassword)) {
+			user.setUserPassword(DataEncrypt.encrypt(userPassword));// 登录密码
 		}
-		if (StringUtils.isNotBlank(seconde_password)) {
-			user.setTwoPassword(DataEncrypt.encrypt(seconde_password));// 支付密码
+		if (StringUtils.isNotBlank(twoPassword)) {
+			user.setTwoPassword(DataEncrypt.encrypt(twoPassword));// 支付密码
 		}
 		if (StringUtils.isNotBlank(refereeUserMobile)) {
 			user.setRefereeUserMobile(refereeUserMobile);// 推荐人
-		}
-		if (StringUtils.isNotBlank(isActivated)) {
-			user.setIsActivated(Integer.parseInt(isActivated));// 激活状态
-		}
-		if (StringUtils.isNotBlank(certification)) {
-			user.setCertification(Integer.valueOf(certification));// 认证状态
 		}
 		if (StringUtils.isNotBlank(sex)) {
 			user.setSex(Integer.valueOf(sex));// 性别
 		}
 		if (StringUtils.isNotBlank(idnumber)) {
-			// 身份号验证
-			if (isLegal(idnumber) == 0) {
-
-				Result.failureResult("该身份证号不合法");
-				return;
-			} else {
-				user.setIdnumber(idnumber);// 身份证
-			}
+			user.setIdnumber(idnumber);// 身份证
 		}
 		if (StringUtils.isNotBlank(banknumber)) {
 			user.setBanknumber(banknumber);// 银行卡号
 		}
 		if (StringUtils.isNotBlank(banktype)) {
-
-			// 银行卡号校验
-			if (!checkBankCard(banknumber)) {
-
-				Result.failureResult("该银行卡号不合法");
-				return;
-			} else {
-				user.setBanktype(banktype);// 开户行
-			}
+			user.setBanktype(banktype);// 开户行
 		}
 
 		try {
@@ -413,71 +390,7 @@ public class UserController extends BaseAction {
 	}
 
 	/**
-	 * 检验身份证是否合法
-	 * 
-	 * @return 1-合法；0-不合法
-	 */
-	public int isLegal(String idnumber) {
-		int a = 0;
-		int sum = 0;
-		char checkBit[] = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
-		int[] add = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
-		char[] stringArr = idnumber.toCharArray();
-		for (int i = 0; i < 17; i++) {
-			sum += add[i] * (stringArr[i] - '0');
-		}
-		if (stringArr[17] == checkBit[sum % 11]) {
-			a = 1;
-		}
-		return a;
-	}
-
-	/*
-	 * 校验过程： 1、从卡号最后一位数字开始，逆向将奇数位(1、3、5等等)相加。
-	 * 2、从卡号最后一位数字开始，逆向将偶数位数字，先乘以2（如果乘积为两位数，将个位十位数字相加，即将其减去9），再求和。
-	 * 3、将奇数位总和加上偶数位总和，结果应该可以被10整除。
-	 */
-	/**
-	 * 校验银行卡卡号
-	 */
-	public static boolean checkBankCard(String bankCard) {
-		if (bankCard.length() < 15 || bankCard.length() > 19) {
-			return false;
-		}
-		char bit = getBankCardCheckCode(bankCard.substring(0, bankCard.length() - 1));
-		if (bit == 'N') {
-			return false;
-		}
-		return bankCard.charAt(bankCard.length() - 1) == bit;
-	}
-
-	/**
-	 * 从不含校验位的银行卡卡号采用 Luhm 校验算法获得校验位
-	 * 
-	 * @param nonCheckCodeBankCard
-	 * @return
-	 */
-	public static char getBankCardCheckCode(String nonCheckCodeBankCard) {
-		if (nonCheckCodeBankCard == null || nonCheckCodeBankCard.trim().length() == 0
-				|| !nonCheckCodeBankCard.matches("\\d+")) {
-			// 如果传的不是数据返回N
-			return 'N';
-		}
-		char[] chs = nonCheckCodeBankCard.trim().toCharArray();
-		int luhmSum = 0;
-		for (int i = chs.length - 1, j = 0; i >= 0; i--, j++) {
-			int k = chs[i] - '0';
-			if (j % 2 == 0) {
-				k *= 2;
-				k = k / 10 + k % 10;
-			}
-			luhmSum += k;
-		}
-		return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
-	}
-
-	/**
-	 * 活动
+	 * 认证（活动）
 	 * 
 	 * @param model
 	 * @return
@@ -499,12 +412,12 @@ public class UserController extends BaseAction {
 		String userId = getString("userId");
 		String userLevel = getString("userLevel");
 
-		logger.info("激活用户信息:userId=" + userId);
-		logger.info("激活用户信息:userLevel=" + userLevel);
+		logger.info("认证用户信息:userId=" + userId);
+		logger.info("认证用户信息:userLevel=" + userLevel);
 
 		UserDo user = new UserDo();
 		if (StringUtils.isBlank(userId)) {
-			outPrint(response, Result.failureResult("请选择要激活的用户!"));
+			outPrint(response, Result.failureResult("请选择要认证的用户!"));
 			return;
 		}
 
@@ -521,17 +434,17 @@ public class UserController extends BaseAction {
 			logger.info("修改结果:" + JSON.toJSONString(flag));
 			if (flag.isSuccess()) {
 
-				outPrint(response, JSON.toJSONString(Result.successResult("用户激活成功!")));
+				outPrint(response, JSON.toJSONString(Result.successResult("用户认证成功!")));
 			} else {
 
-				outPrint(response, JSON.toJSONString(Result.failureResult("用户激活失败!")));
+				outPrint(response, JSON.toJSONString(Result.failureResult("用户认证失败!")));
 			}
 		} catch (BusinessException e) {
 			logger.info("充值报错BusinessException:", e);
-			outPrint(response, JSON.toJSONString(Result.failureResult("用户激活失败!")));
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户认证失败!")));
 		} catch (Exception e) {
 			logger.info("充值报错Exception:", e);
-			outPrint(response, JSON.toJSONString(Result.failureResult("用户激活失败!")));
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户认证失败!")));
 		}
 	}
 

@@ -17,7 +17,7 @@
 	<input type="hidden" id="change_level_userId" value="${user.id }"/>
 	<table style="margin-left: auto;margin-right: auto;">
 		<tr>
-			<td>用户名:</td>
+			<td>用户名1111:</td>
 			<td><input id="name" class="easyui-validatebox" type="text" name="name" readonly="readonly" value="${user.userName }" style="height:30px;"/></td>
 		</tr>
 		<tr>

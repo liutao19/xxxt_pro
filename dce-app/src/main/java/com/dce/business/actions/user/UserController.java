@@ -349,11 +349,12 @@ public class UserController extends BaseController {
 				return Result.failureResult("手机号码错误");
 			}
 
-			// 身份号验证
+			/*// 身份号验证
 			if (!isIDNumber(idnumber)) {
 
 				return Result.failureResult("该身份证号不合法");
 			}
+*/
 			
 			// 银行卡号校验
 			/*
@@ -363,6 +364,7 @@ public class UserController extends BaseController {
 			 * 
 			 * }
 			 */
+
 
 			System.out.println("用户信息----------》》》" + userDo);
 

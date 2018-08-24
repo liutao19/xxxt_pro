@@ -148,7 +148,7 @@ public class OrderController extends BaseController {
 	 * @return
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "finally" })
 	@RequestMapping(value = "/notify_url", method = RequestMethod.POST)
 	@ResponseBody
 	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -181,6 +181,7 @@ public class OrderController extends BaseController {
 			logger.error("支付宝异步返回支付结果处理失败", e);
 			ret = "fail";
 		}finally{
+			
 			return ret;
 		}
 	}

@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (order == null) {
 			return 0;
 		}
-		return orderDao.updateByPrimaryKey(order);
+		return orderDao.updateByPrimaryKeySelective(order);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
-			logger.info("根据订单编号查询出的订单：" + ordercode);
+			logger.info("根据订单编号查询出的订单：" + order);
 			// 付款状态为已支付
 			order.setPaystatus(1);
 			// 支付宝返回的支付结果成功
@@ -213,7 +213,7 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》用户状态激活失败");
 			}
 			// 计算奖励
-			awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
+			awardService.calcAward(order.getUserid(), order.getOrderid());
 
 		} catch (Exception e) {
 			logger.info("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
@@ -224,7 +224,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
-	 * 下单处理
+	 * 添加订单明细
 	 */
 	@Override
 	public Order buyOrder(Order order) {
@@ -326,14 +326,18 @@ public class OrderServiceImpl implements IOrderService {
 		logger.info("需要补的赠品差价========》》》：" + priceSpread);
 
 		// 创建订单
-		order.setOrdercode(orderCode); // 订单号
+		Order newOrder = new Order();
+		newOrder.setOrdercode(orderCode); // 订单号
 		Date date = new Date();
-		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
-		order.setOrderstatus(0); // 未发货状态
-		order.setPaystatus(0); // 未支付状态
-		order.setQty(quantity); // 商品总数量
-		order.setTotalprice(totalprice); // 商品总价格
-		order.setOrderDetailList(chooseGoodsLst); // 订单明细
+		newOrder.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
+		newOrder.setOrderstatus(0); // 未发货状态
+		newOrder.setPaystatus(0); // 未支付状态
+		newOrder.setQty(quantity); // 商品总数量
+		newOrder.setTotalprice(totalprice); // 商品总价格
+		newOrder.setAddress(order.getAddress()); //地址
+		newOrder.setUserid(order.getUserid());
+		newOrder.setOrdertype(order.getOrdertype());
+		newOrder.setOrderDetailList(chooseGoodsLst); // 订单明细
 
 		// 插入订单
 		orderDao.insertSelective(order);

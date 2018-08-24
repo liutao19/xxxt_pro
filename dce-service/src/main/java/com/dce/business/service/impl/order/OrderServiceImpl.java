@@ -179,7 +179,6 @@ public class OrderServiceImpl implements IOrderService {
 	 * 
 	 * @return
 	 */
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public boolean orderPay(String ordercode, String gmtPayment) {
 
 		boolean flag = false; // 返回业务处理最终结果
@@ -216,10 +215,6 @@ public class OrderServiceImpl implements IOrderService {
 			// 计算奖励
 			awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
 
-			// 记录到交易流水表中
-			// accountService.addUserAccountDetail(order.getUserid(),
-			// order.getTotalprice(), "减少", 902);
-
 		} catch (Exception e) {
 			logger.info("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
 			e.printStackTrace();
@@ -232,7 +227,6 @@ public class OrderServiceImpl implements IOrderService {
 	 * 下单处理
 	 */
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Order buyOrder(Order order) {
 
 		try {
@@ -343,10 +337,10 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 插入订单
 		orderDao.insertSelective(order);
+		logger.debug("==========》》》》》插入的订单信息："+order);
 
 		// 判断支付方式，生成预支付订单
 		if (order.getOrdertype() == 1) {
-
 			// 微信支付
 			try {
 				return getWXPayStr(request, response, buyOrder(order));
@@ -354,7 +348,6 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("获取微信预支付订单出错");
 				e.printStackTrace();
 			}
-
 			// 支付宝支付
 		} else if (order.getOrdertype() == 2) {
 			return getAlipayorderStr(buyOrder(order));
@@ -533,19 +526,19 @@ public class OrderServiceImpl implements IOrderService {
 						return "success";
 
 					} else {
-						return "fail";
+						return "failure";
 					}
 				} else {
-					return "fail";
+					return "failure";
 				}
 			} else {
 				logger.info("==========支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
-				return "fail";
+				return "failure";
 			}
 			// 验签不通过
 		} else {
 			logger.info("============验签不通过 ！");
-			return "fail";
+			return "failure";
 		}
 	}
 

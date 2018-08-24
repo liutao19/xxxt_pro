@@ -463,7 +463,7 @@
 				AND u.true_name = #{userName}
 			</if>
 		</trim>
-		WHERE t.pathid IN(SELECT pathid FROM ct_travel_path WHERE state=0)
+		AND t.pathid IN(SELECT pathid FROM ct_travel_path WHERE state=0)
 		order by createtime desc
 	</select>
 </mapper>

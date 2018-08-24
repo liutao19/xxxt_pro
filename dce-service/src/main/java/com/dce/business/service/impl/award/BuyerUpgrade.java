@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.entity.account.UserAccountDo;
+import com.dce.business.entity.award.Awardlist;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
 import com.dce.business.service.user.IUserService;
-
-import com.dce.business.entity.account.UserAccountDo;
-import com.dce.business.entity.award.Awardlist;
 
 
 /**
@@ -44,18 +44,14 @@ public class BuyerUpgrade implements IAwardCalculator {
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
 	 * 计算奖励的方法
 	 * @param buyUserId 购买者
-	 * @param buyQty    购买数量
 	 * @param orderId   购买订单
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Integer orderId) {
-		
-		//获取用户信息
-		UserDo  buyer = userService.getUser(buyUserId);
+	public void doAward(UserDo buyer, Order order) {
 		
 		// 得到奖励记录
-		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),buyQty);
+		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),order.getQty());
 		
 		if(award == null){
 			throw new BusinessException("找不到购买者对应的奖励办法，请检查奖励办法的配置","error-buyerAward-001");
@@ -68,7 +64,7 @@ public class BuyerUpgrade implements IAwardCalculator {
 		
 		//多种奖励办法以;分隔
 		String[]  bAwardLst = buyerAward.split(";");
-		oneAward(buyUserId,bAwardLst);
+		oneAward(buyer.getId(),bAwardLst);
 		
 	}
 

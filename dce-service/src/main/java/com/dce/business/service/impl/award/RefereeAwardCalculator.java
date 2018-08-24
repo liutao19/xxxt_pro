@@ -50,31 +50,27 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
 	 * 计算奖励的方法
 	 * @param buyUserId 购买者
-	 * @param buyQty    购买数量
 	 * @param orderId   购买订单
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Integer orderId) {
+	public void doAward(UserDo buyer, Order order) {
 		
-		UserDo  buyer = userService.getUser(buyUserId);
-		
-		Order order = orderService.selectByPrimaryKey(orderId);
 		
 		//获取推荐人
 		UserDo ref1 = userService.getUser( buyer.getRefereeid());
 		if(ref1 == null){
-			logger.info("会员userId="+buyUserId+"购买订单id="+orderId +"推荐人没有查找到");
+			logger.info("会员userId="+buyer.getId()+"购买订单id="+order.getOrderid() +"推荐人没有查找到");
 			return;
 		}
 		//第二个推荐人
 		UserDo ref2 = userService.getUser( ref1.getRefereeid());
 		if(ref2 == null){
-			logger.info("会员userId="+buyUserId+"购买订单id="+orderId +"推荐人没有查找到");
+			logger.info("会员userId="+buyer.getId()+"购买订单id="+order.getOrderid() +"推荐人没有查找到");
 		}
 					
 		// 得到奖励记录
-		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),buyQty);
+		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),order.getQty());
 		if(award == null){
 			throw new BusinessException("找不到购买者对应的奖励办法，请检查奖励办法的配置","error-refereeAward-001");
 		}

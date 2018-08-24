@@ -64,7 +64,7 @@ public interface IOrderService {
 	
 	public Result<String> getAlipayorderStr(Order order);
 	
-	public String notify(Map<String, String> conversionParams);
+	public String notify(Map<String, String> conversionParams) throws Exception;
 	
 	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order) throws Exception;
 	

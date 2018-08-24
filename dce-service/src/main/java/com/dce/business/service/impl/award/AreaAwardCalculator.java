@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
@@ -61,20 +60,15 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * 
 	 * @param buyUserId
 	 *            购买者
-	 * @param buyQty
-	 *            购买数量
 	 * @param orderId
 	 *            购买订单
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Integer orderId) {
-		Assert.notNull(buyUserId, "购买者用户ID不能为空");
-		Assert.notNull(buyQty, "购买数量不能为空");
-		Assert.notNull(orderId, "购买订单ID不能为空");
+	public void doAward(UserDo buyer, Order order) {
 
 		// 获取订单信息
-		Order order = orderService.selectByPrimaryKey(orderId);
+		Integer buyQty = order.getQty();
 
 		if(order==null){
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");
@@ -99,7 +93,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 		// 获取奖励记录
 		if (userLst != null) {
-			Map<String, Object> maps = gainAward(buyUserId, 0, buyQty);
+			Map<String, Object> maps = gainAward(buyer.getId(), 0, buyQty);
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");

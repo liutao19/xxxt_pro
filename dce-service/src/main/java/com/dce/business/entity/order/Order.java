@@ -39,6 +39,10 @@ public class Order {
 
 	private String address; // 收货地址
 
+	private String awardStatus;
+
+	private String awardRemark;
+
 	private Long matchorderid;
 
 	private BigDecimal salqty;
@@ -48,6 +52,22 @@ public class Order {
 	private Long goodsid;
 
 	private Long price;
+
+	public String getAwardStatus() {
+		return awardStatus;
+	}
+
+	public void setAwardStatus(String awardStatus) {
+		this.awardStatus = awardStatus;
+	}
+
+	public String getAwardRemark() {
+		return awardRemark;
+	}
+
+	public void setAwardRemark(String awardRemark) {
+		this.awardRemark = awardRemark;
+	}
 
 	public Integer getOrderid() {
 		return orderid;
@@ -232,8 +252,20 @@ public class Order {
 				+ ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime + ", ordertype="
 				+ ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus + ", orderDetailList="
 				+ orderDetailList + ", awardDetailLst=" + awardDetailLst + ", trueName=" + trueName + ", address="
-				+ address + ", matchorderid=" + matchorderid + ", salqty=" + salqty + ", accounttype=" + accounttype
-				+ ", goodsid=" + goodsid + ", price=" + price + "]";
+				+ address + ", awardStatus=" + awardStatus + ", awardRemark=" + awardRemark + ", matchorderid="
+				+ matchorderid + ", salqty=" + salqty + ", accounttype=" + accounttype + ", goodsid=" + goodsid
+				+ ", price=" + price + ", getAwardStatus()=" + getAwardStatus() + ", getAwardRemark()="
+				+ getAwardRemark() + ", getOrderid()=" + getOrderid() + ", getOrdercode()=" + getOrdercode()
+				+ ", getUserid()=" + getUserid() + ", getQty()=" + getQty() + ", getTotalprice()=" + getTotalprice()
+				+ ", getRecaddress()=" + getRecaddress() + ", getCreatetime()=" + getCreatetime()
+				+ ", getOrderstatus()=" + getOrderstatus() + ", getPaystatus()=" + getPaystatus() + ", getPaytime()="
+				+ getPaytime() + ", getOrdertype()=" + getOrdertype() + ", getAddressid()=" + getAddressid()
+				+ ", getAlipayStatus()=" + getAlipayStatus() + ", getOrderDetailList()=" + getOrderDetailList()
+				+ ", getAwardDetailLst()=" + getAwardDetailLst() + ", getTrueName()=" + getTrueName()
+				+ ", getAddress()=" + getAddress() + ", getMatchorderid()=" + getMatchorderid() + ", getSalqty()="
+				+ getSalqty() + ", getAccounttype()=" + getAccounttype() + ", getGoodsid()=" + getGoodsid()
+				+ ", getPrice()=" + getPrice() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
+				+ ", toString()=" + super.toString() + "]";
 	}
 
 }

@@ -20,7 +20,7 @@
 				<input type="hidden" id="pathid" name="pathid" value="${path.pathid}" />
 				<tr>
 					<td align="right"><label for="name">路线名称</label></td>
-					<td><input type="text" id="linename" name="linename"
+					<td><input type="text" id="linename"
 						value="${path.linename}" /></td>
 				</tr>
 				<tr>

@@ -20,13 +20,6 @@ $(function(){
 	
 /*##########################grid init begin####################################################*/
 /*##########################grid toolbar begin#################################################*/
-	var toolbar_tt = [
-					{
-						iconCls:"icon-edit",
-						text:"新增",
-						handler:to_adduserFeedback
-					}
-	          	];
 	
 /*######################grid toolbar end##############################*/
 /*######################grid columns begin##############################*/
@@ -38,7 +31,7 @@ $(function(){
 								{field:"createtime",title:"反馈时间",width:180,align:"center",formatter:dateTimeFormatter},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_edituserFeedback(\''+row.feedbackid+'\');">编辑</a> <a href="javascript:void(0);" onclick="deleteFeedBack(\''+row.feedbackid+'\');">删除</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="deleteFeedBack(\''+row.feedbackid+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -71,7 +64,6 @@ $(function(){
 		pageList:[10,20,30],
 		idField:"id",
 		columns:columns_tt,
-		toolbar:toolbar_tt,
 		queryParams:{
 			'userName': $("#searchuserFeedbackForm #userName").val(),
 			'startDate':$("#searchuserFeedbackForm #startDate").datebox('getValue'),
@@ -89,16 +81,6 @@ $(function(){
 });
 
 
-/**
- * 新增
- * @param id
- */
-function to_adduserFeedback(){
-	to_edituserFeedback('');
-	$('#editUserFeedbackDiv').dialog({
-		title: "新增",
-	});
-}
 
 /**
  *删除

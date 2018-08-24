@@ -483,53 +483,45 @@
 		where id = #{id,jdbcType=INTEGER}
 	</update>
 	<select id="queryListPage" parameterType="Map" resultMap="BaseResultMap">
-		(SELECT *
-		FROM t_ys_notice
-		WHERE top_notice &lt;&gt; 1
-		ORDER BY
-		top_notice DESC
-		)
-		UNION ALL
-		(
 		SELECT *
 		FROM t_ys_notice
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="id != null">
-				AND id like #{id}
+				AND id = #{id}
 			</if>
 
 			<if test="title != null">
-				AND title like #{title}
+				AND title = #{title}
 			</if>
 			<if test="image != null">
-				AND image like #{image}
+				AND image = #{image}
 			</if>
 			<if test="content != null">
-				AND content like #{content}
+				AND content = #{content}
 			</if>
 			<if test="author != null">
-				AND author like #{author}
+				AND author = #{author}
 			</if>
 			<if test="topNotice != null">
-				AND top_notice like #{topNotice}
+				AND top_notice = #{topNotice}
 			</if>
 			<if test="remark != null">
-				AND remark like #{remark}
+				AND remark = #{remark}
 			</if>
 			<if test="status != null">
-				AND status like #{status}
+				AND status = #{status}
 			</if>
 			<if test="createDate != null">
-				AND create_date like #{createDate}
+				AND create_date = #{createDate}
 			</if>
 			<if test="createName != null">
-				AND create_name like #{createName}
+				AND create_name = #{createName}
 			</if>
 			<if test="updateDate != null">
-				AND update_date like #{updateDate}
+				AND update_date = #{updateDate}
 			</if>
 			<if test="updateName != null">
-				AND update_name like #{updateName}
+				AND update_name = #{updateName}
 			</if>
 			<if test="startDate != null">
 				AND <![CDATA[create_date >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
@@ -538,8 +530,6 @@
 				AND <![CDATA[create_date <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 		</trim>
-		WHERE top_notice = 1
 		order by create_name desc
-		)
 	</select>
 </mapper>

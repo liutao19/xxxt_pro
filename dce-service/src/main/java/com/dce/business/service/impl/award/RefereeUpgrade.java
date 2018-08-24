@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserPromoteDo;
 import com.dce.business.service.account.IAccountService;
@@ -50,15 +51,11 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
 	 * 计算奖励的方法
 	 * @param buyUserId 购买者
-	 * @param buyQty    购买数量
 	 * @param orderId   购买订单
 	 * @return
 	 */
 	@Override
-	public void doAward(int buyUserId, int buyQty, Integer orderId) {
-		
-		//获取购买者信息
-		UserDo  buyer = userService.getUser(buyUserId);
+	public void doAward(UserDo buyer, Order order) {
 		
 		if(buyer.getUserLevel()==4){
 			logger.error("此用戶為以是最高等级");
@@ -66,7 +63,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 		}
 		
 		// 得到奖励记录
-		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((Integer.valueOf(buyer.getUserLevel())),buyQty);
+		UserPromoteDo promote = userPromoteService.selectUserLevelAntBuyQty((Integer.valueOf(buyer.getUserLevel())),order.getQty());
 		
 		if(promote == null){
 			logger.error("用户购买数量无法升级");

@@ -154,7 +154,7 @@ public class MemberAcountController extends BaseController {
 		orderDo.setPrice(new BigDecimal(price));
 		orderDo.setQty(new BigDecimal(qty));
 		orderDo.setTotalPrice(orderDo.getQty().multiply(orderDo.getPrice()).setScale(4, RoundingMode.HALF_UP));
-		orderDo.setOrderStatus(1); // 有效
+		orderDo.setOrderStatus(1); // 有效 
 		orderDo.setPayStatus(0); // 未成交
 		orderDo.setCreateTime(new Date());
 		//Long orderId = orderService.addOrder(orderDo);

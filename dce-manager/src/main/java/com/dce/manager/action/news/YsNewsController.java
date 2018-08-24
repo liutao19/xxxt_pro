@@ -180,11 +180,10 @@ public class YsNewsController extends BaseAction {
 					if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
 						// 图片压缩
 						Picture_Compression(filePath,filePath,300,300);
+						
+						// 存数据库
+						ysnewsDo.setImage(getReadImgUrl(filePath));
 					}
-					
-					// 存数据库
-					ysnewsDo.setImage(getReadImgUrl(filePath));
-
 
 				} catch (IllegalStateException | IOException e) {
 					// TODO Auto-generated catch block
@@ -209,9 +208,6 @@ public class YsNewsController extends BaseAction {
 			} else {
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
-			
-			
-			
 
 			if (i <= 0) {
 				outPrint(response, this.toJSONString(Result.failureResult("操作失败")));

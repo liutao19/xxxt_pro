@@ -25,7 +25,7 @@
 								<input type="text" id="distrctName" name="distrctName" value="${district.distrctName}"/>												
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">用户id</label>
 						</td>	
@@ -40,13 +40,13 @@
 						<td>
 								<input type="text" id="districtStatus" name="districtStatus" value="${district.districtStatus}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 		
-				<tr>
+				<!-- <tr>
 					<td colspan="2">
 						<input id="submitButton" name="submitButton" type="button" onclick="district_submit();"  value="提交" />	
 					</td>
-				<tr>			 
+				<tr> -->			 
 			</table>	   
 		</div>	
 	</form>

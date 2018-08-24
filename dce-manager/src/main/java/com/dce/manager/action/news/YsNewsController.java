@@ -71,8 +71,8 @@ public class YsNewsController extends BaseAction {
 			String title = getString("title");
 			String startDate = getString("startDate");
 			String endDate = getString("endDate");
-			String updateName = getString("updateName");
-			String createName = getString("createName");
+			//String updateName = getString("updateName");
+			//String createName = getString("createName");
 			Map<String, Object> param = new HashMap<String, Object>();
 			if (StringUtils.isNotBlank(companyName)) {
 				param.put("policyName", companyName);
@@ -93,12 +93,12 @@ public class YsNewsController extends BaseAction {
 			if (StringUtils.isNotBlank(title)) {
 				param.put("title", title);
 			}
-			if (StringUtils.isNotBlank(updateName)) {
+			/*if (StringUtils.isNotBlank(updateName)) {
 				param.put("updateName", updateName);
 			}
 			if (StringUtils.isNotBlank(createName)) {
 				param.put("createName", createName);
-			}
+			}*/
 
 			page = ysNewsService.getYsNewsPage(param, page);
 			List<NewsDo> list = page.getModelList();
@@ -198,12 +198,12 @@ public class YsNewsController extends BaseAction {
 
 			Assert.hasText(ysnewsDo.getTitle(), "标题不能为空");
 			Assert.hasText(ysnewsDo.getContent(), "内容不能为空");
-			Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
+			//Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
 
 			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
-				Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
+				//Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {
 				i = ysNewsService.addYsNews(ysnewsDo);

@@ -75,7 +75,7 @@
 						<td>
 						<select id="status" class="easyui-combobox" name="status" style="width: 150px;">
 									<option value="0" <c:if test="${ysnews.status==0}">selected="selected"</c:if> >待发布</option>
-									<option value="1" <c:if test="${ysnews.status==1}">selected="selected"</c:if>>已发布</option>
+									<option value="1" <c:if test="${ysnews.status==1}">selected="selected"</c:if>>发布</option>
 							</select>
 						</td>						   
 					</tr>
@@ -92,14 +92,14 @@
 								/>
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">创建人</label>
 						</td>	
 						<td>
 								<input type="text" id="createName" name="createName" value="${ysnews.createName}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					
 					<tr>	
 						<td align="right">
@@ -114,14 +114,14 @@
 								/>
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">修改人</label>
 						</td>	
 						<td>
 								<input type="text" id="updateName" name="updateName" value="${ysnews.updateName}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 		
 				<!-- <tr>
 					<td colspan="2">

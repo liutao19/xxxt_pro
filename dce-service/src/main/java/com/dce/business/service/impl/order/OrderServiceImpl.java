@@ -480,8 +480,8 @@ public class OrderServiceImpl implements IOrderService {
 		logger.info("根据支付宝的通知信息查询出对应的订单信息===========》》》" + order);
 
 		// 目前测试中totalAmount.equals(order.getTotalprice())，totalAmount先暂时设置为0.01
-		if (order != null && totalAmount.equals("0.01") && sellerId.equals(AlipayConfig.seller_id)
-				&& AlipayConfig.APPID.equals(appId)) {
+		if (order == null || !totalAmount.equals("0.01") || !sellerId.equals(AlipayConfig.seller_id)
+				|| !AlipayConfig.APPID.equals(appId)) {
 				logger.info("==========支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
 				return "fail";
 		}
@@ -489,7 +489,9 @@ public class OrderServiceImpl implements IOrderService {
 		
 		String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
 		String gmtPayment  = conversionParams.get("gmt_payment");// 交易付款时间
-
+		//交易记录状态的处理
+		logNotifyResult(conversionParams);
+		
 		// 只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功
 		if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
 			// 支付成功，逻辑业务处理

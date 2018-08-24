@@ -8,7 +8,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 @ContextConfiguration(locations = { "classpath:config/applicationContext.xml" })
 public class BaseTest extends AbstractTransactionalJUnit4SpringContextTests {
     static {
-        System.setProperty("catalina.home", "E:/JAVAEE/Apache/apache-tomcat-8.0.52/");
+        System.setProperty("catalina.home", "E:/apache-tomcat-8.0.39/");
     }
     
     

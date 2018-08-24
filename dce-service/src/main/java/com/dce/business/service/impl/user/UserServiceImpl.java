@@ -647,6 +647,14 @@ public class UserServiceImpl implements IUserService {
 		}
 
 		UserDo user = userDao.selectByPrimaryKey(userDo.getId());
+		
+		
+		if(user==null||user.equals("")){
+			
+			return Result.failureResult("该用户不存在!");
+			
+		}
+		
 
 		// 用户状态验证
 		if (user.getCertification() == 1) {
@@ -681,6 +689,7 @@ public class UserServiceImpl implements IUserService {
 
 			if (!user1.isEmpty()) {
 
+				System.err.println("用户id******"+user1.get(0).getId());
 				if (user1.get(0).getId() != userDo.getId()) {
 
 					return Result.failureResult("该身份证号已存在");

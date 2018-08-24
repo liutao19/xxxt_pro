@@ -350,22 +350,26 @@ public class UserController extends BaseController {
 			}
 
 			// 身份号验证
-			if (isLegal(idnumber) == 0) {
+			/*if (!isLegal(idnumber)) {
 
 				return Result.failureResult("该身份证号不合法");
-			}
-			//银行卡号校验
-			if(!checkBankCard(banknumber)){
-				
-				return Result.failureResult("该银行卡号不合法");
-				
-			}
+			}*/
+			
+			// 银行卡号校验
+			/*
+			 * if(!checkBankCard(banknumber)){
+			 * 
+			 * return Result.failureResult("该银行卡号不合法");
+			 * 
+			 * }
+			 */
 
 			System.out.println("用户信息----------》》》" + userDo);
 
 			return userService.Authentication(userDo);
 
 		} catch (Exception e) {
+
 			return Result.failureResult("用户信息认证失败");
 		}
 	}
@@ -375,8 +379,8 @@ public class UserController extends BaseController {
 	 * 
 	 * @return 1-合法；0-不合法
 	 */
-	public int isLegal(String idnumber) {
-		int a = 0;
+	public boolean isLegal(String idnumber) {
+		boolean a = false;
 		int sum = 0;
 		char checkBit[] = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
 		int[] add = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
@@ -385,7 +389,7 @@ public class UserController extends BaseController {
 			sum += add[i] * (stringArr[i] - '0');
 		}
 		if (stringArr[17] == checkBit[sum % 11]) {
-			a = 1;
+			a = true;
 		}
 		return a;
 	}
@@ -434,8 +438,6 @@ public class UserController extends BaseController {
 		return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
 	}
 
-	
-	
 	@RequestMapping(value = "toLevel", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView tosetLevel() {
 		ModelAndView mv = new ModelAndView("jjzd/set_user_level");

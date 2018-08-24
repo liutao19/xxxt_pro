@@ -61,7 +61,9 @@ public class WithDrawController extends BaseController {
 
     	Map<String, Object> map=new HashMap<String,Object>();
     	
-    	map.put("userId", getString("userId"));
+    	map.put("userid", getString("userId"));
+    	
+    	Assert.hasText(getString("userId"),"用户不存在");
     	
     	List<Map<String,Object>>maps=withdrawService.getWithdrawRecords(map);
     	

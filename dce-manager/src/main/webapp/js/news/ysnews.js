@@ -160,11 +160,32 @@ function save_YsNews(){
 	var updateName=$("#editYsNewsForm #updateName").val();
 	
 	if($.isEmptyObject(title)){
-		$.messager.alert("新闻标题","不能为空");
+		$.messager.alert("提示","新闻标题不能为空");
+		return false;
 	}else if($.isEmptyObject(content)){
-		$.messager.alert("内容","不能为空");
+		$.messager.alert("提示","内容不能为空");
+		return false;
+	}else if($.isEmptyObject(author)){
+		$.messager.alert("提示","作者不能为空");
+		return false;
 	}else if($.isEmptyObject(createName)){
-		$.messager.alert("创建人","不能为空");
+		$.messager.alert("提示","创建人不能为空");
+		return false;
+	}
+	
+	//校验上传的是否是图片
+	/*if($.isEmptyObject(file)){
+		checkType();
+	}*/
+	
+	
+	//校验姓名
+	checkName(author);
+	checkName(createName);
+	checkName(updateName);
+	
+	if(!checkName(author)||!checkName(createName)||!checkName(updateName)){
+		return false;
 	}
 	
 	/* alert("id---->>"+id+"---title---"+title+"----file--"+
@@ -246,6 +267,46 @@ function reloadDataGrid()
 
 
 /*##########################公用方法##begin############################*/
+
+//姓名校验
+function checkName(name) {
+    
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）;—|{}【】‘；：”“'。，、？]");
+    if (pattern.test($.trim(name))) {
+    	$.messager.alert("提示", "姓名只能是汉字字母或数字", "error");
+    	 return false;
+    }
+    if (name.length > 10) {
+    	$.messager.alert("提示", "姓名过长，请您最多输入10个汉字。", "error");
+    	 return false;
+    }
+    if (name.length < 2) {
+    	$.messager.alert("提示", "姓名必须大于2个汉字", "error");
+    	 return false;
+    } 
+}
+
+//图片校验
+function checkType(){
+	
+	 var fileName=document.getElementById("image").value;
+	 
+	 var seat=fileName.lastIndexOf(".");
+	 
+	 var extension=fileName.substring(seat).toLowerCase();
+	 var allowed=[".jpg",".gif",".png",".jpeg"];
+	 for(var i=0;i<allowed.length;i++){
+	   if(allowed[i]!=extension){
+	     return true;
+	   }
+	 }
+	 alert("不支持"+extension+"格式");
+	 return false;
+	}
+
+
+
+
 
 //监听窗口大小变化
 window.onresize = function(){

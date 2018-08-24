@@ -226,6 +226,8 @@ function reloadDataGrid() {
 
 /* ##########################公用方法##begin############################ */
 
+
+
 // 监听窗口大小变化
 window.onresize = function() {
 	setTimeout(domresize, 300);

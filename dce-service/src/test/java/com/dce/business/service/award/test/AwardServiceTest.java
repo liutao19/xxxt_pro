@@ -18,14 +18,11 @@ public class AwardServiceTest extends BaseTest {
     private IUserRefereeDao userreferee;
     
     @Test
-   // @Rollback(false)
+    @Rollback(false)
     public void testCalcAward() {
-    	Integer buyQty = 5;
-		Integer orderId = 5;
+		Integer orderId = 20;
 		Integer buyUserId =711;
-		awardService.calcAward(buyUserId , orderId);
+		awardService.calcAward(buyUserId ,orderId);
     }
-    
-    
     
 }

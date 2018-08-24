@@ -17,25 +17,10 @@
 		
 			<table width="100%" border="0" align="center" cellpadding="3">			  
 					<input type="hidden" id="promoteId" name="promoteId" value="${userpromote.promoteId}"/>
+					
 					<tr>	
 						<td align="right">
-							<label for="name">userLevel</label>
-						</td>	
-						<td>
-								<input type="text" id="userLevel" name="userLevel" value="${userpromote.userLevel}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">promoteLevel</label>
-						</td>	
-						<td>
-								<input type="text" id="promoteLevel" name="promoteLevel" value="${userpromote.promoteLevel}"/>												
-						</td>						   
-					</tr>
-					<tr>	
-						<td align="right">
-							<label for="name">minQty</label>
+							<label for="name">最小数量</label>
 						</td>	
 						<td>
 								<input type="text" id="minQty" name="minQty" value="${userpromote.minQty}"/>												
@@ -43,7 +28,7 @@
 					</tr>
 					<tr>	
 						<td align="right">
-							<label for="name">maxQty</label>
+							<label for="name">最大数量</label>
 						</td>	
 						<td>
 								<input type="text" id="maxQty" name="maxQty" value="${userpromote.maxQty}"/>												

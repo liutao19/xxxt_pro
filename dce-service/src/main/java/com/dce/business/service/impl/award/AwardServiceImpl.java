@@ -53,6 +53,7 @@ public class AwardServiceImpl implements IAwardService {
 		}catch(Exception e){
 			logger.info("计算奖励出错 购买者ID:"+buyUserId+" 订单id"+orderId);
 			logger.error("计算奖励出错 购买者ID:"+buyUserId+" 订单id"+orderId, e);
+			e.printStackTrace();
 			Order order =  new Order();
 			order.setOrderid(orderId);
 			order.setAwardStatus("fail");

@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
 		if (order == null) {
 			return 0;
 		}
-		return orderDao.updateByPrimaryKey(order);
+		return orderDao.updateByPrimaryKeySelective(order);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
-			logger.info("根据订单编号查询出的订单：" + ordercode);
+			logger.info("根据订单编号查询出的订单：" + order);
 			// 付款状态为已支付
 			order.setPaystatus(1);
 			// 支付宝返回的支付结果成功
@@ -204,7 +204,7 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》订单表更新失败");
 			}
 			// 激活用户状态
-			Map<String,Object> map = new HashMap<String,Object>();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("id", order.getUserid());
 			map.put("isActivated", 1);
 			int j = userService.updateUserStatus(map);
@@ -213,7 +213,7 @@ public class OrderServiceImpl implements IOrderService {
 				logger.info("==========》》》》》用户状态激活失败");
 			}
 			// 计算奖励
-			awardService.calcAward(order.getUserid(), order.getQty(), order.getOrderid());
+			awardService.calcAward(order.getUserid(), order.getOrderid());
 
 		} catch (Exception e) {
 			logger.info("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
@@ -224,7 +224,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
-	 * 下单处理
+	 * 添加订单明细
 	 */
 	@Override
 	public Order buyOrder(Order order) {
@@ -326,6 +326,7 @@ public class OrderServiceImpl implements IOrderService {
 		logger.info("需要补的赠品差价========》》》：" + priceSpread);
 
 		// 创建订单
+		// Order newOrder = new Order();
 		order.setOrdercode(orderCode); // 订单号
 		Date date = new Date();
 		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
@@ -337,7 +338,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 插入订单
 		orderDao.insertSelective(order);
-		logger.debug("==========》》》》》插入的订单信息："+order);
+		logger.debug("==========》》》》》插入的订单信息：" + order);
 
 		// 判断支付方式，生成预支付订单
 		if (order.getOrdertype() == 1) {
@@ -704,5 +705,5 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
-	
+
 }

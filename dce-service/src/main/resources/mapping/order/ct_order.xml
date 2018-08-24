@@ -45,7 +45,7 @@
 		a.payTime
 		paytime,a.orderType ordertype,a.addressId addressid,
 		a.alipayStatus
-		alipayStatus,a.alipayStatus alipayStatus,a.awardRemark awardRemark
+		alipayStatus,a.alipayStatus alipayStatus,a.awardRemark awardRemark,
 		CONCAT(b.address,b.addressDetails) address
 		from ct_order a left join
 		ct_user_address b on b.addressId = a.addressId
@@ -313,9 +313,6 @@
 		<set>
 			<if test="ordercode != null">
 				ordercode = #{ordercode,jdbcType=VARCHAR},
-			</if>
-			<if test="userid != null">
-				userId = #{userid,jdbcType=INTEGER},
 			</if>
 			<if test="qty != null">
 				qty = #{qty,jdbcType=DECIMAL},

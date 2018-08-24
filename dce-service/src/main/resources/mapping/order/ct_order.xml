@@ -41,10 +41,9 @@
 		a.payTime paytime,a.orderType ordertype,a.addressId addressid,
 		a.alipayStatus alipayStatus,
 		CONCAT(b.address,b.addressDetails) address
-		from ct_order a, ct_user_address b
-		where orderId =
-		#{orderId,jdbcType=BIGINT}
-		and b.addressId = a.addressId
+		from ct_order a left join  ct_user_address b  on  b.addressId = a.addressId 
+		where a.orderId =	#{orderId,jdbcType=BIGINT}
+	
 	</select>
 
 	<select id="selectByOrderCode" parameterType="java.lang.String"

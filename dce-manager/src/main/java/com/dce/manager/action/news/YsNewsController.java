@@ -2,6 +2,7 @@ package com.dce.manager.action.news;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,15 +11,18 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,6 +46,9 @@ import net.coobird.thumbnailator.Thumbnails;
 public class YsNewsController extends BaseAction {
 	@Resource
 	private INewsService ysNewsService;
+	
+	@Value("#{sysconfig['readImgUrl']}")
+	private String readImgUrl;
 
 	/**
 	 * 去列表页面
@@ -127,6 +134,21 @@ public class YsNewsController extends BaseAction {
 		}
 
 	}
+	
+	
+	/**
+	 * 读取图片的url	
+	 * @param filePath
+	 * @return
+	 */
+	private String getReadImgUrl(String filePath) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(readImgUrl);
+		sb.append(filePath);
+		return sb.toString();
+	}
+	
+	
 
 	/**
 	 * 保存更新
@@ -154,8 +176,15 @@ public class YsNewsController extends BaseAction {
 					System.out.println(filePath);
 					// 转存文件
 					file.transferTo(new File(filePath));
+					
+					if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
+						// 图片压缩
+						Picture_Compression(filePath,filePath,300,300);
+					}
+					
+					// 存数据库
+					ysnewsDo.setImage(getReadImgUrl(filePath));
 
-					ysnewsDo.setImage(filePath);
 
 				} catch (IllegalStateException | IOException e) {
 					// TODO Auto-generated catch block
@@ -181,10 +210,7 @@ public class YsNewsController extends BaseAction {
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
 			
-			if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
-				// 图片压缩
-				Picture_Compression(filePath,filePath,300,300);
-			}
+			
 			
 
 			if (i <= 0) {
@@ -201,6 +227,42 @@ public class YsNewsController extends BaseAction {
 		}
 		logger.info("----end saveYsNews--------");
 	}
+	
+	/**
+	 * IO流读取图片
+	 * @param filePath
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/img", method = {RequestMethod.GET})
+	
+	public void saveGoods(HttpServletRequest request,HttpServletResponse response) throws IOException {
+		ServletOutputStream out = null;
+		FileInputStream ips = null;
+		try {
+			String filePath = this.getString("filePath");
+			ips = new FileInputStream(filePath);
+			response.setContentType("image/png");
+			out = response.getOutputStream();
+			//读取文件流
+			int len = 0;
+			byte[] buffer = new byte[1024 * 10];
+			while ((len = ips.read(buffer)) != -1){
+				out.write(buffer,0,len);
+			}
+			out.flush();
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally {
+			out.close();
+			ips.close();
+		}
+		 
+	 }
+	
+	
+	
 	
 	/**
 	 * 图片压缩

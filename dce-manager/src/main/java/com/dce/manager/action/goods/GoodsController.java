@@ -59,7 +59,6 @@ public class GoodsController extends BaseAction {
 	@Value("#{sysconfig['uploadPath']}")
 	private String uploadPath;
 	
-	//http://localhost:8080/dce-app/mall/img.do?filePath=
 	@Value("#{sysconfig['readImgUrl']}")
 	private String readImgUrl;
 

@@ -183,8 +183,8 @@ public class OrderServiceImpl implements IOrderService {
 	public boolean orderPay(String ordercode, String gmtPayment) {
 
 		boolean flag = false; // 返回业务处理最终结果
-		boolean updateOrder = false;
-		boolean updateUser = false;
+		boolean updateOrder = true;
+		boolean updateUser = true;
 
 		try {
 			// 根据订单编号查询出订单
@@ -210,7 +210,7 @@ public class OrderServiceImpl implements IOrderService {
 			map.put("isActivated", 1);
 			int j = userService.updateUserStatus(map);
 			if (j <= 0) {
-				updateOrder = false;
+				updateUser = false;
 				logger.info("==========》》》》》用户状态激活失败");
 			}
 			// 计算奖励

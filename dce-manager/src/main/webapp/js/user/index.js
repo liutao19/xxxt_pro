@@ -343,8 +343,8 @@ function baoKongDan(id) {
 }
 
 function addVipr() {
-	return;
-	var url = basePath + "/user/edit.html?userId=" + id;
+	//return;
+	var url = basePath + "/user/edit.html" ;
 	$('#editLevelDiv').dialog({
 		title : "新增一个会员",
 		width : 400,

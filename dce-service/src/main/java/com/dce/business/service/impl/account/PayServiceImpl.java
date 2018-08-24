@@ -26,12 +26,13 @@ import com.alipay.api.request.AlipayFundTransOrderQueryRequest;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.response.AlipayFundTransOrderQueryResponse;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-import com.dce.business.common.alipay.util.AlipayConfig;
+//import com.dce.business.common.alipay.util.AlipayConfig;
+
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.enums.IncomeType;
-
+import com.dce.business.common.pay.util.AlipayConfig;
 import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DataDecrypt;
@@ -231,8 +232,8 @@ public class PayServiceImpl implements IPayService {
 		request.setBizContent("{" +
 		"\"out_biz_no\":"+orderId+","+
 		"\"payee_type\":\"ALIPAY_LOGONID\"," +
-		"\"payee_account\":\"13378068577\"," +
-		"\"amount\":"+0.1+"," +
+		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+		"\"amount\":"+50+"," +
 		"\"remark\":\"提现\"" +
 		"}");
 		AlipayFundTransToaccountTransferResponse response = null;
@@ -244,19 +245,22 @@ public class PayServiceImpl implements IPayService {
 				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
 				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
 				withdraw.setPaymentDate((new Date()).getTime() / 1000);
+				//流水信息
 				EthereumTransInfoDo trans=new EthereumTransInfoDo();
 				trans.setUserid(userId);      //用户id
 				trans.setActualamount(qty.toString());     //转出金额
 				trans.setAmount(qty.toString());    //转出金额
-
 				trans.setCreatetime(new Date());
-
 				trans.setStatus("true");      //状态
 				trans.setType(2);      //类型
 				trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
 				etherenumTranInfodao.insertSelective(trans);
 			}else{
+				System.out.println(response.getSubMsg());
+				withdraw.setRemark(response.getSubMsg());
 				withdraw.setWithdraw_status("0"); 
+				withdraw.setId(withdrawId);
+				withdrawDao.updateWithDrawStatus(withdraw);
 				return Result.failureResult(response.getSubMsg());
 			}
 			withdraw.setId(withdrawId);

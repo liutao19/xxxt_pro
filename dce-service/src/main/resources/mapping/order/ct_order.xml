@@ -20,6 +20,8 @@
 		<result column="price" jdbcType="DECIMAL" property="price" />
 		<result column="addressId" jdbcType="INTEGER" property="addressid" />
 		<result column="alipayStatus" jdbcType="INTEGER" property="alipayStatus" />
+		<result column="awardStatus" jdbcType="VARCHAR" property="awardStatus" />
+		<result column="awardRemark" jdbcType="VARCHAR" property="awardRemark" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -29,21 +31,26 @@
 		date_format(payTime,'%Y-%m-%d %H:%i:%s'), orderType, matchOrderId,
 		salqty, accountType, goodsId,
 		price,
-		addressId, alipayStatus
+		addressId,
+		alipayStatus,awardStatus,awardRemark
 	</sql>
 
 	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
 		resultMap="BaseResultMap">
 		select
-		a.orderId orderid, a.orderCode ordercode, a.userId userid,
+		a.orderId orderid, a.orderCode ordercode, a.userId
+		userid,
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
-		a.payTime paytime,a.orderType ordertype,a.addressId addressid,
-		a.alipayStatus alipayStatus,
+		a.payTime
+		paytime,a.orderType ordertype,a.addressId addressid,
+		a.alipayStatus
+		alipayStatus,a.alipayStatus alipayStatus,a.awardRemark awardRemark,
 		CONCAT(b.address,b.addressDetails) address
-		from ct_order a left join  ct_user_address b  on  b.addressId = a.addressId 
-		where a.orderId =	#{orderId,jdbcType=BIGINT}
-	
+		from ct_order a left join
+		ct_user_address b on b.addressId = a.addressId
+		where a.orderId = #{orderId,jdbcType=BIGINT}
+
 	</select>
 
 	<select id="selectByOrderCode" parameterType="java.lang.String"
@@ -74,16 +81,20 @@
 		a.orderStatus,
 		a.payStatus,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
-		paytime, a.orderType,
-		addressId, alipayStatus, b.orderDetailId,
-		b.orderId, b.goods_id, b.qty, b.price, b.remark
+		paytime, a.orderType,a.alipayStatus,a.awardRemark,
+		a.addressId,
+		a.alipayStatus, b.orderDetailId,
+		b.orderId, b.goods_id, b.qty, b.price,
+		b.remark
 		from ct_order a,
 		ct_orderdetail b
 		where
-		a.userId = #{userId,jdbcType=INTEGER} and
+		a.userId =
+		#{userId,jdbcType=INTEGER} and
 		a.orderId=b.orderId
 		order by
-		a.createTime desc
+		a.createTime
+		desc
 	</select>
 	<resultMap type="Order" id="orderMapper">
 		<id column="orderId" jdbcType="INTEGER" property="orderid" />
@@ -98,6 +109,8 @@
 		<result column="orderType" jdbcType="INTEGER" property="ordertype" />
 		<result column="addressId" jdbcType="INTEGER" property="addressid" />
 		<result column="alipayStatus" jdbcType="INTEGER" property="alipayStatus" />
+		<result column="awardStatus" jdbcType="VARCHAR" property="awardStatus" />
+		<result column="awardRemark" jdbcType="VARCHAR" property="awardRemark" />
 		<collection property="orderDetailList"
 			ofType="com.dce.business.entity.order.OrderDetail">
 			<id column="orderdetailid" jdbcType="INTEGER" property="orderdetailid"></id>
@@ -119,12 +132,14 @@
 		salqty, accountType,
 		goodsId,
 		price,
-		addressId, alipayStatus
+		addressId, alipayStatus,awardStatus,awardRemark
 		)
-		values (#{orderid,jdbcType=BIGINT},
+		values
+		(#{orderid,jdbcType=BIGINT},
 		#{ordercode,jdbcType=VARCHAR},
 		#{userid,jdbcType=INTEGER},
-		#{qty,jdbcType=DECIMAL}, #{totalprice,jdbcType=DECIMAL},
+		#{qty,jdbcType=DECIMAL},
+		#{totalprice,jdbcType=DECIMAL},
 		#{recaddress,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
 		#{orderStatus,jdbcType=INTEGER},
@@ -136,7 +151,9 @@
 		#{goodsid,jdbcType=BIGINT},
 		#{price,jdbcType=DECIMAL},
 		#{addressid,jdbcType=INTEGER},
-		#{alipayStatus,jdbcType=VARCHAR}
+		#{alipayStatus,jdbcType=VARCHAR},
+		#{awardStatus,jdbcType=VARCHAR},
+		#{awardRemark,jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -177,6 +194,12 @@
 			<if test="alipayStatus != null">
 				alipayStatus,
 			</if>
+			<if test="awardStatus != null">
+				awardStatus,
+			</if>
+			<if test="awardRemark != null">
+				awardRemark,
+			</if>
 		</trim>
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			<if test="ordercode != null">
@@ -211,6 +234,12 @@
 			</if>
 			<if test="alipayStatus != null">
 				#{alipayStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardStatus != null">
+				#{awardStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardRemark != null">
+				#{awardRemark,jdbcType=VARCHAR},
 			</if>
 		</trim>
 	</insert>
@@ -269,6 +298,12 @@
 			<if test="alipayStatus != null">
 				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
 			</if>
+			<if test="awardStatus != null">
+				awardStatus = #{awardStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardRemark != null">
+				awardRemark = #{awardRemark,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where orderId = #{orderid,jdbcType=BIGINT}
 	</update>
@@ -278,9 +313,6 @@
 		<set>
 			<if test="ordercode != null">
 				ordercode = #{ordercode,jdbcType=VARCHAR},
-			</if>
-			<if test="userid != null">
-				userId = #{userid,jdbcType=INTEGER},
 			</if>
 			<if test="qty != null">
 				qty = #{qty,jdbcType=DECIMAL},
@@ -327,6 +359,12 @@
 			<if test="alipayStatus != null">
 				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
 			</if>
+			<if test="awardStatus != null">
+				awardStatus = #{awardStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardRemark != null">
+				awardRemark = #{awardRemark,jdbcType=VARCHAR},
+			</if>
 		</set>
 		where ordercode = #{ordercode,jdbcType=INTEGER}
 	</update>
@@ -358,7 +396,11 @@
 		price = #{price,jdbcType=DECIMAL},
 		addressId = #{addressid,jdbcType=INTEGER},
 		alipayStatus =
-		#{alipayStatus,jdbcType=VARCHAR}
+		#{alipayStatus,jdbcType=VARCHAR},
+		alipayStatus =
+		#{awardStatus,jdbcType=VARCHAR},
+		awardRemark =
+		#{awardRemark,jdbcType=VARCHAR}
 		where orderId =
 		#{orderid,jdbcType=BIGINT}
 	</update>
@@ -498,13 +540,18 @@
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
-		a.payTime paytime,a.orderType ordertype,a.addressId addressid,
-		a.alipayStatus alipayStatus, b.true_name trueName,CONCAT(c.address,c.addressDetails)
+		a.payTime
+		paytime,a.orderType ordertype,a.addressId addressid, a.alipayStatus
+		alipayStatus,a.awardRemark awardRemark,
+		a.alipayStatus alipayStatus,
+		b.true_name trueName,CONCAT(c.address,c.addressDetails)
 		address
-		FROM ct_order a
+		FROM
+		ct_order a
 		LEFT
 		JOIN ct_user b ON a.userid = b.id
-		left join ct_user_address c on
+		left join
+		ct_user_address c on
 		c.addressId = a.addressId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userId != null">

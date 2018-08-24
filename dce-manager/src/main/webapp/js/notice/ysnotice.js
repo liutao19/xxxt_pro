@@ -251,7 +251,6 @@ function save_YsNotice() {
 	var title = $("#editYsNoticeForm #title").val();
 	var content = document.getElementById("content").value;
 	var topNotice = $('#topNotice').combobox('getValue');
-	alert(topNotice);
 	var remark = document.getElementById("remark").value;
 	var file = document.getElementById("image").files[0];
 	if(title == null || title == ""){

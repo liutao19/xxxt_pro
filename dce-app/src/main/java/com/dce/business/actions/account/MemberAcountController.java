@@ -66,7 +66,7 @@ public class MemberAcountController extends BaseController {
 		int userId=getUserId();
 		String user_level=getString("user_level");
 		
-		Assert.hasText("userId","用户id不能为空");
+		Assert.hasText("userId","用户不存在");
 				
 		Map<String,Object> params = new HashMap<String,Object>();
 		
@@ -154,7 +154,7 @@ public class MemberAcountController extends BaseController {
 		orderDo.setPrice(new BigDecimal(price));
 		orderDo.setQty(new BigDecimal(qty));
 		orderDo.setTotalPrice(orderDo.getQty().multiply(orderDo.getPrice()).setScale(4, RoundingMode.HALF_UP));
-		orderDo.setOrderStatus(1); // 有效
+		orderDo.setOrderStatus(1); // 有效 
 		orderDo.setPayStatus(0); // 未成交
 		orderDo.setCreateTime(new Date());
 		//Long orderId = orderService.addOrder(orderDo);

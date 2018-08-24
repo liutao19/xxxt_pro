@@ -43,9 +43,9 @@ $(function(){
 								{field:"remark",title:"备注",width:180,align:"center"},
 								{field:"status",title:"状态",width:180,align:"center"},
 								{field:"createDate",title:"创建日期",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"createName",title:"创建人",width:180,align:"center"},
+								//{field:"createName",title:"创建人",width:180,align:"center"},
 								{field:"updateDate",title:"修改日期",width:180,align:"center",formatter:dateTimeFormatter},
-								{field:"updateName",title:"修改人",width:180,align:"center"},
+								//{field:"updateName",title:"修改人",width:180,align:"center"},
 					{field:"操作",title:"操作",width:180,align:"center",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editysNews(\''+row.id+'\');">编辑</a>  <a href="javascript:void(0);" onclick="deleteNotice(\''+row.id+'\');">删除</a>';
@@ -113,7 +113,7 @@ function to_editysNews(id){
 	
 	var url = httpUrl+"/ysnews/addYsNews.html?&rand=" + Math.random()+"&id="+id;
 	$('#editYsNewsDiv').dialog({
-		title: "新增",
+		title: "修改",
 		width: 760,
 		height: 500,
 		closed: false,
@@ -160,12 +160,35 @@ function save_YsNews(){
 	var updateName=$("#editYsNewsForm #updateName").val();
 	
 	if($.isEmptyObject(title)){
-		$.messager.alert("新闻标题","不能为空");
+		$.messager.alert("提示","新闻标题不能为空");
+		return false;
 	}else if($.isEmptyObject(content)){
-		$.messager.alert("内容","不能为空");
-	}else if($.isEmptyObject(createName)){
-		$.messager.alert("创建人","不能为空");
+		$.messager.alert("提示","内容不能为空");
+		return false;
+	}else if($.isEmptyObject(author)){
+		$.messager.alert("提示","作者不能为空");
+		return false;
 	}
+	/*else if($.isEmptyObject(createName)){
+		$.messager.alert("提示","创建人不能为空");
+		return false;
+	}*/
+	
+	//校验上传的是否是图片
+	/*if($.isEmptyObject(file)){
+		checkType();
+	}*/
+	
+	
+	//校验姓名
+	checkName(author);
+	
+	//checkName(createName);
+	//checkName(updateName);
+	
+	/*if(!checkName(author)||!checkName(createName)||!checkName(updateName)){
+		return false;
+	}*/
 	
 	/* alert("id---->>"+id+"---title---"+title+"----file--"+
 			 file+"---content---"+content+"---author----"+author+
@@ -181,9 +204,9 @@ function save_YsNews(){
 	object.append("remark",remark);
 	object.append("status",status);
 	object.append("createDate",createDate);
-	object.append("createName",createName);
+	//object.append("createName",createName);
 	object.append("updateDate",updateDate);
-	object.append("updateName",updateName);
+	//object.append("updateName",updateName);
 
 	var  url =httpUrl+"/ysnews/saveYsNews.html?&rand=" + Math.random();
 	 $.ajax({   
@@ -246,6 +269,46 @@ function reloadDataGrid()
 
 
 /*##########################公用方法##begin############################*/
+
+//姓名校验
+function checkName(name) {
+    
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）;—|{}【】‘；：”“'。，、？]");
+    if (pattern.test($.trim(name))) {
+    	$.messager.alert("提示", "姓名只能是汉字字母或数字", "error");
+    	 return false;
+    }
+    if (name.length > 10) {
+    	$.messager.alert("提示", "姓名过长，请您最多输入10个汉字。", "error");
+    	 return false;
+    }
+    if (name.length < 2) {
+    	$.messager.alert("提示", "姓名必须大于2个汉字", "error");
+    	 return false;
+    } 
+}
+
+//图片校验
+function checkType(){
+	
+	 var fileName=document.getElementById("image").value;
+	 
+	 var seat=fileName.lastIndexOf(".");
+	 
+	 var extension=fileName.substring(seat).toLowerCase();
+	 var allowed=[".jpg",".gif",".png",".jpeg"];
+	 for(var i=0;i<allowed.length;i++){
+	   if(allowed[i]!=extension){
+	     return true;
+	   }
+	 }
+	 alert("不支持"+extension+"格式");
+	 return false;
+	}
+
+
+
+
 
 //监听窗口大小变化
 window.onresize = function(){

@@ -19,11 +19,7 @@ $(function(){
 /*##########################grid init begin####################################################*/
 /*##########################grid toolbar begin#################################################*/
 	var toolbar_tt = [
-					{
-						iconCls:"icon-edit",
-						text:"新增",
-						handler:to_adddistrict
-					}
+					
 	          	];
 	
 /*######################grid toolbar end##############################*/
@@ -38,7 +34,7 @@ $(function(){
 								{field:"districtStatus",title:"封地状态",width:180,align:"center"},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.district_id+'\');">封地</a>   <a href="javascript:void(0);" onclick="deleteDistrict(\''+row.district_id+'\',\''+row.user_id+'\');">删除</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.district_id+'\');">分配区域</a>   <a href="javascript:void(0);" onclick="deleteDistrict(\''+row.district_id+'\',\''+row.user_id+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -103,7 +99,7 @@ function to_editdistrict(id){
 	
 	var url = httpUrl+"/district/addDistrict.html?&rand=" + Math.random()+"&id="+id;
 	$('#editDistrictDiv').dialog({
-		title: "新增",
+		title: "分配",
 		width: 760,
 		height: 500,
 		closed: false,

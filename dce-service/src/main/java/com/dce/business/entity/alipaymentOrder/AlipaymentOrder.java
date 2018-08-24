@@ -184,4 +184,19 @@ public class AlipaymentOrder {
 		this.buyerpayamount = buyerpayamount;
 	}
 
+	@Override
+	public String toString() {
+		return "AlipaymentOrder [id=" + id + ", orderid=" + orderid
+				+ ", ordercode=" + ordercode + ", orderstatus=" + orderstatus
+				+ ", totalamount=" + totalamount + ", receptamount="
+				+ receptamount + ", createtime=" + createtime + ", notifytime="
+				+ notifytime + ", gmtcreatetime=" + gmtcreatetime
+				+ ", gmtrefundtime=" + gmtrefundtime + ", gmtclosetime="
+				+ gmtclosetime + ", tradeno=" + tradeno + ", buyerlogonid="
+				+ buyerlogonid + ", sellerid=" + sellerid + ", selleremail="
+				+ selleremail + ", invoiceamount=" + invoiceamount
+				+ ", buyerpayamount=" + buyerpayamount + ", remark=" + remark
+				+ "]";
+	}
+
 }

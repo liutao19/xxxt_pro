@@ -71,8 +71,8 @@ public class YsNewsController extends BaseAction {
 			String title = getString("title");
 			String startDate = getString("startDate");
 			String endDate = getString("endDate");
-			String updateName = getString("updateName");
-			String createName = getString("createName");
+			//String updateName = getString("updateName");
+			//String createName = getString("createName");
 			Map<String, Object> param = new HashMap<String, Object>();
 			if (StringUtils.isNotBlank(companyName)) {
 				param.put("policyName", companyName);
@@ -93,12 +93,12 @@ public class YsNewsController extends BaseAction {
 			if (StringUtils.isNotBlank(title)) {
 				param.put("title", title);
 			}
-			if (StringUtils.isNotBlank(updateName)) {
+			/*if (StringUtils.isNotBlank(updateName)) {
 				param.put("updateName", updateName);
 			}
 			if (StringUtils.isNotBlank(createName)) {
 				param.put("createName", createName);
-			}
+			}*/
 
 			page = ysNewsService.getYsNewsPage(param, page);
 			List<NewsDo> list = page.getModelList();
@@ -180,11 +180,10 @@ public class YsNewsController extends BaseAction {
 					if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
 						// 图片压缩
 						Picture_Compression(filePath,filePath,300,300);
+						
+						// 存数据库
+						ysnewsDo.setImage(getReadImgUrl(filePath));
 					}
-					
-					// 存数据库
-					ysnewsDo.setImage(getReadImgUrl(filePath));
-
 
 				} catch (IllegalStateException | IOException e) {
 					// TODO Auto-generated catch block
@@ -199,19 +198,16 @@ public class YsNewsController extends BaseAction {
 
 			Assert.hasText(ysnewsDo.getTitle(), "标题不能为空");
 			Assert.hasText(ysnewsDo.getContent(), "内容不能为空");
-			Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
+			//Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
 
 			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
-				Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
+				//Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
-			
-			
-			
 
 			if (i <= 0) {
 				outPrint(response, this.toJSONString(Result.failureResult("操作失败")));

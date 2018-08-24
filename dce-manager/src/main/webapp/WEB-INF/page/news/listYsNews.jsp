@@ -30,12 +30,6 @@
 			          <td class="tdfont">标题:
 			          	<input type="text" size="14" id="title" name="title" placeholder="标题" >
 			          </td>
-			          <td class="tdfont">创建人:
-			          	<input type="text" size="14" id="createName" name="title" placeholder="创建人" >
-			          </td>
-			          <td class="tdfont">修改人:
-			          	<input type="text" size="14" id="updateName" name="title" placeholder="修改人" >
-			          </td>
 			          <td class="tdfont" colspan="2">创建时间:
 						 <input type="text" id="startDate"  name="startDate" class="easyui-datetimebox" size="14" data-options="editable : true" />-
 						 <input type="text" id="endDate" name="endDate" class="easyui-datetimebox" size="14" data-options="editable : true" />

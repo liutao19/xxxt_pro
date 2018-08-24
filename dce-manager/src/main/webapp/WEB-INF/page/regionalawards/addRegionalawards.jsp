@@ -42,11 +42,11 @@
 						</td>						   
 					</tr>
 		
-				<tr>
+				<!-- <tr>
 					<td colspan="2">
 						<input id="submitButton" name="submitButton" type="button" onclick="regionalawards_submit();"  value="提交" />	
 					</td>
-				<tr>			 
+				<tr> -->			 
 			</table>	   
 		</div>	
 	</form>

@@ -59,7 +59,6 @@ public class GoodsController extends BaseAction {
 	@Value("#{sysconfig['uploadPath']}")
 	private String uploadPath;
 	
-	//http://localhost:8080/dce-app/mall/img.do?filePath=
 	@Value("#{sysconfig['readImgUrl']}")
 	private String readImgUrl;
 
@@ -182,7 +181,7 @@ public class GoodsController extends BaseAction {
 					file.transferTo(new File(filePath));
 
 					// 定死大小 不会根据比列压缩
-					Thumbnails.of(filePath).size(200, 300).keepAspectRatio(false).toFile(filePath);
+					//Thumbnails.of(filePath).size(200, 300).keepAspectRatio(false).toFile(filePath);
 
 					// 存数据库
 					CTGoodsDo.setGoodsImg(getReadImgUrl(filePath));

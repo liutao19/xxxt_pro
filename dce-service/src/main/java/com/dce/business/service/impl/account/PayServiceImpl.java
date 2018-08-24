@@ -179,10 +179,10 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		// 账户校验
-		EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
+		/*EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
 		if (ethereumAccountDo == null) {
 			return Result.failureResult("请先获取以太坊地址再提现");
-		}
+		}*/
 
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("qty", qty);
@@ -200,12 +200,13 @@ public class PayServiceImpl implements IPayService {
 			record.setWithdrawDate((new Date()).getTime() / 1000);
 			record.setType(type);
 			record.setBankNo(bank_no);
-			withdrawDao.insertSelective(record);
+			int i=withdrawDao.insertSelective(record);
 
+			if(i>0){
 			return Result.successResult("提现申请成功");
-
+			}
 		}
-		return Result.successResult("提现申请失败");
+		return Result.failureResult("提现申请失败");
 
 	}
 

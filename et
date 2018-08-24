@@ -1,0 +1,313 @@
+[33mcommit 751c712eeccc215056b7318fe5a324d518d7e743[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Fri Aug 24 17:07:10 2018 +0800
+
+    news
+
+[33mcommit 2207f2866520b034ccbec91c36a0df1a8c843593[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Fri Aug 24 15:06:16 2018 +0800
+
+    MemberAcountController
+
+[33mcommit cfec8a204362629e26545449d18c494f6ffbcf45[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Fri Aug 24 14:38:24 2018 +0800
+
+    g
+
+[33mcommit 4e4b37be455e9a1223708d8351d666d56dbafa8c[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Fri Aug 24 13:28:21 2018 +0800
+
+    order
+
+[33mcommit a69726d9ef201f0e291eb3cb756ab8edf2dd7813[m
+Merge: e1e4d64 8d97ed7
+Author: emmsybil <1242776362@qq.com>
+Date:   Fri Aug 24 12:16:54 2018 +0800
+
+    order
+
+[33mcommit 8d97ed709bdd9f31c3689fe825f7a9ad85bb8094[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 11:05:49 2018 +0800
+
+    status 判断
+
+[33mcommit e1e4d64c49a1611faf2616aab89630bed6769e6c[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Fri Aug 24 10:46:22 2018 +0800
+
+    order
+
+[33mcommit 2a198f79cbfdb61c6c5491025fc3e3fbd83fb13b[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 10:37:32 2018 +0800
+
+    回调‘
+
+[33mcommit 618923066d40886cf6fb1c0157009b865758bd74[m
+Merge: 1ce6fe6 17bcfda
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 10:31:09 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit 1ce6fe61245ea0ac1d76485426e26f84cb4857c8[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 10:28:35 2018 +0800
+
+    支付回调
+
+[33mcommit 17bcfdad7fa88165f4d3f9d23a2c767748ad0aa1[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Fri Aug 24 09:57:22 2018 +0800
+
+    withDraw
+
+[33mcommit 6967ee9b165aeb366a13a19c893c74b5fb1e91a6[m
+Merge: c852281 962b67b
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 09:34:36 2018 +0800
+
+    计算奖励出错处理
+
+[33mcommit c8522814caf8a52cf66d06128eb3ec45bc0aa756[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Fri Aug 24 09:29:41 2018 +0800
+
+    计算奖励异常处理
+
+[33mcommit 962b67bd3675783fe5b6e132f10f72280a4b118c[m
+Merge: 3ac003c b753a5e
+Author: liutao <1422842397@qq.com>
+Date:   Fri Aug 24 09:22:50 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit 3ac003c2dc9990ccd310838c4c24096551251d80[m
+Author: liutao <1422842397@qq.com>
+Date:   Fri Aug 24 09:22:19 2018 +0800
+
+    s
+
+[33mcommit b753a5e2e9c18fd720fc8d328b7dc6558af313f5[m
+Author: NI24 <2424743401@qq.com>
+Date:   Fri Aug 24 09:21:44 2018 +0800
+
+    ni
+
+[33mcommit 8cd544d6f100ae7cd331b4379ed5e719f6644f6b[m
+Author: wanghekang <2282811096@qq.com>
+Date:   Fri Aug 24 09:14:19 2018 +0800
+
+    award
+
+[33mcommit f960ed30e652673a22df3bbbef29e4bc7af589d0[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Fri Aug 24 00:33:28 2018 +0800
+
+    vip
+
+[33mcommit 1855b9729702dd616f2fb9e02e9d0ad5b6af4b36[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 23:34:24 2018 +0800
+
+    alipay
+
+[33mcommit 0df8c65fa919c7293e11aba7acd38694fa1f20d9[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Thu Aug 23 21:26:09 2018 +0800
+
+    news
+
+[33mcommit e94f31912e8d8893cce28ff945c91d1aaab7c2e7[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 21:11:57 2018 +0800
+
+    alipay
+
+[33mcommit f56813f1c3fbfd521b98623810bd32dfd811055e[m
+Merge: db1efb5 86804b7
+Author: NI24 <2424743401@qq.com>
+Date:   Thu Aug 23 20:33:09 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit db1efb5eac233ba0346074a0a87eb98774e1b857[m
+Author: NI24 <2424743401@qq.com>
+Date:   Thu Aug 23 20:32:35 2018 +0800
+
+    path
+
+[33mcommit 86804b734836a3a12463eb1f9268083a12b0d664[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 19:07:44 2018 +0800
+
+    alipay
+
+[33mcommit 47c9fd4666496686941f1d945a522fcb3d46ad40[m
+Merge: 59fa260 cc9b083
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 18:53:35 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit cc9b083dc84c7e5888df0216ddd96a0a738923e3[m
+Author: wanghekang <2282811096@qq.com>
+Date:   Thu Aug 23 18:51:29 2018 +0800
+
+    award
+
+[33mcommit 59fa26032678cd75fb0f183147ad705dd786030a[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 18:46:41 2018 +0800
+
+    pay
+
+[33mcommit 96f156468a542a6da8e8661e9a69b06aa34862ac[m
+Merge: 1a86bf7 85b6fc2
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 18:45:15 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit 85b6fc23d036217a58089c93ba57cd789082d777[m
+Author: wanghekang <2282811096@qq.com>
+Date:   Thu Aug 23 18:21:41 2018 +0800
+
+    award
+
+[33mcommit 1a86bf798bef090d4a3c00846b5345ccefcf96c6[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 17:59:01 2018 +0800
+
+    alipay
+
+[33mcommit db9d8505be7e1e7ab9354a44a2c969570ffe01e9[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 17:56:42 2018 +0800
+
+    vip
+
+[33mcommit b2384a19848201c005cacc197f2567b7a1d395a7[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 17:07:15 2018 +0800
+
+    pay
+
+[33mcommit 96b60ddf6a05a65d66361fc352d95303f24b6492[m
+Merge: 8bd4186 4e5fb75
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Thu Aug 23 16:54:08 2018 +0800
+
+    userservice
+
+[33mcommit 8bd4186e44df86aa45b8673e2dab2ca3ad959efa[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Thu Aug 23 16:47:26 2018 +0800
+
+    userserviceImp
+
+[33mcommit 4e5fb75f8eaf050ffaab6e76ef28394590112a98[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 16:40:13 2018 +0800
+
+    user
+
+[33mcommit 00c876473f6e08a80ca1c5480e63f978facd574f[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 16:25:24 2018 +0800
+
+    user service
+
+[33mcommit 60e3052be6d1a50c3028b0f8872afc88a743aceb[m
+Merge: 1f9488a 9077f47
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 15:06:21 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit 1f9488a804a774c11391409bf27884bdc355bf92[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 15:04:54 2018 +0800
+
+    user
+
+[33mcommit 9077f47ff8bd7fa0106cc51c6a432a62585a44a4[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Thu Aug 23 14:19:52 2018 +0800
+
+    withdraw
+
+[33mcommit 6ee151ab083d7a53bc67bb68db1acba6e1dc59d2[m
+Merge: db95151 c66541a
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 12:56:16 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit db95151b7f956c35b08d0f2c91e3acb8abcad67c[m
+Author: emmsybil <1242776362@qq.com>
+Date:   Thu Aug 23 12:55:36 2018 +0800
+
+    pay
+
+[33mcommit c66541ae0476c1830238d18db915b25ed4e1d1cd[m
+Author: liaojiaojiao <2489068350@qq.com>
+Date:   Thu Aug 23 11:58:35 2018 +0800
+
+    news
+
+[33mcommit 1b6fd92af2dfd94fe901299cc1763bdf31b31572[m
+Author: NI24 <2424743401@qq.com>
+Date:   Thu Aug 23 11:27:47 2018 +0800
+
+    ni
+
+[33mcommit 494726a6ca1adbe8443fc74fcf654261064fb92b[m
+Author: wanghekang <2282811096@qq.com>
+Date:   Thu Aug 23 11:03:50 2018 +0800
+
+    award
+
+[33mcommit 371efdc8a8f813aa7970902c7ed48a4acad9e979[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Thu Aug 23 10:07:52 2018 +0800
+
+    fig bug
+
+[33mcommit 677ef7e8288ad34c603032eeb8b28052ad7231b1[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Thu Aug 23 09:57:00 2018 +0800
+
+    area bug
+
+[33mcommit 07b824bc68cd0606196524fd0ff48fb9e283e702[m
+Author: mysupergit <3012477662@qq.com>
+Date:   Thu Aug 23 09:39:02 2018 +0800
+
+    reg
+
+[33mcommit 2e0c96f702861279e74fb6005e91064f57ad0164[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Thu Aug 23 09:37:50 2018 +0800
+
+    fix user service bug
+
+[33mcommit 1d0222e19b45999bf27005c31f6e439f08d60d08[m
+Merge: 3c828f4 71db178
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Thu Aug 23 09:31:06 2018 +0800
+
+    Merge branch 'master' of https://github.com/liutao19/xxxt_pro
+
+[33mcommit 3c828f4cae7a93ca102c1bb49c65f720b6886a5c[m
+Author: Your Name <zhangyunhmf@hyn.com>
+Date:   Thu Aug 23 09:30:14 2018 +0800
+
+    groovy script engine
+
+[33mcommit 71db178a96d0cdee897cb24b6955410ccbe3fcbf[m
+Merge:

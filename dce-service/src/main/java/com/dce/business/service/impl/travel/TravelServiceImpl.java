@@ -149,7 +149,13 @@ public class TravelServiceImpl implements ITravelApplyService {
 	public Result<?> ravelRevokeById(Integer applyTravelid) {
 		// TODO Auto-generated method stub
 		logger.info("----ravelRevokeById----");
-		int result = travelApplyDao.ravelRevokeById(applyTravelid);
-		return result > 0 ? Result.successResult("撤销成功") : Result.failureResult("系统繁忙");
+		
+		TravelDo travel = travelApplyDao.selectByPrimaryKey(applyTravelid);
+		if("0".equals(travel.getState())){
+			return Result.failureResult("已通过的申请不能撤销");
+		}else{
+			int result = travelApplyDao.ravelRevokeById(applyTravelid);
+			return result > 0 ? Result.successResult("撤销成功") : Result.failureResult("系统繁忙");
+		}
 	}
 }

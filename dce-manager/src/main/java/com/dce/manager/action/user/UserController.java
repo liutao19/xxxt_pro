@@ -486,8 +486,8 @@ public class UserController extends BaseAction {
 			List<String[]> excelheaderList = new ArrayList<String[]>();
 			String[] excelheader = { "登录账号", "用户等级", "手机号码", "真实姓名", "性别", "身份证", "银行卡号", "银行卡类型", "账号状态", "是否激活" };
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "userName", "userLevel", "mobile", "trueName", "displaySex", "idnumber", "banknumber",
-					"banktype", "status", "isActivated" };
+			String[] excelData = { "userName", "displayUserLevel", "mobile", "trueName", "displaySex", "idnumber",
+					"banknumber", "banktype", "displayStatus", "displayIsActivated" };
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, userLst);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);

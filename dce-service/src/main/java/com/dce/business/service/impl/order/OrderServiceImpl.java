@@ -1,6 +1,7 @@
 package com.dce.business.service.impl.order;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -329,8 +330,8 @@ public class OrderServiceImpl implements IOrderService {
 		order.setOrdercode(orderCode); // 订单号
 		Date date = new Date();
 		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
-		order.setOrderstatus(0); // 未发货状态
-		order.setPaystatus(0); // 未支付状态
+		order.setOrderstatus("0"); // 未发货状态
+		order.setPaystatus("0"); // 未支付状态
 		order.setQty(quantity); // 商品总数量
 		order.setTotalprice(totalprice); // 商品总价格
 		order.setOrderDetailList(chooseGoodsLst); // 订单明细
@@ -340,7 +341,7 @@ public class OrderServiceImpl implements IOrderService {
 		logger.debug("==========》》》》》插入的订单信息：" + order);
 
 		// 判断支付方式，生成预支付订单
-		if (order.getOrdertype() == 1) {
+		if (order.getOrdertype().equals("1")) {
 			// 微信支付
 			try {
 				return getWXPayStr(request, response, buyOrder(order));
@@ -349,7 +350,7 @@ public class OrderServiceImpl implements IOrderService {
 				e.printStackTrace();
 			}
 			// 支付宝支付
-		} else if (order.getOrdertype() == 2) {
+		} else if (order.getOrdertype().equals("2")) {
 			return getAlipayorderStr(buyOrder(order));
 		}
 		logger.debug("===========获取支付方式失败，生成预支付订单失败！！！");
@@ -726,5 +727,35 @@ public class OrderServiceImpl implements IOrderService {
 			e.printStackTrace();
 		}
 		return Result.failureResult("向支付宝发起订单查询失败");
+	}
+
+	/**
+	 * 根据条件打印出订单数据
+	 */
+	@Override
+	public List<Order> selectOrderByCondition(Map<String, Object> paraMap) {
+
+		List<Order> list = new ArrayList<Order>();
+		list = orderDao.selectOrderByCondition(paraMap);
+		for(Order order : list){
+			if("1".equals(order.getPaystatus())){
+				order.setPaystatus("已付");
+			}else{
+				order.setPaystatus("待付");
+			}
+			
+			if("1".equals(order.getOrdertype())){
+				order.setOrdertype("微信");
+			}else{
+				order.setOrdertype("支付宝");
+			}
+			
+			if("1".equals(order.getOrderstatus())){
+				order.setOrdertype("已发货");
+			}else{
+				order.setOrdertype("未发货");
+			}
+		}
+		return list;
 	}
 }

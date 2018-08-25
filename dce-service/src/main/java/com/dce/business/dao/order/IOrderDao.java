@@ -28,6 +28,8 @@ public interface IOrderDao {
 
     List<Map<String, Object>> selectOrderByPage(Map<String, Object> paraMap);
     
+    List<Order> selectOrderByCondition(Map<String, Object> paraMap);
+    
     Long selectGuadanAmount(Map<String, Object> paraMap);
     
     //获取当前用户所有的订单

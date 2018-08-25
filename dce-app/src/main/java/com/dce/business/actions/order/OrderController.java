@@ -122,7 +122,7 @@ public class OrderController extends BaseController {
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));
 		order.setAddressid(Integer.valueOf(addressId));;
-		order.setOrdertype(Integer.valueOf(orderType));
+		order.setOrdertype(orderType);
 
 		logger.info("获取的商品信息-------》》》》》" + goods);
 

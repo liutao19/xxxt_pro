@@ -49,7 +49,8 @@
 		CONCAT(b.address,b.addressDetails) address
 		from ct_order a left join
 		ct_user_address b on b.addressId = a.addressId
-		where a.orderId = #{orderId,jdbcType=BIGINT}
+		where a.orderId =
+		#{orderId,jdbcType=BIGINT}
 
 	</select>
 
@@ -91,7 +92,7 @@
 		where
 		a.userId =
 		#{userId,jdbcType=INTEGER} and
-		a.orderId=b.orderId and 
+		a.orderId=b.orderId and
 		a.payStatus = 1
 		order by
 		a.createTime
@@ -538,9 +539,11 @@
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
 		a.payTime
-		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark awardRemark,
+		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
+		awardRemark,
 		a.alipayStatus alipayStatus,
-		b.true_name trueName,CONCAT(c.address,c.addressDetails)
+		b.true_name
+		trueName,CONCAT(c.address,c.addressDetails)
 		address
 		FROM
 		ct_order a
@@ -577,6 +580,55 @@
 		</trim>
 		order by a.createTime, a.orderStatus desc
 	</select>
+
+	<!-- 导出订单数据 -->
+	<select id="selectOrderByCondition" parameterType="java.util.Map"
+		resultMap="com.dce.business.entity.order.Order">
+		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
+		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
+		a.orderStatus orderstatus,a.payStatus paystatus,
+		a.payTime
+		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
+		awardRemark,
+		a.alipayStatus alipayStatus,
+		b.true_name
+		trueName,CONCAT(c.address,c.addressDetails)
+		address
+		FROM
+		ct_order a
+		LEFT
+		JOIN ct_user b ON a.userid = b.id
+		left join
+		ct_user_address c on
+		c.addressId = a.addressId
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userId != null">
+				AND a.userId = #{userId}
+			</if>
+			<if test="orderStatus != null">
+				AND a.orderStatus = #{orderStatus}
+			</if>
+			<if test="payStatus != null">
+				AND a.payStatus = #{payStatus}
+			</if>
+			<if test="orderType != null">
+				AND a.orderType = #{orderType}
+			</if>
+			<if test="trueName != null">
+				AND b.true_name = #{trueName}
+			</if>
+			<if test="userName != null">
+				AND b.user_name = #{userName}
+			</if>
+			<if test="startDate != null">
+				AND <![CDATA[a.createTime >= STR_TO_DATE(#{startDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+			<if test="endDate != null">
+				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
+			</if>
+		</trim>
+	</select>
+
 	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
 		SELECT sum(qty) as qty
 		FROM ct_order a LEFT JOIN ct_user b ON a.userid

@@ -46,7 +46,7 @@ $(function() {
 	}, {
 		iconCls : 'icon-edit',
 		text : '导出客户信息',
-		handler : editUser
+		handler : export_excel
 	}, {
 		iconCls : 'icon-edit',
 		text : '修改客户信息',
@@ -497,8 +497,7 @@ function save_activity() {
 	var mobile = $("#act_user_mobile").val();
 	var idnumber = $("#act_user_idnumber").val();
 	var banknumber = $("#act_user_banknumber").val();
-	var banktype = $("#act_user_banktype").val()
-	;
+	var banktype = $("#act_user_banktype").val();
 	var sex = $("#act_change_sex").combobox('getValue');
 	var userLevel = $("#act_change_level").combobox('getValue');
 
@@ -588,24 +587,15 @@ function formatDate(value) {
 }
 /* ################***导出**begin*################### */
 function export_excel() {
-	var searchStr = $("#searchForm #searchStr").val();
-	var productCode = $("#searchForm #search_productCode").combobox('getValue');
-	var loanStatus = $("#searchForm #search_loanStatus").combobox('getValue');
-	var loanType = $("#searchForm #search_loanType").combobox('getValue');
-	var cityCode = $("#searchForm #search_city").combobox('getValue');
-	var channelType = $("#searchForm #search_channelType").combobox('getValue');
-	var startDate = $("#searchForm #search_startDate").datebox('getValue');
-	var endDate = $("#searchForm #search_endDate").datebox('getValue');
-	var processNextStep = $("#searchForm #search_processNextStep").combobox(
-			'getValue');
-	// document.getElementById("exportExcel").disabled = true;
-	// document.getElementById("exportExcel").value = "正在导出";
+	var userName = $("#searchForm #userName").val();
+	var userMobile = $("#searchForm #userMobile").val();
+	var startDate = $("#searchForm #user_reg_startDate").datebox('getValue');
+	var endDate = $("#searchForm #user_reg_endDate").datebox('getValue');
+
 	var exportIframe = document.createElement('iframe');
-	exportIframe.src = basePath + "/loan/export/excel.html" + "?searchStr="
-			+ searchStr + "&productCode=" + productCode + "&loanType="
-			+ loanType + "&loanStatus=" + loanStatus + "&cityCode=" + cityCode
-			+ "&channelType=" + channelType + "&startDate=" + startDate
-			+ "&endDate=" + endDate + "&processNextStep=" + processNextStep;
+	exportIframe.src = basePath + "/user/export.html" + "?userName=" + userName
+			+ "&userMobile=" + userMobile + "&startDate=" + startDate
+			+ "&endDate=" + endDate;
 
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);

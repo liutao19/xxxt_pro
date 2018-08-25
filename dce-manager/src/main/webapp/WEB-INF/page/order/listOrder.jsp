@@ -38,6 +38,7 @@
 				      </td>
 			        </tr>
 			      </table>
+			      <a href="javascript:void(0);" class="easyui-linkbutton" id="excel" iconCls="icon-print" onclick="export_excel()">导出excel</a>
 		     </form>
 	     </div>
     	<span id="openOrClose"></span> 

@@ -550,9 +550,9 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public List<UserAccountDo> selectByExample(UserAccountDo example) {
+	public List<Map<String,Object>> exportQuery(Map map) {
 		// TODO Auto-generated method stub
 		
-		return userAccountDao.selectByExample(example);
+		return userAccountDao.exportQuery(map);
 	}
 }

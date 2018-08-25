@@ -10,6 +10,8 @@ import com.dce.business.common.result.Result;
 import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.user.UserDo;
 
 public interface IAccountService {
@@ -191,4 +193,12 @@ public interface IAccountService {
      * 提现申请
      */
     public int updateMoney(Map<String, Object> param);
+    
+    
+    /**
+     * 数据导出
+     * @param example
+     * @return
+     */
+    public List<UserAccountDo> selectByExample(UserAccountDo example);
 }

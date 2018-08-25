@@ -318,7 +318,8 @@ public class UserController extends BaseController {
 			String sex = getString("sex");
 			String banknumber = getString("banknumber");// 卡号
 			String banktype = getString("banktype");// 开卡行
-
+			
+		
 			System.err.println("shuju----" + trueName);
 
 			logger.info("用户信息，userId:" + userId);
@@ -341,9 +342,8 @@ public class UserController extends BaseController {
 			// 更改用户认证状态
 			userDo.setCertification(1);
 
-			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
-
 			// 手机号验证
+			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
 			if (!p.matcher(mobile).matches()) {
 
 				return Result.failureResult("手机号码错误");
@@ -370,10 +370,17 @@ public class UserController extends BaseController {
 
 			return userService.Authentication(userDo);
 
+		} catch (IllegalArgumentException t) {
+			t.printStackTrace();
+			logger.error("用户信息认证失败", t);
+			return Result.failureResult(t.getMessage());
 		} catch (Exception e) {
-
+			e.printStackTrace();
+			logger.error("用户信息认证失败", e);
 			return Result.failureResult("用户信息认证失败");
 		}
+		
+		
 	}
 
 	

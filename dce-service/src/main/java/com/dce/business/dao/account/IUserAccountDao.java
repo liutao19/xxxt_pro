@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.dce.business.entity.account.UserAccountDetailDo;
 import com.dce.business.entity.account.UserAccountDo;
+import com.dce.business.entity.travel.TravelDoExample;
 
 public interface IUserAccountDao {
     int deleteByPrimaryKey(Integer id);
@@ -73,4 +74,12 @@ public interface IUserAccountDao {
      * 提现申请
      */
     public int updateMoney(Map<String, Object> param);
+    
+    
+    /**
+     * 数据导出
+     * @param example
+     * @return
+     */
+    public List<UserAccountDo> selectByExample(UserAccountDo example);
 }

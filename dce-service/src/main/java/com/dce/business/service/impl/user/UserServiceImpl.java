@@ -644,6 +644,7 @@ public class UserServiceImpl implements IUserService {
 		// TODO Auto-generated method stub
 
 		if (userDo == null || userDo.getId() == null) {
+			
 			return Result.failureResult("认证用户信息参数错误!");
 		}
 

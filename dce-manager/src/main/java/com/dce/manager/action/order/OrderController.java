@@ -94,6 +94,13 @@ public class OrderController extends BaseAction {
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
 	}
+	
+	@RequestMapping("/export")
+	public void exportOrder(HttpServletResponse response){
+		Order order = new Order();
+		order.setOrderstatus(0);
+		
+	}
 
 	/**
 	 * 发货

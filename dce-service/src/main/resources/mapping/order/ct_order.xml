@@ -538,8 +538,7 @@
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
 		a.payTime
-		paytime,a.orderType ordertype,a.addressId addressid, a.alipayStatus
-		alipayStatus,a.awardRemark awardRemark,
+		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark awardRemark,
 		a.alipayStatus alipayStatus,
 		b.true_name trueName,CONCAT(c.address,c.addressDetails)
 		address

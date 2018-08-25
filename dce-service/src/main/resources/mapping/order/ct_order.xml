@@ -583,7 +583,7 @@
 
 	<!-- 导出订单数据 -->
 	<select id="selectOrderByCondition" parameterType="java.util.Map"
-		resultMap="com.dce.business.entity.order.Order">
+		resultType="com.dce.business.entity.order.Order">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,

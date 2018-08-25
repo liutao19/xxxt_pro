@@ -87,6 +87,8 @@ public class PayServiceImpl implements IPayService {
 	private ITransOutDailyService transOutDailyService;
 	@Resource
 	private IEthereumTransInfoDao etherenumTranInfodao;	
+	
+	private int ordId=0;
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> recharge(Integer userId, String password, BigDecimal qty) {
@@ -218,58 +220,34 @@ public class PayServiceImpl implements IPayService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo) {
 		Result<?> result = Result.successResult("审核成功!") ;
-		Map<String,String> resultMap=new HashMap<String,String>();
-
-		//1、校验用户金额是否足够
-		/*UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);			
-		//System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
-		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
-			return Result.failureResult("账户余额不足");
-		}*/
-		WithdrawalsDo withdraw=new WithdrawalsDo();
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
-		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+		Map<String, Object> param = new HashMap<String, Object>();
+		WithdrawalsDo withdrawDo = withdrawDao.selectByPrimaryKey(withdrawId);
+		param.put("withdrawalsId", withdrawId);
+		EthereumTransInfoDo transgetId=etherenumTranInfodao.select(param);
 		String orderId=getOrderIdByUUId();
-		request.setBizContent("{" +
-		"\"out_biz_no\":"+orderId+","+
-		"\"payee_type\":\"ALIPAY_LOGONID\"," +
-		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
-		"\"amount\":"+50+"," +
-		"\"remark\":\"提现\"" +
-		"}");
-		AlipayFundTransToaccountTransferResponse response = null;
-		try {
-			response = alipayClient.execute(request);
-			if("10000".equals(response.getCode())){
-				result.setMsg("转账成功");
-				withdraw.setWithdraw_status("1"); 
-				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
-				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
-				withdraw.setPaymentDate((new Date()).getTime() / 1000);
-				//流水信息
-				EthereumTransInfoDo trans=new EthereumTransInfoDo();
-				trans.setUserid(userId);      //用户id
-				trans.setActualamount(qty.toString());     //转出金额
-				trans.setAmount(qty.toString());    //转出金额
-				trans.setCreatetime(new Date());
-				trans.setStatus("true");      //状态
-				trans.setType(2);      //类型
-				trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
-				etherenumTranInfodao.insertSelective(trans);
-			}else{
-				System.out.println(response.getSubMsg());
-				withdraw.setRemark(response.getSubMsg());
-				withdraw.setWithdraw_status("0"); 
-				withdraw.setId(withdrawId);
-				withdrawDao.updateWithDrawStatus(withdraw);
-				return Result.failureResult(response.getSubMsg());
+		//重做
+		System.out.println("ordId22222"+ordId);
+		if(transgetId!=null&&transgetId.getStatus().equals("false")){
+			ordId++;
+			System.out.println("orderId"+ordId);
+			if(ordId>1){
+				result.setMsg("交易正在进行，请稍后...");
+			}else if(ordId==1){
+				result=this.trans(withdrawId, userId, qty, bankNo,orderId);
 			}
-			withdraw.setId(withdrawId);
-			withdrawDao.updateWithDrawStatus(withdraw);
-		} catch (AlipayApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return Result.failureResult(response.getSubMsg());
+		}else{
+			//流水信息
+			EthereumTransInfoDo transInfo=new EthereumTransInfoDo();
+			transInfo.setPointamount(DataEncrypt.encrypt(orderId));  //orderId
+			transInfo.setWithdrawalsId(withdrawId);                  //转账id唯一               
+			transInfo.setUserid(userId);                             //用户id
+			transInfo.setAmount(qty.toString());                     //转出金额
+			transInfo.setCreatetime(new Date());                     //创建日期
+			transInfo.setType(2);                                    //类型：转入
+			transInfo.setStatus("false");                            //状态：false未到账，true已到账 
+			transInfo.setToaccount(DataEncrypt.encrypt(bankNo));     //转入地址
+			etherenumTranInfodao.insertSelective(transInfo);
+			result=this.trans(withdrawId, userId, qty, bankNo,orderId);
 		}
 		return result;
 	}
@@ -487,9 +465,61 @@ public class PayServiceImpl implements IPayService {
 
 		return Result.successResult(null);
 	}
-	
+	public Result<?> trans(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo,String orderId) {
+		Result<?> result = Result.successResult("提现成功!") ;
+		//EthereumTransInfoDo ethtransInfo=etherenumTranInfodao.select(params); 
+		WithdrawalsDo withdraw=new WithdrawalsDo();
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
+		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+		request.setBizContent("{" +
+			"\"out_biz_no\":"+orderId+","+
+			"\"payee_type\":\"ALIPAY_LOGONID\"," +
+			"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+			"\"amount\":"+50+"," +
+			"\"remark\":\"提现\"" +
+			"}");
+		AlipayFundTransToaccountTransferResponse response = null;
+		try {
+			response = alipayClient.execute(request);
+			EthereumTransInfoDo ethetraninfo=new EthereumTransInfoDo();
+			if("10000".equals(response.getCode())){
+				result.setMsg("转账成功");
+				withdraw.setWithdraw_status("1"); 
+				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
+				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
+				withdraw.setPaymentDate((new Date()).getTime() / 1000);
+				ethetraninfo.setStatus("true");
+				ethetraninfo.setActualamount(qty.toString());               //实际转出金额
+				ethetraninfo.setConfirmed("true");
+			}else{
+				System.out.println(response.getSubMsg());
+				withdraw.setRemark(response.getSubMsg());
+				withdraw.setWithdraw_status("0"); 
+				withdraw.setId(withdrawId);
+				withdrawDao.updateWithDrawStatus(withdraw);
+				ethetraninfo.setStatus("false");
+				ethetraninfo.setConfirmed("false");
+				ethetraninfo.setHash(response.getMsg());
+				ethetraninfo.setWithdrawalsId(withdrawId);
+				etherenumTranInfodao.updateByWithdrawId(ethetraninfo);
+				ordId=0;
+				return Result.failureResult(response.getSubMsg());
+			}
+			withdraw.setId(withdrawId);
+			withdrawDao.updateWithDrawStatus(withdraw);
+			ethetraninfo.setWithdrawalsId(withdrawId);
+			etherenumTranInfodao.updateByWithdrawId(ethetraninfo);
+		} catch (AlipayApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return Result.failureResult(response.getSubMsg());
+		}
+		return result;
+		
+	}
 	public Trans withdraw(WithdrawalsDo withdraw){
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);		AlipayFundTransOrderQueryRequest request = new AlipayFundTransOrderQueryRequest();
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);		
+		AlipayFundTransOrderQueryRequest request = new AlipayFundTransOrderQueryRequest();
 		request.setBizContent("{" +
 		"\"out_biz_no\":"+withdraw.getOutbizno()+"," +
 		"\"order_id\":"+withdraw.getOrderId()+"," +
@@ -500,7 +530,6 @@ public class PayServiceImpl implements IPayService {
 			response = alipayClient.execute(request);
 			String status = null;
 			if(response.isSuccess()){
-				System.out.println("调用成功");
 				trans.setArrival_time_end(response.getArrivalTimeEnd());
 				trans.setFail_reason(response.getFailReason());
 				trans.setOrder_fee(response.getOrderFee());
@@ -519,10 +548,10 @@ public class PayServiceImpl implements IPayService {
 				else if(response.getStatus().equals("REFUND")){
 					status="退票";
 				}
-				trans.setStatus(status);
 			} else {
-				System.out.println("调用失败");
+				status="失败";
 			}
+			trans.setStatus(status);
 		} catch (AlipayApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

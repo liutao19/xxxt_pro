@@ -20,6 +20,15 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!-- 拦截器配置 -->
+    <mvc:interceptors>
+        <!-- 配置Token拦截器，防止用户重复提交数据 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.dce.business.common.filter.TokenInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
 		<property name="properties" ref="sysconfig" />

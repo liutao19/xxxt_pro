@@ -63,7 +63,7 @@ $(function(){
 	 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 						}else if(row.process_status == "2"){
 	 							if(row.withdrawStatus == "未到账"){
-	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">提现</a>';
+	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a>';
 	 							}else{
 	 								return '<a href="javascript:void(0);"  onclick="to_viewTrans('+row.id+');">查看进展</a>';
 	 							}
@@ -193,7 +193,7 @@ function to_viewTrans(withdrawId){
 
 
 function auditWithdraw(withdrawId, optType){
-	var msg = optType=='2'?'审核通过':optType=='3'?'审核拒绝':'提现'; 
+	var msg = optType=='2'?'提现通过':optType=='3'?'提现拒绝':'重做'; 
 	$.messager.confirm("确认", "确认" + msg + "？", function (r) {  
         if (r) {  
         	$.ajax({

@@ -43,7 +43,7 @@ public class EthereumJobServiceImpl implements IEthereumJobService {
 			params.put("confirmed", "false"); //未确认
 			params.put("offset", offset);
 			params.put("rows", rows);
-			List<EthereumTransInfoDo> list = ethereumTransInfoDao.select(params);
+			List<EthereumTransInfoDo> list = ethereumTransInfoDao.selectParam(params);
 			if (CollectionUtils.isEmpty(list)) {
 				break;
 			}

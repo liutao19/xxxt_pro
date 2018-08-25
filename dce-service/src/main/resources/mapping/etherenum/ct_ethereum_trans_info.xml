@@ -224,6 +224,60 @@
 		</set>
 		where id = #{id,jdbcType=BIGINT}
 	</update>
+	<update id="updateByWithdrawId" parameterType="com.dce.business.entity.etherenum.EthereumTransInfoDo">
+		update ct_ethereum_trans_info
+		<set>
+			<if test="userid != null">
+				userId = #{userid,jdbcType=INTEGER},
+			</if>
+			<if test="fromaccount != null">
+				fromAccount = #{fromaccount,jdbcType=VARCHAR},
+			</if>
+			<if test="toaccount != null">
+				toAccount = #{toaccount,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				amount = #{amount,jdbcType=VARCHAR},
+			</if>
+			<if test="actualamount != null">
+				actualAmount = #{actualamount,jdbcType=VARCHAR},
+			</if>
+			<if test="pointamount != null">
+				pointAmount = #{pointamount,jdbcType=VARCHAR},
+			</if>
+			<if test="gas != null">
+				gas = #{gas,jdbcType=VARCHAR},
+			</if>
+			<if test="gaslimit != null">
+				gasLimit = #{gaslimit,jdbcType=VARCHAR},
+			</if>
+			<if test="actualgas != null">
+				ActualGas = #{actualgas,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmed != null">
+				confirmed = #{confirmed,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="hash != null">
+				hash = #{hash,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="createtime != null">
+				createTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatetime != null">
+				updateTime = #{updatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="withdrawFee != null">
+				withdrawFee = #{withdrawFee,jdbcType=VARCHAR},
+			</if>		
+		</set>
+		where withdrawalsId = #{withdrawalsId,jdbcType=BIGINT}
+	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.etherenum.EthereumTransInfoDo">
 		update ct_ethereum_trans_info
 		set userId = #{userid,jdbcType=INTEGER},
@@ -268,7 +322,28 @@
             limit #{offset}, #{rows}
         </if>
     </select>
-    
+    <!-- 自定义查询 -->
+    <select id="selectParam" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from ct_ethereum_trans_info u
+        <trim prefix="WHERE" prefixOverrides="AND |OR "> 
+           <if test="status != null">  
+               AND u.status = #{status}
+           </if>
+           <if test="confirmed != null">  
+               AND u.confirmed = #{confirmed}
+           </if>
+           <if test="withdrawalsId != null">  
+               AND u.withdrawalsId = #{withdrawalsId}
+           </if>
+           and hash <![CDATA[ <> ]]> '' and u.status='true'
+        </trim> 
+        order by createTime
+        <if test="offset != null">  
+            limit #{offset}, #{rows}
+        </if>
+    </select>
 	<!-- 自定义查询 -->
     <select id="queryEthTrans" parameterType="java.util.Map" resultType="map">
         select  

@@ -13,12 +13,17 @@ public interface IEthereumTransInfoDao {
     int insertSelective(EthereumTransInfoDo record);
 
     EthereumTransInfoDo selectByPrimaryKey(Long id);
+    
 
     int updateByPrimaryKeySelective(EthereumTransInfoDo record);
+    
+    int updateByWithdrawId(EthereumTransInfoDo record);
 
     int updateByPrimaryKey(EthereumTransInfoDo record);
     
-    List<EthereumTransInfoDo> select(Map<String, Object> params);
+    EthereumTransInfoDo select(Map<String, Object> params);
+    
+    List<EthereumTransInfoDo> selectParam(Map<String, Object> params);
 
     /**
      * 查询以太坊流水

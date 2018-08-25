@@ -40,13 +40,15 @@
 						</td>
 			        </tr>
 			      </table>
+			      
 		     </form>
 	     </div>
     	<span id="openOrClose"></span> 
 	</div>
   
   	<!-- 数据表格区域 -->
-  <div id="withDrawTable"></div>
+  <div id="withDrawTable">
+  </div>
   
 </div>
 

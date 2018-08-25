@@ -76,8 +76,14 @@ public class WithdrawServiceImpl implements IWithdrawService {
         withdraw.setConfirmDate(new Date().getTime()/1000);
         
         //审核通过同意
-        if ("2".equals(auditResult)) {
-            
+        if ("2".equals(auditResult)||"4".equals(auditResult)) {
+        	check(withdrawId); //重复性校验
+        	if(withdrawDo.getType().equals("1")){
+                result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo());
+        	}
+            if(result.isSuccess()){
+            	result.setMsg("提现成功！");
+            }
         } else if ("3".equals(auditResult)) {
             // 返还钱数
             UserAccountDo updateAccount = new UserAccountDo();
@@ -88,16 +94,6 @@ public class WithdrawServiceImpl implements IWithdrawService {
            
             addMessage(withdrawDo.getUserid(), withdrawDo.getAmount());
             
-        }
-        //提现操作
-        else if("4".equals(auditResult)){
-        	check(withdrawId); //重复性校验
-        	if(withdrawDo.getType().equals("1")){
-                result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo());
-        	}
-            if(result.isSuccess()){
-            	result.setMsg("提现成功！");
-            }
         }
         
         //更新
@@ -115,7 +111,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
     private void check(Integer withdrawId) {
         Map<String, Object> params = new HashMap<>();
         params.put("withdrawalsId", withdrawId);
-        List<WithdrawalsDo> list = withdrawDao.select(params);
+        List<EthereumTransInfoDo> list = ethereumTransInfoDao.selectParam(params);
         if (!CollectionUtils.isEmpty(list)) {
             throw new BusinessException("提现正在处理中，请勿重复操作");
         }

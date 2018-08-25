@@ -106,7 +106,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
-			if (maps == null) {
+			if (maps.isEmpty()) {
 				return;
 			}
 			// 多种奖励办法以;分隔

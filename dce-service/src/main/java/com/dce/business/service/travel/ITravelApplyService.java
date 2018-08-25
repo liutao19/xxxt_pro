@@ -24,4 +24,6 @@ public interface ITravelApplyService {
 	public PageDo<TravelDo> getTravelapplyTravelPage(Map<String, Object> param, PageDo<TravelDo> page);	
 	
 	public int updateapplyStateById(Integer applyTravelid);
+	
+	public Result<?>ravelRevokeById(Integer applyTravelid);
 }

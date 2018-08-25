@@ -763,22 +763,12 @@ public class UserServiceImpl implements IUserService {
 		userDo.setIsActivated(1);// 激活状态
 		userDo.setCertification(1);// 认证状态
 
-		userDo.setUserLevel(userDo.getUserLevel()); // 等级
-		userDo.setSex(Integer.valueOf(userDo.getSex()));// 性别
-		userDo.setUserPassword(userDo.getUserPassword()); // 登录密码
-		userDo.setTwoPassword(userDo.getTwoPassword()); // 支付密码
-		userDo.setIdnumber(userDo.getIdnumber());// 身份证
-		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
-		userDo.setBanktype(userDo.getBanktype());// 开户行
-		userDo.setTrueName(userDo.getUserName());// 姓名
-		userDo.setMobile(userDo.getMobile()); // 手机号
-
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
 
 			Map<String, Object> params = new HashMap<String, Object>();
 
-			params.put("mobile", DataEncrypt.encrypt(userDo.getRefereeUserMobile()));
+			params.put("mobile", userDo.getRefereeUserMobile());
 
 			List<UserDo> refUserLst = this.selectMobile(params);
 			if (refUserLst == null || refUserLst.size() < 1) {

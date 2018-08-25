@@ -72,7 +72,7 @@
 		createTime desc
 	</select>
 
-	<!-- 获取当前用户所有的订单，一对多查询 -->
+	<!-- 获取当前用户所有的订单（支付成功），一对多查询 -->
 	<select id="selectByUesrIdOneToMany" parameterType="java.lang.Integer"
 		resultMap="orderMapper">
 		select
@@ -91,7 +91,8 @@
 		where
 		a.userId =
 		#{userId,jdbcType=INTEGER} and
-		a.orderId=b.orderId
+		a.orderId=b.orderId and 
+		a.payStatus = 1
 		order by
 		a.createTime
 		desc
@@ -498,14 +499,10 @@
 		UPDATE ct_order
 		<trim prefix="SET" suffixOverrides=",">
 			<if test="newStatus != null">
-				orderStatus = #{newStatus},
-			</if>
-			<if test="matchOrderId != null">
-				matchOrderId = #{matchOrderId},
+				payStatus = #{newStatus},
 			</if>
 		</trim>
-
-		WHERE orderId = #{orderId} and orderStatus = #{oldStatus}
+		WHERE orderId = #{orderId} and payStatus = #{oldStatus}
 	</update>
 
 	<update id="updateMatchOrder" parameterType="com.dce.business.entity.order.Order">
@@ -541,8 +538,7 @@
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
 		a.payTime
-		paytime,a.orderType ordertype,a.addressId addressid, a.alipayStatus
-		alipayStatus,a.awardRemark awardRemark,
+		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark awardRemark,
 		a.alipayStatus alipayStatus,
 		b.true_name trueName,CONCAT(c.address,c.addressDetails)
 		address

@@ -65,7 +65,7 @@
 		</tr>
 		<tr>
 			<td>银行卡开户行:</td>
-			<td><input id="edit_user_banktype" class="easyui-validatebox"
+			<td><input id="vip_user_banktype" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.banktype }"
 				style="height: 30px;" /></td>
 		</tr>

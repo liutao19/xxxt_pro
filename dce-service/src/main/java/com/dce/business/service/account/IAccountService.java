@@ -89,6 +89,11 @@ public interface IAccountService {
 	void convertBetweenAccount(Integer sourceUserId, Integer targetUserId, BigDecimal sourceAmount,
 			BigDecimal targetAmount, String fromAccount, String toAccount, IncomeType sourceMsg, IncomeType targetMsg);
 
+	/**
+	 * 多条件查询流水
+	 * @param params
+	 * @return
+	 */
 	List<UserAccountDetailDo> selectUserAccountDetail(Map<String, Object> params);
 
 	/**

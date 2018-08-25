@@ -34,7 +34,7 @@
 					<table border="0">
 						<tr>
 							<td class="tdfont">用户名:<input type="text" size="14"
-								id="userName" name="userName" placeholder="用户名"></td>
+								id="name" name="name" placeholder="用户名"></td>
 							<td class="tdfont" colspan="2">创建时间: <input type="text"
 								id="startDate" name="startDate" class="easyui-datetimebox"
 								size="14" placeholder="开始时间" data-options="editable : true" />-

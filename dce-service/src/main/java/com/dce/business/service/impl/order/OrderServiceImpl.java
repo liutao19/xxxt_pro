@@ -25,6 +25,7 @@ import com.alipay.api.request.AlipayTradeQueryRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import com.dce.business.common.alipay.util.AlipayConfig;
+import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.Constants;
 import com.dce.business.common.util.DateUtil;
@@ -42,6 +43,7 @@ import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.dict.ICtCurrencyService;
@@ -177,50 +179,46 @@ public class OrderServiceImpl implements IOrderService {
 	/**
 	 * 支付成功，更新订单状态，计算奖励处理
 	 * 
-	 * @return
+	 * @return 处理出错抛异常
 	 */
-	public boolean orderPay(String ordercode, String gmtPayment) {
-
-		boolean flag = false; // 返回业务处理最终结果
-		boolean updateOrder = true;
-		boolean updateUser = true;
-
+	public void orderPay(String ordercode, String gmtPayment) {
 		try {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
-			logger.info("根据订单编号查询出的订单：" + order);
+			logger.debug("根据订单编号查询出的订单：" + order);
+			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
+			Map<String, Object> paraMap = new HashMap<String, Object>();
 			// 付款状态为已支付
-			order.setPaystatus(1);
-			// 支付宝返回的支付结果成功
-			order.setAlipayStatus(1);
+			paraMap.put("newStatus", 1);
+			paraMap.put("oldStatus", 0);
 			// 支付时间
-			order.setPaytime(gmtPayment);
-
-			logger.info("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
-			// 更新订单表状态
-			int i = orderDao.updateByOrderCodeSelective(order);
+			paraMap.put("payTime", gmtPayment);
+			paraMap.put("orderId", order.getOrderid());
+			// 更新订单表状态,从未付改成已付
+			int i = orderDao.updateOrderStatusByOldStatus(paraMap);
 			if (i <= 0) {
-				updateOrder = false;
-				logger.info("==========》》》》》订单表更新失败");
+				throw new BusinessException("支付宝回调更新订单失败，order：" + order, "lipay002");
 			}
+
 			// 激活用户状态
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("id", order.getUserid());
-			map.put("isActivated", 1);
-			int j = userService.updateUserStatus(map);
-			if (j <= 0) {
-				updateUser = false;
-				logger.info("==========》》》》》用户状态激活失败");
+			UserDo buyer = userService.getUser(order.getUserid());
+			// 未激活的用户去激活
+			if (buyer.getIsActivated().intValue() != 1) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("id", order.getUserid());
+				map.put("isActivated", 1);
+				int j = userService.updateUserStatus(map);
+				logger.debug("用户状态激活结果=====" + j);
 			}
-			// 计算奖励
+			// 计算奖励， 如果计算过程失败，这个服务不会抛异常， 会记录在订单的奖金计算状态的字段， 后台管理员可以重新计算
 			awardService.calcAward(order.getUserid(), order.getOrderid());
 
 		} catch (Exception e) {
-			logger.info("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
+			logger.debug("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
 			e.printStackTrace();
+			logger.error("订单支付成功，处理逻辑业务失败！", e);
+			throw e;
 		}
-		flag = updateOrder && updateUser;
-		return flag;
 	}
 
 	/**
@@ -232,6 +230,7 @@ public class OrderServiceImpl implements IOrderService {
 		try {
 			// 获取订单对象
 			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
+			logger.debug("=======获取订单对象=====" + oldOrder);
 
 			// 插入订单明细
 			for (OrderDetail orderDetail : order.getOrderDetailList()) {
@@ -239,7 +238,7 @@ public class OrderServiceImpl implements IOrderService {
 				orderDetailDao.insertSelective(orderDetail);
 			}
 		} catch (Exception e) {
-			logger.debug("插入订单明细失败！！！");
+			logger.error("添加订单明细失败！！！" + e);
 			e.printStackTrace();
 		}
 		return order;
@@ -308,7 +307,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 产生订单编号
 		String orderCode = OrderCodeUtil.genOrderCode(order.getUserid());
-		logger.info("商户自行产生的订单号=====》》》" + orderCode);
+		logger.debug("商户自行产生的订单号=====》》》" + orderCode);
 
 		Integer quantity = 0; // 商品总数量
 		BigDecimal totalprice = new BigDecimal(0); // 商品总价格
@@ -317,13 +316,13 @@ public class OrderServiceImpl implements IOrderService {
 			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 			quantity += orderDetail.getQty(); // 商品总数量
 			totalprice = totalprice.add(BigDecimal.valueOf(orderDetail.getPrice())); // 商品总价格
-			logger.info("商品总金额---------》》》》》》》》》" + totalprice);
+			logger.debug("商品总金额---------》》》》》》》》》" + totalprice);
 		}
 
 		if (priceSpread != 0) { // 总金额加上赠品需要补的差价
 			totalprice = totalprice.add(BigDecimal.valueOf(priceSpread));
 		}
-		logger.info("需要补的赠品差价========》》》：" + priceSpread);
+		logger.debug("需要补的赠品差价========》》》：" + priceSpread);
 
 		// 创建订单
 		// Order newOrder = new Order();
@@ -346,7 +345,7 @@ public class OrderServiceImpl implements IOrderService {
 			try {
 				return getWXPayStr(request, response, buyOrder(order));
 			} catch (Exception e) {
-				logger.info("获取微信预支付订单出错");
+				logger.debug("获取微信预支付订单出错");
 				e.printStackTrace();
 			}
 			// 支付宝支付
@@ -368,7 +367,7 @@ public class OrderServiceImpl implements IOrderService {
 	public Result<String> getAlipayorderStr(Order order) {
 
 		String orderString = "";
-		logger.info("============支付宝下单获取，获取的商户订单号为：===========" + order.getOrdercode());
+		logger.debug("============支付宝下单，获取的商户订单号为：===========" + order.getOrdercode());
 
 		if (Double.valueOf(order.getTotalprice().toString()) <= 0) // 一些必要的验证，防止抓包恶意修改支付金额
 		{
@@ -380,8 +379,7 @@ public class OrderServiceImpl implements IOrderService {
 		AlipaymentOrder alipaymentOrder = new AlipaymentOrder();
 		alipaymentOrder.setOrderid(order.getOrderid());
 		alipaymentOrder.setOrdercode(order.getOrdercode());
-		alipaymentOrder.setTotalamount(order.getTotalprice());
-		alipaymentOrder.setReceptamount(order.getTotalprice());
+		alipaymentOrder.setTotalamount(order.getTotalprice()); // 交易金额
 		alipaymentOrder.setOrderstatus(0);
 		alipaymentOrder.setRemark("支付宝支付");
 
@@ -426,15 +424,15 @@ public class OrderServiceImpl implements IOrderService {
 			logger.debug("生成支付宝预付单失败！！！！");
 			e.printStackTrace();
 		}
-		return Result.successResult("返回支付宝预付订单", orderString);
+		return Result.successResult("生成支付宝预付订单", orderString);
 	}
 
 	/**
 	 * 支付宝异步通知处理，验签
 	 */
 	@Override
-	public String notify(Map<String, String> conversionParams) {
-		logger.info("==================支付宝异步请求逻辑处理=============");
+	public String notify(Map<String, String> conversionParams) throws Exception {
+		logger.debug("==================支付宝异步请求逻辑处理=============");
 
 		// 签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
 		boolean signVerified = false;
@@ -445,166 +443,126 @@ public class OrderServiceImpl implements IOrderService {
 					AlipayConfig.CHARSET, AlipayConfig.SIGNTYPE);
 
 		} catch (AlipayApiException e) {
-			logger.info("==================验签失败 ！");
 			e.printStackTrace();
+			logger.error("支付回调验签失败", e);
+			throw new BusinessException("验签失败", "alipay001");
 		}
+
 		// 对验签进行处理
-		if (signVerified) {
-			// 验签通过
-			// 获取需要保存的数据
-			String appId = conversionParams.get("app_id");// 支付宝分配给开发者的应用Id
-			String notifyTime = conversionParams.get("notify_time");// 通知时间:yyyy-MM-dd
-																	// HH:mm:ss
-			String gmtCreate = conversionParams.get("gmt_create");// 交易创建时间:yyyy-MM-dd
-																	// HH:mm:ss
-			String gmtPayment = conversionParams.get("gmt_payment");// 交易付款时间
-			String gmtRefund = conversionParams.get("gmt_refund");// 交易退款时间
-			String gmtClose = conversionParams.get("gmt_close");// 交易结束时间
-			String tradeNo = conversionParams.get("trade_no");// 支付宝的交易号
-			String outTradeNo = conversionParams.get("out_trade_no");// 获取商户之前传给支付宝的订单号（商户系统的唯一订单号）
-			String sellerId = conversionParams.get("seller_id");// 卖家支付宝用户号
-			String sellerEmail = conversionParams.get("seller_email");// 卖家支付宝账号
-			String totalAmount = conversionParams.get("total_amount");// 订单金额:本次交易支付的订单金额，单位为人民币（元）
-			String receiptAmount = conversionParams.get("receipt_amount");// 实收金额:商家在交易中实际收到的款项，单位为元
-			String invoiceAmount = conversionParams.get("invoice_amount");// 开票金额:用户在交易中支付的可开发票的金额
-			String buyerPayAmount = conversionParams.get("buyer_pay_amount");// 付款金额:用户在交易中支付的金额
-			String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
-
-			logger.info("需要校验的参数=======》》》out_trade_no：" + outTradeNo + "======》》》total_amount：" + totalAmount
-					+ "=====》》》seller_id：" + sellerId + "=====》》》app_id：" + appId);
-
-			// 支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）
-			Order order = orderDao.selectByOrderCode(outTradeNo); // 查询出对应的订单记录
-			logger.info("根据支付宝的通知信息查询出对应的订单信息===========》》》" + order);
-
-			// 目前测试中totalAmount.equals(order.getTotalprice())，totalAmount先暂时设置为0.01
-			if (order != null && totalAmount.equals("0.01") && sellerId.equals(AlipayConfig.seller_id)
-					&& AlipayConfig.APPID.equals(appId)) {
-
-				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo);
-				// 修改数据库支付宝订单记录(因为要保存每次支付宝返回的信息到数据库里，以便以后查证)
-				alipaymentOrder.setNotifytime(notifyTime);
-				alipaymentOrder.setGmtcreatetime(gmtPayment);
-				alipaymentOrder.setGmtrefundtime(gmtRefund);
-				alipaymentOrder.setCreatetime(gmtCreate);
-				alipaymentOrder.setGmtclosetime(gmtClose);
-				alipaymentOrder.setTradeno(tradeNo);
-				alipaymentOrder.setSelleremail(sellerEmail);
-				alipaymentOrder.setSellerid(sellerId);
-				alipaymentOrder.setReceptamount(new BigDecimal(receiptAmount));
-				alipaymentOrder.setInvoiceamount(Double.valueOf(invoiceAmount));
-				alipaymentOrder.setBuyerpayamount(Double.valueOf(buyerPayAmount));
-
-				switch (tradeStatus) // 判断交易结果
-				{
-				case "TRADE_FINISHED": // 交易结束并不可退款
-					alipaymentOrder.setOrderstatus(3);
-					break;
-				case "TRADE_SUCCESS": // 交易支付成功
-					alipaymentOrder.setOrderstatus(2);
-					break;
-				case "TRADE_CLOSED": // 未付款交易超时关闭或支付完成后全额退款
-					alipaymentOrder.setOrderid(1);
-					break;
-				case "WAIT_BUYER_PAY": // 交易创建并等待买家付款
-					alipaymentOrder.setOrderstatus(0);
-					break;
-				default:
-					break;
-				}
-				logger.info("======支付宝交易状态======》》》：" + tradeStatus);
-				// 更新支付记录表中的状态
-				int returnResult = alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
-
-				// 只有交易通知状态为TRADE_SUCCESS或TRADE_FINISHED时，支付宝才会认定为买家付款成功
-				if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
-
-					// 支付成功，逻辑业务处理
-					boolean updateOrderResult = orderPay(outTradeNo, gmtPayment);
-
-					// 逻辑业务处理成功才返回success给支付宝
-					if (returnResult > 0 && updateOrderResult) {
-						return "success";
-
-					} else {
-						return "failure";
-					}
-				} else {
-					return "failure";
-				}
-			} else {
-				logger.info("==========支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
-				return "failure";
-			}
-			// 验签不通过
-		} else {
-			logger.info("============验签不通过 ！");
+		if (!signVerified) {
+			logger.debug("============验签不通过 ！");
 			return "failure";
 		}
+
+		// 验签通过
+		// 获取需要保存的数据
+		boolean isPass = checkAlipayParamer(conversionParams);
+		if (isPass == false) {
+			return "failure";
+		}
+
+		String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
+		String gmtPayment = conversionParams.get("gmt_payment");// 交易付款时间
+
+		// 记录通知日志
+		boolean logStatus = logAlipayNotify(conversionParams);
+		logger.debug("记录通知日志结果======》》》》" + logStatus);
+
+		// 支付成功做业务逻辑
+		if ("TRADE_FINISHED".equals(tradeStatus) || "TRADE_SUCCESS".equals(tradeStatus)) {
+			String outTradeNo = conversionParams.get("out_trade_no");// 获取商户之前传给支付宝的订单号（商户系统的唯一订单号）
+			orderPay(outTradeNo, gmtPayment);
+		}
+		return "sucess";
 	}
 
 	/**
-	 * 向支付宝发起订单查询请求
+	 * 校验 out_trade_no、total_amount、sellerId、app_id
 	 * 
-	 * @param outTradeNo
+	 * @param conversionParams
 	 * @return
 	 */
-	@Override
-	public Result<?> alipayQuery(String outTradeNo) {
-		logger.info("==================向支付宝发起查询，查询商户订单号为：" + outTradeNo);
+	private boolean checkAlipayParamer(Map<String, String> conversionParams) {
 
-		if (outTradeNo == "") {
-			logger.info("支付宝查询的订单编号为空！");
-			return Result.failureResult("查询的支付宝订单号为空！！！");
+		String appId = conversionParams.get("app_id");// 支付宝分配给开发者的应用Id
+		String outTradeNo = conversionParams.get("out_trade_no");// 获取商户之前传给支付宝的订单号（商户系统的唯一订单号）
+		String totalAmount = conversionParams.get("total_amount");// 订单金额:本次交易支付的订单金额，单位为人民币（元）
+		String sellerId = conversionParams.get("seller_id");// 卖家支付宝用户号
+
+		logger.debug("需要校验的参数=======》》》out_trade_no：" + outTradeNo + "======》》》total_amount：" + totalAmount
+				+ "=====》》》seller_id：" + sellerId + "=====》》》app_id：" + appId);
+
+		Order order = orderDao.selectByOrderCode(outTradeNo); // 查询出对应的订单记录
+		logger.debug("根据支付宝的通知信息查询出对应的订单信息===========》》》" + order);
+
+		// 支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）
+		// 目前测试中totalAmount.equals(order.getTotalprice())，totalAmount先暂时设置为0.01
+		if (order == null || !totalAmount.equals("0.01") || !sellerId.equals(AlipayConfig.seller_id)
+				|| !AlipayConfig.APPID.equals(appId)) {
+			logger.debug("==========支付宝官方建议校验的值（out_trade_no、total_amount、sellerId、app_id）,不一致！返回fail");
+			return false;
 		}
-		try {
-			// 实例化客户端（参数：网关地址、商户appid、商户私钥、格式、编码、支付宝公钥、加密类型）
-			AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID,
-					AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET,
-					AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
+		return true;
+	}
 
-			AlipayTradeQueryRequest alipayTradeQueryRequest = new AlipayTradeQueryRequest();
-			alipayTradeQueryRequest.setBizContent("{" + "\"out_trade_no\":\"" + outTradeNo + "\"" + "}");
-			AlipayTradeQueryResponse alipayTradeQueryResponse = alipayClient.execute(alipayTradeQueryRequest);
-			if (alipayTradeQueryResponse.isSuccess()) {
+	/**
+	 * 记录阿里通知记录
+	 * 
+	 * @param conversionParams
+	 */
+	private boolean logAlipayNotify(Map<String, String> conversionParams) {
 
-				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo);
-				// 修改数据库支付宝订单表
-				alipaymentOrder.setOrdercode(alipayTradeQueryResponse.getTradeNo());
-				alipaymentOrder.setBuyerlogonid(alipayTradeQueryResponse.getBuyerLogonId());
-				alipaymentOrder.setTotalamount(new BigDecimal(alipayTradeQueryResponse.getTotalAmount()));
-				alipaymentOrder.setReceptamount(new BigDecimal(alipayTradeQueryResponse.getReceiptAmount()));
-				alipaymentOrder.setInvoiceamount(Double.parseDouble(alipayTradeQueryResponse.getInvoiceAmount()));
-				alipaymentOrder.setBuyerpayamount(Double.parseDouble(alipayTradeQueryResponse.getBuyerPayAmount()));
-				switch (alipayTradeQueryResponse.getTradeStatus()) // 判断交易结果
-				{
-				case "TRADE_FINISHED": // 交易结束并不可退款
-					alipaymentOrder.setOrderstatus(3);
-					;
-					break;
-				case "TRADE_SUCCESS": // 交易支付成功
-					alipaymentOrder.setOrderstatus(2);
-					break;
-				case "TRADE_CLOSED": // 未付款交易超时关闭或支付完成后全额退款
-					alipaymentOrder.setOrderstatus(1);
-					break;
-				case "WAIT_BUYER_PAY": // 交易创建并等待买家付款
-					alipaymentOrder.setOrderstatus(0);
-					break;
-				default:
-					break;
-				}
-				alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder); // 更新表记录
-				return Result.successResult(alipaymentOrder.getOrderstatus() + "");
+		String outTradeNo = conversionParams.get("out_trade_no");// 获取商户之前传给支付宝的订单号（商户系统的唯一订单号）
+		String sellerId = conversionParams.get("seller_id");// 卖家支付宝用户号
+		String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
+		String gmtPayment = conversionParams.get("gmt_payment");// 交易付款时间
+		String notifyTime = conversionParams.get("notify_time");// 通知时间:yyyy-MM-dd
+																// HH:mm:ss
+		String gmtCreate = conversionParams.get("gmt_create");// 交易创建时间:yyyy-MM-dd
+																// HH:mm:ss
+		String gmtRefund = conversionParams.get("gmt_refund");// 交易退款时间
+		String gmtClose = conversionParams.get("gmt_close");// 交易结束时间
+		String tradeNo = conversionParams.get("trade_no");// 支付宝的交易号
+		String sellerEmail = conversionParams.get("seller_email");// 卖家支付宝账号
+		String receiptAmount = conversionParams.get("receipt_amount");// 实收金额:商家在交易中实际收到的款项，单位为元
+		String invoiceAmount = conversionParams.get("invoice_amount");// 开票金额:用户在交易中支付的可开发票的金额
+		String buyerPayAmount = conversionParams.get("buyer_pay_amount");// 付款金额:用户在交易中支付的金额
 
-			} else {
-				logger.info("==================调用支付宝查询接口失败！");
-			}
-		} catch (AlipayApiException e) {
-			logger.error("程序异常，支付宝订单查询失败！");
-			e.printStackTrace();
+		AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo);
+		// 修改数据库支付宝订单记录(因为要保存每次支付宝返回的信息到数据库里，以便以后查证)
+		alipaymentOrder.setNotifytime(notifyTime);
+		alipaymentOrder.setGmtcreatetime(gmtPayment);
+		alipaymentOrder.setGmtrefundtime(gmtRefund);
+		alipaymentOrder.setCreatetime(gmtCreate);
+		alipaymentOrder.setGmtclosetime(gmtClose);
+		alipaymentOrder.setTradeno(tradeNo);
+		alipaymentOrder.setSelleremail(sellerEmail);
+		alipaymentOrder.setSellerid(sellerId);
+		alipaymentOrder.setReceptamount(new BigDecimal(receiptAmount));
+		alipaymentOrder.setInvoiceamount(Double.valueOf(invoiceAmount));
+		alipaymentOrder.setBuyerpayamount(Double.valueOf(buyerPayAmount));
+
+		switch (tradeStatus) // 判断交易结果
+		{
+		case "TRADE_FINISHED": // 交易结束并不可退款
+			alipaymentOrder.setOrderstatus(3);
+			break;
+		case "TRADE_SUCCESS": // 交易支付成功
+			alipaymentOrder.setOrderstatus(2);
+			break;
+		case "TRADE_CLOSED": // 未付款交易超时关闭或支付完成后全额退款
+			alipaymentOrder.setOrderid(1);
+			break;
+		case "WAIT_BUYER_PAY": // 交易创建并等待买家付款
+			alipaymentOrder.setOrderstatus(0);
+			break;
+		default:
+			break;
 		}
-		return Result.failureResult("向支付宝发起订单查询失败");
+		logger.debug("======支付宝交易状态======》》》：" + tradeStatus);
+		// 更新支付记录表中的状态
+		int returnResult = alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder);
+		return returnResult > 0;
 	}
 
 	/**
@@ -627,10 +585,10 @@ public class OrderServiceImpl implements IOrderService {
 		// 获取生成预支付订单的请求类
 		PrepayIdRequestHandler prepayReqHandler = new PrepayIdRequestHandler(request, response);
 		BigDecimal totalFee = order.getTotalprice();
-		logger.info("======获取封装的订单总金额=====" + totalFee);
+		logger.debug("======获取封装的订单总金额=====" + totalFee);
 		// 测试时，每次支付一分钱，微信支付所传的金额是以分为单位的，因此实际开发中需要x100
 		int total_fee = Integer.valueOf(totalFee.multiply(new BigDecimal(100)).toString());
-		logger.info("=========》》》total_fee:" + total_fee);
+		logger.debug("=========》》》total_fee:" + total_fee);
 		prepayReqHandler.setParameter("appid", WXPayConfig.APP_ID);
 		prepayReqHandler.setParameter("body", WXPayConfig.BODY);
 		prepayReqHandler.setParameter("mch_id", WXPayConfig.MCH_ID);
@@ -706,4 +664,67 @@ public class OrderServiceImpl implements IOrderService {
 		return orderDao.updateByPrimaryKeySelective(order);
 	}
 
+	/**
+	 * 向支付宝发起订单查询请求
+	 * 
+	 * @param outTradeNo
+	 * @return
+	 */
+	@Override
+	public Result<?> alipayQuery(String outTradeNo) {
+		logger.debug("==================向支付宝发起查询，查询商户订单号为：" + outTradeNo);
+
+		if (outTradeNo == "") {
+			logger.debug("支付宝查询的订单编号为空！");
+			return Result.failureResult("查询的支付宝订单号为空！！！");
+		}
+		try {
+			// 实例化客户端（参数：网关地址、商户appid、商户私钥、格式、编码、支付宝公钥、加密类型）
+			AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID,
+					AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET,
+					AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.SIGNTYPE);
+
+			AlipayTradeQueryRequest alipayTradeQueryRequest = new AlipayTradeQueryRequest();
+			alipayTradeQueryRequest.setBizContent("{" + "\"out_trade_no\":\"" + outTradeNo + "\"" + "}");
+			AlipayTradeQueryResponse alipayTradeQueryResponse = alipayClient.execute(alipayTradeQueryRequest);
+			if (alipayTradeQueryResponse.isSuccess()) {
+
+				AlipaymentOrder alipaymentOrder = alipaymentOrderService.selectByOrderCode(outTradeNo);
+				// 修改数据库支付宝订单表
+				alipaymentOrder.setOrdercode(alipayTradeQueryResponse.getTradeNo());
+				alipaymentOrder.setBuyerlogonid(alipayTradeQueryResponse.getBuyerLogonId());
+				alipaymentOrder.setTotalamount(new BigDecimal(alipayTradeQueryResponse.getTotalAmount()));
+				alipaymentOrder.setReceptamount(new BigDecimal(alipayTradeQueryResponse.getReceiptAmount()));
+				alipaymentOrder.setInvoiceamount(Double.parseDouble(alipayTradeQueryResponse.getInvoiceAmount()));
+				alipaymentOrder.setBuyerpayamount(Double.parseDouble(alipayTradeQueryResponse.getBuyerPayAmount()));
+				switch (alipayTradeQueryResponse.getTradeStatus()) // 判断交易结果
+				{
+				case "TRADE_FINISHED": // 交易结束并不可退款
+					alipaymentOrder.setOrderstatus(3);
+					;
+					break;
+				case "TRADE_SUCCESS": // 交易支付成功
+					alipaymentOrder.setOrderstatus(2);
+					break;
+				case "TRADE_CLOSED": // 未付款交易超时关闭或支付完成后全额退款
+					alipaymentOrder.setOrderstatus(1);
+					break;
+				case "WAIT_BUYER_PAY": // 交易创建并等待买家付款
+					alipaymentOrder.setOrderstatus(0);
+					break;
+				default:
+					break;
+				}
+				alipaymentOrderService.updateByPrimaryKeySelective(alipaymentOrder); // 更新表记录
+				return Result.successResult(alipaymentOrder.getOrderstatus() + "");
+
+			} else {
+				logger.debug("==================调用支付宝查询接口失败！");
+			}
+		} catch (AlipayApiException e) {
+			logger.error("程序异常，支付宝订单查询失败！");
+			e.printStackTrace();
+		}
+		return Result.failureResult("向支付宝发起订单查询失败");
+	}
 }

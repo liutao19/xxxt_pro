@@ -45,6 +45,10 @@ $(function() {
 		handler : queryOrgTree
 	}, {
 		iconCls : 'icon-edit',
+		text : '导出客户信息',
+		handler : editUser
+	}, {
+		iconCls : 'icon-edit',
 		text : '修改客户信息',
 		handler : editUser
 	} ];
@@ -82,15 +86,15 @@ $(function() {
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == "0") {
-						return "未购卖";
+						return "普通会员";
 					} else if (value == "1") {
-						return "普通";
+						return "会员";
 					} else if (value == "2") {
-						return "会员"; // 铂金会员
+						return "VIP"; // 铂金会员
 					} else if (value == "3") {
-						return "VIP"; // 黄金会员
+						return "合伙人"; // 黄金会员
 					} else if (value == "4") {
-						return "合伙人";
+						return "股东";
 					}
 				}
 			},
@@ -133,7 +137,6 @@ $(function() {
 					if (value == null || value == 0 || value == undefined) {
 						return "";
 					} else {
-
 						return formatDate(value);
 					}
 				}
@@ -316,12 +319,11 @@ function to_lock(userId, optType) {
 }
 
 function baoKongDan(id) {
-
 	var url = basePath + "/user/toActivity.html?userId=" + id;
 	$('#activityUserDiv').dialog({
 		title : "用户认证",
-		width : 400,
-		height : 500,
+		width : 450,
+		height : 550,
 		closed : false,
 		closable : false,
 		cache : false,
@@ -346,8 +348,8 @@ function editVip() {
 	var url = basePath + "/user/vipAdmin.html";
 	$('#newVipDiv').dialog({
 		title : "新增一个会员",
-		width : 400,
-		height : 500,
+		width : 450,
+		height : 550,
 		closed : false,
 		closable : false,
 		cache : false,
@@ -372,13 +374,13 @@ function editVip() {
 function save_vip() {
 	var userName = $("#vip_user_login_name").val();
 	var userPassword = $("#vip_user_login_password").val();
-	var twoPassword = $("#vip_user_two_password").val;
+	var twoPassword = $("#vip_user_two_password").val();
 	var refereeUserMobile = $("#vip_user_refereeUserMobile").val();
 	var trueName = $("#vip_trueName").val();
 	var mobile = $("#vip_user_mobile").val();
 	var idnumber = $("#vip_user_idnumber").val();
-	var banknumber = $("#vip_user_banknumber").val;
-	var banktype = $("#vip_user_banktype").val;
+	var banknumber = $("#vip_user_banknumber").val();
+	var banktype = $("#vip_user_banktype").val();
 	var sex = $("#vip_change_sex").combobox('getValue');
 	var userLevel = $("#vip_change_level").combobox('getValue');
 
@@ -419,8 +421,8 @@ function editUser() {
 	var url = basePath + "/user/edit.html?userId=" + id;
 	$('#editLevelDiv').dialog({
 		title : "修改用户信息",
-		width : 400,
-		height : 500,
+		width : 450,
+		height : 550,
 		closed : false,
 		closable : false,
 		cache : false,
@@ -446,13 +448,13 @@ function save_edit() {
 	var userId = $("#change_level_userId").val();
 	var userName = $("#edit_user_login_name").val();
 	var userPassword = $("#edit_user_login_password").val();
-	var twoPassword = $("#edit_user_two_password").val;
+	var twoPassword = $("#edit_user_two_password").val();
 	var refereeUserMobile = $("#edit_user_refereeUserMobile").val();
 	var trueName = $("#edit_trueName").val();
 	var mobile = $("#edit_user_mobile").val();
 	var idnumber = $("#edit_user_idnumber").val();
-	var banknumber = $("#edit_user_banknumber").val;
-	var banktype = $("#edit_user_banktype").val;
+	var banknumber = $("#edit_user_banknumber").val();
+	var banktype = $("#edit_user_banktype").val();
 	var sex = $("#edit_change_sex").combobox('getValue');
 	var userLevel = $("#edit_change_level").combobox('getValue');
 
@@ -490,8 +492,15 @@ function save_edit() {
  * 认证（激活）
  */
 function save_activity() {
-	var userId = $("#change_level_userId").val();
-	var userLevel = $("#change_level").combobox('getValue');
+	var userId = $("#act_level_userId").val();
+	var trueName = $("#act_trueName").val();
+	var mobile = $("#act_user_mobile").val();
+	var idnumber = $("#act_user_idnumber").val();
+	var banknumber = $("#act_user_banknumber").val();
+	var banktype = $("#act_user_banktype").val()
+	;
+	var sex = $("#act_change_sex").combobox('getValue');
+	var userLevel = $("#act_change_level").combobox('getValue');
 
 	$.ajax({
 		url : basePath + "/user/saveActivity.html",
@@ -499,6 +508,12 @@ function save_activity() {
 		dataType : 'json',
 		data : {
 			"userId" : userId,
+			"trueName" : trueName,
+			"mobile" : mobile,
+			"idnumber" : idnumber,
+			"banknumber" : banknumber,
+			"banktype" : banktype,
+			"sex" : sex,
 			"userLevel" : userLevel
 		},
 		success : function(ret) {
@@ -536,7 +551,7 @@ function queryOrgTree() {
 		title : "查看直推树",
 		content : content,
 		width : 600,
-		height : 400,
+		height : 500,
 		closed : false,
 		closable : false,
 		cache : false,

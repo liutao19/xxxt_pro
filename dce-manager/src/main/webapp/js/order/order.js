@@ -58,7 +58,7 @@ $(function(){
 				 							return "其他";
 				 						}
 				 					}},
-								{field:"alipayStatus",title:"订单支付状态",width:180,align:"center",
+								/*{field:"alipayStatus",title:"订单支付状态",width:180,align:"center",
 				 						formatter:function(value,row,index){
 					 						if(value == "0"){
 					 							return "支付失败";
@@ -67,7 +67,7 @@ $(function(){
 					 						}else if(value == "2"){
 					 							return "未确定";
 					 						}
-					 					}},
+					 					}},*/
 								{field:"address",title:"地址",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",
 									formatter:function(value,row,index){

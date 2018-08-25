@@ -16,7 +16,7 @@ public interface IOrderDao {
 
     List<Order> selectOrder(Map<String, Object> paraMap);
     
-    void updateOrderStatusByOldStatus(Map<String, Object> paraMap);
+    int updateOrderStatusByOldStatus(Map<String, Object> paraMap);
     
     int updateMatchOrder(Order order);
     

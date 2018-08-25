@@ -240,21 +240,8 @@ function formatDate(value) {
 }
 /*################***导出**begin*################### */
 function export_excel(){
-	var searchStr = $("#searchForm #searchStr").val();
-	var productCode = $("#searchForm #search_productCode").combobox('getValue');
-	var loanStatus =  $("#searchForm #search_loanStatus").combobox('getValue');
-	var loanType = $("#searchForm #search_loanType").combobox('getValue');
-    var cityCode= $("#searchForm #search_city").combobox('getValue');
-	var channelType=$("#searchForm #search_channelType").combobox('getValue');
-	var startDate =  $("#searchForm #search_startDate").datebox('getValue');
-	var endDate =  $("#searchForm #search_endDate").datebox('getValue');
-	var processNextStep = $("#searchForm #search_processNextStep").combobox('getValue');
-	//document.getElementById("exportExcel").disabled = true;
-	//document.getElementById("exportExcel").value = "正在导出";
 	var exportIframe = document.createElement('iframe');
-	exportIframe.src =basePath+"/loan/export/excel.html"+ "?searchStr="+ searchStr+ "&productCode="+ productCode+
-	"&loanType="+loanType+ "&loanStatus="+ loanStatus+"&cityCode="+ cityCode+"&channelType="+ channelType+ "&startDate="+startDate+ "&endDate="+ endDate+
-	"&processNextStep="+processNextStep;
+	exportIframe.src =basePath+"/withdraw/export.html"
 
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);

@@ -278,6 +278,16 @@
 		</set>
 		where withdrawalsId = #{withdrawalsId,jdbcType=BIGINT}
 	</update>
+	
+	<update id="updateByPrimaryByStatus" parameterType="Map">
+		UPDATE ct_ethereum_trans_info
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="newStatus != null">
+				status = #{newStatus},
+			</if>
+		</trim>
+		WHERE withdrawalsId = #{withdrawalsId} and status = #{oldStatus}
+	</update>
 	<update id="updateByPrimaryKey" parameterType="com.dce.business.entity.etherenum.EthereumTransInfoDo">
 		update ct_ethereum_trans_info
 		set userId = #{userid,jdbcType=INTEGER},

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -26,9 +27,11 @@ import com.dce.business.entity.etherenum.EthereumTransInfoDo;
 import com.dce.business.entity.message.MessageAndNewsDo;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.trade.WithdrawalsDo;
+import com.dce.business.entity.travel.TravelDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.account.IPayService;
+import com.dce.business.service.impl.travel.TravelServiceImpl;
 import com.dce.business.service.message.IMessageService;
 import com.dce.business.service.trade.IWithdrawService;
 
@@ -41,6 +44,7 @@ import com.dce.business.service.trade.IWithdrawService;
 @Service("withdrawService")
 public class WithdrawServiceImpl implements IWithdrawService {
 
+	private final static Logger logger = Logger.getLogger(TravelServiceImpl.class);
 
 	@Resource
     private IWithdrawalsDao withdrawDao;
@@ -162,6 +166,39 @@ public class WithdrawServiceImpl implements IWithdrawService {
 	public WithdrawalsDo selectByPrimaryKey(Integer withdrawId) {
 		// TODO Auto-generated method stub
 		return withdrawDao.selectByPrimaryKey(withdrawId);
+	}
+
+	@Override
+	public List<WithdrawalsDo> selectByExample(WithdrawalsDo example) {
+		// TODO Auto-generated method stub
+		logger.info("----selectByExample----");
+		List<WithdrawalsDo> result = withdrawDao.selectByExample(example);
+
+		for (WithdrawalsDo withdraw : result) {
+			if ("1".equals(withdraw.getProcessStatus())) {
+				withdraw.setProcessStatus("待审批");
+			} else if ("2".equals(withdraw.getProcessStatus())) {
+				withdraw.setProcessStatus("已审批");
+			}else if ("3".equals(withdraw.getProcessStatus())) {
+				withdraw.setProcessStatus("已拒绝");
+			}
+			if ("0".equals(withdraw.getWithdraw_status())) {
+				withdraw.setWithdraw_status("未到账");
+			} else if ("1".equals(withdraw.getWithdraw_status())) {
+				withdraw.setWithdraw_status("已到账");
+			}
+			if ("1".equals(withdraw.getType())){
+				withdraw.setType("支付宝");
+			}else if("2".equals(withdraw.getType())){
+				withdraw.setType("微信");
+			}else if("3".equals(withdraw.getType())){
+				withdraw.setType("银行卡");
+			}
+			
+
+		}
+
+		return result;
 	}
 	
 	

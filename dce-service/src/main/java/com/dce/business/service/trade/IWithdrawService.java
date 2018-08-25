@@ -6,6 +6,8 @@ import java.util.Map;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.trade.WithdrawalsDo;
+import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.travel.TravelDoExample;
 
 public interface IWithdrawService {
 
@@ -50,4 +52,10 @@ public interface IWithdrawService {
      * @return
      */
 	WithdrawalsDo selectByPrimaryKey(Integer withdrawId);
+	/**
+	 * 导出Excel
+	 * @param example
+	 * @return
+	 */
+	List<WithdrawalsDo> selectByExample(WithdrawalsDo example);
 }

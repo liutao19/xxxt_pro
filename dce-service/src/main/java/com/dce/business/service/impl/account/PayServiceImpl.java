@@ -32,6 +32,7 @@ import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.enums.IncomeType;
+import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.pay.util.AlipayConfig;
 import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
@@ -226,13 +227,16 @@ public class PayServiceImpl implements IPayService {
 		EthereumTransInfoDo transgetId=etherenumTranInfodao.select(param);
 		String orderId=getOrderIdByUUId();
 		//重做
-		System.out.println("ordId22222"+ordId);
-		if(transgetId!=null&&transgetId.getStatus().equals("false")){
-			ordId++;
-			System.out.println("orderId"+ordId);
-			if(ordId>1){
-				result.setMsg("交易正在进行，请稍后...");
-			}else if(ordId==1){
+		if(transgetId!=null&&transgetId.getStatus().equals("0")){
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			// 付款状态为已支付
+			paraMap.put("newStatus", 2);
+			paraMap.put("oldStatus", 0);
+			paraMap.put("withdrawalsId",withdrawId );
+			int i = etherenumTranInfodao.updateByPrimaryByStatus(paraMap);
+			if (i <= 0) {
+				throw new BusinessException("交易正在进行，请稍后...");
+			}else{
 				result=this.trans(withdrawId, userId, qty, bankNo,orderId);
 			}
 		}else{
@@ -246,8 +250,12 @@ public class PayServiceImpl implements IPayService {
 			transInfo.setType(2);                                    //类型：转入
 			transInfo.setStatus("false");                            //状态：false未到账，true已到账 
 			transInfo.setToaccount(DataEncrypt.encrypt(bankNo));     //转入地址
-			etherenumTranInfodao.insertSelective(transInfo);
-			result=this.trans(withdrawId, userId, qty, bankNo,orderId);
+			int i =etherenumTranInfodao.insertSelective(transInfo);
+			if (i <= 0) {
+				throw new BusinessException("交易正在进行，请稍后...");
+			}else{
+				result=this.trans(withdrawId, userId, qty, bankNo,orderId);
+			}
 		}
 		return result;
 	}
@@ -488,7 +496,7 @@ public class PayServiceImpl implements IPayService {
 				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
 				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
 				withdraw.setPaymentDate((new Date()).getTime() / 1000);
-				ethetraninfo.setStatus("true");
+				ethetraninfo.setStatus("1");
 				ethetraninfo.setActualamount(qty.toString());               //实际转出金额
 				ethetraninfo.setConfirmed("true");
 			}else{
@@ -497,7 +505,7 @@ public class PayServiceImpl implements IPayService {
 				withdraw.setWithdraw_status("0"); 
 				withdraw.setId(withdrawId);
 				withdrawDao.updateWithDrawStatus(withdraw);
-				ethetraninfo.setStatus("false");
+				ethetraninfo.setStatus("0");
 				ethetraninfo.setConfirmed("false");
 				ethetraninfo.setHash(response.getMsg());
 				ethetraninfo.setWithdrawalsId(withdrawId);

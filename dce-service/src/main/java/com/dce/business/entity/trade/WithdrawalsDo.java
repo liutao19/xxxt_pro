@@ -4,6 +4,36 @@ import java.math.BigDecimal;
 
 public class WithdrawalsDo {
     private Integer id;
+    
+    private String user_name;
+    
+    public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getTrue_name() {
+		return true_name;
+	}
+
+	public void setTrue_name(String true_name) {
+		this.true_name = true_name;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	private String true_name;
+    
+    private String mobile;
 
     private Long withdrawDate;
 

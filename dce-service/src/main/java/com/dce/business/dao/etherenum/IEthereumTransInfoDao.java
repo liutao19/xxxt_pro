@@ -17,6 +17,9 @@ public interface IEthereumTransInfoDao {
 
     int updateByPrimaryKeySelective(EthereumTransInfoDo record);
     
+    int updateByPrimaryByStatus(Map<String, Object> params);
+
+    
     int updateByWithdrawId(EthereumTransInfoDo record);
 
     int updateByPrimaryKey(EthereumTransInfoDo record);

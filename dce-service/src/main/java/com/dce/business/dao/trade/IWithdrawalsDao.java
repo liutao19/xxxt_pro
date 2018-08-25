@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.dce.business.entity.etherenum.EthereumTransInfoDo;
 import com.dce.business.entity.trade.WithdrawalsDo;
+import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.travel.TravelDoExample;
 
 public interface IWithdrawalsDao {
     int deleteByPrimaryKey(Integer id);
@@ -56,5 +58,12 @@ public interface IWithdrawalsDao {
 	List<Map<String,Object>> selectWithDrawByPage(Map<String,Object> param);
 	
 	Long selectWithDrawTotallAmount(Map<String,Object> param);
+	
+	/**
+	 * 导出Excel
+	 * @param example
+	 * @return
+	 */
+	List<WithdrawalsDo> selectByExample(WithdrawalsDo example);
 	
 }

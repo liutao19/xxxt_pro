@@ -79,7 +79,7 @@ public class OrderController extends BaseController {
 		logger.info("获取当前用户的所有订单:" + orderLitst);
 		
 		if(orderLitst.size() == 0 || orderLitst.isEmpty()){
-			return Result.successResult("当前用户订单为空");
+			return Result.successResult("当前用户订单为空",new JSONArray());
 		}
 
 		// 设置商品名称
@@ -152,7 +152,7 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/notify_url", method = RequestMethod.POST)
 	@ResponseBody
 	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String ret = "success";
+		String ret = "failure";
 		try{
 			logger.info("==================支付宝异步返回支付结果开始");
 			// 1.从支付宝回调的request域中取值
@@ -177,9 +177,11 @@ public class OrderController extends BaseController {
 			String status = orderService.notify(conversionParams);
 			logger.info("===========》》》》》验签结果：" + status);
 			
+			ret = "success";
+			
 		}catch(Exception e ){
 			logger.error("支付宝异步返回支付结果处理失败", e);
-			ret = "fail";
+			ret = "failure";
 			
 		}finally{
 			return ret;

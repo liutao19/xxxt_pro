@@ -71,12 +71,14 @@ $(function(){
 								{field:"people",title:"同行人数",width:80,align:"center"},
 								{field:"linename",title:"路线名称",width:150,align:"center"},
 								{field:"createtime",title:"申请时间",width:150,align:"center",formatter:dateTimeFormatter},
-								{field:"state",title:"是否通过",width:80,align:"center",
+								{field:"state",title:"状态",width:80,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
 				 							return "通过";
 				 						}else if(row.state == "1"){
 				 							return "未通过";
+				 						}else if(row.state == "2"){
+				 							return "撤销";
 				 						}
 				 					}
 								},

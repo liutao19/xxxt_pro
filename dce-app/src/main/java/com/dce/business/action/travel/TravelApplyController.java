@@ -1,7 +1,5 @@
 package com.dce.business.action.travel;
 
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,87 +25,93 @@ import com.dce.business.service.travel.ITravelPathService;
 public class TravelApplyController extends BaseController {
 	private final static Logger logger = Logger.getLogger(TravelApplyController.class);
 
-	//旅游申请
+	// 旅游申请
 	@Resource
 	private ITravelApplyService travelApplyService;
-	
-	//查看活动
+
+	// 查看活动
 	@Resource
 	private ICheckTravelService checkTravelService;
-	
-	
-	//旅游路线
+
+	// 旅游路线
 	@Resource
 	private ITravelPathService travelPathService;
 
 	/**
 	 * 旅游申请
+	 * 
 	 * @return
 	 */
 	@RequestMapping(value = "/addApply", method = RequestMethod.POST)
 	public Result<?> addApply() {
 		logger.info("申请旅游....");
-		
+
 		TravelDo travel = new TravelDo();
-		
-		//获取用户id
-    	Integer userId = getUserId();
-    	
-    	//获取前台传过来的用户信息
-    	String sex = getString("sex") == null ? "" : getString("sex");
-    	String nation = getString("nation") == null ? "" : getString("nation");
-    	String identity = getString("identity") == null ? "" : getString("identity");
-    	String phone = getString("phone") == null ? "" : getString("phone");
-    	String address = getString("address") == null ? "" : getString("address");
-    	String pathid = getString("pathId") == null ? "" : getString("pathId");
-    	String isBenn = getString("IsBenn") == null ? "" : getString("IsBenn");
-    	String people = getString("people") == null ? "" : getString("people");
-    	
-    	travel.setUserid(userId);
-    	travel.setSex(sex);//性别(0/1 男/女)
-    	travel.setNation(nation);
-    	travel.setIdentity(identity);
-    	travel.setPhone(phone);
-    	travel.setAddress(address);
-    	travel.setPathid(Integer.parseInt(pathid));
-    	travel.setIsbeen(isBenn); //是否去过该路线 0是/1否
-    	travel.setPeople(Integer.parseInt(people));
-    	travel.setState("1");
-    	
-    	
-    	Result<?> result = travelApplyService.travelApply(travel);
-    	
+
+		// 获取用户id
+		Integer userId = getUserId();
+
+		// 获取前台传过来的用户信息
+		String sex = getString("sex") == null ? "" : getString("sex");
+		String nation = getString("nation") == null ? "" : getString("nation");
+		String identity = getString("identity") == null ? "" : getString("identity");
+		String phone = getString("phone") == null ? "" : getString("phone");
+		String address = getString("address") == null ? "" : getString("address");
+		String pathid = getString("pathId") == null ? "" : getString("pathId");
+		String isBenn = getString("IsBenn") == null ? "" : getString("IsBenn");
+		String people = getString("people") == null ? "" : getString("people");
+
+		travel.setUserid(userId);
+		travel.setSex(sex);// 性别(0/1 男/女)
+		travel.setNation(nation);
+		travel.setIdentity(identity);
+		travel.setPhone(phone);
+		travel.setAddress(address);
+		travel.setPathid(Integer.parseInt(pathid));
+		travel.setIsbeen(isBenn); // 是否去过该路线 0是/1否
+		travel.setPeople(Integer.parseInt(people));
+		travel.setState("1");
+
+		Result<?> result = travelApplyService.travelApply(travel);
+
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/checkTravel", method = RequestMethod.GET)
 	public Result<?> checkTravel() {
 		logger.info("查看活动....");
-		
-		
-		//获取用户id
-    	Integer userId = getUserId();
-		
+
+		// 获取用户id
+		Integer userId = getUserId();
+
 		List<TravelDo> travelList = checkTravelService.userApplyTravelList(userId);
 		List<Map<String, Object>> result = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(travelList)) {
-            for (TravelDo message : travelList) {
+			for (TravelDo message : travelList) {
 
-                Map<String, Object> map = new HashMap<>();
-                map.put("id", message.getId());
-                //获取到路线id
-                int pathid = message.getPathid();
-                //调用travelPathService查询出对应路线id的对象 并取出路线名称
-                String lineName = (travelPathService.selectByPrimaryKey(pathid)).getLinename();
-                map.put("lineName", lineName);
-                map.put("createTime", message.getCreatetime());
-                map.put("state", message.getState()); //状态 (已开发0/马上推出1/正在开发2)
-                result.add(map);
-            }
-        }
+				Map<String, Object> map = new HashMap<>();
+				map.put("id", message.getId());
+				// 获取到路线id
+				int pathid = message.getPathid();
+				// 调用travelPathService查询出对应路线id的对象 并取出路线名称
+				String lineName = (travelPathService.selectByPrimaryKey(pathid)).getLinename();
+				map.put("lineName", lineName);
+				map.put("createTime", message.getCreatetime());
+				map.put("state", message.getState()); // 状态 (已开发0/马上推出1/正在开发2)
+				result.add(map);
+			}
+		}
 
-        return Result.successResult("查询成功", result);
-    	
+		return Result.successResult("查询成功", result);
+
+	}
+
+	@RequestMapping(value = "/ravelRevoke", method = RequestMethod.POST)
+	public Result<?> rravelRevoke(String id) {
+		logger.info("撤销申请....");
+		Result<?> result = travelApplyService.ravelRevokeById(Integer.parseInt(id));
+		return result;
+
 	}
 
 }

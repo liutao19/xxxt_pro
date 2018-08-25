@@ -9,7 +9,7 @@ $(function(){
 		var dataUrl = httpUrl+"/applytravel/listApplyTravel.html";
 		$("#tt_ApplyTravel").datagrid('options').url = dataUrl;
 		$("#tt_ApplyTravel").datagrid('load',{
-			'userName': $("#searchapplyTravelForm #userName").val(),
+			'name': $("#searchapplyTravelForm #name").val(),
 			'startDate':$("#searchapplyTravelForm #startDate").datebox('getValue'),
 			'endDate':$("#searchapplyTravelForm #endDate").datebox('getValue')		
 		});
@@ -45,7 +45,7 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'id',title:'id',width:100,hidden:true},						
-								{field:"truename",title:"真实姓名",width:100,align:"center"},
+								{field:"name",title:"姓名",width:100,align:"center"},
 								{field:"sex",title:"性别",width:80,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
@@ -71,12 +71,14 @@ $(function(){
 								{field:"people",title:"同行人数",width:80,align:"center"},
 								{field:"linename",title:"路线名称",width:150,align:"center"},
 								{field:"createtime",title:"申请时间",width:150,align:"center",formatter:dateTimeFormatter},
-								{field:"state",title:"是否通过",width:80,align:"center",
+								{field:"state",title:"状态",width:80,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
 				 							return "通过";
 				 						}else if(row.state == "1"){
 				 							return "未通过";
+				 						}else if(row.state == "2"){
+				 							return "撤销";
 				 						}
 				 					}
 								},
@@ -117,7 +119,7 @@ $(function(){
 		columns:columns_tt,
 		toolbar:toolbar_tt,
 		queryParams:{
-			'userName': $("#searchapplyTravelForm #userName").val(),
+			'name': $("#searchapplyTravelForm #name").val(),
 			'startDate':$("#searchapplyTravelForm #startDate").datebox('getValue'),
 			'endDate':$("#searchapplyTravelForm #endDate").datebox('getValue')	
 		},

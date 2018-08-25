@@ -16,7 +16,7 @@ public interface IOrderDao {
 
     List<Order> selectOrder(Map<String, Object> paraMap);
     
-    void updateOrderStatusByOldStatus(Map<String, Object> paraMap);
+    int updateOrderStatusByOldStatus(Map<String, Object> paraMap);
     
     int updateMatchOrder(Order order);
     
@@ -27,6 +27,8 @@ public interface IOrderDao {
     int selectOrderForReportCount(Map<String, Object> paraMap);
 
     List<Map<String, Object>> selectOrderByPage(Map<String, Object> paraMap);
+    
+    List<Order> selectOrderByCondition(Map<String, Object> paraMap);
     
     Long selectGuadanAmount(Map<String, Object> paraMap);
     

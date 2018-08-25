@@ -179,7 +179,7 @@ public class YsNewsController extends BaseAction {
 					
 					if(filePath!=null||!filePath.equals("")||!filePath.isEmpty()){
 						// 图片压缩
-						Picture_Compression(filePath,filePath,300,300);
+						//Picture_Compression(filePath,filePath,300,300);
 						
 						// 存数据库
 						ysnewsDo.setImage(getReadImgUrl(filePath));

@@ -60,7 +60,7 @@
 		<result column="city" jdbcType="INTEGER" property="city" />
 		<result column="darea" jdbcType="INTEGER" property="darea" />
 		<result column="balance_et" jdbcType="DECIMAL" property="balanceEt" />
-		<result column="idnumber" jdbcType="CHAR" property="idnumber" />
+		<result column="idnumber" jdbcType="VARCHAR" property="idnumber" />
 		<result column="banktype" jdbcType="VARCHAR" property="banktype" />
 		<result column="bank_user_name" jdbcType="VARCHAR" property="bankUserName" />
 		<result column="banknumber" jdbcType="VARCHAR" property="banknumber" />
@@ -245,7 +245,7 @@
 		#{country,jdbcType=INTEGER},
 		#{province,jdbcType=INTEGER},
 		#{city,jdbcType=INTEGER}, #{darea,jdbcType=INTEGER},
-		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=CHAR},
+		#{balanceEt,jdbcType=DECIMAL}, #{idnumber,jdbcType=VARCHAR},
 		#{banktype,jdbcType=VARCHAR},
 		#{bankUserName,jdbcType=VARCHAR},
 		#{banknumber,jdbcType=VARCHAR}, #{bankContent,jdbcType=VARCHAR},
@@ -744,7 +744,7 @@
 				#{balanceEt,jdbcType=DECIMAL},
 			</if>
 			<if test="idnumber != null">
-				#{idnumber,jdbcType=CHAR},
+				#{idnumber,jdbcType=VARCHAR},
 			</if>
 			<if test="banktype != null">
 				#{banktype,jdbcType=VARCHAR},
@@ -1037,7 +1037,7 @@
 				balance_et = #{balanceEt,jdbcType=DECIMAL},
 			</if>
 			<if test="idnumber != null">
-				idnumber = #{idnumber,jdbcType=CHAR},
+				idnumber = #{idnumber,jdbcType=VARCHAR},
 			</if>
 			<if test="banktype != null">
 				banktype = #{banktype,jdbcType=VARCHAR},
@@ -1419,7 +1419,7 @@
 		darea = #{darea,jdbcType=INTEGER},
 		balance_et = #{balanceEt,jdbcType=DECIMAL},
 		idnumber =
-		#{idnumber,jdbcType=CHAR},
+		#{idnumber,jdbcType=VARCHAR},
 		banktype = #{banktype,jdbcType=VARCHAR},
 		bank_user_name = #{bankUserName,jdbcType=VARCHAR},
 		banknumber =

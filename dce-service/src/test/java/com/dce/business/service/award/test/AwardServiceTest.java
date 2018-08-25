@@ -1,6 +1,5 @@
 package com.dce.business.service.award.test;
 
-
 import javax.annotation.Resource;
 
 import org.junit.Test;
@@ -11,21 +10,20 @@ import com.dce.business.service.award.IAwardService;
 import com.dce.test.BaseTest;
 
 public class AwardServiceTest extends BaseTest {
+
+	@Resource
+	private IAwardService awardService;
+	@Resource
+	private IUserRefereeDao userreferee;
+
+	@Test
+	@Rollback(false)
 	
-    @Resource
-    private IAwardService awardService;
-    @Resource
-    private IUserRefereeDao userreferee;
-    
-    @Test
-   // @Rollback(false)
-    public void testCalcAward() {
-    	Integer buyQty = 5;
-		Integer orderId = 5;
-		Integer buyUserId =711;
-		awardService.calcAward(buyUserId , orderId);
-    }
-    
-    
-    
+	
+	public void testCalcAward() {
+		Integer orderId = 20;
+		Integer buyUserId = 711;
+		awardService.calcAward(buyUserId, orderId);
+	}
+
 }

@@ -60,11 +60,11 @@ public class ApplyTravelController extends BaseAction {
 			String companyName = getString("searchPolicyName");
 			Map<String, Object> param = new HashMap<String, Object>();
 
-			String userName = getString("userName");
-			System.out.println(userName);
-			if (StringUtils.isNotBlank(userName)) {
-				param.put("userName", userName);
-				model.addAttribute("userName", userName);
+			String name = getString("name");
+			System.out.println(name);
+			if (StringUtils.isNotBlank(name)) {
+				param.put("name", name);
+				model.addAttribute("name", name);
 			}
 
 			String startDate = getString("startDate");
@@ -180,9 +180,9 @@ public class ApplyTravelController extends BaseAction {
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "真实姓名", "性别", "民族", "身份证", "手机号码", "地址", "是否去过", "同行人数", "路线名称", "申请时间", "是否通过" };
+			String[] excelheader = { "姓名", "性别", "民族", "身份证", "手机号码", "地址", "是否去过", "同行人数", "路线名称", "申请时间", "是否通过" };
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "truename", "sex", "nation", "identity", "phone",
+			String[] excelData = { "name", "sex", "nation", "identity", "phone",
 					"address", "isbeen", "people", "linename","createtime","state"};
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, applytravelLst);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");

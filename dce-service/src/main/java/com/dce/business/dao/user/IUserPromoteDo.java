@@ -43,4 +43,12 @@ public interface IUserPromoteDo {
      * @return
      */
     UserPromoteDo selectUserLevelAntBuyQty(Map<String,Object> map);
+    
+    
+    /**
+     * 修改升级条件的数量
+     */
+    int updataCount(UserPromoteDo record);
+    
+    
 }

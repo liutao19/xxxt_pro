@@ -3,7 +3,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>修改客户信息</title>
+<title>新增会员</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache" />
 <style type="text/css">
@@ -14,65 +14,64 @@
 </style>
 </head>
 <body>
-	<input type="hidden" id="change_level_userId" value="${user.id }" />
 	<table style="margin-left: 10px; margin-right: 10px;">
 		<tr>
 			<td>用户名:</td>
-			<td><input id="edit_true_userName" class="easyui-validatebox"
-				type="text" name="userName" readonly="readonly"
+			<td><input id="vip_user_login_name" class="easyui-validatebox"
+				type="text" name="userName"
 				value="${user.userName }" style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>登录密码:</td>
-			<td><input id="edit_user_login_password"
+			<td><input id="vip_user_login_password"
 				class="easyui-validatebox" type="text" name="trueName"
 				value="${user.userPassword }" style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>支付密码:</td>
-			<td><input id="edit_user_seconde_password"
-				class="easyui-validatebox" type="text" name="trueName"
-				value="${user.twoPassword }" style="height: 30px;" /></td>
+			<td><input id="vip_user_two_password" class="easyui-validatebox"
+				type="text" name="trueName" value="${user.twoPassword }"
+				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>推荐人:</td>
-			<td><input id="edit_user_refereeUserMobile"
+			<td><input id="vip_user_refereeUserMobile"
 				class="easyui-validatebox" type="text" name="trueName"
 				value="${user.refereeUserMobile }" style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>真实姓名:</td>
-			<td><input id="edit_trueName" class="easyui-validatebox"
+			<td><input id="vip_trueName" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.trueName }"
 				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>手机号码:</td>
-			<td><input id="edit_user_mobile" class="easyui-validatebox"
+			<td><input id="vip_user_mobile" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.mobile }"
 				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>身份证号:</td>
-			<td><input id="edit_user_idnumber" class="easyui-validatebox"
+			<td><input id="vip_user_idnumber" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.idnumber }"
 				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>银行卡号:</td>
-			<td><input id="edit_user_banknumber" class="easyui-validatebox"
+			<td><input id="vip_user_banknumber" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.banknumber }"
 				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>银行卡开户行:</td>
-			<td><input id="edit_user_banktype" class="easyui-validatebox"
+			<td><input id="vip_user_banktype" class="easyui-validatebox"
 				type="text" name="trueName" value="${user.banktype }"
 				style="height: 30px;" /></td>
 		</tr>
 		<tr>
 			<td>用户性别:</td>
-			<td><select class="easyui-combobox" id="change_sex"
+			<td><select class="easyui-combobox" id="vip_change_sex"
 				name="levelType" style="width: 140px;" style="height:30px;">
 					<option value="">--请选择用户性别--</option>
 					<option value="1"
@@ -83,7 +82,7 @@
 		</tr>
 		<tr>
 			<td>会员等级:</td>
-			<td><select class="easyui-combobox" id="change_level"
+			<td><select class="easyui-combobox" id="vip_change_level"
 				name="levelType" style="width: 140px;" style="height:30px;">
 					<option value="">--请选择用户级别--</option>
 					<option value="0"
@@ -98,8 +97,7 @@
 		</tr>
 		<tr>
 			<td colspan='2' style="word-wrap: break-word; word-break: break-all;"><font
-				color="red"><br>
-				<br></font></td>
+				color="red"><br> <br></font></td>
 		</tr>
 	</table>
 

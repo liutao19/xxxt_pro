@@ -18,11 +18,16 @@
 			<table width="100%" border="0" align="center" cellpadding="3">			  
 					<input type="hidden" id="id" name="id" value="${applytravel.id}"/>
 						<tr>	
-						<td align="right">
-							<label for="name">用户id</label>
-						</td>	
 						<td>
 								<input type="hidden" id="userid" name="userid" value="${applytravel.userid}"/>												
+						</td>						   
+					</tr>
+					<tr>	
+						<td align="right">
+							<label for="name">姓名</label>
+						</td>	
+						<td>
+								<input type="text" id="name" name="name" value="${applytravel.name}"/>												
 						</td>						   
 					</tr>											
 					<tr>	

@@ -124,6 +124,7 @@ public class UserController extends BaseController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("token", token);
 		map.put("userId", userDo.getId());
+		map.put("certification", userDo.getCertification());
 		return Result.successResult("登录成功", map);
 	}
 
@@ -318,7 +319,8 @@ public class UserController extends BaseController {
 			String sex = getString("sex");
 			String banknumber = getString("banknumber");// 卡号
 			String banktype = getString("banktype");// 开卡行
-
+			
+		
 			System.err.println("shuju----" + trueName);
 
 			logger.info("用户信息，userId:" + userId);
@@ -341,54 +343,100 @@ public class UserController extends BaseController {
 			// 更改用户认证状态
 			userDo.setCertification(1);
 
-			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
-
 			// 手机号验证
+			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
 			if (!p.matcher(mobile).matches()) {
 
 				return Result.failureResult("手机号码错误");
 			}
 
 			// 身份号验证
-			if (isLegal(idnumber) == 0) {
+			if (!isIDNumber(idnumber)) {
 
 				return Result.failureResult("该身份证号不合法");
 			}
-			//银行卡号校验
-			/*if(!checkBankCard(banknumber)){
-				
-				return Result.failureResult("该银行卡号不合法");
-				
-			}*/
+
+			
+			// 银行卡号校验
+			/*
+			 * if(!checkBankCard(banknumber)){
+			 * 
+			 * return Result.failureResult("该银行卡号不合法");
+			 * 
+			 * }
+			 */
+
 
 			System.out.println("用户信息----------》》》" + userDo);
 
 			return userService.Authentication(userDo);
 
+		} catch (IllegalArgumentException t) {
+			t.printStackTrace();
+			logger.error("用户信息认证失败", t);
+			return Result.failureResult(t.getMessage());
 		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("用户信息认证失败", e);
 			return Result.failureResult("用户信息认证失败");
 		}
+		
+		
 	}
 
+	
+	
 	/**
-	 * 检验身份证是否合法
-	 * 
-	 * @return 1-合法；0-不合法
+	 * 身份证校验
+	 * @param IDNumber
+	 * @return
 	 */
-	public int isLegal(String idnumber) {
-		int a = 0;
-		int sum = 0;
-		char checkBit[] = { '1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2' };
-		int[] add = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
-		char[] stringArr = idnumber.toCharArray();
-		for (int i = 0; i < 17; i++) {
-			sum += add[i] * (stringArr[i] - '0');
-		}
-		if (stringArr[17] == checkBit[sum % 11]) {
-			a = 1;
-		}
-		return a;
-	}
+	 public static boolean isIDNumber(String IDNumber) {
+	        if (IDNumber == null || "".equals(IDNumber)) {
+	            return false;
+	        }
+	        // 定义判别用户身份证号的正则表达式（15位或者18位，最后一位可以为字母）
+	        String regularExpression = "(^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|" +
+	                "(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}$)";
+	      
+	        boolean matches = IDNumber.matches(regularExpression);
+
+	        //判断第18位校验值
+	        if (matches) {
+
+	            if (IDNumber.length() == 18) {
+	                try {
+	                    char[] charArray = IDNumber.toCharArray();
+	                    //前十七位加权因子
+	                    int[] idCardWi = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+	                    //这是除以11后，可能产生的11位余数对应的验证码
+	                    String[] idCardY = {"1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2"};
+	                    int sum = 0;
+	                    for (int i = 0; i < idCardWi.length; i++) {
+	                        int current = Integer.parseInt(String.valueOf(charArray[i]));
+	                        int count = current * idCardWi[i];
+	                        sum += count;
+	                    }
+	                    char idCardLast = charArray[17];
+	                    int idCardMod = sum % 11;
+	                    if (idCardY[idCardMod].toUpperCase().equals(String.valueOf(idCardLast).toUpperCase())) {
+	                        return true;
+	                    } else {
+	                        System.out.println("身份证最后一位:" + String.valueOf(idCardLast).toUpperCase() + 
+"错误,正确的应该是:" + idCardY[idCardMod].toUpperCase());
+	                        return false;
+	                    }
+
+	                } catch (Exception e) {
+	                    e.printStackTrace();
+	                    System.out.println("异常:" + IDNumber);
+	                    return false;
+	                }
+	            }
+
+	        }
+	        return matches;
+	    }
 
 	/*
 	 * 校验过程： 1、从卡号最后一位数字开始，逆向将奇数位(1、3、5等等)相加。
@@ -434,8 +482,6 @@ public class UserController extends BaseController {
 		return (luhmSum % 10 == 0) ? '0' : (char) ((10 - luhmSum % 10) + '0');
 	}
 
-	
-	
 	@RequestMapping(value = "toLevel", method = { RequestMethod.GET, RequestMethod.POST })
 	public ModelAndView tosetLevel() {
 		ModelAndView mv = new ModelAndView("jjzd/set_user_level");

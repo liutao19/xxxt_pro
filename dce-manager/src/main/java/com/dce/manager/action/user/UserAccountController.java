@@ -1,6 +1,11 @@
 package com.dce.manager.action.user;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +27,7 @@ import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.ExeclTools;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
@@ -191,6 +198,45 @@ public class UserAccountController extends BaseAction {
 			outPrint(response, JSON.toJSONString(Result.failureResult(("0".equals(type)?"转出":"转入") + "失败!")));
 		}
 		
+	}
+	
+	
+	
+	/**
+	 * 导出数据
+	 */
+	@RequestMapping("/export")
+	public void export(HttpServletResponse response) throws IOException {
+		try {
+			Long time = System.currentTimeMillis();
+			//TravelDoExample example = new TravelDoExample();
+			UserAccountDo Useraccountao=new UserAccountDo();
+			
+			List<UserAccountDo> applytravelLst = accountService.selectByExample(Useraccountao);
+
+			String excelHead = "数据导出";
+			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
+			List<String[]> excelheaderList = new ArrayList<String[]>();
+			String[] excelheader = { "用户名", "账户余额（元）", "奖励旅游（次）", "奖励商品（盒）", "奖励活动（场）"};
+			excelheaderList.add(0, excelheader);
+			String[] excelData = { "userName", "wallet_money", "wallet_travel", "wallet_goods", "wallet_active"};
+			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, applytravelLst);
+			response.setContentType("application/vnd.ms-excel;charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			wb.write(response.getOutputStream());
+			time = System.currentTimeMillis() - time;
+			logger.info("导出数据，导出耗时(ms)：" + time);
+		} catch (Exception e) {
+			response.setContentType("text/html;charset=utf-8");
+			response.getWriter().println("下载失败");
+			logger.error("导出数据，Excel下载失败", e);
+			logger.error("导出数据异常", e);
+			throw new BusinessException("系统繁忙，请稍后再试");
+		} finally {
+			response.flushBuffer();
+		}
+
 	}
 	
 }

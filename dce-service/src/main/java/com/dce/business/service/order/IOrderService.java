@@ -30,6 +30,9 @@ public interface IOrderService {
 
 	// 根据订单编号更新订单
 	int updateByOrderCodeSelective(Order order);
+	
+	//根据条件打印订单数据
+	 List<Order> selectOrderByCondition(Map<String, Object> paraMap);
 
 	//更新订单状态发货
 	int updateByPrimaryKeySelective(Order record,Integer userId);
@@ -70,6 +73,6 @@ public interface IOrderService {
 	
 	public Result<?> alipayQuery(String outTradeNo);
 	
-	public boolean orderPay(String orderCode, String gmtPayment);
+	public void orderPay(String orderCode, String gmtPayment);
 
 }

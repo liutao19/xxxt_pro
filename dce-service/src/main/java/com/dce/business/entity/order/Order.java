@@ -19,13 +19,13 @@ public class Order {
 
 	private String createtime; // 订单创建之间
 
-	private Integer orderstatus; // 订单状态（1已发货0未发货）
+	private String orderstatus; // 订单状态（1已发货0未发货）
 
-	private Integer paystatus; // 付款状态（1已付0待付）
+	private String paystatus; // 付款状态（1已付0待付）
 
 	private String paytime; // 支付时间
 
-	private Integer ordertype; // 订单支付方式（1微信2支付宝）
+	private String ordertype; // 订单支付方式（1微信2支付宝）
 
 	private Integer addressid; // 收获地址表id，从该表中获取收货人的信息
 
@@ -34,6 +34,8 @@ public class Order {
 	private List<OrderDetail> orderDetailList; // 订单明细
 
 	private List<OrderDetail> awardDetailLst; // 订单优惠明细
+
+	private String remark; // 商品详情
 
 	private String trueName; // 客户姓名
 
@@ -125,19 +127,19 @@ public class Order {
 		this.createtime = createtime;
 	}
 
-	public Integer getOrderstatus() {
+	public String getOrderstatus() {
 		return orderstatus;
 	}
 
-	public void setOrderstatus(Integer orderstatus) {
+	public void setOrderstatus(String orderstatus) {
 		this.orderstatus = orderstatus;
 	}
 
-	public Integer getPaystatus() {
+	public String getPaystatus() {
 		return paystatus;
 	}
 
-	public void setPaystatus(Integer paystatus) {
+	public void setPaystatus(String paystatus) {
 		this.paystatus = paystatus;
 	}
 
@@ -149,11 +151,11 @@ public class Order {
 		this.paytime = paytime;
 	}
 
-	public Integer getOrdertype() {
+	public String getOrdertype() {
 		return ordertype;
 	}
 
-	public void setOrdertype(Integer ordertype) {
+	public void setOrdertype(String ordertype) {
 		this.ordertype = ordertype;
 	}
 
@@ -243,6 +245,14 @@ public class Order {
 
 	public void setPrice(Long price) {
 		this.price = price;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 	@Override

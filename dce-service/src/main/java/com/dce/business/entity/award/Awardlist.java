@@ -8,6 +8,16 @@ public class Awardlist {
 
    
     private String p1Level0;
+    
+    public String getP1Level0Dipaly() {
+		return converDiaply(p1Level0);
+	}
+
+	private String converDiaply(String p1Level02) {
+		return  "level 0 级购买"+minQty +"到" +maxQty+"获的奖励公式等于 300+(n-1)*300"+"现金";
+	}
+
+	private String p1Level0Dipaly;
 
     
     private String p1Level1;

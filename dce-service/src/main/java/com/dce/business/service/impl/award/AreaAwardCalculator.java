@@ -67,26 +67,29 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	@Override
 	public void doAward(UserDo buyer, Order order) {
 
-		// 获取订单信息
-		Integer buyQty = order.getQty();
-
-		if(order==null){
+		if (order == null) {
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");
 		}
+		if(buyer==null){
+			throw new BusinessException("购买者信息为空", "error-buyerAward-003");
+		}
+		
+
+		// 获取订单信息
+		Integer buyQty = order.getQty();
 		// 获取地址信息
 		UserAddressDo useraddress = userAdressService.selectByPrimaryKey(order.getAddressid());
-		if(useraddress==null){
+		if (useraddress == null) {
 			logger.warn("订单地址ID无效");
 			return;
 		}
-
 
 		// 获取区域代表信息
 		Map<String, Object> map = new HashMap<>();
 		map.put("district", useraddress.getAddress());
 		List<UserDo> userLst = userService.selectUserCondition(map);
 
-		if (userLst == null || userLst.size()<1) {
+		if (userLst == null || userLst.size() < 1) {
 			logger.warn("此区域无代理,结束奖励");
 			return;
 		}
@@ -103,11 +106,11 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
-			if(maps==null){
+			if (maps.isEmpty()) {
 				return;
 			}
 			// 多种奖励办法以;分隔
-			String buyerAward =  maps.get("money").toString();
+			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
 			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst);
 		}
@@ -126,8 +129,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			Integer wardAmount = getAmtByAward(oneAward);
 
 			// 奖励进入那个账户类型
-			String accountType ="wallet_money";
-			
+			String accountType = "wallet_money";
+
 			if (wardAmount.intValue() > 0) {
 				UserAccountDo accont = new UserAccountDo(new BigDecimal(wardAmount), buyUserId, accountType);
 				// 账户对象增加金额
@@ -162,7 +165,6 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 	}
 
-
 	/**
 	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错 配置格式： 1-wallet_travel-isFirst-A001-4人港澳游
 	 * 表示 1次，旅游账户 奖励 4人港澳游 ， wallet_travel 查看{@link AccountType}
@@ -172,7 +174,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 */
 	private Integer getAmtByAward(String oneAward) {
 		String[] awds = oneAward.split("-");
-		
+
 		return new Integer(awds[0].trim());
 	}
 
@@ -194,9 +196,10 @@ public class AreaAwardCalculator implements IAwardCalculator {
 				if (user.getUserLevel() >= 3) {
 					Regionalawards region = new Regionalawards();
 					region.setAlgebra(1);
-					region =  regionalawardsService.selectByPrimaryKeySelective(region).get(0);
+					region = regionalawardsService.selectByPrimaryKeySelective(region).get(0);
 					maps.put("userId", user.getId());
 					maps.put("money", Integer.valueOf(region.getRewardbalance()) * count);
+					logger.error("派发20元奖励成功");
 					return maps;
 				} else {
 					// 如果该用户没有推荐人，则终止循环不派送20元奖励

@@ -39,6 +39,7 @@ import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
 import com.dce.business.entity.etherenum.EthereumAccountDo;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.dict.ILoanDictService;
@@ -546,5 +547,12 @@ public class AccountServiceImpl implements IAccountService {
 			return 0;
 		}
 		return userAccountDao.updateMoney(param);
+	}
+
+	@Override
+	public List<UserAccountDo> selectByExample(UserAccountDo example) {
+		// TODO Auto-generated method stub
+		
+		return userAccountDao.selectByExample(example);
 	}
 }

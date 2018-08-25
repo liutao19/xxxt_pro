@@ -1,7 +1,13 @@
 package com.dce.manager.action.order;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -9,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -19,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
+import com.dce.business.common.util.ExeclTools;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.NewPagination;
@@ -94,6 +102,44 @@ public class OrderController extends BaseAction {
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
 	}
+	
+	@RequestMapping("/export")
+	public void exportOrder(HttpServletResponse response){
+		
+		Long startTime = System.currentTimeMillis(); 
+		
+		try {
+
+			Map<String,Object> map = new HashMap<String,Object>();
+			//map.put("", value);
+			
+			//条件查询订单
+			List<Order> orderList = new ArrayList<Order>();
+			orderList = orderService.selectOrderByCondition(map);
+			
+			String excelHead = "订单导出";
+			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
+			List<String[]> excelheaderList = new ArrayList<String[]>();
+			String[] excelheader = { "订单编号", "收货人", "数量","总金额", "下单时间", "付款状态", "支付方式","地址", "详情","是否发货"};
+			excelheaderList.add(0, excelheader);
+			String[] excelData = { "ordercode", "trueName", "qty", "totalprice", "createtime",
+					"paystatus", "ordertype", "address", " ","orderstatus"};
+			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, orderList);
+			response.setContentType("application/vnd.ms-excel;charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			wb.write(response.getOutputStream());
+			startTime = System.currentTimeMillis() - startTime;
+			logger.info("导出数据，导出耗时(ms)：" + startTime);
+			
+		} catch (UnsupportedEncodingException e) {
+			logger.error("不支持字符集，导出订单数据失败！！！"+e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error("IO错误，导出订单数据失败！！！"+e);
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 发货
@@ -114,7 +160,7 @@ public class OrderController extends BaseAction {
 				int i = 0;
 				if (order != null) {
 					// 更新订单状态发货
-					order.setOrderstatus(1);
+					order.setOrderstatus("1");
 					i = orderService.updateByPrimaryKeySelective(order,userId);
 				}
 				if (i <= 0) {

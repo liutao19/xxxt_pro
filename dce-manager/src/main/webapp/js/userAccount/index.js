@@ -223,7 +223,7 @@ function formatDate(value) {
 }
 /*################***导出**begin*################### */
 function export_excel(){
-	var searchStr = $("#searchForm #searchStr").val();
+	/*var searchStr = $("#searchForm #searchStr").val();
 	var productCode = $("#searchForm #search_productCode").combobox('getValue');
 	var loanStatus =  $("#searchForm #search_loanStatus").combobox('getValue');
 	var loanType = $("#searchForm #search_loanType").combobox('getValue');
@@ -240,7 +240,15 @@ function export_excel(){
 	"&processNextStep="+processNextStep;
 
 	exportIframe.style.display = 'none';
+	document.body.appendChild(exportIframe);*/
+	
+	
+	var exportIframe = document.createElement('iframe');
+	exportIframe.src = httpUrl + "/userAccount/export.html";
+
+	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);
+	
 }
 /*################***导出**end*################### */
 

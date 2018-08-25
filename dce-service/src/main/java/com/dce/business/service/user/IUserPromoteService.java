@@ -56,4 +56,9 @@ public interface IUserPromoteService{
 	 * 根据用户等级和购买的数量，判断用户升级的等级
 	 */
 	UserPromoteDo selectUserLevelAntBuyQty(Integer userLevel, int buyQty);
+	
+	/**
+	 * 修改升级条件数量
+	 */
+	public int updataCount(UserPromoteDo record);
 }

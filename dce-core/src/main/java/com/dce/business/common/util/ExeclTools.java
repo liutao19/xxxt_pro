@@ -399,7 +399,10 @@ public class ExeclTools {
                     } else if (obj instanceof Integer) {
                         cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
                         cell.setCellValue((Integer) obj);
-                    } else {
+                    } else if (obj instanceof Byte) {
+                        cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+                        cell.setCellValue((Byte) obj);
+                    }else {
                         if (obj == null) {
                             cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                             cell.setCellValue("");
@@ -458,6 +461,9 @@ public class ExeclTools {
                                 } else if (obj instanceof Integer) {
                                     cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
                                     cell.setCellValue((Integer) obj);
+                                } else if (obj instanceof Byte) {
+                                    cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+                                    cell.setCellValue((Byte) obj);
                                 } else {
                                     cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                                     cell.setCellValue((String) obj);

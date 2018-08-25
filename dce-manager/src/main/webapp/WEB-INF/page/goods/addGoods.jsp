@@ -27,7 +27,8 @@
 				</tr>
 				<tr>
 					<td align="right"><label for="name">商品图片地址：</label></td>
-					<td><input type="file" id="goodsImg" name="goodsImg"   onclick=""  /></td>
+					<td><input type="file" id="goodsImg" name="goodsImg"
+						onclick="" /></td>
 				</tr>
 				<tr>
 					<td align="right"><label for="name">商品单位：</label></td>
@@ -83,7 +84,7 @@
 	</script>
 	<div align="center">
 		<c:if test="${not empty goods.goodsImg }">
-			<img style="width: 300px; height: 300px; align: center"
+			<img style="width: 300px; height: 300px; align: center" id="img"
 				src="${goods.goodsImg }">
 		</c:if>
 	</div>

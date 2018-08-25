@@ -52,6 +52,7 @@ public class TravelApplyController extends BaseController {
 		Integer userId = getUserId();
 
 		// 获取前台传过来的用户信息
+		String name = getString("name") == null ? "" : getString("name");
 		String sex = getString("sex") == null ? "" : getString("sex");
 		String nation = getString("nation") == null ? "" : getString("nation");
 		String identity = getString("identity") == null ? "" : getString("identity");
@@ -62,6 +63,7 @@ public class TravelApplyController extends BaseController {
 		String people = getString("people") == null ? "" : getString("people");
 
 		travel.setUserid(userId);
+		travel.setName(name);
 		travel.setSex(sex);// 性别(0/1 男/女)
 		travel.setNation(nation);
 		travel.setIdentity(identity);
@@ -95,6 +97,7 @@ public class TravelApplyController extends BaseController {
 				int pathid = message.getPathid();
 				// 调用travelPathService查询出对应路线id的对象 并取出路线名称
 				String lineName = (travelPathService.selectByPrimaryKey(pathid)).getLinename();
+				map.put("id", message.getId());
 				map.put("lineName", lineName);
 				map.put("createTime", message.getCreatetime());
 				map.put("state", message.getState()); // 状态 (已开发0/马上推出1/正在开发2)

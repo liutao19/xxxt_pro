@@ -246,10 +246,6 @@ function reloadDataGrid()
 }
 
 
-function img(){
-	
-}
-
 
 
 

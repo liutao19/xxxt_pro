@@ -219,7 +219,19 @@ public class PayServiceImpl implements IPayService {
 	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo) {
 		Result<?> result = Result.successResult("审核成功!") ;
 		Map<String,String> resultMap=new HashMap<String,String>();
-
+		String orderId=getOrderIdByUUId();
+		//流水信息
+		EthereumTransInfoDo trans=new EthereumTransInfoDo();
+		trans.setPointamount(DataEncrypt.encrypt(orderId));
+		trans.setWithdrawalsId(withdrawId);
+		trans.setUserid(userId);      //用户id
+		trans.setActualamount(qty.toString());     //转出金额
+		trans.setAmount(qty.toString());    //转出金额
+		trans.setCreatetime(new Date());
+		trans.setStatus("true");      //状态
+		trans.setType(2);      //类型
+		trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
+		etherenumTranInfodao.insertSelective(trans);
 		//1、校验用户金额是否足够
 		/*UserAccountDo account = accountService.getUserAccount(userId, AccountType.wallet_money);			
 		//System.out.println("用户余额------》》》"+accountService.getUserAccount(userId, AccountType.wallet_money));
@@ -229,7 +241,6 @@ public class PayServiceImpl implements IPayService {
 		WithdrawalsDo withdraw=new WithdrawalsDo();
 		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
-		String orderId=getOrderIdByUUId();
 		request.setBizContent("{" +
 		"\"out_biz_no\":"+orderId+","+
 		"\"payee_type\":\"ALIPAY_LOGONID\"," +
@@ -246,16 +257,6 @@ public class PayServiceImpl implements IPayService {
 				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
 				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
 				withdraw.setPaymentDate((new Date()).getTime() / 1000);
-				//流水信息
-				EthereumTransInfoDo trans=new EthereumTransInfoDo();
-				trans.setUserid(userId);      //用户id
-				trans.setActualamount(qty.toString());     //转出金额
-				trans.setAmount(qty.toString());    //转出金额
-				trans.setCreatetime(new Date());
-				trans.setStatus("true");      //状态
-				trans.setType(2);      //类型
-				trans.setToaccount(DataEncrypt.encrypt(bankNo));    //转入地址
-				etherenumTranInfodao.insertSelective(trans);
 			}else{
 				System.out.println(response.getSubMsg());
 				withdraw.setRemark(response.getSubMsg());

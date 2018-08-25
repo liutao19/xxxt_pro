@@ -1,5 +1,10 @@
 package com.dce.manager.action.user;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,9 +32,12 @@ import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DataDecrypt;
 import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.common.util.DateUtil;
+import com.dce.business.common.util.ExeclTools;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.page.Pagination;
+import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
@@ -459,5 +468,44 @@ public class UserController extends BaseAction {
 			outPrint(response, JSON.toJSONString(Result.failureResult("用户认证失败!")));
 		}
 	}
+	
+	
+	/**
+	 * 导出用户数据
+	 */
+	@RequestMapping("/export")
+	public void export(HttpServletResponse response) throws IOException {
+		try {
+			Long time = System.currentTimeMillis();
+			
+			Map<String, Object> params =new HashMap<String,Object>();
+			List<UserDo>  userLst = userService.selectUser(params );
+					
+
+			String excelHead = "数据导出";
+			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
+			List<String[]> excelheaderList = new ArrayList<String[]>();
+			String[] excelheader = { "真实姓名", "登录账号", "性别", "身份证", "手机号码", "银行卡号", "银行卡类型", "用户等级","状态" ,"是否激活"};
+			excelheaderList.add(0, excelheader);
+			String[] excelData = { "trueName", "userName", "sex", "idnumber", "mobile","banknumber", "banktype", "userLevel","status","isActivated"};
+			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, userLst);
+			response.setContentType("application/vnd.ms-excel;charset=utf-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			wb.write(response.getOutputStream());
+			time = System.currentTimeMillis() - time;
+			logger.info("导出数据，导出耗时(ms)：" + time);
+		} catch (Exception e) {
+			response.setContentType("text/html;charset=utf-8");
+			response.getWriter().println("下载失败");
+			logger.error("导出数据，Excel下载失败", e);
+			logger.error("导出数据异常", e);
+			throw new BusinessException("系统繁忙，请稍后再试");
+		} finally {
+			response.flushBuffer();
+		}
+
+	}
+	
 
 }

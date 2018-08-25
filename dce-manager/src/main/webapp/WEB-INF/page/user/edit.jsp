@@ -72,7 +72,7 @@
 		</tr>
 		<tr>
 			<td>用户性别:</td>
-			<td><select class="easyui-combobox" id="edit_change_sex"
+			<td><select id="edit_change_sex" class="easyui-combobox"
 				name="levelType" style="width: 140px;" style="height:30px;">
 					<option value="">--请选择用户性别--</option>
 					<option value="1"

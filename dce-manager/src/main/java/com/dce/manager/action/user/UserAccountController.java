@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
@@ -210,9 +212,11 @@ public class UserAccountController extends BaseAction {
 		try {
 			Long time = System.currentTimeMillis();
 			//TravelDoExample example = new TravelDoExample();
-			UserAccountDo Useraccountao=new UserAccountDo();
+			Map<String, Object> map=new HashMap<String,Object>();
+			List<Map<String, Object>> applytravelLst = accountService.exportQuery(map);
 			
-			List<UserAccountDo> applytravelLst = accountService.selectByExample(Useraccountao);
+			
+			System.err.println("对象------》》》"+JSONObject.toJSON(applytravelLst));
 
 			String excelHead = "数据导出";
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -220,7 +224,7 @@ public class UserAccountController extends BaseAction {
 			List<String[]> excelheaderList = new ArrayList<String[]>();
 			String[] excelheader = { "用户名", "账户余额（元）", "奖励旅游（次）", "奖励商品（盒）", "奖励活动（场）"};
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "userName", "wallet_money", "wallet_travel", "wallet_goods", "wallet_active"};
+			String[] excelData = { "userName","wallet_money", "wallet_travel", "wallet_goods", "wallet_active"};
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, applytravelLst);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);

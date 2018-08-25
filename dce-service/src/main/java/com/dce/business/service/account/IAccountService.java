@@ -205,5 +205,5 @@ public interface IAccountService {
      * @param example
      * @return
      */
-    public List<UserAccountDo> selectByExample(UserAccountDo example);
+    public List<Map<String,Object>> exportQuery(Map<String,Object> map);
 }

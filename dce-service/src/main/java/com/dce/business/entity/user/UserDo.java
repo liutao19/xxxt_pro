@@ -43,6 +43,24 @@ public class UserDo {
 	// 证件性别
 	private int sex;
 
+	private String displaySex;
+
+	public String getDisplaySex() {
+		displaySex = null;
+		if (this.getSex() == 0) {
+			displaySex = "未认证";
+		} else if (this.getSex() == 1) {
+			displaySex = "男";
+		} else if (this.getSex() == 2) {
+			displaySex = "女";
+		}
+		return displaySex;
+	}
+
+	public void setDisplaySex(String displaySex) {
+		this.displaySex = displaySex;
+	}
+
 	private Long loginTimes;
 
 	private Long lastLoginTime;
@@ -56,6 +74,25 @@ public class UserDo {
 
 	// 会员禁用，
 	private Byte status;
+
+	private String displayStatus;
+
+	public String getDisplayStatus() {
+		displayStatus = null;
+		if (this.getIsActivated() == null) {
+			return "空";
+		}
+		if (this.getStatus().intValue() == 0) {
+			displayStatus = "已冻结用户";
+		} else if (this.getStatus().intValue() == 1) {
+			displayStatus = "正常";
+		}
+		return displayStatus;
+	}
+
+	public void setDisplayStatus(String displayStatus) {
+		this.displayStatus = displayStatus;
+	}
 
 	private BigDecimal balanceBonus;
 
@@ -121,6 +158,30 @@ public class UserDo {
 
 	// 用户等级
 	private Byte userLevel;
+	private String displayUserLevel;
+
+	public String getDisplayUserLevel() {
+		displayUserLevel = null;
+		if (this.getIsActivated() == null) {
+			return "空";
+		}
+		if (this.getUserLevel().intValue() == 0) {
+			displayUserLevel = "未购买";
+		} else if (this.getUserLevel().intValue() == 1) {
+			displayUserLevel = "普通会员";
+		} else if (this.getUserLevel().intValue() == 2) {
+			displayUserLevel = "会员";
+		} else if (this.getUserLevel().intValue() == 3) {
+			displayUserLevel = "VIP";
+		} else if (this.getUserLevel().intValue() == 4) {
+			displayUserLevel = "合伙人";
+		}
+		return displayUserLevel;
+	}
+
+	public void setDisplayUserLevel(String displayUserLevel) {
+		this.displayUserLevel = displayUserLevel;
+	}
 
 	private Byte userPost;
 
@@ -165,13 +226,13 @@ public class UserDo {
 
 	// 身份证照片url
 	private String identity;
-	
-	//开卡行
+
+	// 开卡行
 	private String banktype;
 
 	private String bankUserName;
 
-	//卡号
+	// 卡号
 	private String banknumber;
 
 	private String bankContent;
@@ -247,6 +308,24 @@ public class UserDo {
 
 	// 用户是否已激活（状态），
 	private Integer isActivated;
+	private String displayIsActivated;
+
+	public String getDisplayIsActivated() {
+		displayIsActivated = null;
+		if (this.getIsActivated() == null) {
+			return "未激活(空)";
+		}
+		if (this.getIsActivated().intValue() == 0) {
+			displayIsActivated = "未激活";
+		} else if (this.getIsActivated().intValue() == 1) {
+			displayIsActivated = "激活";
+		}
+		return displayIsActivated;
+	}
+
+	public void setDisplayIsActivated(String displayIsActivated) {
+		this.displayIsActivated = displayIsActivated;
+	}
 
 	// 用户所属区域
 	private String district;
@@ -746,8 +825,6 @@ public class UserDo {
 	public void setIdnumber(String idnumber) {
 		this.idnumber = idnumber;
 	}
-
-	
 
 	public String getBanktype() {
 		return banktype;

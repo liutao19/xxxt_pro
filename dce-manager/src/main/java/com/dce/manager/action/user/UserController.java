@@ -468,8 +468,7 @@ public class UserController extends BaseAction {
 			outPrint(response, JSON.toJSONString(Result.failureResult("用户认证失败!")));
 		}
 	}
-	
-	
+
 	/**
 	 * 导出用户数据
 	 */
@@ -477,18 +476,18 @@ public class UserController extends BaseAction {
 	public void export(HttpServletResponse response) throws IOException {
 		try {
 			Long time = System.currentTimeMillis();
-			
-			Map<String, Object> params =new HashMap<String,Object>();
-			List<UserDo>  userLst = userService.selectUser(params );
-					
+
+			Map<String, Object> params = new HashMap<String, Object>();
+			List<UserDo> userLst = userService.selectUser(params);
 
 			String excelHead = "数据导出";
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "真实姓名", "登录账号", "性别", "身份证", "手机号码", "银行卡号", "银行卡类型", "用户等级","状态" ,"是否激活"};
+			String[] excelheader = { "登录账号", "用户等级", "手机号码", "真实姓名", "性别", "身份证", "银行卡号", "银行卡类型", "账号状态", "是否激活" };
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "trueName", "userName", "sex", "idnumber", "mobile","banknumber", "banktype", "userLevel","status","isActivated"};
+			String[] excelData = { "userName", "userLevel", "mobile", "trueName", "displaySex", "idnumber", "banknumber",
+					"banktype", "status", "isActivated" };
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, userLst);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
@@ -506,6 +505,5 @@ public class UserController extends BaseAction {
 		}
 
 	}
-	
 
 }

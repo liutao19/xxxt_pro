@@ -60,9 +60,9 @@ public enum IncomeType {
     TYPE_AWARD_BUYER(331, "会员奖励"),
     
     /**
-     * 量碰奖励
+     * 会员体验奖
      */
-    TYPE_AWARD_TOUCH(3331, "量碰奖励"),
+    TYPE_AWARD_EXPERIENCE(3331, "会员体验奖"),
     /**
      * 互助奖励
      */

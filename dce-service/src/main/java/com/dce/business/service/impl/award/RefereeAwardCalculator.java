@@ -25,6 +25,7 @@ import com.dce.business.service.user.IUserService;
 
 /**
  * 推荐人奖金计算类
+ * 
  * @author harry
  *
  */
@@ -32,105 +33,119 @@ import com.dce.business.service.user.IUserService;
 public class RefereeAwardCalculator implements IAwardCalculator {
 
 	private Logger logger = Logger.getLogger(getClass());
-	
+
 	@Resource
 	private IAwardlistService awardlistService;
-	
+
 	@Resource
 	private IUserService userService;
-	
+
 	// 账户
 	@Resource
 	private IAccountService accountService;
-	
+
 	@Resource
 	private IOrderService orderService;
 
 	/**
-	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
-	 * 计算奖励的方法
-	 * @param buyUserId 购买者
-	 * @param orderId   购买订单
+	 * 根据购买者购买数量确定用户会员等级和给会员的奖励 计算奖励的方法
+	 * 
+	 * @param buyUserId
+	 *            购买者
+	 * @param orderId
+	 *            购买订单
 	 * @return
 	 */
 	@Override
 	public void doAward(UserDo buyer, Order order) {
-		
-		
-		//获取推荐人
-		UserDo ref1 = userService.getUser( buyer.getRefereeid());
-		if(ref1 == null){
-			logger.info("会员userId="+buyer.getId()+"购买订单id="+order.getOrderid() +"推荐人没有查找到");
+
+		// 获取推荐人
+		UserDo ref1 = userService.getUser(buyer.getRefereeid());
+		if (ref1 == null) {
+			logger.info("会员userId=" + buyer.getId() + "购买订单id=" + order.getOrderid() + "推荐人没有查找到");
 			return;
 		}
-		//第二个推荐人
-		UserDo ref2 = userService.getUser( ref1.getRefereeid());
-		if(ref2 == null){
-			logger.info("会员userId="+buyer.getId()+"购买订单id="+order.getOrderid() +"推荐人没有查找到");
+		// 第二个推荐人
+		UserDo ref2 = userService.getUser(ref1.getRefereeid());
+		if (ref2 == null) {
+			logger.info("会员userId=" + buyer.getId() + "购买订单id=" + order.getOrderid() + "推荐人没有查找到");
 		}
-					
-		// 得到奖励记录
-		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),order.getQty());
-		if(award == null){
-			throw new BusinessException("找不到购买者对应的奖励办法，请检查奖励办法的配置","error-refereeAward-001");
-		}
-		
-		
-		if(ref1 != null){
-			String awardConf = getAwardConfByRefLevel(ref1.getUserLevel(),1,award);
-			//多种奖励办法以;分隔
-			String[]  bAwardLst = awardConf.split(";");
-			oneAward(ref1.getId(), bAwardLst,order);
-		}
-		
-		//推荐人为空，下一个
-		if(ref2 != null){
-			String awardConf = getAwardConfByRefLevel(ref2.getUserLevel(),2,award);
-			//多种奖励办法以;分隔
-			String[]  bAwardLst = awardConf.split(";");
-			oneAward(ref2.getId(), bAwardLst,order);
-		}
-		
-		
-		
-	}
 
+		// 得到奖励记录
+		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(), order.getQty());
+
+		// 分级奖励
+		if ((buyer.getUserLevel() == 0 && order.getQty() == 5) || (buyer.getUserLevel() == 1 && order.getQty() == 5)) {
+			distributionone(buyer.getRefereeid(), order.getQty(), award, order);
+			return;
+		}
+
+		if (award == null) {
+			throw new BusinessException("找不到购买者对应的奖励办法，请检查奖励办法的配置", "error-refereeAward-001");
+		}
+
+		if (ref1 != null) {
+
+			if (ref1.getUserLevel() < 2) {
+				//体验奖
+				experiencePrize(ref1.getId(), order.getQty(), award, order);
+			} else {
+				String awardConf = getAwardConfByRefLevel(ref1.getUserLevel(), 1, award);
+				// 多种奖励办法以;分隔
+				String[] bAwardLst = awardConf.split(";");
+				oneAward(ref1.getId(), bAwardLst, order);
+			}
+		}
+
+		// 推荐人为空，下一个
+		if (ref2 != null) {
+			String awardConf = getAwardConfByRefLevel(ref2.getUserLevel(), 2, award);
+			// 多种奖励办法以;分隔
+			String[] bAwardLst = awardConf.split(";");
+			oneAward(ref2.getId(), bAwardLst, order);
+		}
+
+	}
 
 	/**
 	 * 逐个奖励处理
+	 * 
 	 * @param buyUserId
 	 * @param bAwardLst
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst,Order order) {
-		
-		for(String oneAward : bAwardLst){
-			
-			if(StringUtils.isBlank(oneAward)){return;}
-			//解析单个奖励配置
+	private void oneAward(int buyUserId, String[] bAwardLst, Order order) {
+
+		for (String oneAward : bAwardLst) {
+
+			if (StringUtils.isBlank(oneAward)) {
+				return;
+			}
+			// 解析单个奖励配置
 			String[] awds = oneAward.split(",");
-			//计算奖励金额
-			BigDecimal wardAmount = getAmtByAward(awds,order);
-			//获取奖励账户
+			// 计算奖励金额
+			BigDecimal wardAmount = getAmtByAward(awds, order);
+			// 获取奖励账户
 			String accountType = getAccountTypeByAward(awds);
-			
-			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
-				UserAccountDo accont = new UserAccountDo(wardAmount,buyUserId,accountType);
-				//账户对象增加金额
-				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_REFEREE);
+
+			if (wardAmount.compareTo(BigDecimal.ZERO) > 0) {
+				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
+				// 账户对象增加金额
+				accountService.updateUserAmountById(accont,IncomeType.TYPE_AWARD_EXPERIENCE);
 			}
 		}
 	}
 
-	
 	/**
 	 * 
-	 * @param refUser 推荐用户
-	 * @param refSort 推荐人顺序 1： 第一推荐人， 2：第二推荐人
+	 * @param refUser
+	 *            推荐用户
+	 * @param refSort
+	 *            推荐人顺序 1： 第一推荐人， 2：第二推荐人
 	 * @return
 	 */
-	private String getAwardConfByRefLevel(byte refUserLevel,int refSort,Awardlist award) {
+	private String getAwardConfByRefLevel(byte refUserLevel, int refSort, Awardlist award) {
 		String awardConf = null;
-		if(1== refSort){
+		if (1 == refSort) {
 			switch (refUserLevel) {
 			case 0:
 				awardConf = award.getP1Level0();
@@ -149,7 +164,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 				break;
 			}
 		}
-		if(2 == refSort){
+		if (2 == refSort) {
 			switch (refUserLevel) {
 			case 0:
 				awardConf = award.getP2Level0();
@@ -168,46 +183,104 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 				break;
 			}
 		}
-		
-		if(awardConf == null){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-002");
+
+		if (awardConf == null) {
+			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-refereeAward-002");
 		}
 		return awardConf;
 	}
 
-
 	/**
-	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错
-	 * 配置格式： 1-wallet_travel-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
+	 * 根据配置 用 - 分隔 ，获取奖励次数或金额，如果没有配置报错 配置格式： 1-wallet_travel-4人港澳游 表示 1次，旅游账户 奖励
+	 * 4人港澳游 ， wallet_travel 查看{@link AccountType}
 	 * 
 	 * @param oneAward
 	 * @return
 	 */
-	private BigDecimal getAmtByAward(String[] awds,Order order) {
-		
-		if(awds.length<2){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-003");
+	private BigDecimal getAmtByAward(String[] awds, Order order) {
+
+		if (awds.length < 2) {
+			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-refereeAward-003");
 		}
 		String formula = awds[0].trim();
-		
-		Map<String, Object> map = new HashMap<String,Object>();
+
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("n", order.getQty());
 		return new BigDecimal(String.valueOf(GroovyParse.executeScript(formula, map)));
 	}
 
 	/**
-	 * 根据配置 用 - 分隔 ，配置进什么账户类型，如果没有配置报错
-	 * 配置格式： 1-wallet_travel-4人港澳游       表示 1次，旅游账户  奖励  4人港澳游 ， wallet_travel 查看{@link AccountType}
+	 * 根据配置 用 - 分隔 ，配置进什么账户类型，如果没有配置报错 配置格式： 1-wallet_travel-4人港澳游 表示 1次，旅游账户 奖励
+	 * 4人港澳游 ， wallet_travel 查看{@link AccountType}
 	 * 
 	 * @param oneAward
 	 * @return
 	 */
 	private String getAccountTypeByAward(String[] awds) {
-		if(awds.length<2){
-			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置","error-refereeAward-004");
+		if (awds.length < 2) {
+			throw new BusinessException("购买者对应的奖励办法没有正确配置，请检查奖励办法的配置", "error-refereeAward-004");
 		}
 		return awds[1];
 	}
 
+	// 800元推荐人奖励 userid 推荐人id
+	private void distributionone(int userid, int count, Awardlist award, Order order) {
+
+		// 获取推荐人信息
+		UserDo userone = userService.getUser(userid);
+
+		if (userone == null) {
+			throw new BusinessException("推荐人为空");
+		}
+
+		if (userone.getUserLevel() > 1) {
+			String awardConf = getAwardConfByRefLevel(userone.getUserLevel(), 1, award);
+			// 多种奖励办法以;分隔
+			String[] bAwardLst = awardConf.split(";");
+			oneAward(userone.getId(), bAwardLst, order);
+			// 派发500奖励
+			distributiontwo(userone.getRefereeid(), count, award, order);
+
+		} else {
+			distributionone(userone.getRefereeid(), count, award, order);
+		}
+	}
+
+	// 500元推荐人奖励 userid 推荐人id
+	private void distributiontwo(int userid, int count, Awardlist award, Order order) {
+
+		// 获取推荐人信息
+		UserDo userone = userService.getUser(userid);
+
+		if (userone == null) {
+			throw new BusinessException("推荐人为空");
+		}
+
+		if (userone.getUserLevel() > 1) {
+			String awardConf = getAwardConfByRefLevel(userone.getUserLevel(), 2, award);
+			// 多种奖励办法以;分隔
+			String[] bAwardLst = awardConf.split(";");
+			oneAward(userone.getId(), bAwardLst, order);
+		} else {
+			distributiontwo(userone.getRefereeid(), count, award, order);
+		}
+	}
+
+	// 会员300体验奖发放 userid 推荐人id
+	public void experiencePrize(int userid, int count, Awardlist award, Order order) {
+		Map<String, Object> map = new HashMap<>();
+		UserDo user = userService.getUser(userid);
+		map.put("userId", userid);
+		map.put("remark", IncomeType.TYPE_AWARD_EXPERIENCE.getRemark());
+		if ((!accountService.selectUserAccountDetail(map).isEmpty())
+				|| accountService.selectUserAccountDetail(map).size() >0) {
+			logger.error("已享受会员体验奖");
+			return;
+		}
+		String awardConf = getAwardConfByRefLevel(user.getUserLevel(), 1, award);
+		// 多种奖励办法以;分隔
+		String[] bAwardLst = awardConf.split(";");
+		oneAward(user.getId(), bAwardLst, order);
+	}
 
 }

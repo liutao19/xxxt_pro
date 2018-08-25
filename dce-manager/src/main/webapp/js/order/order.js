@@ -132,6 +132,14 @@ $(function(){
 /*##########################grid init end###################################################*/
 });
 
+function export_excel() {
+	var exportIframe = document.createElement('iframe');
+	exportIframe.src = httpUrl + "/order/export.html";
+
+	exportIframe.style.display = 'none';
+	document.body.appendChild(exportIframe);
+}
+
 
 /**
  * 发货

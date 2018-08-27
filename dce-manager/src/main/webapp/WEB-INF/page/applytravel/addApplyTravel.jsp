@@ -99,7 +99,7 @@
 							<label for="name">申请状态</label>
 						</td>	
 						<td>
-								<input type="text" id="state" name="state" value="${applytravel.state}"/>												
+								<input type="text" id="state" name="state" value="${applytravel.state}"/>
 						</td>						   
 					</tr>
 		

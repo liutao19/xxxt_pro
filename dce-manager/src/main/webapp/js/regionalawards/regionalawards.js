@@ -32,11 +32,11 @@ $(function() {
 	 * ##########################grid toolbar
 	 * begin#################################################
 	 */
-	var toolbar_tt = [ {
+	var toolbar_tt = [ /*{
 		iconCls : "icon-edit",
 		text : "新增",
 		handler : to_addregionalawards
-	} ];
+	}*/ ];
 
 	/* ######################grid toolbar end############################## */
 	/* ######################grid columns begin############################## */
@@ -52,13 +52,7 @@ $(function() {
 				title : "区域奖励金额",
 				width : 180,
 				align : "center"
-			},
-			{
-				field : "algebra",
-				title : "推荐代数",
-				width : 180,
-				align : "center"
-			},
+			},	
 			{
 				field : "remark",
 				title : "备注",
@@ -72,9 +66,10 @@ $(function() {
 				align : "left",
 				formatter : function(value, row, index) {
 					var str = '<a href="javascript:void(0);" onclick="to_editregionalawards(\''
-							+ row.rewardsareaid + '\');">编辑</a>   <a href="javascript:void(0);" onclick="deleteRegionalawards(\''
-							+ row.rewardsareaid + '\');">删除</a>';
-					return str;
+							+ row.rewardsareaid + '\');">编辑</a>';
+					/*<a href="javascript:void(0);" onclick="deleteRegionalawards(\''
+						+ row.rewardsareaid + '\');">删除</a>
+*/					return str;
 				}
 			} ] ];
 	/* ######################grid columns end############################## */
@@ -211,10 +206,10 @@ function save_Regionalawards() {
 		return flag=false;
 	}
 	
-	if($.isEmptyObject(algebra)){
+	/*if($.isEmptyObject(algebra)){
 		$.messager.alert("提示","推荐代数不能为空");
 		return flag=false;
-	}
+	}*/
 	
 	if (!reg.test(rewardbalance)) {
     	$.messager.alert("提示", "区域奖励金额请填写整数", "error");
@@ -222,11 +217,11 @@ function save_Regionalawards() {
 
     }
 	
-	if (!reg.test(algebra)) {
+	/*if (!reg.test(algebra)) {
     	$.messager.alert("提示", "推荐代数请填写整数", "error");
     	return flag=false;
 
-    }
+    }*/
 	
 	var formdata = $("#editRegionalawardsForm").serialize();
 	console.info("formdata");

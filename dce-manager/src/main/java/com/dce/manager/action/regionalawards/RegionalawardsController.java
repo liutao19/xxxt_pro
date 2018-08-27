@@ -145,11 +145,11 @@ public class RegionalawardsController extends BaseAction {
 		logger.info("----saveRegionalawards------" + regionalawardsDo.getRewardsareaid()+"***"+regionalawardsDo.getRewardbalance()+"****"+regionalawardsDo.getAlgebra());
 		try {
 			Integer id = regionalawardsDo.getRewardsareaid();
-			Long userId = new Long(this.getUserId());
+			//Long userId = new Long(getUserId());
 
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
-				regionalawardsDo.setRewardsareaid(this.getUserId());
+				regionalawardsDo.setRewardsareaid(id);
 				// regionalawardsDo.setUpdateTime(new Date());
 				i = regionalawardsService.updateRegionalawardsById(regionalawardsDo);
 			} else {

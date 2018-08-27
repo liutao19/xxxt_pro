@@ -28,10 +28,10 @@ $(function(){
       			[	 				
 							    {field:'district_id',title:'id',width:100,hidden:true},						
 								{field:"distrct_name",title:"区域",width:180,align:"center"},
-								{field:"user_id",title:"用户id",width:180,align:"center"},
+								/*{field:"user_id",title:"用户id",width:180,align:"center"},*/
 								{field:"true_name",title:"真实姓名",width:180,align:"center"},
 								{field:"user_name",title:"用户呢称",width:180,align:"center"},
-								{field:"districtStatus",title:"封地状态",width:180,align:"center"},
+								/*{field:"districtStatus",title:"封地状态",width:180,align:"center"},*/
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editdistrict(\''+row.district_id+'\');">分配区域</a>   <a href="javascript:void(0);" onclick="deleteDistrict(\''+row.district_id+'\',\''+row.user_id+'\');">删除</a>';

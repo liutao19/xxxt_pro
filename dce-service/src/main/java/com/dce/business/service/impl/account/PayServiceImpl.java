@@ -151,7 +151,7 @@ public class PayServiceImpl implements IPayService {
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
-		int nm=qty.intValue()%100;
+		double  nm=qty.intValue()%100;
 		
 		System.err.println("整提----》》》"+nm);
 		

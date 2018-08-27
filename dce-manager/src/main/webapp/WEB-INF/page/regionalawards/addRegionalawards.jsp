@@ -25,14 +25,14 @@
 								<input type="text" id="rewardbalance" name="rewardbalance" value="${regionalawards.rewardbalance}"/>												
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name"> 推荐代数</label>
 						</td>	
 						<td>
 								<input type="text" id="algebra" name="algebra" value="${regionalawards.algebra}"/>												
 						</td>						   
-					</tr>
+					</tr> --%>
 					<tr>	
 						<td align="right">
 							<label for="name"> 备注</label>

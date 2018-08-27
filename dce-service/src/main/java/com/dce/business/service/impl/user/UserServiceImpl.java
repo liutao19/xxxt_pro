@@ -777,6 +777,10 @@ public class UserServiceImpl implements IUserService {
 			}
 			ref = refUserLst.get(0);
 		}
+		// 密码加密处理
+		userDo.setRegTime(new Date().getTime());
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
 		// 维护推荐人关系
 		if (ref != null) {
 			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
@@ -785,7 +789,7 @@ public class UserServiceImpl implements IUserService {
 
 		// 新增的会员信息
 		logger.info("用户信息:userName=" + userDo.getUserName());
-		logger.info("用户信息:trueName=" + userDo.getUserName());
+		logger.info("用户信息:trueName=" + userDo.getTrueName());
 		logger.info("用户信息:mobile=" + userDo.getMobile());
 		logger.info("用户信息:login_password=" + userDo.getUserPassword());
 		logger.info("用户信息:seconde_password=" + userDo.getTwoPassword());

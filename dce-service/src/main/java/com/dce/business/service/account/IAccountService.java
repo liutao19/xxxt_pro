@@ -206,4 +206,6 @@ public interface IAccountService {
      * @return
      */
     public List<Map<String,Object>> exportQuery(Map<String,Object> map);
+
+	public List<UserAccountDo> sumAccount(Map emptyMap);
 }

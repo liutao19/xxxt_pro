@@ -555,4 +555,9 @@ public class AccountServiceImpl implements IAccountService {
 		
 		return userAccountDao.exportQuery(map);
 	}
+
+	@Override
+	public List<UserAccountDo> sumAccount(Map emptyMap) {
+		return userAccountDao.sumAccount(emptyMap);
+	}
 }

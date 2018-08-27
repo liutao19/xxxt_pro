@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
@@ -202,6 +202,13 @@ public class UserAccountController extends BaseAction {
 		
 	}
 	
+	
+	@RequestMapping("/sumAccount")
+	public String sumAccount(HttpServletRequest request, HttpServletResponse response){
+		List<UserAccountDo> select = accountService.sumAccount(Collections.EMPTY_MAP);
+		request.setAttribute("sumList", select);
+		return "/userAccount/sumAccount";
+	}
 	
 	
 	/**

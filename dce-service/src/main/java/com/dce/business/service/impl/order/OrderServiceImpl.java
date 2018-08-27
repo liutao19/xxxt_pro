@@ -188,21 +188,27 @@ public class OrderServiceImpl implements IOrderService {
 			Order order = orderDao.selectByOrderCode(ordercode);
 			logger.debug("根据订单编号查询出的订单：" + order);
 			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
-			Map<String, Object> paraMap = new HashMap<String, Object>();
-			// 付款状态为已支付
-			paraMap.put("newStatus", 1);
-			paraMap.put("oldStatus", 0);
-			// 支付时间
-			paraMap.put("payTime", gmtPayment);
-			paraMap.put("orderId", order.getOrderid());
-			// 更新订单表状态,从未付改成已付
-			int i = orderDao.updateOrderStatusByOldStatus(paraMap);
-			if (i <= 0) {
-				throw new BusinessException("支付宝回调更新订单失败，order：" + order, "lipay002");
+			logger.debug("获取的订单支付状态========》》》》》"+order.getPaystatus());
+			//如果订单状态为支付失败状态才进行更新
+			if(order.getPaystatus().equals("0")){
+				Map<String, Object> paraMap = new HashMap<String, Object>();
+				// 付款状态为已支付
+				paraMap.put("newStatus", 1);
+				paraMap.put("oldStatus", 0);
+				// 支付时间
+				paraMap.put("payTime", gmtPayment);
+				paraMap.put("orderId", order.getOrderid());
+				logger.debug("更新订单状态的参数=======》》》》》"+paraMap);
+				// 更新订单表状态,从未付改成已付
+				int i = orderDao.updateOrderStatusByOldStatus(paraMap);
+				if (i <= 0) {
+					throw new BusinessException("支付宝回调更新订单失败，order：" + order, "lipay002");
+				}
 			}
 
 			// 激活用户状态
 			UserDo buyer = userService.getUser(order.getUserid());
+			logger.debug("根据支付宝回调返回的信息获取用户=======》》》》》"+buyer.isActivated());
 			// 未激活的用户去激活
 			if (buyer.getIsActivated().intValue() != 1) {
 				Map<String, Object> map = new HashMap<String, Object>();
@@ -316,7 +322,7 @@ public class OrderServiceImpl implements IOrderService {
 			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 			quantity += orderDetail.getQty(); // 商品总数量
-			totalprice = totalprice.add(BigDecimal.valueOf(orderDetail.getPrice())); // 商品总价格
+			totalprice = BigDecimal.valueOf(orderDetail.getPrice()*(orderDetail.getQty())).add(totalprice); // 商品总价格
 			logger.debug("商品总金额---------》》》》》》》》》" + totalprice);
 		}
 

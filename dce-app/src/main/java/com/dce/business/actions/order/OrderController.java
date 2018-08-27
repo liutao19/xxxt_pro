@@ -114,10 +114,14 @@ public class OrderController extends BaseController {
 		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 		String orderType = getString("orderType") == null ? "" : request.getParameter("orderType");
 
+		//假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
 
 			return Result.failureResult("获取userId、addressId、orderType、cart参数为空！");
 		}
+		
+		//判断该用户是否存在
+		//UserDao user = 
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));

@@ -56,8 +56,8 @@ public class AwardServiceImpl implements IAwardService {
 			e.printStackTrace();
 			Order order =  new Order();
 			order.setOrderid(orderId);
-//			order.setAwardStatus("fail");
-//			order.setAwardRemark(e.getMessage());
+			order.setAwardStatus("fail");
+			order.setAwardRemark(e.getMessage());
 			orderService.updateOrder(order);
 		}
 		logger.info("计算奖励结束 购买者ID:"+buyUserId+" 订单id"+orderId);

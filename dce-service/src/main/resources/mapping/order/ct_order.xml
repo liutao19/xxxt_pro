@@ -496,13 +496,74 @@
 		</trim>
 	</select>
 
-	<update id="updateOrderStatusByOldStatus" parameterType="Map">
+<!-- 	<update id="updateOrderStatusByOldStatus" parameterType="Map">
 		UPDATE ct_order
 		<trim prefix="SET" suffixOverrides=",">
 			<if test="newStatus != null">
 				payStatus = #{newStatus},
 			</if>
 		</trim>
+		WHERE orderId = #{orderId} and payStatus = #{oldStatus}
+	</update> -->
+	<!-- 支付成功更新订单状态 -->
+	<update id="updateOrderStatusByOldStatus" parameterType="Map">
+		update ct_order
+		<set>
+			<if test="ordercode != null">
+				ordercode = #{ordercode,jdbcType=VARCHAR},
+			</if>
+			<if test="qty != null">
+				qty = #{qty,jdbcType=DECIMAL},
+			</if>
+			<if test="totalprice != null">
+				totalPrice = #{totalprice,jdbcType=DECIMAL},
+			</if>
+			<if test="recaddress != null">
+				recAddress = #{recaddress,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				createTime = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderstatus != null">
+				orderStatus = #{orderstatus,jdbcType=INTEGER},
+			</if>
+			<if test="newStatus != null">
+				payStatus = #{newStatus,jdbcType=INTEGER},
+			</if>
+			<if test="payTime != null">
+				payTime = #{payTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="ordertype != null">
+				orderType = #{ordertype,jdbcType=INTEGER},
+			</if>
+			<if test="matchorderid != null">
+				matchOrderId = #{matchorderid,jdbcType=BIGINT},
+			</if>
+			<if test="salqty != null">
+				salqty = #{salqty,jdbcType=DECIMAL},
+			</if>
+			<if test="accounttype != null">
+				accountType = #{accounttype,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsid != null">
+				goodsId = #{goodsid,jdbcType=BIGINT},
+			</if>
+			<if test="price != null">
+				price = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="addressid != null">
+				addressId = #{addressid,jdbcType=INTEGER},
+			</if>
+			<if test="alipayStatus != null">
+				alipayStatus = #{alipayStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardStatus != null">
+				awardStatus = #{awardStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="awardRemark != null">
+				awardRemark = #{awardRemark,jdbcType=VARCHAR},
+			</if>
+		</set>
 		WHERE orderId = #{orderId} and payStatus = #{oldStatus}
 	</update>
 

@@ -496,15 +496,10 @@
 		</trim>
 	</select>
 
-<!-- 	<update id="updateOrderStatusByOldStatus" parameterType="Map">
-		UPDATE ct_order
-		<trim prefix="SET" suffixOverrides=",">
-			<if test="newStatus != null">
-				payStatus = #{newStatus},
-			</if>
-		</trim>
-		WHERE orderId = #{orderId} and payStatus = #{oldStatus}
-	</update> -->
+	<!-- <update id="updateOrderStatusByOldStatus" parameterType="Map"> UPDATE 
+		ct_order <trim prefix="SET" suffixOverrides=","> <if test="newStatus != null"> 
+		payStatus = #{newStatus}, </if> </trim> WHERE orderId = #{orderId} and payStatus 
+		= #{oldStatus} </update> -->
 	<!-- 支付成功更新订单状态 -->
 	<update id="updateOrderStatusByOldStatus" parameterType="Map">
 		update ct_order
@@ -644,7 +639,7 @@
 
 	<!-- 导出订单数据 -->
 	<select id="selectOrderByCondition" parameterType="java.util.Map"
-		resultType="com.dce.business.entity.order.Order">
+		resultMap="orderMapper">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
@@ -654,14 +649,19 @@
 		a.alipayStatus alipayStatus,
 		b.true_name
 		trueName,CONCAT(c.address,c.addressDetails)
-		address
+		address,d.orderDetailId,
+		d.orderId, d.goods_id, d.qty, d.price,
+		d.remark
 		FROM
 		ct_order a
-		LEFT
-		JOIN ct_user b ON a.userid = b.id
+		left join
+		ct_user b ON a.userid = b.id
 		left join
 		ct_user_address c on
 		c.addressId = a.addressId
+		left join
+		ct_orderdetail d on
+		a.orderId = d.orderId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userId != null">
 				AND a.userId = #{userId}

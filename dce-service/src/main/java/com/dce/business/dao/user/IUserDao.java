@@ -28,6 +28,12 @@ public interface IUserDao {
 	 */
 	int insertSelective(UserDo record);
 
+	/**
+	 * 通过userId查询所有用户所有信息
+	 * 
+	 * @param id
+	 * @return
+	 */
 	UserDo selectByPrimaryKey(Integer id);
 
 	/**
@@ -66,6 +72,12 @@ public interface IUserDao {
 	 */
 	List<UserDo> selectMobile(Map<String, Object> params);
 
+	/**
+	 * 查询所有用户名（手机号）
+	 * 
+	 * @param params
+	 * @return
+	 */
 	List<UserDo> selectUser(Map<String, Object> params);
 
 	List<UserDo> list(Map<String, Object> params);

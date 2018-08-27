@@ -16,44 +16,40 @@
 <script type="text/javascript" src="<c:url value='/js/common/formatter.js?v=${jsversion}'/>"></script>
 <style type="text/css">
 .tdfont{
-	font-size: 12px;
+	font-size: 18px;
+	
 }
 </style>
 </head>
 <body class="easyui-layout">
 <div id="body" region="center" > 
   <!-- 查询条件区域 -->
-	<div id="search_area"  class="easyui-panel" >
-		<div id="conditon" >
-		      <table border="0">
+	<div id="userAccountTable" region="center">
+		      <table border="0" align="center" >
+		      <c:forEach items="${sumList}" var="li">
 		        <tr>
-					
-					<c:forEach items="${sumList}" var="li">
-						<td class="tdfont">
-									<c:choose>
-										<c:when test="${li.accountType eq 'wallet_money' }">
-											现金奖励
-										</c:when>
-										<c:when test="${li.accountType eq 'wallet_travel' }">
-										   	 旅游奖励
-										</c:when>
-										<c:when test="${li.accountType eq 'wallet_active' }">
-										   	 活动奖励
-										</c:when>
-										<c:when test="${li.accountType eq 'wallet_goods' }">
-										   	 商品赠送
-										</c:when>
-									</c:choose>
-						                   :${li.amount}
-						</td>
-					</c:forEach>
-
+					<td class="tdfont">
+						<c:choose>
+							<c:when test="${li.accountType eq 'wallet_money' }">
+							现金奖励
+							</c:when>
+						<c:when test="${li.accountType eq 'wallet_travel' }">
+							旅游奖励
+						</c:when>
+						<c:when test="${li.accountType eq 'wallet_active' }">
+							活动奖励
+						</c:when>
+						<c:when test="${li.accountType eq 'wallet_goods' }">
+							商品赠送
+						</c:when>
+						</c:choose>
+						    :${li.amount}
+					</td>
 		        </tr>
+		        </c:forEach>
 		      </table>
-	     </div>
-	</div>
   
-  
+  </div>
 </div>
 
   

@@ -36,12 +36,14 @@ import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.accountRecord.AccountRecordService;
 import com.dce.business.service.bonus.IBonusLogService;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.impl.order.AlipaymentOrderService;
 import com.dce.business.service.order.IOrderService;
+import com.dce.business.service.user.IUserService;
 import com.dce.business.service.user.UserAdressService;
 
 @RestController
@@ -65,6 +67,8 @@ public class OrderController extends BaseController {
 	private ICTGoodsService ctGoodsService;
 	@Resource
 	private AlipaymentOrderService alipaymentOrderService;
+	@Resource
+	private IUserService userService;
 
 	/**
 	 * 用户订单列表显示
@@ -81,6 +85,7 @@ public class OrderController extends BaseController {
 		if(orderLitst.size() == 0 || orderLitst.isEmpty()){
 			return Result.successResult("当前用户订单为空",new JSONArray());
 		}
+		logger.debug("获取用户所有订单=======》》》》》"+orderLitst);
 
 		// 设置商品名称
 		for (Order order : orderLitst) {
@@ -117,11 +122,14 @@ public class OrderController extends BaseController {
 		//假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
 
-			return Result.failureResult("获取userId、addressId、orderType、cart参数为空！");
+			return Result.successResult("获取userId、addressId、orderType、cart参数为空！",new JSONArray());
 		}
 		
 		//判断该用户是否存在
-		//UserDao user = 
+		UserDo user = userService.getUser(Integer.valueOf(userId));
+		if(user == null){
+			return Result.successResult("该用户不存在！",new JSONArray());
+		}
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));

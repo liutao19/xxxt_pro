@@ -153,10 +153,11 @@ public class PayServiceImpl implements IPayService {
 		}
 		float nm=qty.intValue()%100;		
 		
-		
-		/*if(qty.intValue().compareTo(qty)==0){
+		System.err.println("金额------***"+qty);
+	
+		if(qty.scale()!=0){
 			return Result.failureResult("提现金额不能有小数");
-		}*/
+		}
 		
 		
 		if(qty.divideAndRemainder(BigDecimal.valueOf((int)100))[1].intValue()!=0){

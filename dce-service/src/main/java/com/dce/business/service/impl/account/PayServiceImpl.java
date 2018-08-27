@@ -151,11 +151,15 @@ public class PayServiceImpl implements IPayService {
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
-		double  nm=qty.intValue()%100;
+		float nm=qty.intValue()%100;		
 		
-		System.err.println("整提----》》》"+nm);
 		
-		if(nm!=0){
+		/*if(qty.intValue().compareTo(qty)==0){
+			return Result.failureResult("提现金额不能有小数");
+		}*/
+		
+		
+		if(qty.divideAndRemainder(BigDecimal.valueOf((int)100))[1].intValue()!=0){
 			return Result.failureResult("只能整100整100的提");
 		}
 		

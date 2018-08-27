@@ -79,7 +79,7 @@
 							</select>
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">创建日期</label>
 						</td>	
@@ -91,7 +91,7 @@
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   
-					</tr>
+					</tr> --%>
 					<%-- <tr>	
 						<td align="right">
 							<label for="name">创建人</label>
@@ -101,7 +101,7 @@
 						</td>						   
 					</tr> --%>
 					
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">修改日期</label>
 						</td>	
@@ -113,7 +113,7 @@
 								class="easyui-datebox" size="14" data-options="editable : true"  
 								/>
 						</td>						   
-					</tr>
+					</tr> --%>
 					<%-- <tr>	
 						<td align="right">
 							<label for="name">修改人</label>

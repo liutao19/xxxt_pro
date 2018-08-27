@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,9 +204,11 @@ public class YsNewsController extends BaseAction {
 			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
+				ysnewsDo.setUpdateDate(new Date());
 				//Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {
+				ysnewsDo.setCreateDate(new Date());
 				i = ysNewsService.addYsNews(ysnewsDo);
 			}
 

@@ -743,6 +743,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		List<Order> list = new ArrayList<Order>();
 		list = orderDao.selectOrderByCondition(paraMap);
+		logger.debug("获取的订单数据=====》》》"+list);
 		for(Order order : list){
 			if("1".equals(order.getPaystatus())){
 				order.setPaystatus("已付");
@@ -760,6 +761,22 @@ public class OrderServiceImpl implements IOrderService {
 				order.setOrdertype("已发货");
 			}else{
 				order.setOrdertype("未发货");
+			}
+		}
+		//获取订单详情
+		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
+		for(Order order : list){
+			orderDetailList = order.getOrderDetailList();
+			//拼接订单详情
+			for(OrderDetail orderDetail : orderDetailList){
+				StringBuffer str = new StringBuffer();
+				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
+				orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
+				str.append(orderDetail.getGoodsName());
+				str.append(orderDetail.getQty()+"盒");
+				str.append(" ");
+				order.setRemark(str.toString()); 
+				logger.debug("拼接好的订单详情=====》》》"+order.getRemark());
 			}
 		}
 		return list;

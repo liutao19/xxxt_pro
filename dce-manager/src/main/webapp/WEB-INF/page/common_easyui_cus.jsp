@@ -17,3 +17,4 @@
 <script type="text/javascript">
  var httpUrl = "<c:url value='/' />";
 </script>
+

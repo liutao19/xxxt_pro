@@ -18,11 +18,11 @@ $(function(){
 /*##########################grid init begin####################################################*/
 /*##########################grid toolbar begin#################################################*/
 	var toolbar_tt = [
-					{
+/*					{
 						iconCls:"icon-edit",
 						text:"新增",
 						handler:to_addawardlist
-					}
+					}*/
 	          	];
 	
 /*######################grid toolbar end##############################*/
@@ -30,19 +30,19 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'awardid',title:'id',width:100,hidden:true},						
-								{field:"buyerLecel",title:"编码",width:180,align:"center"},
-								{field:"p1Level0",title:"编码",width:180,align:"center"},
-								{field:"p1Level1",title:"编码",width:180,align:"center"},
-								{field:"p1Level2",title:"编码",width:180,align:"center"},
-								{field:"p1Level3",title:"编码",width:180,align:"center"},
-								{field:"p1Level4",title:"编码",width:180,align:"center"},
-								{field:"p2Level0",title:"编码",width:180,align:"center"},
-								{field:"p2Level1",title:"编码",width:180,align:"center"},
-								{field:"p2Level2",title:"编码",width:180,align:"center"},
-								{field:"p2Level3",title:"编码",width:180,align:"center"},
-								{field:"p2Level4",title:"编码",width:180,align:"center"},
-								{field:"buyerAward",title:"编码",width:180,align:"center"},
-								{field:"buyQty",title:"编码",width:180,align:"center"},
+								{field:"buyerLecel",title:"购买者等级",width:180,align:"center"},
+								{field:"p1Level0",title:"第一代推荐人普通等级奖励",width:180,align:"center"},
+								{field:"p1Level1",title:"第一代推荐人会员等级奖励",width:180,align:"center"},
+								{field:"p1Level2",title:"第一代推荐人VIP等级奖励",width:180,align:"center"},
+								{field:"p1Level3",title:"第一代推荐人城市合伙人等级奖励",width:180,align:"center"},
+								{field:"p1Level4",title:"第一代推荐人股东等级奖励",width:180,align:"center"},
+								{field:"p2Level0",title:"第二代推荐人普通等级奖励",width:180,align:"center"},
+								{field:"p2Level1",title:"第二代推荐人会员等级奖励",width:180,align:"center"},
+								{field:"p2Level2",title:"第二代推荐人VIP等级奖励",width:180,align:"center"},
+								{field:"p2Level3",title:"第二代推荐人城市合伙人等级奖励",width:180,align:"center"},
+								{field:"p2Level4",title:"第二代推荐人股东等级奖励",width:180,align:"center"},
+								{field:"buyerAward",title:"购买者奖励",width:180,align:"center"},
+								/*{field:"buyQty",title:"编码",width:180,align:"center"},*/
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
 	 					  var str= '<a href="javascript:void(0);" onclick="to_editawardlist(\''+row.awardid+'\');">编辑</a>';
@@ -99,9 +99,9 @@ $(function(){
  * 新增
  * @param id
  */
-function to_addawardlist(){
+/*function to_addawardlist(){
 	to_editawardlist('');
-}
+}*/
 /**
  * 编辑
  * @param id
@@ -110,9 +110,9 @@ function to_editawardlist(id){
 	
 	var url = httpUrl+"/awardlist/addAwardlist.html?&rand=" + Math.random()+"&id="+id;
 	$('#editAwardlistDiv').dialog({
-		title: "新增",
-		width: 760,
-		height: 500,
+		title: "会员奖励制度管理",
+		width: 1200,
+		height: 800,
 		closed: false,
 		closable:false,
 		cache: false,

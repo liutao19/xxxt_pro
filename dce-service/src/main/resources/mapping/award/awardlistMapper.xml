@@ -54,9 +54,6 @@
     
     insert into awardlist
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="awardid != null">
-        awardId,
-      </if>
       <if test="buyerLecel != null">
         buyer_lecel,
       </if>
@@ -98,9 +95,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="awardid != null">
-        #{awardid,jdbcType=INTEGER},
-      </if>
       <if test="buyerLecel != null">
         #{buyerLecel,jdbcType=INTEGER},
       </if>

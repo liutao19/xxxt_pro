@@ -13,11 +13,10 @@
 
 <!-- 内容 -->
 <form id="editUserPromoteForm" method="post" action="<c:url value='userpromote/saveUserPromote.html'/>"> 
-		<div>
-		
+		<div style="text-align: center;">
+		<h3>${userpromote.userLevel}升级到${userpromote.promoteLevel}</h3>
 			<table width="100%" border="0" align="center" cellpadding="3">			  
 					<input type="hidden" id="promoteId" name="promoteId" value="${userpromote.promoteId}"/>
-					
 					<tr>	
 						<td align="right">
 							<label for="name">最小数量</label>

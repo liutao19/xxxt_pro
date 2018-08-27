@@ -133,11 +133,11 @@ public class AwardlistController extends BaseAction{
             
             int i = 0;
             if (id != null && id.intValue()>0) {
-            	awardlistDo.setAwardid(this.getUserId());
+            	awardlistDo.setAwardid(id);
             	//awardlistDo.setUpdateTime(new Date());
                 i = awardlistService.updateAwardlistById(awardlistDo);
             } else {
-				awardlistDo.setAwardid(this.getUserId());
+				awardlistDo.setAwardid(id);
             	//awardlistDo.set(new Date());
                 i = awardlistService.addAwardlist(awardlistDo);
             }

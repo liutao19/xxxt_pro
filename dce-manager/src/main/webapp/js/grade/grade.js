@@ -100,7 +100,7 @@ function to_editgrade(id){
 	
 	var url = httpUrl+"/grade/addGrade.html?&rand=" + Math.random()+"&id="+id;
 	$('#editGradeDiv').dialog({
-		title: "新增",
+		title: "编辑用户升级",
 		width: 760,
 		height: 500,
 		closed: false,

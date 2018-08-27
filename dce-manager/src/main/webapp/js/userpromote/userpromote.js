@@ -28,11 +28,7 @@ $(function() {
 	 * ##########################grid toolbar
 	 * begin#################################################
 	 */
-	var toolbar_tt = [ {
-		iconCls : "icon-edit",
-		text : "新增",
-		handler : to_adduserPromote
-	} ];
+	var toolbar_tt = [  ];
 
 	/* ######################grid toolbar end############################## */
 	/* ######################grid columns begin############################## */
@@ -137,9 +133,9 @@ $(function() {
  * 
  * @param id
  */
-function to_adduserPromote() {
+/*function to_adduserPromote() {
 	to_edituserPromote("");
-}
+}*/
 /**
  * 编辑
  * 
@@ -150,7 +146,7 @@ function to_edituserPromote(id) {
 	var url = httpUrl + "/userpromote/addUserPromote.html?&rand="
 			+ Math.random() + "&id=" + id;
 	$('#editUserPromoteDiv').dialog({
-		title : "新增",
+		title : "编辑用户升级管理",
 		width : 760,
 		height : 500,
 		closed : false,

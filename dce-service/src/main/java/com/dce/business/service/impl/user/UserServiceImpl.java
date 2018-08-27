@@ -149,6 +149,9 @@ public class UserServiceImpl implements IUserService {
 		}
 	}
 
+	/**
+	 * 查询用户所有信息
+	 */
 	@Override
 	public UserDo getUser(Integer userId) {
 		return userDao.selectByPrimaryKey(userId);
@@ -644,19 +647,17 @@ public class UserServiceImpl implements IUserService {
 		// TODO Auto-generated method stub
 
 		if (userDo == null || userDo.getId() == null) {
-			
+
 			return Result.failureResult("认证用户信息参数错误!");
 		}
 
 		UserDo user = userDao.selectByPrimaryKey(userDo.getId());
-		
-		
-		if(user==null||user.equals("")){
-			
+
+		if (user == null || user.equals("")) {
+
 			return Result.failureResult("该用户不存在!");
-			
+
 		}
-		
 
 		// 用户状态验证
 		if (user.getCertification() == 1) {
@@ -691,7 +692,7 @@ public class UserServiceImpl implements IUserService {
 
 			if (!user1.isEmpty()) {
 
-				System.err.println("用户id******"+user1.get(0).getId());
+				System.err.println("用户id******" + user1.get(0).getId());
 				if (user1.get(0).getId() != userDo.getId()) {
 
 					return Result.failureResult("该身份证号已存在");
@@ -814,7 +815,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	/**
-	 * 修改用户信息（后台）
+	 * 修改用户信息
 	 */
 	@Override
 	public Result<?> update(UserDo userDo) {
@@ -830,6 +831,7 @@ public class UserServiceImpl implements IUserService {
 			return Result.failureResult("修改失败");
 		}
 	}
+
 	/**
 	 * 下单购买商品之后，用户状态激活
 	 */

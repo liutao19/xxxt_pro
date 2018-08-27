@@ -17,7 +17,7 @@
 	<input type="hidden" id="change_level_userId" value="${user.id }" />
 	<table style="margin-left: 10px; margin-right: 10px;">
 		<tr>
-			<td>用户名:</td>
+			<td>登录手机号:</td>
 			<td><input id="edit_user_login_name" class="easyui-validatebox"
 				type="text" name="userName" readonly="readonly"
 				value="${user.userName }" style="height: 30px;" /></td>

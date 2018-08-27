@@ -395,7 +395,7 @@ public class UserController extends BaseAction {
 	@RequestMapping(value = "/toActivity", method = { RequestMethod.GET, RequestMethod.POST })
 	public String toActivity(ModelMap model) {
 		String userId = getString("userId");
-		UserDo user = userService.getUser(Integer.parseInt(userId));
+		UserDo user = userService.getUser(Integer.parseInt(userId));// 非空验证
 		user.setUserPassword(DataDecrypt.decrypt(user.getUserPassword()));
 		user.setTwoPassword(DataDecrypt.decrypt(user.getTwoPassword()));
 		model.put("user", user);

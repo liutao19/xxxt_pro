@@ -83,9 +83,9 @@ public class UserDo {
 			return "空";
 		}
 		if (this.getStatus().intValue() == 0) {
-			displayStatus = "已冻结用户";
+			displayStatus = "使用中";
 		} else if (this.getStatus().intValue() == 1) {
-			displayStatus = "正常";
+			displayStatus = "已冻结";
 		}
 		return displayStatus;
 	}

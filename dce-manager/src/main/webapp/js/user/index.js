@@ -65,7 +65,7 @@ $(function() {
 			},
 			{
 				field : "userName",
-				title : "用户名",
+				title : "手机号码",
 				width : 100,
 				align : "center",
 				formatter : function(value, row, index) {
@@ -106,7 +106,7 @@ $(function() {
 			},
 			{
 				field : "mobile",
-				title : "手机号码",
+				title : "联系方式",
 				width : 80,
 				align : "center"
 			},

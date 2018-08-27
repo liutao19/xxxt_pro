@@ -92,10 +92,9 @@ public class OrderController extends BaseController {
 			if (order.getOrderDetailList() != null) {
 				for (OrderDetail orderDetail : order.getOrderDetailList()) {
 					long id = Long.valueOf(orderDetail.getGoodsId());
-					logger.info("获取订单里面的商品id：" + orderDetail.getGoodsId());
 
 					CTGoodsDo goods = ctGoodsService.selectById(id);
-					logger.info("商品名称：" + goods.getTitle());
+					logger.info("单个商品信息：ID--->>>" + orderDetail.getGoodsId()+"商品名称--->>>"+goods.getTitle()+"商品数量--->>>"+orderDetail.getQuantity());
 
 					orderDetail.setGoodsName(goods.getTitle());
 				}
@@ -308,7 +307,7 @@ public class OrderController extends BaseController {
 			OrderDetail orderDetail = new OrderDetail();
 			JSONObject obj = jsonArray.getJSONObject(i);
 			orderDetail.setGoodsId(Integer.valueOf(obj.getString("goodsId")));
-			orderDetail.setQty(Integer.valueOf(obj.getString("qty")));
+			orderDetail.setQuantity(Integer.valueOf(obj.getString("qty")));
 			orderDetail.setPrice(Double.valueOf(obj.getString("price")));
 			orderList.add(orderDetail);
 		}

@@ -155,7 +155,12 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public List<Order> selectByUesrIdOneToMany(Integer userId) {
 
-		return orderDao.selectByUesrIdOneToMany(userId);
+		List<Order> list = new ArrayList<Order>();
+		list = orderDao.selectByUesrIdOneToMany(userId);
+		for(Order order : list){
+			System.err.println("一对多查询出的单条商品信息：-----》》》》》"+order.getOrderDetailList());
+		}
+		return list;
 	}
 
 	@Override
@@ -273,7 +278,7 @@ public class OrderServiceImpl implements IOrderService {
 					if (premiumList.get(0).getOrderid() == 1001) { // 男版
 						totalprice = 0;
 					} else { // 女版差价
-						totalprice = premiumList.get(0).getQty() * price;
+						totalprice = premiumList.get(0).getQuantity() * price;
 					}
 
 					// 二、当赠品为混合版时
@@ -281,7 +286,7 @@ public class OrderServiceImpl implements IOrderService {
 					for (int j = 0; j < premiumList.size(); j++) {
 						// 计算出需补的差价
 						if (premiumList.get(j).getGoodsId() == 1002) {
-							totalprice = premiumList.get(j).getQty() * price;
+							totalprice = premiumList.get(j).getQuantity() * price;
 						}
 					}
 				}
@@ -321,8 +326,8 @@ public class OrderServiceImpl implements IOrderService {
 		for (OrderDetail orderDetail : chooseGoodsLst) { // 循环遍历出商品信息，计算商品总价格和商品总数量
 			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
-			quantity += orderDetail.getQty(); // 商品总数量
-			totalprice = BigDecimal.valueOf(orderDetail.getPrice()*(orderDetail.getQty())).add(totalprice); // 商品总价格
+			quantity += orderDetail.getQuantity(); // 商品总数量
+			totalprice = BigDecimal.valueOf(orderDetail.getPrice()*(orderDetail.getQuantity())).add(totalprice); // 商品总价格
 			logger.debug("商品总金额---------》》》》》》》》》" + totalprice);
 		}
 
@@ -773,7 +778,7 @@ public class OrderServiceImpl implements IOrderService {
 				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 				orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 				str.append(orderDetail.getGoodsName());
-				str.append(orderDetail.getQty()+"盒");
+				str.append(orderDetail.getQuantity()+"盒");
 				str.append(" ");
 				order.setRemark(str.toString()); 
 				logger.debug("拼接好的订单详情=====》》》"+order.getRemark());

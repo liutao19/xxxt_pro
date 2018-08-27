@@ -32,21 +32,37 @@ $(function(){
  * ##########################grid toolbar
  * begin#################################################
  */
-	var toolbar_tt = [
+	/*var toolbar_tt = [
 					{
 						iconCls:"icon-edit",
 						text:"新增",
 						handler:to_addapplyTravel
 					}
-	          	];
+	          	];*/
 	
 /* ######################grid toolbar end############################## */
 /* ######################grid columns begin############################## */
 	var columns_tt = [
       			[	 				
-							{field:'id',title:'id',width:100,hidden:true},						
+							{field:'id',title:'id',width:100,hidden:true},	
+								{field:"mobile",title:"账号",width:150,align:"center"},
+								{field:"level",title:"等级",width:80,align:"center",
+									formatter:function(value,row,index){
+				 						if(row.level == "0"){
+				 							return "普通用户";
+				 						}else if(row.level == "1"){
+				 							return "会员";
+				 						}else if(row.level == "2"){
+				 							return "VIP";
+				 						}else if(row.level == "3"){
+				 							return "合伙人";
+				 						}else if(row.level == "4"){
+				 							return "分红股东";
+				 						}
+									}
+								},
 								{field:"name",title:"姓名",width:100,align:"center"},
-								{field:"sex",title:"性别",width:80,align:"center",
+								{field:"sex",title:"性别",width:50,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
 				 							return "男";
@@ -59,7 +75,7 @@ $(function(){
 								{field:"identity",title:"身份证",width:150,align:"center"},
 								{field:"phone",title:"手机号码",width:150,align:"center"},
 								{field:"address",title:"地址",width:150,align:"center"},
-								{field:"isbeen",title:"是否去过",width:80,align:"center",
+								{field:"isbeen",title:"是否去过",width:50,align:"center",
 									formatter:function(value,row,index){
 				 						if(row.state == "0"){
 				 							return "是";
@@ -68,7 +84,7 @@ $(function(){
 				 						}
 									}
 								},
-								{field:"people",title:"同行人数",width:80,align:"center"},
+								{field:"people",title:"同行人数",width:50,align:"center"},
 								{field:"linename",title:"路线名称",width:150,align:"center"},
 								{field:"createtime",title:"申请时间",width:150,align:"center",formatter:dateTimeFormatter},
 								{field:"state",title:"状态",width:80,align:"center",
@@ -82,9 +98,9 @@ $(function(){
 				 						}
 				 					}
 								},
-								{field:"操作",title:"操作",width:100,align:"left",
+								{field:"操作",title:"操作",width:150,align:"left",
 				 					formatter:function(value,row,index){
-				 					  var str= '<a href="javascript:void(0);" onclick="to_editapplyTravel(\''+row.id+'\');">编辑</a> <a href="javascript:void(0);" onclick="agree_applyTravel(\''+row.id+'\');">同意申请</a>';
+				 					  var str= '<a href="javascript:void(0);" onclick="to_editapplyTravel(\''+row.id+'\');">编辑</a> <a href="javascript:void(0);" onclick="agree_applyTravel(\''+row.id+'\');">同意申请</a> <a href="javascript:void(0);" onclick="deleteapplyTravelById(\''+row.id+'\');">删除</a>';
 				 					  return str;
 				 					}
 				 				}	 				
@@ -117,7 +133,6 @@ $(function(){
 		pageList:[10,20,30],
 		idField:"id",
 		columns:columns_tt,
-		toolbar:toolbar_tt,
 		queryParams:{
 			'name': $("#searchapplyTravelForm #name").val(),
 			'startDate':$("#searchapplyTravelForm #startDate").datebox('getValue'),
@@ -143,12 +158,12 @@ $(function(){
  * 
  * @param id
  */
-function to_addapplyTravel(){
+/*function to_addapplyTravel(){
 	to_editapplyTravel('');
 	$('#editUserFeedbackDiv').dialog({
 		title: "新增",
 	});
-}
+}*/
 /**
  * 编辑
  * 
@@ -205,6 +220,36 @@ function agree_applyTravel(id){
 		}
 	});
 }
+
+
+/**
+ * 删除
+ */
+function deleteapplyTravelById(id){
+	if(!id){
+		$.messager.alert("消息","id不能为空");
+		return;
+	}
+	$.messager.confirm("消息","确认删除该申请吗，删除后不可恢复",function(r){
+		if(r){
+			$.ajax({
+				url:httpUrl+"/applytravel/deleteapplyTravelById.html?id="+id,
+				type:"post",
+				data:{},
+				success:function(data){
+					if(data.ret==1){
+						$.messager.alert("消息","删除成功");
+						$('#tableGrid').datagrid('reload');
+					}else{
+						$.messager.alert("消息","删除失败，请稍后再试");
+					}
+				}
+			});
+		}
+	});
+}
+
+
 
 function save_ApplyTravel(){
 	var formdata = $("#editApplyTravelForm").serialize();

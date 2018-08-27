@@ -445,9 +445,11 @@
 	</update>
 
 	<select id="queryListPage" parameterType="Map" resultType="Map">
-		SELECT t.*,p.linename AS linename from ct_apply_travel t
+		SELECT t.*,p.linename AS linename,u.mobile AS mobile,u.user_level AS level from ct_apply_travel t
 		LEFT JOIN
 		ct_travel_path AS p ON t.pathid=p.pathid
+		LEFT JOIN
+		ct_user AS u ON t.userid=u.id
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="id != null">
 				AND id = #{id}

@@ -164,7 +164,26 @@ public class ApplyTravelController extends BaseAction {
 		}
 		logger.info("----end saveApplyTravel--------");
 	}
-
+	
+	/**
+	 * 删除单条
+	 */
+	@RequestMapping("/deleteapplyTravelById")
+	public void deleteapplyTravelById(String id, HttpServletRequest request, HttpServletResponse response) {
+		logger.info("----deleteapplyTravelById----");
+		try {
+			if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
+				logger.info(id);
+				ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+				return;
+			}
+			int ret = travelApplyService.deleteapplyTravelById(Integer.valueOf(id));
+			ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
+		} catch (Exception e) {
+			logger.error("删除商品异常", e);
+			ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+		}
+	}
 	/**
 	 * 导出数据
 	 */
@@ -180,9 +199,9 @@ public class ApplyTravelController extends BaseAction {
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "姓名", "性别", "民族", "身份证", "手机号码", "地址", "是否去过", "同行人数", "路线名称", "申请时间", "是否通过" };
+			String[] excelheader = { "账号", "等级", "姓名", "性别", "民族", "身份证", "手机号码", "地址", "是否去过", "同行人数", "路线名称", "申请时间", "是否通过" };
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "name", "sex", "nation", "identity", "phone",
+			String[] excelData = { "mobile", "displayLevel", "name", "sex", "nation", "identity", "phone",
 					"address", "isbeen", "people", "linename","createtime","state"};
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, applytravelLst);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");

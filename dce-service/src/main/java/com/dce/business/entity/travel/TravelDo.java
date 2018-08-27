@@ -32,6 +32,46 @@ public class TravelDo {
 	private String name;
 
 	private String sex;
+	private String mobile;
+	private String level;
+	private String displayLevel;
+	
+
+	public String getDisplayLevel() {
+		displayLevel=null;
+		if("0".equals(this.getLevel())){
+			displayLevel="普通用户";
+		}else if("1".equals(this.getLevel())){
+			displayLevel="会员";
+		}else if("2".equals(this.getLevel())){
+			displayLevel="VIP";
+		}else if("3".equals(this.getLevel())){
+			displayLevel="合伙人";
+		}else if("4".equals(this.getLevel())){
+			displayLevel="分红股东";
+		}
+		return displayLevel;
+	}
+
+	public void setDisplayLevel(String displayLevel) {
+		this.displayLevel = displayLevel;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
 
 	public String getName() {
 		return name;

@@ -27,8 +27,7 @@
 				</tr>
 				<tr>
 					<td align="right"><label for="name">商品图片地址：</label></td>
-					<td><input type="file" id="goodsImg" name="goodsImg"
-						onclick="" /></td>
+					<td><input type="file" id="goodsImg" name="goodsImg"/></td>
 				</tr>
 				<tr>
 					<td align="right"><label for="name">商品单位：</label></td>

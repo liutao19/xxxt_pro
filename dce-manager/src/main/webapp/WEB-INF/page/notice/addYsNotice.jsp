@@ -25,8 +25,7 @@
 				</tr>
 				<tr>
 					<td align="right"><label for="name">图片</label></td>
-					<td><input type="file" id="image" value="${ysnotice.image}" />
-					</td>
+					<td><input type="file" id="image" /></td>
 				</tr>
 				<tr>
 					<td align="right"><label for="name">内容</label></td>
@@ -39,7 +38,8 @@
 						style="width: 150px;">
 							<option value="1"
 								<c:if test="${ysnotice.topNotice==1}">selected="selected"</c:if>>不置顶</option>
-							<option value="0" <c:if test="${ysnotice.topNotice==0}">selected="selected"</c:if>>置顶</option>
+							<option value="0"
+								<c:if test="${ysnotice.topNotice==0}">selected="selected"</c:if>>置顶</option>
 					</select></td>
 				</tr>
 				<tr>
@@ -71,7 +71,12 @@
 			});
 		}
 	</script>
-
+	<div align="center">
+	 <c:if test="${not empty ysnotice.image }">
+			<img style="width: 300px; height: 300px; align: center" id="img"
+				src="${ysnotice.image }">
+		</c:if>
+	</div>
 </body>
 
 </html>

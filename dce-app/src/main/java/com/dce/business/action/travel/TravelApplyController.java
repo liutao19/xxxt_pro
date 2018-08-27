@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.travel.TravelDo;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.travel.ICheckTravelService;
 import com.dce.business.service.travel.ITravelApplyService;
 import com.dce.business.service.travel.ITravelPathService;
+import com.dce.business.service.user.IUserService;
 
 @RestController
 @RequestMapping("/travelApply")
@@ -37,6 +39,10 @@ public class TravelApplyController extends BaseController {
 	@Resource
 	private ITravelPathService travelPathService;
 
+	// 用户信息
+	@Resource
+	private IUserService userService;
+
 	/**
 	 * 旅游申请
 	 * 
@@ -50,33 +56,44 @@ public class TravelApplyController extends BaseController {
 
 		// 获取用户id
 		Integer userId = getUserId();
+		UserDo user = new UserDo();
+		user = userService.getUser(userId);
+		if (user == null) {
+			return Result.failureResult("用户不存在,请重新登陆");
+		} else {
+			// 获取前台传过来的用户信息
+			String name = getString("name") == null ? "" : getString("name");
+			String sex = getString("sex") == null ? "" : getString("sex");
+			String nation = getString("nation") == null ? "" : getString("nation");
+			String identity = getString("identity") == null ? "" : getString("identity");
+			String phone = getString("phone") == null ? "" : getString("phone");
+			String address = getString("address") == null ? "" : getString("address");
+			String pathid = getString("pathId") == null ? "" : getString("pathId");
+			String isBenn = getString("IsBenn") == null ? "" : getString("IsBenn");
+			String people = getString("people") == null ? "" : getString("people");
+			if (name == null || name == "" || sex == null || sex == "" || nation == null || nation == ""
+					|| identity == null || identity == "" || phone == null || phone == "" || address == null
+					|| address == "" || pathid == null || pathid == "" || isBenn == null || isBenn == ""
+					|| people == null || people == "") {
+				return Result.failureResult("参数不能为空");
+			}
 
-		// 获取前台传过来的用户信息
-		String name = getString("name") == null ? "" : getString("name");
-		String sex = getString("sex") == null ? "" : getString("sex");
-		String nation = getString("nation") == null ? "" : getString("nation");
-		String identity = getString("identity") == null ? "" : getString("identity");
-		String phone = getString("phone") == null ? "" : getString("phone");
-		String address = getString("address") == null ? "" : getString("address");
-		String pathid = getString("pathId") == null ? "" : getString("pathId");
-		String isBenn = getString("IsBenn") == null ? "" : getString("IsBenn");
-		String people = getString("people") == null ? "" : getString("people");
+			travel.setUserid(userId);
+			travel.setName(name);
+			travel.setSex(sex);// 性别(0/1 男/女)
+			travel.setNation(nation);
+			travel.setIdentity(identity);
+			travel.setPhone(phone);
+			travel.setAddress(address);
+			travel.setPathid(Integer.parseInt(pathid));
+			travel.setIsbeen(isBenn); // 是否去过该路线 0是/1否
+			travel.setPeople(Integer.parseInt(people));
+			travel.setState("1");
 
-		travel.setUserid(userId);
-		travel.setName(name);
-		travel.setSex(sex);// 性别(0/1 男/女)
-		travel.setNation(nation);
-		travel.setIdentity(identity);
-		travel.setPhone(phone);
-		travel.setAddress(address);
-		travel.setPathid(Integer.parseInt(pathid));
-		travel.setIsbeen(isBenn); // 是否去过该路线 0是/1否
-		travel.setPeople(Integer.parseInt(people));
-		travel.setState("1");
+			Result<?> result = travelApplyService.travelApply(travel);
 
-		Result<?> result = travelApplyService.travelApply(travel);
-
-		return result;
+			return result;
+		}
 	}
 
 	@RequestMapping(value = "/checkTravel", method = RequestMethod.GET)

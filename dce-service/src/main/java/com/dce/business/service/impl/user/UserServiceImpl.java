@@ -69,7 +69,7 @@ public class UserServiceImpl implements IUserService {
 	 * 查询用户名是否存在
 	 */
 	@Override
-	public UserDo getUser(String userName) {
+	public UserDo userName(String userName) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("userName", userName);
 		List<UserDo> list = userDao.selectUser(params);
@@ -104,7 +104,7 @@ public class UserServiceImpl implements IUserService {
 
 		// 判断注册用户名是否为空
 		userDo.setUserName(userDo.getUserName().trim());
-		UserDo oldUser = getUser(userDo.getUserName());
+		UserDo oldUser = userName(userDo.getUserName());
 		if (oldUser != null) {
 			return Result.failureResult("用户已存在");
 		}
@@ -754,7 +754,7 @@ public class UserServiceImpl implements IUserService {
 
 		// 判断新增用户名是否为空
 		userDo.setUserName(userDo.getUserName().trim());
-		UserDo oldUser = getUser(DataEncrypt.encrypt(userDo.getUserName()));
+		UserDo oldUser = userName(DataEncrypt.encrypt(userDo.getUserName()));
 		if (oldUser != null) {
 			logger.info("用户已存在");
 			return Result.failureResult("用户已存在");

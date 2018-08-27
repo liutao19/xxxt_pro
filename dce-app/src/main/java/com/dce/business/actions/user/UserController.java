@@ -110,7 +110,7 @@ public class UserController extends BaseController {
 		password = DataEncrypt.encrypt(password);
 
 		logger.info("用户登录, userName:" + userName + "; password:" + password);
-		UserDo userDo = userService.getUser(userName);
+		UserDo userDo = userService.userName(userName);
 		Assert.notNull(userDo, "用户不存在");
 
 		if (!userName.equals(userDo.getUserName()) || !password.equals(userDo.getUserPassword())) {
@@ -319,8 +319,7 @@ public class UserController extends BaseController {
 			String sex = getString("sex");
 			String banknumber = getString("banknumber");// 卡号
 			String banktype = getString("banktype");// 开卡行
-			
-		
+
 			System.err.println("shuju----" + trueName);
 
 			logger.info("用户信息，userId:" + userId);
@@ -356,7 +355,6 @@ public class UserController extends BaseController {
 				return Result.failureResult("该身份证号不合法");
 			}
 
-			
 			// 银行卡号校验
 			/*
 			 * if(!checkBankCard(banknumber)){
@@ -365,7 +363,6 @@ public class UserController extends BaseController {
 			 * 
 			 * }
 			 */
-
 
 			System.out.println("用户信息----------》》》" + userDo);
 
@@ -380,63 +377,61 @@ public class UserController extends BaseController {
 			logger.error("用户信息认证失败", e);
 			return Result.failureResult("用户信息认证失败");
 		}
-		
-		
+
 	}
 
-	
-	
 	/**
 	 * 身份证校验
+	 * 
 	 * @param IDNumber
 	 * @return
 	 */
-	 public static boolean isIDNumber(String IDNumber) {
-	        if (IDNumber == null || "".equals(IDNumber)) {
-	            return false;
-	        }
-	        // 定义判别用户身份证号的正则表达式（15位或者18位，最后一位可以为字母）
-	        String regularExpression = "(^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|" +
-	                "(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}$)";
-	      
-	        boolean matches = IDNumber.matches(regularExpression);
+	public static boolean isIDNumber(String IDNumber) {
+		if (IDNumber == null || "".equals(IDNumber)) {
+			return false;
+		}
+		// 定义判别用户身份证号的正则表达式（15位或者18位，最后一位可以为字母）
+		String regularExpression = "(^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|"
+				+ "(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}$)";
 
-	        //判断第18位校验值
-	        if (matches) {
+		boolean matches = IDNumber.matches(regularExpression);
 
-	            if (IDNumber.length() == 18) {
-	                try {
-	                    char[] charArray = IDNumber.toCharArray();
-	                    //前十七位加权因子
-	                    int[] idCardWi = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
-	                    //这是除以11后，可能产生的11位余数对应的验证码
-	                    String[] idCardY = {"1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2"};
-	                    int sum = 0;
-	                    for (int i = 0; i < idCardWi.length; i++) {
-	                        int current = Integer.parseInt(String.valueOf(charArray[i]));
-	                        int count = current * idCardWi[i];
-	                        sum += count;
-	                    }
-	                    char idCardLast = charArray[17];
-	                    int idCardMod = sum % 11;
-	                    if (idCardY[idCardMod].toUpperCase().equals(String.valueOf(idCardLast).toUpperCase())) {
-	                        return true;
-	                    } else {
-	                        System.out.println("身份证最后一位:" + String.valueOf(idCardLast).toUpperCase() + 
-"错误,正确的应该是:" + idCardY[idCardMod].toUpperCase());
-	                        return false;
-	                    }
+		// 判断第18位校验值
+		if (matches) {
 
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                    System.out.println("异常:" + IDNumber);
-	                    return false;
-	                }
-	            }
+			if (IDNumber.length() == 18) {
+				try {
+					char[] charArray = IDNumber.toCharArray();
+					// 前十七位加权因子
+					int[] idCardWi = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2 };
+					// 这是除以11后，可能产生的11位余数对应的验证码
+					String[] idCardY = { "1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2" };
+					int sum = 0;
+					for (int i = 0; i < idCardWi.length; i++) {
+						int current = Integer.parseInt(String.valueOf(charArray[i]));
+						int count = current * idCardWi[i];
+						sum += count;
+					}
+					char idCardLast = charArray[17];
+					int idCardMod = sum % 11;
+					if (idCardY[idCardMod].toUpperCase().equals(String.valueOf(idCardLast).toUpperCase())) {
+						return true;
+					} else {
+						System.out.println("身份证最后一位:" + String.valueOf(idCardLast).toUpperCase() + "错误,正确的应该是:"
+								+ idCardY[idCardMod].toUpperCase());
+						return false;
+					}
 
-	        }
-	        return matches;
-	    }
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("异常:" + IDNumber);
+					return false;
+				}
+			}
+
+		}
+		return matches;
+	}
 
 	/*
 	 * 校验过程： 1、从卡号最后一位数字开始，逆向将奇数位(1、3、5等等)相加。

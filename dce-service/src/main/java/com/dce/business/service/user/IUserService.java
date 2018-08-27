@@ -25,7 +25,7 @@ public interface IUserService {
 	 * @param userName
 	 * @return
 	 */
-	UserDo getUser(String userName);
+	UserDo userName(String userName);
 
 	/**
 	 * 查询用户

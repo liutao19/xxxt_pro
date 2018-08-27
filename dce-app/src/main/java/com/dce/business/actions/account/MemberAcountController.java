@@ -253,7 +253,7 @@ public class MemberAcountController extends BaseController {
 		Integer paraParentId =null;
 		
 		if("1".equals(queryModel)){
-			UserDo user = userService.getUser(userName);
+			UserDo user = userService.userName(userName);
 			Map<String,Object>  param = new HashMap<String,Object>();
 			param.put("userid", user.getId());
 			param.put("parentid", this.getUserId());

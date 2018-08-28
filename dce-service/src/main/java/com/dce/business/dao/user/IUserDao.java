@@ -130,5 +130,11 @@ public interface IUserDao {
 	 * @return
 	 */
 	List<UserDo> selectUserCondition(Map<String, Object> map);
+	
+	
+	/**
+	 * 修改有用戶等级方法
+	 */
+	int updateLevel(UserDo record);
 
 }

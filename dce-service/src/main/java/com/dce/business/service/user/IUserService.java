@@ -184,6 +184,15 @@ public interface IUserService {
 	 * @return
 	 */
 	List<UserDo> selectUserCondition(Map<String, Object> map);
+	
+	/**
+	 * 
+	 * 单独修改用户等级方法
+	 * @return
+	 */
+	
+	boolean updateLevel(UserDo record);
+	
 
 	// 下单购买商品之后，用户状态激活
 	int updateUserStatus(Map<String, Object> params);

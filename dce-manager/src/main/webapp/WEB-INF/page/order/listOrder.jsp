@@ -39,6 +39,11 @@
 			        </tr>
 			      </table>
 			      <a href="javascript:void(0);" class="easyui-linkbutton" id="excel" iconCls="icon-print" onclick="export_excel()">导出excel</a>
+			      <select id="orderStatus" class="easyui-combobox" style="width:90px;cursor:pointer;">
+						<option value="">全部</option>
+							<option value="0">未发货</option>
+							<option value="1">已发货</option>
+					</select>
 		     </form>
 	     </div>
     	<span id="openOrClose"></span> 

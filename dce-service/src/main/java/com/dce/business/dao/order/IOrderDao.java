@@ -59,6 +59,9 @@ public interface IOrderDao {
     
     // 查询总业绩
  	Map<String, Object> selectSum(Map<String, Object> paraMap);
+ 	
+ 	//奖励计算成功清空奖励状态
+ 	int updateAwardStatusByOrder(Order order);
 
  	// 根据订单查询出收货人的信息
  	UserAddressDo selectAddressByOrder(Integer orderId);

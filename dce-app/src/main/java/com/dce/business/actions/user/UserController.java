@@ -304,6 +304,12 @@ public class UserController extends BaseController {
 
 		return BigDecimal.ZERO;
 	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 用户信息认证
@@ -313,6 +319,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
 	public Result<?> Authentication() {
 		try {
+			
 			Integer userId = getUserId();
 			String trueName = getString("trueName");
 			String mobile = getString("mobile");

@@ -100,7 +100,7 @@ $(function() {
 				width : 180,
 				align : "center"
 			},
-			{
+			/*{
 				field : "status",
 				title : "状态",
 				width : 180,
@@ -112,7 +112,7 @@ $(function() {
 						return "已发布";
 					}
 				}
-			},
+			},*/
 			{
 				field : "createDate",
 				title : "创建日期",
@@ -247,7 +247,7 @@ function save_YsNews() {
 	var author = document.getElementById("author").value;
 	var topNews = $("#editYsNewsForm #topNews").combobox('getValue');
 	var remark = document.getElementById("remark").value;
-	var status = $("#editYsNewsForm #status").combobox('getValue');
+	//var status = $("#editYsNewsForm #status").combobox('getValue');
 	// var createDate=$("#editYsNewsForm #createDate").datebox('getValue');
 	var createName = $("#editYsNewsForm #createName").val();
 	// var updateDate=$("#editYsNewsForm #updateDate").datebox('getValue');
@@ -302,7 +302,7 @@ function save_YsNews() {
 	object.append("author", author);
 	object.append("topNews", topNews);
 	object.append("remark", remark);
-	object.append("status", status);
+	//object.append("status", status);
 	// object.append("createDate",createDate);
 	// object.append("createName",createName);
 	// object.append("updateDate",updateDate);

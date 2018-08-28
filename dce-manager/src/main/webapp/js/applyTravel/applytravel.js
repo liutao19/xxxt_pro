@@ -304,7 +304,7 @@ function agree_applyTravel(id) {
 				success : function(data) {
 					if (data.ret == 1) {
 						$.messager.alert("消息", "操作成功");
-						$('#tableGrid').datagrid('reload');
+						$('#tt_ApplyTravel').datagrid('reload');
 					} else {
 						$.messager.alert("消息", "操作失败，请稍后再试");
 					}
@@ -332,7 +332,7 @@ function deleteapplyTravelById(id) {
 				success : function(data) {
 					if (data.ret == 1) {
 						$.messager.alert("消息", "删除成功");
-						$('#tableGrid').datagrid('reload');
+						$('#tt_ApplyTravel').datagrid('reload');
 					} else {
 						$.messager.alert("消息", "删除失败，请稍后再试");
 					}
@@ -414,7 +414,7 @@ function save_ApplyTravel() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editApplyTravelDiv").dialog("close");
-				$('tt_ApplyTravel').datagrid('reload');
+				$('#tt_ApplyTravel').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");

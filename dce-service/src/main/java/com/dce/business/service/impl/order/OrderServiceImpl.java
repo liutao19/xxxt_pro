@@ -769,14 +769,9 @@ public class OrderServiceImpl implements IOrderService {
 			if(userAddress == null){
 				continue;
 			}
-			logger.debug("获取的收货人信息"+userAddress);
 			order.setPhone(userAddress.getUserphone());
 			order.setTrueName(userAddress.getUsername());
-			order.setAddress(userAddress.getRemark());
-			
-			logger.debug("订单地址========》》》》》"+order.getAddress());
-			logger.debug("收货人========》》》》》"+order.getTrueName());
-			logger.debug("订单详情========》》》》》"+order.getRemark());
+			order.setAddress(userAddress.getAddress());
 			
 			//获取每条订单的商品详情
 			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
@@ -798,5 +793,13 @@ public class OrderServiceImpl implements IOrderService {
 			}
 		}
 		return list;
+	}
+
+	@Override
+	public int updateAwardStatusByOrder(Order order) {
+		if(order == null){
+			return 0;
+		}
+		return orderDao.updateAwardStatusByOrder(order);
 	}
 }

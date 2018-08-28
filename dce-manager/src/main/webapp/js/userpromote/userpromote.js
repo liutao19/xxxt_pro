@@ -182,7 +182,7 @@ function save_UserPromote() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editUserPromoteDiv").dialog("close");
-				$('tt_UserPromote').datagrid('reload');
+				$('#tt_UserPromote').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");

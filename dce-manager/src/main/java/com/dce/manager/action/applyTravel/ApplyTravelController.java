@@ -30,7 +30,9 @@ import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.travel.TravelDo;
 import com.dce.business.entity.travel.TravelDoExample;
+import com.dce.business.entity.travel.TravelPathDo;
 import com.dce.business.service.travel.ITravelApplyService;
+import com.dce.business.service.travel.ITravelPathService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
 
@@ -39,6 +41,10 @@ import com.dce.manager.util.ResponseUtils;
 public class ApplyTravelController extends BaseAction {
 	@Resource
 	private ITravelApplyService travelApplyService;
+	
+	// 旅游路线
+	@Resource
+	private ITravelPathService travelPathService;
 
 	/**
 	 * 去列表页面
@@ -78,7 +84,6 @@ public class ApplyTravelController extends BaseAction {
 				param.put("endDate", endDate);
 				model.addAttribute("endDate", endDate);
 			}
-
 			page = travelApplyService.getTravelapplyTravelPage(param, page);
 			logger.info(page.getModelList().toString());
 			pagination = PageDoUtil.getPageValue(pagination, page);
@@ -100,6 +105,7 @@ public class ApplyTravelController extends BaseAction {
 				ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
 				return;
 			}
+			
 			int ret = travelApplyService.updateapplyStateById(Integer.valueOf(id));
 			ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
 		} catch (Exception e) {
@@ -122,6 +128,10 @@ public class ApplyTravelController extends BaseAction {
 				if (null != TravelDo) {
 					modelMap.addAttribute("applytravel", TravelDo);
 				}
+			}
+			List<TravelPathDo> path = travelPathService.selectAll();
+			if(path!=null){
+				modelMap.addAttribute("path", path);
 			}
 			return "applytravel/addApplyTravel";
 		} catch (Exception e) {

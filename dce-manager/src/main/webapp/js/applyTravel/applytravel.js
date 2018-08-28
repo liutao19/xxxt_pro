@@ -96,9 +96,9 @@ $(function() {
 				width : 50,
 				align : "center",
 				formatter : function(value, row, index) {
-					if (row.state == "0") {
+					if (row.sex == "0") {
 						return "男";
-					} else if (row.state == "1") {
+					} else if (row.sex == "1") {
 						return "女";
 					}
 				}
@@ -343,16 +343,74 @@ function deleteapplyTravelById(id) {
 }
 
 function save_ApplyTravel() {
-	var formdata = $("#editApplyTravelForm").serialize();
-	console.info("formdata");
-	console.info(formdata);
+
 	var url = httpUrl + "/applytravel/saveApplyTravel.html?&rand="
 			+ Math.random();
+
+	// 创建表单数据对象
+	var obj = new FormData();
+
+	// 获取框中的数据
+	var id = $("#editApplyTravelForm #id").val();
+	var userid = $("#editApplyTravelForm #userid").val();
+	var name = $("#editApplyTravelForm #name").val();
+	var sex = $("#editApplyTravelForm #sex").combobox('getValue');
+	var nation = $("#editApplyTravelForm #nation").val();
+	var identity = $("#editApplyTravelForm #identity").val();
+	var phone = $("#editApplyTravelForm #phone").val();
+	var address = $("#address").val();
+	var isbeen = $("#editApplyTravelForm #isbeen").combobox('getValue');
+	var people = $("#editApplyTravelForm #people").combobox('getValue');
+	var pathid = $("#editApplyTravelForm #pathid").combobox('getValue');
+	var state = $("#editApplyTravelForm #state").combobox('getValue');
+	if (name == null || name == "") {
+		$.messager.alert("错误", "姓名不能为空");
+		return;
+	}
+	if (nation == null || nation == "") {
+		$.messager.alert("错误", "民族不能为空");
+		return;
+	}
+	/*var reg =  /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+	if (!reg.test(identity)) {
+		$.messager.alert("错误", "身份证输入不合法");
+		return;
+	}*/
+	if (identity == null || identity == "") {
+		$.messager.alert("错误", "身份证不能为空");
+		return;
+	}
+	/*var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+	if (!myreg.test(phone)) {
+		$.messager.alert("错误", "请输入正确的手机号码");
+		return;
+	}*/
+	if (phone == null || phone == "") {
+		$.messager.alert("错误", "手机号码不能为空");
+		return;
+	}
+	// 将数据添加至表单数据对象中
+	obj.append("id", id);
+	obj.append("userid", userid);
+	obj.append("name", name);
+	obj.append("sex", sex);
+	obj.append("nation", nation);
+	obj.append("id", id);
+	obj.append("identity", identity);
+	obj.append("phone", phone);
+	obj.append("address", address);
+	obj.append("isbeen", isbeen);
+	obj.append("people", people);
+	obj.append("pathid", pathid);
+	obj.append("state", state);
+
 	$.ajax({
 		type : 'POST',
 		dataType : 'json',
 		url : url,
-		data : $("#editApplyTravelForm").serialize(),
+		data : obj,
+		processData : false,
+		contentType : false,
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editApplyTravelDiv").dialog("close");

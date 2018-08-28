@@ -23,10 +23,10 @@
 					<td><input type="text" id="title" name="title"
 						value="${ysnotice.title}" /></td>
 				</tr>
-				<tr>
+			<!-- 	<tr>
 					<td align="right"><label for="name">图片</label></td>
 					<td><input type="file" id="image" /></td>
-				</tr>
+				</tr> -->
 				<tr>
 					<td align="right"><label for="name">内容</label></td>
 					<td><textarea rows="3" cols="20" id="content"

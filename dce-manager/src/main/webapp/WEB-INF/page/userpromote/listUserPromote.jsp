@@ -20,7 +20,7 @@
 
 <div id="body" region="center" > 
   <!-- 查询条件区域 -->
-	<div id="search_areaUserPromote"  class="easyui-panel" >
+	<!-- <div id="search_areaUserPromote"  class="easyui-panel" >
 		<div id="conditon" >
 			<form id="searchuserPromoteForm" style="margin-top:7px;margin-left:5px;" >
 			      <table border="0">
@@ -38,7 +38,7 @@
 		     </form>
 	     </div>
     	<span id="openOrClose"></span> 
-	</div>
+	</div> -->
   
   	<!-- 数据表格区域 -->
   <div id="tt_UserPromote"></div>

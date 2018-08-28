@@ -1985,7 +1985,9 @@
 			<if test="userLevel != null">
 				user_level = #{userLevel,jdbcType=TINYINT},
 			</if>
-			
+			<if test="district !=null">
+			  district=#{district,jdbcType=VARCHAR}
+			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
 	

@@ -54,8 +54,9 @@ public enum IncomeType {
      * 区域奖励
      */
     TYPE_AWARD_LEADER(321, "区域奖励"),
+	
     /**
-     * 领导奖励
+     * 会员奖励
      */
     TYPE_AWARD_BUYER(331, "会员奖励"),
     
@@ -66,23 +67,23 @@ public enum IncomeType {
     /**
      * 互助奖励
      */
-    TYPE_AWARD_HUZHU(341, "互助奖励"),
+    TYPE_AWARD_PASSIVITYLEADER(341, "被动区域奖励"),
     /**
      * 报单
      */
-    TYPE_AWARD_BAODAN(401, "报单激活"),
+    TYPE_AWARD_BAODAN(401, "一级发分销奖"),
     /**
      * 加金
      */
-    TYPE_AWARD_JIAJIN(411, "加金"),
+    TYPE_AWARD_JIAJIN(411, "二级发分销奖"),
     /**
      * 复投
      */
-    TYPE_AWARD_FUTOU(421, "复投"),
+    TYPE_AWARD_FUTOU(421, "零售奖"),
     /**
      * 挂单买入
      */
-    TYPE_GD_SAL(501,"挂单卖出"),
+    TYPE_GD_SAL(501,"开拓奖"),
     /**
      * 挂单买入
      */

@@ -180,15 +180,13 @@ public class UserPromoteController extends BaseAction{
         logger.info("----saveUserPromote------");
         try{
             Integer id = userpromoteDo.getPromoteId();
-            Integer userId = this.getUserId();
-            
             int i = 0;
             if (id != null && id.intValue()>0) {
-            	userpromoteDo.setPromoteId(userId);
+            	userpromoteDo.setPromoteId(id);
             //	userpromoteDo.setUpdateTime(new Date());
-                i = userPromoteService.updataCount(userpromoteDo);
+                i = userPromoteService.updateUserPromoteById(userpromoteDo);
             } else {
-            	userpromoteDo.setPromoteId(userId);
+            	userpromoteDo.setPromoteId(id);
             //	userpromoteDo.setCreateTime(new Date());
             	
                 i = userPromoteService.addUserPromote(userpromoteDo);

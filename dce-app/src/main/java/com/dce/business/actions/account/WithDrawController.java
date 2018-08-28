@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IPayService;
 import com.dce.business.service.trade.IWithdrawService;
+import com.dce.business.service.user.IUserService;
 
 @RestController
 @RequestMapping("/withdraw")
@@ -27,6 +29,8 @@ public class WithDrawController extends BaseController {
     private IPayService payService;
     @Resource
     private IWithdrawService withdrawService;
+    @Resource
+	private IUserService userService;
     
 
     /** 
@@ -46,6 +50,15 @@ public class WithDrawController extends BaseController {
         Assert.hasText(type,"提现方式不能为空");
         Assert.hasText(bank_no,"账号不能为空");
         logger.info("用户提现, userId:" + userId + "; qty:" + qty+"type:"+type);
+        
+        
+        UserDo userdo = userService.getUser(userId);
+
+		if (userdo == null) {
+
+			return Result.failureResult("用户不存在");
+
+		}
 
         return payService.withdraw(getUserId(), password,type, new BigDecimal(qty),bank_no);
     }
@@ -64,6 +77,16 @@ public class WithDrawController extends BaseController {
     	map.put("userid", getString("userId"));
     	
     	Assert.hasText(getString("userId"),"用户不存在");
+    	
+    	UserDo userdo = userService.getUser(getUserId());
+
+		if (userdo == null) {
+
+			return Result.failureResult("用户不存在");
+
+		}
+    	
+    	
     	
     	List<Map<String,Object>>maps=withdrawService.getWithdrawRecords(map);
     	

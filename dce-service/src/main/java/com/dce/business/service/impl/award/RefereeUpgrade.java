@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.exception.BusinessException;
+import com.dce.business.entity.district.District;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserPromoteDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardlistService;
+import com.dce.business.service.district.IDistrictService;
 import com.dce.business.service.user.IUserPromoteService;
 import com.dce.business.service.user.IUserService;
 
@@ -46,6 +48,9 @@ public class RefereeUpgrade implements IAwardCalculator {
 	
 	@Resource
 	private IUserPromoteService userPromoteService;
+	
+	@Resource
+	private IDistrictService districtService;
 
 	/**
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励
@@ -97,14 +102,18 @@ public class RefereeUpgrade implements IAwardCalculator {
 				UserDo userDo=new UserDo();
 				userDo.setId(buyer.getId());
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
-				userService.updateLevel(userDo);
+				if(userService.updateLevel(userDo)){
+					logger.error("用户升级成功");
+					if(promoteLevel.equals("3")){
+						District dis=new District();
+						dis.setUserId(buyer.getId());
+						if(districtService.insertSelective(dis)>0){
+							logger.error("添加区域管理记录成功");
+						}
+						shareholder(buyer);
+					}
+				}
 			}
-			
-			if(Byte.valueOf(promoteLevel)==3){
-				shareholder(buyer);
-			}
-			
-			
 		}
 	}
 	

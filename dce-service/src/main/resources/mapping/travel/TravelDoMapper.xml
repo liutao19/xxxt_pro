@@ -104,10 +104,11 @@
 			MyBatis Generator, do not modify. This element was generated on Thu Aug 09 
 			21:14:24 CST 2018. -->
 		SELECT
-		t.*,p.linename AS linename from
-		ct_apply_travel t
+		t.*,p.linename AS linename,u.mobile AS mobile,u.user_level AS level from ct_apply_travel t
 		LEFT JOIN
 		ct_travel_path AS p ON t.pathid=p.pathid
+		LEFT JOIN
+		ct_user AS u ON t.userid=u.id
 		<if test="_parameter != null">
 			<include refid="Example_Where_Clause" />
 		</if>

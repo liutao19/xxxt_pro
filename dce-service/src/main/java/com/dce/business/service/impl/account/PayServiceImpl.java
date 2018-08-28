@@ -253,7 +253,7 @@ public class PayServiceImpl implements IPayService {
 			transInfo.setAmount(qty.toString());                     //转出金额
 			transInfo.setCreatetime(new Date());                     //创建日期
 			transInfo.setType(2);                                    //类型：转入
-			transInfo.setStatus("false");                            //状态：false未到账，true已到账 
+			transInfo.setStatus("0");                            //状态：false未到账，true已到账 
 			transInfo.setToaccount(DataEncrypt.encrypt(bankNo));     //转入地址
 			int i =etherenumTranInfodao.insertSelective(transInfo);
 			if (i <= 0) {

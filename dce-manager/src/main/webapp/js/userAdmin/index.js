@@ -62,7 +62,7 @@ var UserMenu=function(){
 								$.messager.alert("手机空","手机号不能为空");
 								return;
 							}
-							if(!remark){
+							/*if(!remark){
 								$.messager.alert("备注空","备注不能为空");
 								return;
 							}
@@ -71,7 +71,7 @@ var UserMenu=function(){
 							if(message.length != 0 && !message==""){
 								$.messager.alert("密码格式不对",message);
 								return;
-							}
+							}*/
 							
 							
 							var data={username:name,nickname:nickName,password:password,mobile:mobile,remark:remark};

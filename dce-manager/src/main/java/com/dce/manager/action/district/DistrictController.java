@@ -135,21 +135,27 @@ public class DistrictController extends BaseAction {
 		logger.info("----saveDistrict------");
 		try {
 			Integer id = districtDo.getDistrictId();
-			Long userId = new Long(this.getUserId());
-			districtDo.setDistrictStatus(1);
-
+			//Long userId = new Long(this.getUserId());
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
 				/*
 				 * districtDo.setUpdateBy(userId); districtDo.setUpdateTime(new
 				 * Date());
 				 */
+				districtDo.setDistrictStatus(1);
 				i = districtService.updateDistrictById(districtDo);
+				UserDo user=new UserDo();
+				user.setId(districtDo.getUserId());
+				user.setDistrict(districtDo.getDistrctName());
+				if(userService.updateLevel(user)){
+					logger.error("修改用户区域成功");
+				}
 			} else {
 				/*
 				 * districtDo.setCreateBy(userId); districtDo.setCreateTime(new
 				 * Date());
 				 */
+				districtDo.setDistrictStatus(1);
 
 				i = districtService.addDistrict(districtDo);
 			}

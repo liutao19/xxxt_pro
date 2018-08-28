@@ -134,9 +134,9 @@ public class TravelServiceImpl implements ITravelApplyService {
 				travel.setIsbeen("否");
 			}
 			if ("0".equals(travel.getState())) {
-				travel.setState("未通过");
-			} else if ("1".equals(travel.getState())) {
 				travel.setState("通过");
+			} else if ("1".equals(travel.getState())) {
+				travel.setState("未通过");
 			} else if ("2".equals(travel.getState())) {
 				travel.setState("撤销");
 			}

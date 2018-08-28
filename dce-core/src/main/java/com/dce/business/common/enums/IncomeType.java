@@ -54,8 +54,9 @@ public enum IncomeType {
      * 区域奖励
      */
     TYPE_AWARD_LEADER(321, "区域奖励"),
+	
     /**
-     * 领导奖励
+     * 会员奖励
      */
     TYPE_AWARD_BUYER(331, "会员奖励"),
     
@@ -66,7 +67,7 @@ public enum IncomeType {
     /**
      * 互助奖励
      */
-    TYPE_AWARD_HUZHU(341, "互助奖励"),
+    TYPE_AWARD_PASSIVITYLEADER(341, "被动区域奖励"),
     /**
      * 报单
      */

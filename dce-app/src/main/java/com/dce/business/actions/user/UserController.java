@@ -572,7 +572,8 @@ public class UserController extends BaseController {
 		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
 		map.put("sex", userDo.getSex()); // 用户性别
 		map.put("refereeUserMobile", userDo.getRefereeUserMobile()); // 用户推荐人
-		map.put("banktype", userDo.getBanktype());
+		map.put("banknumber", userDo.getBanknumber());//银行卡卡号
+		map.put("banktype", userDo.getBanktype());// 银行卡开户行
 		return Result.successResult("查询成功", map);
 	}
 }

@@ -234,9 +234,9 @@ function save_Regionalawards() {
 		url : url,
 		data : $("#editRegionalawardsForm").serialize(),
 		success : function(data) {
+			$('#tt_Regionalawards').datagrid('reload');
 			if (data.code === "0") {
 				$("#editRegionalawardsDiv").dialog("close");
-				$('tt_Regionalawards').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");

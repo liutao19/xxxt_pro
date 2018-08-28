@@ -183,8 +183,8 @@ function deleteDistrict(id, userId) {
 				dataType : "json",
 				success : function(data) {
 					if (data.ret == 1) {
-						$.messager.alert("区域", "删除成功");
 						$('#tableGrid').datagrid('reload');
+						$.messager.alert("区域", "删除成功");
 					} else {
 						$.messager.alert("区域", "删除失败，请稍后再试");
 					}
@@ -222,13 +222,15 @@ function save_District() {
 		processData : false,
 		contentType : false,
 		success : function(data) {
+			
 			if (data.code === "0") {
 				$("#editDistrictDiv").dialog("close");
-				$('tt_District').datagrid('reload');
+				$('#tt_District').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");
 			}
+			
 		}
 	});
 }

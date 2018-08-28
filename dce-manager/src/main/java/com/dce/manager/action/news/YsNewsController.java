@@ -195,16 +195,16 @@ public class YsNewsController extends BaseAction {
 		}
 		try {
 			Integer id = ysnewsDo.getId();
-			String img = ysnewsDo.getImage();
+			//String img = ysnewsDo.getImage();
 
 			Assert.hasText(ysnewsDo.getTitle(), "标题不能为空");
-			Assert.hasText(ysnewsDo.getContent(), "内容不能为空");
+			Assert.hasText(ysnewsDo.getContent(), "地址不能为空");
 			//Assert.hasText(ysnewsDo.getCreateName(), "创建人不能为空");
 
 			System.err.println("id---->>" + id);
 			int i = 0;
 			if (id != null && id.intValue() > 0) {
-				ysnewsDo.setUpdateDate(new Date());
+				//ysnewsDo.setUpdateDate(new Date());
 				//Assert.hasText(ysnewsDo.getUpdateName(), "修改人不能为空");
 				i = ysNewsService.updateYsNewsById(ysnewsDo);
 			} else {

@@ -27,6 +27,24 @@
 					</tr>
 					<tr>	
 						<td align="right">
+							<label for="name">新闻地址</label>
+						</td>	
+						<td>
+								<input type="text" id="content" name="content"/>												
+						</td>						   
+					</tr>
+					
+					
+					<%-- <tr>	
+						<td align="right">
+							<label for="name">标题</label>
+						</td>	
+						<td>
+								<input type="text" id="title" name="title" value="${ysnews.title}"/>												
+						</td>						   
+					</tr>
+					<tr>	
+						<td align="right">
 							<label for="name">图片</label>
 						</td>	
 						<td>
@@ -67,7 +85,7 @@
 						<td>
 						<textarea rows="5" cols="20" id="remark" name="remark" >${ysnews.remark}</textarea>
 						</td>						   
-					</tr>
+					</tr> --%>
 					<%-- <tr>	
 						<td align="right">
 							<label for="name">状态</label>

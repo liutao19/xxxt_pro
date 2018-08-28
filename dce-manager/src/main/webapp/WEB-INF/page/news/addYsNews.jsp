@@ -68,7 +68,7 @@
 						<textarea rows="5" cols="20" id="remark" name="remark" >${ysnews.remark}</textarea>
 						</td>						   
 					</tr>
-					<tr>	
+					<%-- <tr>	
 						<td align="right">
 							<label for="name">状态</label>
 						</td>	
@@ -78,7 +78,7 @@
 									<option value="1" <c:if test="${ysnews.status==1}">selected="selected"</c:if>>发布</option>
 							</select>
 						</td>						   
-					</tr>
+					</tr> --%>
 					<%-- <tr>	
 						<td align="right">
 							<label for="name">创建日期</label>

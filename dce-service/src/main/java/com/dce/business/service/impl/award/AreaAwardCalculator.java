@@ -100,7 +100,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
-			oneAward((int) maps.get("userId"), bAwardLst);
+			IncomeType awardsShow=IncomeType.TYPE_AWARD_LEADER;
+			oneAward((int) maps.get("userId"), bAwardLst,awardsShow);
 		}
 
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
@@ -112,7 +113,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
-			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst);
+			IncomeType awardsShow=IncomeType.TYPE_AWARD_PASSIVITYLEADER;
+			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst,awardsShow);
 		}
 
 	}
@@ -123,7 +125,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @param buyUserId
 	 * @param bAwardLst
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst) {
+	private void oneAward(int buyUserId, String[] bAwardLst,IncomeType awardsShow) {
 		for (String oneAward : bAwardLst) {
 			// 奖励金额
 			Integer wardAmount = getAmtByAward(oneAward);
@@ -134,7 +136,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			if (wardAmount.intValue() > 0) {
 				UserAccountDo accont = new UserAccountDo(new BigDecimal(wardAmount), buyUserId, accountType);
 				// 账户对象增加金额
-				accountService.updateUserAmountById(accont, IncomeType.TYPE_AWARD_BUYER);
+				accountService.updateUserAmountById(accont, awardsShow);
 			}
 		}
 	}

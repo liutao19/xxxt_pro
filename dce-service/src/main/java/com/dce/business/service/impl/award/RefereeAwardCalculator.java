@@ -235,7 +235,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		UserDo userone = userService.getUser(userid);
 
 		if (userone == null) {
-			throw new BusinessException("推荐人为空");
+			logger.error("推荐人为空,800奖励失败");
+			return;
 		}
 
 		if (userone.getUserLevel() > 1) {
@@ -259,7 +260,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		UserDo userone = userService.getUser(userid);
 
 		if (userone == null) {
-			throw new BusinessException("推荐人为空");
+			logger.error("推荐人为空,500奖励失败");
+			return;
 		}
 
 		if (userone.getUserLevel() > 1) {

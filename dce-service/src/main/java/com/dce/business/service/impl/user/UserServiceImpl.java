@@ -844,4 +844,16 @@ public class UserServiceImpl implements IUserService {
 
 		return userDao.updateUserStatus(params);
 	}
+
+	/**
+	 * 单独修改用户等级方法
+	 */
+	@Override
+	public boolean  updateLevel(UserDo record) {
+		boolean flag=false;
+		if(userDao.updateLevel(record)>0){
+			flag=true;
+		}
+		return flag;
+	}
 }

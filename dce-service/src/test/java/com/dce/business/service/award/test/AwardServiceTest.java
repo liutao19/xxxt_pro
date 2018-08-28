@@ -21,8 +21,8 @@ public class AwardServiceTest extends BaseTest {
 	
 	
 	public void testCalcAward() {
-		Integer orderId = 20;
-		Integer buyUserId = 711;
+		Integer orderId = 238;
+		Integer buyUserId =753;
 		awardService.calcAward(buyUserId, orderId);
 	}
 

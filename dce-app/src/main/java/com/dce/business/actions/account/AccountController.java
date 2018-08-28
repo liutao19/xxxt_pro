@@ -152,7 +152,7 @@ public class AccountController extends BaseController {
 		
 		Integer userId = getUserId();
 
-		UserAccountDo account = accountService.selectUserAccount2(userId);
+		UserAccountDo account = accountService.getUserAccount(userId,AccountType.wallet_money);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (account == null || account.getAmount() == null) {

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -303,6 +304,12 @@ public class UserController extends BaseController {
 
 		return BigDecimal.ZERO;
 	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 用户信息认证
@@ -312,6 +319,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
 	public Result<?> Authentication() {
 		try {
+			
 			Integer userId = getUserId();
 			String trueName = getString("trueName");
 			String mobile = getString("mobile");
@@ -343,26 +351,19 @@ public class UserController extends BaseController {
 			userDo.setCertification(1);
 
 			// 手机号验证
-			Pattern p = Pattern.compile("^[1][3,4,5,8][0-9]{9}$");
-			if (!p.matcher(mobile).matches()) {
 
+			/*String REGEX_MOBILE = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+			Pattern p = Pattern.compile(REGEX_MOBILE);
+			Matcher m = p.matcher(mobile);
+			if (!m.matches()) {
 				return Result.failureResult("手机号码错误");
-			}
+			}*/
 
 			// 身份号验证
-			if (!isIDNumber(idnumber)) {
+			/*if (!isIDNumber(idnumber)) {
 
 				return Result.failureResult("该身份证号不合法");
-			}
-
-			// 银行卡号校验
-			/*
-			 * if(!checkBankCard(banknumber)){
-			 * 
-			 * return Result.failureResult("该银行卡号不合法");
-			 * 
-			 * }
-			 */
+			}*/
 
 			System.out.println("用户信息----------》》》" + userDo);
 
@@ -387,9 +388,6 @@ public class UserController extends BaseController {
 	 * @return
 	 */
 	public static boolean isIDNumber(String IDNumber) {
-		if (IDNumber == null || "".equals(IDNumber)) {
-			return false;
-		}
 		// 定义判别用户身份证号的正则表达式（15位或者18位，最后一位可以为字母）
 		String regularExpression = "(^[1-9]\\d{5}(18|19|20)\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}[0-9Xx]$)|"
 				+ "(^[1-9]\\d{5}\\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\\d{3}$)";

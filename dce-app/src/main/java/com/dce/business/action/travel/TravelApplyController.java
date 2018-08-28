@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -77,7 +79,6 @@ public class TravelApplyController extends BaseController {
 					|| people == null || people == "") {
 				return Result.failureResult("参数不能为空");
 			}
-
 			travel.setUserid(userId);
 			travel.setName(name);
 			travel.setSex(sex);// 性别(0/1 男/女)
@@ -129,6 +130,7 @@ public class TravelApplyController extends BaseController {
 	@RequestMapping(value = "/ravelRevoke", method = RequestMethod.POST)
 	public Result<?> rravelRevoke(String id) {
 		logger.info("撤销申请....");
+		logger.debug(id);
 		Result<?> result = travelApplyService.ravelRevokeById(Integer.parseInt(id));
 		return result;
 

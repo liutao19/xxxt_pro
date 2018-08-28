@@ -69,6 +69,7 @@ $(function(){
 					 						}
 					 					}},*/
 								{field:"address",title:"地址",width:180,align:"center"},
+								{field:"remark",title:"订单详情",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",
 									formatter:function(value,row,index){
 			 						if(value == "0"){

@@ -5,7 +5,7 @@
     <id column="orderDetailId" jdbcType="INTEGER" property="orderdetailid" />
     <result column="orderId" jdbcType="INTEGER" property="orderid" />
     <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
-    <result column="qty" jdbcType="INTEGER" property="qty" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="price" jdbcType="DOUBLE" property="price" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
@@ -70,7 +70,7 @@
   </sql>
   <sql id="Base_Column_List">
   
-    orderDetailId, orderId, goods_id, qty, price, remark
+    orderDetailId, orderId, goods_id, quantity, price, remark
   </sql>
   <select id="selectByExample" parameterType="com.dce.business.entity.order.OrderDetailExample" resultMap="BaseResultMap">
 
@@ -108,9 +108,9 @@
   </delete>
   <insert id="insert" parameterType="com.dce.business.entity.order.OrderDetail">
     insert into ct_orderdetail (orderDetailId, orderId, goods_id, 
-      qty, price, remark)
+      quantity, price, remark)
     values (#{orderdetailid,jdbcType=INTEGER}, #{orderid,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, 
-      #{qty,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{remark,jdbcType=VARCHAR})
+      #{quantity,jdbcType=INTEGER}, #{price,jdbcType=DOUBLE}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.dce.business.entity.order.OrderDetail">
   
@@ -125,8 +125,8 @@
       <if test="goodsId != null">
         goods_id,
       </if>
-      <if test="qty != null">
-        qty,
+      <if test="quantity != null">
+        quantity,
       </if>
       <if test="price != null">
         price,
@@ -145,8 +145,8 @@
       <if test="goodsId != null">
         #{goodsId,jdbcType=INTEGER},
       </if>
-      <if test="qty != null">
-        #{qty,jdbcType=INTEGER},
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
       </if>
       <if test="price != null">
         #{price,jdbcType=DOUBLE},
@@ -176,8 +176,8 @@
       <if test="record.goodsId != null">
         goods_id = #{record.goodsId,jdbcType=INTEGER},
       </if>
-      <if test="record.qty != null">
-        qty = #{record.qty,jdbcType=INTEGER},
+      <if test="record.quantity != null">
+        quantity = #{record.quantity,jdbcType=INTEGER},
       </if>
       <if test="record.price != null">
         price = #{record.price,jdbcType=DOUBLE},
@@ -196,7 +196,7 @@
     set orderDetailId = #{record.orderdetailid,jdbcType=INTEGER},
       orderId = #{record.orderid,jdbcType=INTEGER},
       goods_id = #{record.goodsId,jdbcType=INTEGER},
-      qty = #{record.qty,jdbcType=INTEGER},
+      quantity = #{record.quantity,jdbcType=INTEGER},
       price = #{record.price,jdbcType=DOUBLE},
       remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -213,8 +213,8 @@
       <if test="goodsId != null">
         goods_id = #{goodsId,jdbcType=INTEGER},
       </if>
-      <if test="qty != null">
-        qty = #{qty,jdbcType=INTEGER},
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
       </if>
       <if test="price != null">
         price = #{price,jdbcType=DOUBLE},
@@ -230,7 +230,7 @@
     update ct_orderdetail
     set orderId = #{orderid,jdbcType=INTEGER},
       goods_id = #{goodsId,jdbcType=INTEGER},
-      qty = #{qty,jdbcType=INTEGER},
+      quantity = #{quantity,jdbcType=INTEGER},
       price = #{price,jdbcType=DOUBLE},
       remark = #{remark,jdbcType=VARCHAR}
     where orderDetailId = #{orderdetailid,jdbcType=INTEGER}

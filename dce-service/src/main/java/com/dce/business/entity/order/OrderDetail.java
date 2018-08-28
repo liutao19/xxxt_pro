@@ -8,7 +8,7 @@ public class OrderDetail {
 
 	private Integer goodsId; // 商品id
 
-	private Integer qty; // 商品数量
+	private Integer quantity; // 商品数量
 
 	private Double price; // 商品单价
 
@@ -56,14 +56,6 @@ public class OrderDetail {
 		this.goodsId = goodsId;
 	}
 
-	public Integer getQty() {
-		return qty;
-	}
-
-	public void setQty(Integer qty) {
-		this.qty = qty;
-	}
-
 	public Double getPrice() {
 		return price;
 	}
@@ -72,10 +64,19 @@ public class OrderDetail {
 		this.price = price;
 	}
 
+	public Integer getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderDetail [orderdetailid=" + orderdetailid + ", orderid=" + orderid + ", goodsId=" + goodsId
-				+ ", qty=" + qty + ", price=" + price + ", goodsName=" + goodsName + ", remark=" + remark + "]";
+				+ ", quantity=" + quantity + ", price=" + price + ", goodsName=" + goodsName + ", remark=" + remark
+				+ "]";
 	}
 
 }

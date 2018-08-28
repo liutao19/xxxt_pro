@@ -161,7 +161,7 @@ function deleteNotice(id){
 				success:function(data){
 					if(data.ret==1){
 						$.messager.alert("消息","删除成功");
-						$('#tableGrid').datagrid('reload');
+						$('#tt_Goods').datagrid('reload');
 					}else{
 						$.messager.alert("消息","删除失败，请稍后再试");
 					}
@@ -230,7 +230,7 @@ function save_Goods(){
 		 success: function(data){ 
 			 if(data.code ==="0"){
 				 $("#editGoodsDiv").dialog("close");
-				 $('tt_Goods').datagrid('reload');
+				 $('#tt_Goods').datagrid('reload');
 				 $.messager.alert("提示","操作成功","info");
 			 }else{
 				 $.messager.alert("提示","操作失败","error");
@@ -242,7 +242,7 @@ function save_Goods(){
 
 function reloadDataGrid()
 {
-	$("tt_Goods").datagrid("reload");
+	$("#tt_Goods").datagrid("reload");
 }
 
 

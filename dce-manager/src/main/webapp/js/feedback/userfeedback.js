@@ -100,7 +100,7 @@ function deleteFeedBack(id){
 				success:function(data){
 					if(data.ret==1){
 						$.messager.alert("消息","删除成功");
-						$('#tableGrid').datagrid('reload');
+						 $('#tt_UserFeedback').datagrid('reload');
 					}else{
 						$.messager.alert("消息","删除失败，请稍后再试");
 					}
@@ -154,7 +154,7 @@ function save_UserFeedback(){
 		 success: function(data){ 
 			 if(data.code ==="0"){
 				 $("#editUserFeedbackDiv").dialog("close");
-				 $('tt_UserFeedback').datagrid('reload');
+				 $('#tt_UserFeedback').datagrid('reload');
 				 $.messager.alert("提示","操作成功","info");
 			 }else{
 				 $.messager.alert("提示","操作失败","error");
@@ -166,7 +166,7 @@ function save_UserFeedback(){
 
 function reloadDataGrid()
 {
-	$("tt_UserFeedback").datagrid("reload");
+	$("#tt_UserFeedback").datagrid("reload");
 }
 
 

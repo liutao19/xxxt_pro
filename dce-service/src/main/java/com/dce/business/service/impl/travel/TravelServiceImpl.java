@@ -155,7 +155,7 @@ public class TravelServiceImpl implements ITravelApplyService {
 			return Result.failureResult("已通过的申请不能撤销");
 		}else{
 			int result = travelApplyDao.ravelRevokeById(applyTravelid);
-			return result > 0 ? Result.successResult("撤销成功") : Result.failureResult("系统繁忙");
+			return result > 0 ? Result.successResult("撤销成功") : Result.failureResult("撤销失败");
 		}
 	}
 }

@@ -86,7 +86,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 
 		if (ref1 != null) {
 
-			if (ref1.getUserLevel() < 2) {
+			if (ref1.getUserLevel() < 2&&order.getQty()>0&&order.getQty()<5) {
 				//体验奖
 				experiencePrize(ref1.getId(), order.getQty(), award, order);
 			} else {

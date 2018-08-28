@@ -33,12 +33,6 @@
 								<input type="text" id="maxQty" name="maxQty" value="${userpromote.maxQty}"/>												
 						</td>						   
 					</tr>
-		
-				<tr>
-					<td colspan="2">
-						<input id="submitButton" name="submitButton" type="button" onclick="userpromote_submit();"  value="提交" />	
-					</td>
-				<tr>			 
 			</table>	   
 		</div>	
 	</form>

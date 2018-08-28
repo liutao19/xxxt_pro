@@ -34,11 +34,10 @@ public class AboutUsController {
 	 List<AboutusDo> aboutUs = aboutusService.getAllAboutUs();
 	 List<Map<String, Object>> result = new ArrayList<>();
 	 if (!CollectionUtils.isEmpty(aboutUs)) {
-	    for (AboutusDo message : aboutUs) {
-	        Map<String, Object> map = new HashMap<>();
-	        map.put("url", message.getUrl());
-	        result.add(map);
-	     }
+	    AboutusDo message=aboutUs.get(0);
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("url", message.getUrl());
+	    result.add(map);
 	  }
 	 return Result.successResult("查询成功", result);
 	 }

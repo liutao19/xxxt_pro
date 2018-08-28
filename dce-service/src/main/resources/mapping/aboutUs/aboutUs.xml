@@ -47,7 +47,7 @@
 	</delete>
 	
 	<select id="getAllAboutUs" parameterType="INTEGER" resultMap="aboutusResultMap">
-		SELECT *  FROM aboutus
+		SELECT *  FROM aboutus order by createTime desc
 	</select>
 </mapper>
 

@@ -155,12 +155,7 @@ public class OrderServiceImpl implements IOrderService {
 	@Override
 	public List<Order> selectByUesrIdOneToMany(Integer userId) {
 
-		List<Order> list = new ArrayList<Order>();
-		list = orderDao.selectByUesrIdOneToMany(userId);
-		for(Order order : list){
-			System.err.println("一对多查询出的单条商品信息：-----》》》》》"+order.getOrderDetailList());
-		}
-		return list;
+		return orderDao.selectByUesrIdOneToMany(userId);
 	}
 
 	@Override

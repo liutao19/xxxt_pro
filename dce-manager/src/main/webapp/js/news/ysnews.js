@@ -321,7 +321,7 @@ function save_YsNews() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editYsNewsDiv").dialog("close");
-				$('tt_YsNews').datagrid('reload');
+				$('#tt_YsNews').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");
@@ -347,7 +347,9 @@ function deleteNotice(id) {
 				data : {},
 				success : function(data) {
 					if (data.ret == 1) {
+						
 						$.messager.alert("新闻", "删除成功");
+						$('#tt_YsNews').datagrid('reload');
 						$('#tableGrid').datagrid('reload');
 					} else {
 						$.messager.alert("新闻", "删除失败，请稍后再试");

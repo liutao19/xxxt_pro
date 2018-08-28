@@ -183,4 +183,14 @@ public class UserAddressDo {
     public void setRemark(String remark) {
         this.remark = createtime;
     }
+
+	@Override
+	public String toString() {
+		return "UserAddressDo [addressid=" + addressid + ", userid=" + userid + ", username=" + username
+				+ ", userphone=" + userphone + ", address=" + address + ", addressDetails=" + addressDetails
+				+ ", postcode=" + postcode + ", remark=" + remark + ", usertel=" + usertel + ", areaid1=" + areaid1
+				+ ", areaid2=" + areaid2 + ", areaid3=" + areaid3 + ", communityid=" + communityid + ", isdefault="
+				+ isdefault + ", addressflag=" + addressflag + ", createtime=" + createtime + ", updateTime="
+				+ updateTime + "]";
+	}
 }

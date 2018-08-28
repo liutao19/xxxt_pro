@@ -58,6 +58,7 @@
     from ct_user_address
     where addressId = #{addressid,jdbcType=INTEGER}
   </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
       WARNING - @mbg.generated

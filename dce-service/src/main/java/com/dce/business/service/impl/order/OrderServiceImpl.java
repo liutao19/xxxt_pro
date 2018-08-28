@@ -44,6 +44,7 @@ import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.user.UserAddressDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.award.IAwardService;
@@ -736,7 +737,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
-	 * 根据条件打印出订单数据
+	 * 根据条件导出Excel订单数据
 	 */
 	@Override
 	public List<Order> selectOrderByCondition(Map<String, Object> paraMap) {
@@ -744,14 +745,12 @@ public class OrderServiceImpl implements IOrderService {
 		List<Order> list = new ArrayList<Order>();
 		list = orderDao.selectOrderByCondition(paraMap);
 		logger.debug("获取的订单数据=====》》》"+list);
+		
 		for(Order order : list){
-			logger.debug("订单地址========》》》》》"+order.getAddress());
-			logger.debug("收货人========》》》》》"+order.getTrueName());
-			logger.debug("订单详情========》》》》》"+order.getRemark());
 			if("1".equals(order.getPaystatus())){
 				order.setPaystatus("已付");
 			}else{
-				order.setPaystatus("待付");
+				order.setPaystatus("未付");
 			}
 			
 			if("1".equals(order.getOrdertype())){
@@ -765,15 +764,29 @@ public class OrderServiceImpl implements IOrderService {
 			}else{
 				order.setOrderstatus("未发货");
 			}
-			//获取订单详情
+			//获取收货人的信息
+			UserAddressDo userAddress = orderDao.selectAddressByOrder(order.getOrderid());
+			if(userAddress == null){
+				continue;
+			}
+			logger.debug("获取的收货人信息"+userAddress);
+			order.setPhone(userAddress.getUserphone());
+			order.setTrueName(userAddress.getUsername());
+			order.setAddress(userAddress.getRemark());
+			
+			logger.debug("订单地址========》》》》》"+order.getAddress());
+			logger.debug("收货人========》》》》》"+order.getTrueName());
+			logger.debug("订单详情========》》》》》"+order.getRemark());
+			
+			//获取每条订单的商品详情
 			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 			orderDetailList = order.getOrderDetailList();
 			//拼接订单详情
+			StringBuffer str = new StringBuffer();
 			for(OrderDetail orderDetail : orderDetailList){
 				if(orderDetail == null){
 					continue;
 				}
-				StringBuffer str = new StringBuffer();
 				logger.debug("订单id=====》》》"+orderDetail.getOrderid());
 				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 				orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称

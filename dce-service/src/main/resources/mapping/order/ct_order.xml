@@ -598,9 +598,8 @@
 		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
 		awardRemark,
 		a.alipayStatus alipayStatus,
-		b.true_name
-		trueName,CONCAT(c.address,c.addressDetails)
-		address
+		c.userName trueName,CONCAT(c.address,c.addressDetails) address,
+		c.userPhone phone
 		FROM
 		ct_order a
 		LEFT
@@ -688,6 +687,15 @@
 			</if>
 		</trim>
 	</select>
+	 <!-- 根据订单查询收货人的地址 -->
+  <select id="selectAddressByOrder" parameterType="java.lang.Integer" resultType="com.dce.business.entity.user.UserAddressDo">
+  	select userName username, userPhone userphone, CONCAT(a.address,a.addressDetails) remark
+  	from ct_user_address a
+  	left join ct_order b
+  	on a.addressId = b.addressId
+  	where b.orderId = #{orderId,jdbcType=INTEGER}
+  </select>
+  
 
 	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
 		SELECT sum(qty) as qty

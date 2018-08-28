@@ -186,7 +186,7 @@ public class UserPromoteController extends BaseAction{
             if (id != null && id.intValue()>0) {
             	userpromoteDo.setPromoteId(userId);
             //	userpromoteDo.setUpdateTime(new Date());
-                i = userPromoteService.updataCount(userpromoteDo);
+                i = userPromoteService.updateUserPromoteById(userpromoteDo);
             } else {
             	userpromoteDo.setPromoteId(userId);
             //	userpromoteDo.setCreateTime(new Date());

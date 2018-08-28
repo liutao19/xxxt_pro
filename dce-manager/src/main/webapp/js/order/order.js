@@ -36,15 +36,16 @@ $(function(){
 							{field:'orderid',title:'orderid',width:100,hidden:true},						
 								{field:"ordercode",title:"订单编号",width:180,align:"center"},
 								{field:"trueName",title:"收货人",width:180,align:"center"},
-								{field:"qty",title:"数量",width:180,align:"center"},
-								{field:"totalprice",title:"总金额",width:180,align:"center"},
+								{field:"phone",title:"手机号码",width:180,align:"center"},
+								{field:"qty",title:"数量（盒）",width:180,align:"center"},
+								{field:"totalprice",title:"总金额（元）",width:180,align:"center"},
 								{field:"createtime",title:"创建时间",width:180,align:"center",formatter:dateTimeFormatter},
 								{field:"paystatus",title:"付款状态",width:180,align:"center",
 			 						formatter:function(value,row,index){
 			 						if(value == "0"){
-			 							return "待付";
+			 							return "失败";
 			 						}else if(value == "1"){
-			 							return "已付";
+			 							return "成功";
 			 						}
 			 					}},
 								/*{field:"payTime",title:"支付时间",width:180,align:"center",formatter:dateTimeFormatter},*/
@@ -69,7 +70,6 @@ $(function(){
 					 						}
 					 					}},*/
 								{field:"address",title:"地址",width:180,align:"center"},
-								{field:"remark",title:"订单详情",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",
 									formatter:function(value,row,index){
 			 						if(value == "0"){
@@ -133,6 +133,9 @@ $(function(){
 /*##########################grid init end###################################################*/
 });
 
+/**
+ * 导出Excel
+ */
 function export_excel() {
 	var exportIframe = document.createElement('iframe');
 	exportIframe.src = httpUrl + "/order/export.html";

@@ -40,6 +40,16 @@ public class Order {
 	private String trueName; // 客户姓名
 
 	private String address; // 收货地址
+	
+	private String phone; // 手机号码
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 	private String awardStatus;
 
@@ -261,21 +271,10 @@ public class Order {
 				+ ", totalprice=" + totalprice + ", recaddress=" + recaddress + ", createtime=" + createtime
 				+ ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime + ", ordertype="
 				+ ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus + ", orderDetailList="
-				+ orderDetailList + ", awardDetailLst=" + awardDetailLst + ", trueName=" + trueName + ", address="
-				+ address + ", awardStatus=" + awardStatus + ", awardRemark=" + awardRemark + ", matchorderid="
-				+ matchorderid + ", salqty=" + salqty + ", accounttype=" + accounttype + ", goodsid=" + goodsid
-				+ ", price=" + price + ", getAwardStatus()=" + getAwardStatus() + ", getAwardRemark()="
-				+ getAwardRemark() + ", getOrderid()=" + getOrderid() + ", getOrdercode()=" + getOrdercode()
-				+ ", getUserid()=" + getUserid() + ", getQty()=" + getQty() + ", getTotalprice()=" + getTotalprice()
-				+ ", getRecaddress()=" + getRecaddress() + ", getCreatetime()=" + getCreatetime()
-				+ ", getOrderstatus()=" + getOrderstatus() + ", getPaystatus()=" + getPaystatus() + ", getPaytime()="
-				+ getPaytime() + ", getOrdertype()=" + getOrdertype() + ", getAddressid()=" + getAddressid()
-				+ ", getAlipayStatus()=" + getAlipayStatus() + ", getOrderDetailList()=" + getOrderDetailList()
-				+ ", getAwardDetailLst()=" + getAwardDetailLst() + ", getTrueName()=" + getTrueName()
-				+ ", getAddress()=" + getAddress() + ", getMatchorderid()=" + getMatchorderid() + ", getSalqty()="
-				+ getSalqty() + ", getAccounttype()=" + getAccounttype() + ", getGoodsid()=" + getGoodsid()
-				+ ", getPrice()=" + getPrice() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+				+ orderDetailList + ", awardDetailLst=" + awardDetailLst + ", remark=" + remark + ", trueName="
+				+ trueName + ", address=" + address + ", phone=" + phone + ", awardStatus=" + awardStatus
+				+ ", awardRemark=" + awardRemark + ", matchorderid=" + matchorderid + ", salqty=" + salqty
+				+ ", accounttype=" + accounttype + ", goodsid=" + goodsid + ", price=" + price + "]";
 	}
 
 }

@@ -71,19 +71,19 @@ public enum IncomeType {
     /**
      * 报单
      */
-    TYPE_AWARD_BAODAN(401, "报单激活"),
+    TYPE_AWARD_BAODAN(401, "一级发分销奖"),
     /**
      * 加金
      */
-    TYPE_AWARD_JIAJIN(411, "加金"),
+    TYPE_AWARD_JIAJIN(411, "二级发分销奖"),
     /**
      * 复投
      */
-    TYPE_AWARD_FUTOU(421, "复投"),
+    TYPE_AWARD_FUTOU(421, "零售奖"),
     /**
      * 挂单买入
      */
-    TYPE_GD_SAL(501,"挂单卖出"),
+    TYPE_GD_SAL(501,"开拓奖"),
     /**
      * 挂单买入
      */

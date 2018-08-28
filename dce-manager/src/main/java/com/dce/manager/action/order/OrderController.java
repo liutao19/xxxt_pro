@@ -121,10 +121,10 @@ public class OrderController extends BaseAction {
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "订单编号", "收货人", "数量","总金额", "下单时间", "付款状态", "支付方式","地址", "详情","是否发货"};
+			String[] excelheader = { "订单编号", "收货人","手机号码", "数量（盒）","总金额（元）", "下单时间", "付款状态", "支付方式","地址", "详情","是否发货"};
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "ordercode", "trueName", "qty", "totalprice", "createtime",
-					"paystatus", "ordertype", "address", " ","orderstatus"};
+			String[] excelData = { "ordercode", "trueName","phone", "qty", "totalprice", "createtime",
+					"paystatus", "ordertype", "address", "remark","orderstatus"};
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, orderList);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);

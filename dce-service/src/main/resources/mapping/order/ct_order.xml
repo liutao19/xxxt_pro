@@ -84,7 +84,7 @@
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime, a.orderType,a.alipayStatus,a.awardRemark,
 		a.addressId,
-		a.alipayStatus, b.orderDetailId,
+		a.awardStatus, b.orderDetailId,
 		b.orderId, b.goods_id, b.quantity quantity, b.price,
 		b.remark
 		from ct_order a,
@@ -592,9 +592,9 @@
 
 	<select id="selectOrderByPage" parameterType="Map" resultType="Map">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
-		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
+		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
-		a.payTime
+		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
 		awardRemark,
 		a.alipayStatus alipayStatus,
@@ -641,17 +641,16 @@
 	<select id="selectOrderByCondition" parameterType="java.util.Map"
 		resultMap="orderMapper">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
-		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
+		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
-		a.payTime
+		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
 		awardRemark,
 		a.alipayStatus alipayStatus,
-		b.true_name
-		trueName,CONCAT(c.address,c.addressDetails)
+		c.userName trueName, c.userPhone phone,
+		CONCAT(c.address,c.addressDetails)
 		address,d.orderDetailId,
-		d.orderId, d.goods_id, d.quantity, d.price,
-		d.remark
+		d.orderId, d.goods_id, d.quantity, d.price
 		FROM
 		ct_order a
 		left join

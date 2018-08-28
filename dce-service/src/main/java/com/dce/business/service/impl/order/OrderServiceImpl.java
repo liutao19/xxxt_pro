@@ -745,6 +745,9 @@ public class OrderServiceImpl implements IOrderService {
 		list = orderDao.selectOrderByCondition(paraMap);
 		logger.debug("获取的订单数据=====》》》"+list);
 		for(Order order : list){
+			logger.debug("订单地址========》》》》》"+order.getAddress());
+			logger.debug("收货人========》》》》》"+order.getTrueName());
+			logger.debug("订单详情========》》》》》"+order.getRemark());
 			if("1".equals(order.getPaystatus())){
 				order.setPaystatus("已付");
 			}else{
@@ -758,18 +761,20 @@ public class OrderServiceImpl implements IOrderService {
 			}
 			
 			if("1".equals(order.getOrderstatus())){
-				order.setOrdertype("已发货");
+				order.setOrderstatus("已发货");
 			}else{
-				order.setOrdertype("未发货");
+				order.setOrderstatus("未发货");
 			}
-		}
-		//获取订单详情
-		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
-		for(Order order : list){
+			//获取订单详情
+			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 			orderDetailList = order.getOrderDetailList();
 			//拼接订单详情
 			for(OrderDetail orderDetail : orderDetailList){
+				if(orderDetail == null){
+					continue;
+				}
 				StringBuffer str = new StringBuffer();
+				logger.debug("订单id=====》》》"+orderDetail.getOrderid());
 				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
 				orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
 				str.append(orderDetail.getGoodsName());

@@ -59,12 +59,12 @@ $(function() {
 				width : 180,
 				align : "center"
 			},
-			{
+			/*{
 				field : "image",
 				title : "图片地址",
 				width : 180,
 				align : "center"
-			},
+			},*/
 			{
 				field : "content",
 				title : "内容",

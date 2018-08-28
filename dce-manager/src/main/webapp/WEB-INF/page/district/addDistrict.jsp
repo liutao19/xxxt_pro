@@ -13,16 +13,16 @@
 
 
 
-<body  >
+<body>
 	<!-- 内容 -->
-	<form id="editDistrictForm" method="post" style="padding-top: 105px;
-    padding-left: 100px;"
+	<form id="editDistrictForm" method="post"
+		style="padding-top: 105px; padding-left: 100px;"
 		action="<c:url value='district/saveDistrict.html'/>">
-		<div >
-
+		<div>
+			<input type="hidden" id="districtId" name="districtId"
+				value="${district.districtId}" /> <input type="hidden" id="userId"
+				name="userId" value="${district.userId}" />
 			<table width="100%" border="0" align="center" cellpadding="3">
-				<input type="hidden" id="districtId" name="districtId"
-					value="${district.districtId}" />
 				<tr>
 					<td align="right"><label for="name">区域名称:</label></td>
 					<td><select id="country" onclick="toProvince();">
@@ -30,7 +30,7 @@
 					</select> <select id="city" onclick="toCity();">
 							<option value="-1">--请选择市---</option>
 					</select> <select id="children">
-							<option value="-1">--请选择区---</option>
+							<option value="-1"></option>
 					</select></td>
 				</tr>
 				<%-- <tr>	
@@ -59,12 +59,10 @@
 		</div>
 	</form>
 	<script type="text/javascript">
-	
-	$().ready(function(){
-		init();
-	})
-	
-	
+		$().ready(function() {
+			init();
+		})
+
 		function district_submit() {
 			alert($("#editDistrictForm").serialize());
 			$.ajax({

@@ -102,7 +102,7 @@ public class UserController extends BaseController {
 		String userName = getString("userName");
 		String password = getString("password");
 
-		Assert.hasText(userName, "请输入用户名");
+		Assert.hasText(userName, "请输入手机号");
 		Assert.hasText(password, "请输入密码");
 
 		userName = userName.trim();
@@ -112,10 +112,10 @@ public class UserController extends BaseController {
 
 		logger.info("用户登录, userName:" + userName + "; password:" + password);
 		UserDo userDo = userService.userName(userName);
-		Assert.notNull(userDo, "用户不存在");
+		Assert.notNull(userDo, "手机号不存在");
 
 		if (!userName.equals(userDo.getUserName()) || !password.equals(userDo.getUserPassword())) {
-			return Result.failureResult("用户名或者密码不正确");
+			return Result.failureResult("手机号或者密码不正确");
 		}
 
 		if (userDo.getStatus().intValue() != 0) {

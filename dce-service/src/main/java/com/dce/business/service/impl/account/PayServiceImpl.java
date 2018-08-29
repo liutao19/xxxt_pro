@@ -87,24 +87,25 @@ public class PayServiceImpl implements IPayService {
 	@Resource
 	private ITransOutDailyService transOutDailyService;
 	@Resource
-	private IEthereumTransInfoDao etherenumTranInfodao;	
-	
-	private int ordId=0;
+	private IEthereumTransInfoDao etherenumTranInfodao;
+
+	private int ordId = 0;
+
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> recharge(Integer userId, String password, BigDecimal qty) {
 
-		//判断系统设置是否可交易
+		// 判断系统设置是否可交易
 		CtCurrencyDo ct = ctCurrencyService.selectByName(CurrencyType.IBAC.name());
 		if (ct == null || ct.getIs_ctstatus() == null || 0 == ct.getIs_ctstatus().intValue()) {
 			logger.info("充币状态设置关闭,当前不允许充币....");
 			return Result.failureResult("当前系统不允许充币!");
 		}
 
-		//充值qty个现金币所需的以太坊币数量
+		// 充值qty个现金币所需的以太坊币数量
 		BigDecimal ethqty = point2Eth(qty, 1);
-		
-		//1、校验用户金额是否足够
+
+		// 1、校验用户金额是否足够
 		BigDecimal ethereumAmount = ethereumService.getEthernumAmount(userId);
 		logger.info("账户余额:" + ethereumAmount.toString() + ",输入金额:" + qty.toString() + "输入金额所需以太坊数量:" + ethqty);
 		if (ethqty.compareTo(ethereumAmount) > 0) {
@@ -113,17 +114,17 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		UserDo userDo = userService.getUser(userId);
-		//2、校验密码是否正确
+		// 2、校验密码是否正确
 		password = DataEncrypt.encrypt(password);
 		if (!userDo.getTwoPassword().equals(password)) {
 			logger.info("交易密码不正确");
 			return Result.failureResult("交易密码不正确");
 		}
 
-		//3、调用以太坊接口，异步
+		// 3、调用以太坊接口，异步
 		EthereumAccountDo userAccount = ethereumService.getByUserId(userId);
 		EthAccountPlatformDo platAccount = ethereumPlatformService.getPlatformAccount();
-		Result<?> result = trans(userAccount, platAccount, ethqty,qty,  1, null);
+		Result<?> result = trans(userAccount, platAccount, ethqty, qty, 1, null);
 
 		return result;
 	}
@@ -151,21 +152,19 @@ public class PayServiceImpl implements IPayService {
 		if (account == null || account.getAmount() == null || qty.compareTo(account.getAmount()) > 0) {
 			return Result.failureResult("现金币账户余额不足");
 		}
-		float nm=qty.intValue()%100;		
-		
-		System.err.println("金额------***"+qty);
-	
-		if(qty.scale()!=0){
+		float nm = qty.intValue() % 100;
+
+		System.err.println("金额------***" + qty);
+
+		if (qty.scale() != 0) {
 			return Result.failureResult("提现金额不能有小数");
 		}
-		
-		
-		if(qty.divideAndRemainder(BigDecimal.valueOf((int)100))[1].intValue()!=0){
+
+		if (qty.divideAndRemainder(BigDecimal.valueOf((int) 100))[1].intValue() != 0) {
 			return Result.failureResult("只能整100整100的提");
 		}
-		
-		
-		if(qty.intValue()<100){
+
+		if (qty.intValue() < 100) {
 			return Result.failureResult("提现金额不能小于100");
 		}
 
@@ -182,16 +181,21 @@ public class PayServiceImpl implements IPayService {
 
 			System.out.println("提现到支付宝");
 
-		} else {
+		} else if (type.equals("3")) {
 
 			System.out.println("提现到微信");
+
+		} else if (type.equals("2")) {
+
+			System.out.println("提现到银行卡");
 		}
 
 		// 账户校验
-		/*EthereumAccountDo ethereumAccountDo = ethereumService.getByUserId(userId);
-		if (ethereumAccountDo == null) {
-			return Result.failureResult("请先获取以太坊地址再提现");
-		}*/
+		/*
+		 * EthereumAccountDo ethereumAccountDo =
+		 * ethereumService.getByUserId(userId); if (ethereumAccountDo == null) {
+		 * return Result.failureResult("请先获取以太坊地址再提现"); }
+		 */
 
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("qty", qty);
@@ -208,11 +212,18 @@ public class PayServiceImpl implements IPayService {
 			record.setAmount(qty);
 			record.setWithdrawDate((new Date()).getTime() / 1000);
 			record.setType(type);
-			record.setBankNo(bank_no);
-			int i=withdrawDao.insertSelective(record);
+			// 提现到银行卡
+			if (type.equals("2")) {
+				record.setOutbizno(userDo.getTrueName());// 真实姓名
+				record.setBank(userDo.getBanktype());// 开卡行
+				record.setBankNo(userDo.getBanknumber());// 卡号
+			} else {
+				record.setBankNo(bank_no);
+			}
+			int i = withdrawDao.insertSelective(record);
 
-			if(i>0){
-			return Result.successResult("提现申请成功");
+			if (i > 0) {
+				return Result.successResult("提现申请成功");
 			}
 		}
 		return Result.failureResult("提现申请失败");
@@ -224,76 +235,79 @@ public class PayServiceImpl implements IPayService {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo) {
-		Result<?> result = Result.successResult("审核成功!") ;
+	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo) {
+		Result<?> result = Result.successResult("审核成功!");
 		Map<String, Object> param = new HashMap<String, Object>();
 		WithdrawalsDo withdrawDo = withdrawDao.selectByPrimaryKey(withdrawId);
 		param.put("withdrawalsId", withdrawId);
-		EthereumTransInfoDo transgetId=etherenumTranInfodao.select(param);
-		String orderId=getOrderIdByUUId();
-		//重做
-		if(transgetId!=null&&transgetId.getStatus().equals("0")){
+		EthereumTransInfoDo transgetId = etherenumTranInfodao.select(param);
+		String orderId = getOrderIdByUUId();
+		// 重做
+		if (transgetId != null && transgetId.getStatus().equals("0")) {
 			Map<String, Object> paraMap = new HashMap<String, Object>();
 			// 付款状态为已支付
 			paraMap.put("newStatus", 2);
 			paraMap.put("oldStatus", 0);
-			paraMap.put("withdrawalsId",withdrawId );
+			paraMap.put("withdrawalsId", withdrawId);
 			int i = etherenumTranInfodao.updateByPrimaryByStatus(paraMap);
 			if (i <= 0) {
 				throw new BusinessException("交易正在进行，请稍后...");
-			}else{
-				result=this.trans(withdrawId, userId, qty, bankNo,orderId);
+			} else {
+				result = this.trans(withdrawId, userId, qty, bankNo, orderId);
 			}
-		}else{
-			//流水信息
-			EthereumTransInfoDo transInfo=new EthereumTransInfoDo();
-			transInfo.setPointamount(DataEncrypt.encrypt(orderId));  //orderId
-			transInfo.setWithdrawalsId(withdrawId);                  //转账id唯一               
-			transInfo.setUserid(userId);                             //用户id
-			transInfo.setAmount(qty.toString());                     //转出金额
-			transInfo.setCreatetime(new Date());                     //创建日期
-			transInfo.setType(2);                                    //类型：转入
-			transInfo.setStatus("0");                            //状态：false未到账，true已到账 
-			transInfo.setToaccount(DataEncrypt.encrypt(bankNo));     //转入地址
-			int i =etherenumTranInfodao.insertSelective(transInfo);
+		} else {
+			// 流水信息
+			EthereumTransInfoDo transInfo = new EthereumTransInfoDo();
+			transInfo.setPointamount(DataEncrypt.encrypt(orderId)); // orderId
+			transInfo.setWithdrawalsId(withdrawId); // 转账id唯一
+			transInfo.setUserid(userId); // 用户id
+			transInfo.setAmount(qty.toString()); // 转出金额
+			transInfo.setCreatetime(new Date()); // 创建日期
+			transInfo.setType(2); // 类型：转入
+			transInfo.setStatus("0"); // 状态：false未到账，true已到账
+			transInfo.setToaccount(DataEncrypt.encrypt(bankNo)); // 转入地址
+			int i = etherenumTranInfodao.insertSelective(transInfo);
 			if (i <= 0) {
 				throw new BusinessException("交易正在进行，请稍后...");
-			}else{
-				result=this.trans(withdrawId, userId, qty, bankNo,orderId);
+			} else {
+				result = this.trans(withdrawId, userId, qty, bankNo, orderId);
 			}
 		}
 		return result;
 	}
-	public static String getOrderIdByUUId() {  
-	    int machineId = 1;//最大支持1-9个集群机器部署  
-		int hashCodeV = UUID.randomUUID().toString().hashCode();  
-		if(hashCodeV < 0) {//有可能是负数  
-		hashCodeV = - hashCodeV;  
-		}  
-		// 0 代表前面补充0       
-		// 4 代表长度为4       
-		// d 代表参数为正数型  
-		return machineId+String.format("%015d", hashCodeV);  
-	}  
-	private Result<?> trans(EthereumAccountDo userAccount, EthAccountPlatformDo platAccount, BigDecimal amount, BigDecimal pointamount,
-			Integer type, Integer withdrawId) {
+
+	public static String getOrderIdByUUId() {
+		int machineId = 1;// 最大支持1-9个集群机器部署
+		int hashCodeV = UUID.randomUUID().toString().hashCode();
+		if (hashCodeV < 0) {// 有可能是负数
+			hashCodeV = -hashCodeV;
+		}
+		// 0 代表前面补充0
+		// 4 代表长度为4
+		// d 代表参数为正数型
+		return machineId + String.format("%015d", hashCodeV);
+	}
+
+	private Result<?> trans(EthereumAccountDo userAccount, EthAccountPlatformDo platAccount, BigDecimal amount,
+			BigDecimal pointamount, Integer type, Integer withdrawId) {
 		logger.info("PayServiceImpl.trans");
-		String fromAccount = null;//转出账号
-		String toAccount = null; //转入账号
-		String password = null; //交易密码
+		String fromAccount = null;// 转出账号
+		String toAccount = null; // 转入账号
+		String password = null; // 交易密码
 
 		BigDecimal fee = BigDecimal.ZERO;
-		if (type == 1) { //充值
+		if (type == 1) { // 充值
 			fromAccount = userAccount.getAccount();
 			password = DataDecrypt.decrypt(userAccount.getPassword());
 			toAccount = platAccount.getAccount();
-		} else if (type == 2) { //提现
+		} else if (type == 2) { // 提现
 			fromAccount = platAccount.getAccount();
 			password = DataDecrypt.decrypt(platAccount.getPassword());
 			toAccount = userAccount.getAccount();
 
-			//手续费，如果提现扣除手续费  
-			LoanDictDtlDo withDrawFee = loanDictService.getLoanDictDtl(DictCode.WithDrawFee.getCode(), DictCode.WithDrawFee.getCode());
+			// 手续费，如果提现扣除手续费
+			LoanDictDtlDo withDrawFee = loanDictService.getLoanDictDtl(DictCode.WithDrawFee.getCode(),
+					DictCode.WithDrawFee.getCode());
 			if (withDrawFee != null && StringUtils.isNotBlank(withDrawFee.getRemark())) {
 
 				fee = amount.multiply(new BigDecimal(withDrawFee.getRemark()));
@@ -307,60 +321,66 @@ public class PayServiceImpl implements IPayService {
 		return Result.successResult("充值正在处理中");
 	}
 
-	/** 
+	/**
 	 * 以太坊换算现金券
+	 * 
 	 * @param ethAmount
-	 * @return  
+	 * @return
 	 */
 	public BigDecimal eth2Point(BigDecimal ethAmount) {
-		BigDecimal usdPrice = ethereumService.getMarketPrice(); //美元价格
-		
-		//计算以太坊值多少美元
+		BigDecimal usdPrice = ethereumService.getMarketPrice(); // 美元价格
+
+		// 计算以太坊值多少美元
 		BigDecimal ytf2$ = ethAmount.multiply(usdPrice).setScale(8, RoundingMode.HALF_UP);
-		
-		//如果getExRate()获得的是现金币与人民币的比例关系  那么下面这行代码是计算以太坊值多少人民币 6进7出
-		//如果是美元比例  则下面这行代码需要注释掉
+
+		// 如果getExRate()获得的是现金币与人民币的比例关系 那么下面这行代码是计算以太坊值多少人民币 6进7出
+		// 如果是美元比例 则下面这行代码需要注释掉
 		ytf2$ = ytf2$.multiply(new BigDecimal(6));
-		
-		//现金币数量 = （以太坊人民币价值）/现金币与人民币比例
+
+		// 现金币数量 = （以太坊人民币价值）/现金币与人民币比例
 		BigDecimal pointQty = ytf2$.divide(getExRate(), 6, RoundingMode.HALF_UP);
 
 		return pointQty;
 	}
 
-	/** 
-	 * 充 pointAmount 现金券需要多少  以太坊 这里是充值转  所以是6进
-	 * @param pointAmount 现金币数量
-	 * @param type 转换类型 1：充值 2：提现   -----  如果是充值  则美元基数取6 如果是提现 则美元基数取7
-	 * @return  
+	/**
+	 * 充 pointAmount 现金券需要多少 以太坊 这里是充值转 所以是6进
+	 * 
+	 * @param pointAmount
+	 *            现金币数量
+	 * @param type
+	 *            转换类型 1：充值 2：提现 ----- 如果是充值 则美元基数取6 如果是提现 则美元基数取7
+	 * @return
 	 */
-	private BigDecimal point2Eth(BigDecimal pointAmount,int type) {
-		//以太坊美元价格
-		BigDecimal usdPrice = ethereumService.getMarketPrice(); //美元价格
-		
-		//现金币转成美元  计算提现的现金币值多少美元
+	private BigDecimal point2Eth(BigDecimal pointAmount, int type) {
+		// 以太坊美元价格
+		BigDecimal usdPrice = ethereumService.getMarketPrice(); // 美元价格
+
+		// 现金币转成美元 计算提现的现金币值多少美元
 		BigDecimal xjb2$ = pointAmount.multiply(getExRate()).setScale(6, RoundingMode.HALF_UP);
-		//如果getExRate()得到的是现金币和人民币的价格  则上面的价格计算的是现金币转人民币的价值  
-		//转美元需要在除以7  6进7出   getExRate()是美元值  则下面这行代码可以注释掉
-		if(type == 1){
-			
-			xjb2$ = xjb2$.divide(new BigDecimal(6),6, RoundingMode.HALF_UP);
-		}else{
-			
-			xjb2$ = xjb2$.divide(new BigDecimal(7),6, RoundingMode.HALF_UP);
+		// 如果getExRate()得到的是现金币和人民币的价格 则上面的价格计算的是现金币转人民币的价值
+		// 转美元需要在除以7 6进7出 getExRate()是美元值 则下面这行代码可以注释掉
+		if (type == 1) {
+
+			xjb2$ = xjb2$.divide(new BigDecimal(6), 6, RoundingMode.HALF_UP);
+		} else {
+
+			xjb2$ = xjb2$.divide(new BigDecimal(7), 6, RoundingMode.HALF_UP);
 		}
-		//以太坊币数量 = (现金币 转成美元值)/以太坊价格
+		// 以太坊币数量 = (现金币 转成美元值)/以太坊价格
 		BigDecimal ethQty = xjb2$.divide(usdPrice, 8, RoundingMode.HALF_UP);
 
 		return ethQty;
 	}
 
 	/**
-	 * 获取现金币与人民币换算关系  1现金币=?人民币
-	 * @return  
+	 * 获取现金币与人民币换算关系 1现金币=?人民币
+	 * 
+	 * @return
 	 */
 	private BigDecimal getExRate() {
-		LoanDictDtlDo loanDictDtlDo = loanDictService.getLoanDictDtl(DictCode.Point2RMB.getCode(), DictCode.Point2RMB.getCode());
+		LoanDictDtlDo loanDictDtlDo = loanDictService.getLoanDictDtl(DictCode.Point2RMB.getCode(),
+				DictCode.Point2RMB.getCode());
 		Assert.notNull(loanDictDtlDo, "提现美元点转美元比例未设置");
 		Assert.hasText(loanDictDtlDo.getRemark(), "提现美元点转美元比例未设置");
 		BigDecimal rate = new BigDecimal(loanDictDtlDo.getRemark());
@@ -369,16 +389,16 @@ public class PayServiceImpl implements IPayService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> transOut(Integer userId, BigDecimal qty, String accountType, String receiver,String password) {
+	public Result<?> transOut(Integer userId, BigDecimal qty, String accountType, String receiver, String password) {
 
 		UserDo userDo = userService.getUser(userId);
-		//2、校验密码是否正确
+		// 2、校验密码是否正确
 		password = DataEncrypt.encrypt(password);
 		if (!userDo.getTwoPassword().equals(password)) {
 			logger.info("交易密码不正确");
 			return Result.failureResult("交易密码不正确");
 		}
-		
+
 		Map<String, Object> params = new HashMap<>();
 		params.put("userName", receiver);
 		List<UserDo> receiverList = userDao.selectUser(params);
@@ -391,10 +411,10 @@ public class PayServiceImpl implements IPayService {
 
 		UserDo receiverUser = receiverList.get(0);
 
-		//判断用户和接受用户是否在转出的范围
-		//checkTransOut(userId, receiverUser);
+		// 判断用户和接受用户是否在转出的范围
+		// checkTransOut(userId, receiverUser);
 
-		//查询转出用户的账号余额是否充足
+		// 查询转出用户的账号余额是否充足
 		UserAccountDo account = accountService.selectUserAccount(userId, accountType);
 		if (account == null) {
 			return Result.failureResult("余额不足，转出失败");
@@ -404,7 +424,7 @@ public class PayServiceImpl implements IPayService {
 			return Result.failureResult("余额不足，转出失败");
 		}
 
-		//现金券钱包不做限制
+		// 现金券钱包不做限制
 		if (!AccountType.wallet_money.getAccountType().equals(accountType)) {
 			if (!transOutDailyService.tryTransOut(userId, accountType, qty)) {
 				return Result.failureResult("转出超出限制");
@@ -412,12 +432,12 @@ public class PayServiceImpl implements IPayService {
 		}
 
 		try {
-			AccountType toAccountType = AccountType.wallet_money; //转入钱包，默认是积分钱包
+			AccountType toAccountType = AccountType.wallet_money; // 转入钱包，默认是积分钱包
 			if (AccountType.wallet_money.getAccountType().equals(accountType)) {
-				toAccountType = AccountType.wallet_money; //如果是现金券钱包，默认转到现金券钱包
+				toAccountType = AccountType.wallet_money; // 如果是现金券钱包，默认转到现金券钱包
 			}
-			accountService.convertBetweenAccount(userId, receiverUser.getId(), qty, accountType, toAccountType.getAccountType(),
-					IncomeType.TYPE_POINT_OUT, IncomeType.TYPE_POINT_IN);
+			accountService.convertBetweenAccount(userId, receiverUser.getId(), qty, accountType,
+					toAccountType.getAccountType(), IncomeType.TYPE_POINT_OUT, IncomeType.TYPE_POINT_IN);
 
 			return Result.successResult("转出成功");
 		} catch (Exception e) {
@@ -478,36 +498,35 @@ public class PayServiceImpl implements IPayService {
 
 		return Result.successResult(null);
 	}
-	public Result<?> trans(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo,String orderId) {
-		Result<?> result = Result.successResult("提现成功!") ;
-		//EthereumTransInfoDo ethtransInfo=etherenumTranInfodao.select(params); 
-		WithdrawalsDo withdraw=new WithdrawalsDo();
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);
+
+	public Result<?> trans(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo, String orderId) {
+		Result<?> result = Result.successResult("提现成功!");
+		// EthereumTransInfoDo ethtransInfo=etherenumTranInfodao.select(params);
+		WithdrawalsDo withdraw = new WithdrawalsDo();
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID,
+				AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,
+				AlipayConfig.SIGNTYPE);
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
-		request.setBizContent("{" +
-			"\"out_biz_no\":"+orderId+","+
-			"\"payee_type\":\"ALIPAY_LOGONID\"," +
-			"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
-			"\"amount\":"+50+"," +
-			"\"remark\":\"提现\"" +
-			"}");
+		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + "\"payee_type\":\"ALIPAY_LOGONID\","
+				+ "\"payee_account\":\"wvavyw6896@sandbox.com\"," + "\"amount\":" + 50 + "," + "\"remark\":\"提现\""
+				+ "}");
 		AlipayFundTransToaccountTransferResponse response = null;
 		try {
 			response = alipayClient.execute(request);
-			EthereumTransInfoDo ethetraninfo=new EthereumTransInfoDo();
-			if("10000".equals(response.getCode())){
+			EthereumTransInfoDo ethetraninfo = new EthereumTransInfoDo();
+			if ("10000".equals(response.getCode())) {
 				result.setMsg("转账成功");
-				withdraw.setWithdraw_status("1"); 
+				withdraw.setWithdraw_status("1");
 				withdraw.setOrderId(DataEncrypt.encrypt(response.getOrderId()));
 				withdraw.setOutbizno(DataEncrypt.encrypt(response.getOutBizNo()));
 				withdraw.setPaymentDate((new Date()).getTime() / 1000);
 				ethetraninfo.setStatus("1");
-				ethetraninfo.setActualamount(qty.toString());               //实际转出金额
+				ethetraninfo.setActualamount(qty.toString()); // 实际转出金额
 				ethetraninfo.setConfirmed("true");
-			}else{
+			} else {
 				System.out.println(response.getSubMsg());
 				withdraw.setRemark(response.getSubMsg());
-				withdraw.setWithdraw_status("0"); 
+				withdraw.setWithdraw_status("0");
 				withdraw.setId(withdrawId);
 				withdrawDao.updateWithDrawStatus(withdraw);
 				ethetraninfo.setStatus("0");
@@ -515,7 +534,7 @@ public class PayServiceImpl implements IPayService {
 				ethetraninfo.setHash(response.getMsg());
 				ethetraninfo.setWithdrawalsId(withdrawId);
 				etherenumTranInfodao.updateByWithdrawId(ethetraninfo);
-				ordId=0;
+				ordId = 0;
 				return Result.failureResult(response.getSubMsg());
 			}
 			withdraw.setId(withdrawId);
@@ -528,48 +547,46 @@ public class PayServiceImpl implements IPayService {
 			return Result.failureResult(response.getSubMsg());
 		}
 		return result;
-		
+
 	}
-	public Trans withdraw(WithdrawalsDo withdraw){
-		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID, AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,AlipayConfig.SIGNTYPE);		
+
+	public Trans withdraw(WithdrawalsDo withdraw) {
+		AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.URL, AlipayConfig.APPID,
+				AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,
+				AlipayConfig.SIGNTYPE);
 		AlipayFundTransOrderQueryRequest request = new AlipayFundTransOrderQueryRequest();
-		request.setBizContent("{" +
-		"\"out_biz_no\":"+withdraw.getOutbizno()+"," +
-		"\"order_id\":"+withdraw.getOrderId()+"," +
-		"  }");
+		request.setBizContent("{" + "\"out_biz_no\":" + withdraw.getOutbizno() + "," + "\"order_id\":"
+				+ withdraw.getOrderId() + "," + "  }");
 		AlipayFundTransOrderQueryResponse response;
-		Trans trans=new Trans();
+		Trans trans = new Trans();
 		try {
 			response = alipayClient.execute(request);
 			String status = null;
-			if(response.isSuccess()){
+			if (response.isSuccess()) {
 				trans.setArrival_time_end(response.getArrivalTimeEnd());
 				trans.setFail_reason(response.getFailReason());
 				trans.setOrder_fee(response.getOrderFee());
 				trans.setOrder_id(response.getOrderId());
 				trans.setOut_biz_no(response.getOutBizNo());
 				trans.setPay_date(response.getPayDate());
-				if(response.getStatus().equals("SUCCESS")){
-					status="成功";
-				}
-				else if(response.getStatus().equals("FAIL")){
-					status=response.getFailReason();
-				}
-				else if(response.getStatus().equals("DEALING")){
-					status="处理中";
-				}
-				else if(response.getStatus().equals("REFUND")){
-					status="退票";
+				if (response.getStatus().equals("SUCCESS")) {
+					status = "成功";
+				} else if (response.getStatus().equals("FAIL")) {
+					status = response.getFailReason();
+				} else if (response.getStatus().equals("DEALING")) {
+					status = "处理中";
+				} else if (response.getStatus().equals("REFUND")) {
+					status = "退票";
 				}
 			} else {
-				status="失败";
+				status = "失败";
 			}
 			trans.setStatus(status);
 		} catch (AlipayApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return trans;
 
 	}

@@ -35,8 +35,8 @@
 				<form id="searchForm" style="margin-top: 7px; margin-left: 5px;">
 					<table border="0">
 						<tr>
-							<!-- <td class="tdfont">用户名:<input type="text" size="14"
-								id="userName" name="userName" placeholder="用户名"></td> -->
+							<td class="tdfont">用户名:<input type="text" size="14"
+								id="userName" name="userName" placeholder="用户名"></td>
 							<td class="tdfont">手机号:<input type="text" size="14"
 								id="userMobile" name="userMobile" placeholder="手机号"></td>
 							<td class="tdfont" colspan="2">注册时间: <input type="text"

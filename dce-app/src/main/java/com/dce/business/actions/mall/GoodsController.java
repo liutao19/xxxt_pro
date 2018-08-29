@@ -18,17 +18,16 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.goods.CTUserAddressDo;
+import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.business.service.goods.ICTUserAddressService;
+import com.dce.business.service.user.IUserService;
 
 @RestController
 @RequestMapping("mall")
@@ -40,12 +39,27 @@ public class GoodsController extends BaseController {
 	private ICTGoodsService ctGoodsService;
 	@Resource
 	private ICTUserAddressService ctUserAddressService;
+	@Resource
+	private IUserService userDo;
 	
 /*	@Resource
 	private RealgoodsService ctrealgoodsService;*/
 	
 	@RequestMapping(value = "/list", method = {RequestMethod.POST,RequestMethod.GET})
 	public Result<?> list() {
+		
+		UserDo user=userDo.getUser(getUserId());
+		if(user==null){
+			return Result.failureResult("用户 不存在");
+			
+		}
+		
+		if (user.getStatus().intValue() != 0) {
+			return Result.failureResult("当前用户已被锁定,不允许登录!");
+		}
+
+		
+		
 		 String pageNum = getString("pageNum");  //当前页码
 		 String rows = getString("rows");   //每页显示记录数
 		 

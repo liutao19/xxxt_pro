@@ -85,7 +85,8 @@
 		paytime, a.orderType,a.alipayStatus,a.awardRemark,
 		a.addressId,
 		a.awardStatus, b.orderDetailId,
-		b.orderId, b.goods_id, b.quantity quantity, b.price,
+		b.orderId, b.goods_id, b.quantity
+		quantity, b.price,
 		b.remark
 		from ct_order a,
 		ct_orderdetail b
@@ -582,6 +583,16 @@
 
 	</update>
 
+	<!-- 重新计算奖励更新订单奖励字段状态 -->
+	<update id="updateAwardStatusByOrder" parameterType="com.dce.business.entity.order.Order">
+		update
+		ct_order
+		set awardStatus = null, awardRemark = null
+		where orderId =
+		#{orderid,jdbcType=INTEGER}
+	</update>
+
+
 	<select id="getBaseInfo" resultType="Map">
 		SELECT COUNT(1) AS salnum, MAX(price) AS maxPrice,MIN(price) AS
 		minPrice
@@ -592,13 +603,17 @@
 
 	<select id="selectOrderByPage" parameterType="Map" resultType="Map">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
-		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
+		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d
+		%H:%i:%s') createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
-		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
+		paytime,a.orderType
+		ordertype,a.addressId addressid,a.awardRemark
 		awardRemark,
+		a.awardStatus awardStatus,
 		a.alipayStatus alipayStatus,
-		c.userName trueName,CONCAT(c.address,c.addressDetails) address,
+		c.userName
+		trueName,CONCAT(c.address,c.addressDetails) address,
 		c.userPhone phone
 		FROM
 		ct_order a
@@ -633,27 +648,31 @@
 				AND <![CDATA[a.createTime <= STR_TO_DATE(#{endDate},'%Y-%m-%d %H:%i:%s')]]>
 			</if>
 		</trim>
-		order by a.createTime, a.orderStatus desc
+		order by a.createTime desc
 	</select>
 
 	<!-- 导出订单数据 -->
 	<select id="selectOrderByCondition" parameterType="java.util.Map"
 		resultMap="orderMapper">
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
-		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
+		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d
+		%H:%i:%s') createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
-		paytime,a.orderType ordertype,a.addressId addressid,a.awardRemark
+		paytime,a.orderType
+		ordertype,a.addressId addressid,a.awardRemark
 		awardRemark,
 		a.alipayStatus alipayStatus,
 		c.userName trueName, c.userPhone phone,
 		CONCAT(c.address,c.addressDetails)
 		address,d.orderDetailId,
-		d.orderId, d.goods_id, d.quantity, d.price
+		d.orderId,
+		d.goods_id, d.quantity, d.price
 		FROM
 		ct_order a
 		left join
-		ct_user b ON a.userid = b.id
+		ct_user b ON
+		a.userid = b.id
 		left join
 		ct_user_address c on
 		c.addressId = a.addressId
@@ -687,15 +706,19 @@
 			</if>
 		</trim>
 	</select>
-	 <!-- 根据订单查询收货人的地址 -->
-  <select id="selectAddressByOrder" parameterType="java.lang.Integer" resultType="com.dce.business.entity.user.UserAddressDo">
-  	select userName username, userPhone userphone, CONCAT(a.address,a.addressDetails) remark
-  	from ct_user_address a
-  	left join ct_order b
-  	on a.addressId = b.addressId
-  	where b.orderId = #{orderId,jdbcType=INTEGER}
-  </select>
-  
+
+	<!-- 根据订单查询收货人的地址 -->
+	<select id="selectAddressByOrder" parameterType="java.lang.Integer"
+		resultType="com.dce.business.entity.user.UserAddressDo">
+		select userName username, userPhone userphone,
+		CONCAT(a.address,a.addressDetails) address
+		from ct_user_address a
+		left
+		join ct_order b
+		on a.addressId = b.addressId
+		where b.orderId =
+		#{orderId,jdbcType=INTEGER}
+	</select>
 
 	<select id="selectGuadanAmount" parameterType="Map" resultType="Long">
 		SELECT sum(qty) as qty
@@ -732,5 +755,6 @@
 		<if test="userId!=null">
 			and userId=#{userId}
 		</if>
+		and payStatus=1
 	</select>
 </mapper>

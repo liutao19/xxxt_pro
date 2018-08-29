@@ -16,6 +16,6 @@ public interface IAwardCalculator  {
 	 * @param orderId   购买订单
 	 * @return
 	 */
-	public void doAward(UserDo buyer, Order order);
+	public  void doAward(UserDo buyer, Order order);
 	
 }

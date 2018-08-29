@@ -50,6 +50,10 @@ public class AwardServiceImpl implements IAwardService {
 			for(IAwardCalculator awardCalc : awardCalculatorList){
 				awardCalc.doAward(buyer, order);
 			}
+			Order orders =  new Order();
+			orders.setOrderid(orderId);
+			orders.setAwardStatus("success");
+			orderService.updateOrder(orders);
 		}catch(Exception e){
 			logger.info("计算奖励出错 购买者ID:"+buyUserId+" 订单id"+orderId);
 			logger.error("计算奖励出错 购买者ID:"+buyUserId+" 订单id"+orderId, e);

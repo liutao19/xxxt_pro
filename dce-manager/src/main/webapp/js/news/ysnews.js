@@ -5,25 +5,19 @@ $(function() {
 	 * begin#################################
 	 */
 
-	$("#searchysNewsForm #searchButton").on(
-			"click",
-			function() {
-				var dataUrl = basePath + "/ysnews/listYsNews.html";
-				$("#tt_YsNews").datagrid('options').url = dataUrl;
-				$("#tt_YsNews").datagrid(
-						'load',
-						{
-							'title' : $("#searchysNewsForm #title").val()/*,
-							'createName' : $("#searchysNewsForm #createName")
-									.val(),
-							'updateName' : $("#searchysNewsForm #updateName")
-									.val(),
-							'startDate' : $("#searchysNewsForm #startDate")
-									.datebox('getValue'),
-							'endDate' : $("#searchysNewsForm #endDate")
-									.datebox('getValue')*/
-						});
-			});
+	$("#searchysNewsForm #searchButton").on("click", function() {
+		var dataUrl = basePath + "/ysnews/listYsNews.html";
+		$("#tt_YsNews").datagrid('options').url = dataUrl;
+		$("#tt_YsNews").datagrid('load', {
+			'title' : $("#searchysNewsForm #title").val()
+		/*
+		 * , 'createName' : $("#searchysNewsForm #createName") .val(),
+		 * 'updateName' : $("#searchysNewsForm #updateName") .val(), 'startDate' :
+		 * $("#searchysNewsForm #startDate") .datebox('getValue'), 'endDate' :
+		 * $("#searchysNewsForm #endDate") .datebox('getValue')
+		 */
+		});
+	});
 
 	$("#searchysNewsForm #resetButton").on("click", function() {
 		$("#searchysNewsForm").form('reset');
@@ -69,50 +63,19 @@ $(function() {
 				width : 180,
 				align : "center"
 			},
-			/*{
-				field : "content",
-				title : "内容",
-				width : 180,
-				align : "center"
-			},
-			{
-				field : "author",
-				title : "作者",
-				width : 180,
-				align : "center"
-			},
-			{
-				field : "topNews",
-				title : "置顶新闻",
-				width : 180,
-				align : "center",
-				formatter : function(value, row, index) {
-					if (row.topNews == "0") {
-						return "未置顶";
-					} else if (row.topNews == "1") {
-						return "已置顶";
-					}
-				}
-			},
-			{
-				field : "remark",
-				title : "备注",
-				width : 180,
-				align : "center"
-			},*/
-			/*{
-				field : "status",
-				title : "状态",
-				width : 180,
-				align : "center",
-				formatter : function(value, row, index) {
-					if (row.status == "0") {
-						return "未发布";
-					} else if (row.status == "1") {
-						return "已发布";
-					}
-				}
-			},*/
+			/*
+			 * { field : "content", title : "内容", width : 180, align : "center" }, {
+			 * field : "author", title : "作者", width : 180, align : "center" }, {
+			 * field : "topNews", title : "置顶新闻", width : 180, align : "center",
+			 * formatter : function(value, row, index) { if (row.topNews == "0") {
+			 * return "未置顶"; } else if (row.topNews == "1") { return "已置顶"; } } }, {
+			 * field : "remark", title : "备注", width : 180, align : "center" },
+			 */
+			/*
+			 * { field : "status", title : "状态", width : 180, align : "center",
+			 * formatter : function(value, row, index) { if (row.status == "0") {
+			 * return "未发布"; } else if (row.status == "1") { return "已发布"; } } },
+			 */
 			{
 				field : "createDate",
 				title : "创建日期",
@@ -121,13 +84,10 @@ $(function() {
 				formatter : dateTimeFormatter
 			},
 			// {field:"createName",title:"创建人",width:180,align:"center"},
-			/*{
-				field : "updateDate",
-				title : "修改日期",
-				width : 180,
-				align : "center",
-				formatter : dateTimeFormatter
-			},*/
+			/*
+			 * { field : "updateDate", title : "修改日期", width : 180, align :
+			 * "center", formatter : dateTimeFormatter },
+			 */
 			// {field:"updateName",title:"修改人",width:180,align:"center"},
 			{
 				field : "操作",
@@ -135,13 +95,12 @@ $(function() {
 				width : 180,
 				align : "center",
 				formatter : function(value, row, index) {
-					var str = '<a href="javascript:void(0);" onclick="deleteNotice(\''
+					var str = '<a href="javascript:void(0);" onclick="to_editysNews(\''
+							+ row.id
+							+ '\');">编辑</a>    <a href="javascript:void(0);" onclick="deleteNotice(\''
 							+ row.id + '\');">删除</a>';
-					
-					/*<a href="javascript:void(0);" onclick="to_editysNews(\''
-						+ row.id
-						+ '\');">编辑</a>*/
-				return str;
+
+					return str;
 				}
 			} ] ];
 	/* ######################grid columns end############################## */
@@ -244,16 +203,18 @@ function save_YsNews() {
 	// 获取表单数据
 	var id = document.getElementById("id").value;
 	var title = $("#editYsNewsForm #title").val();
-	//var file = document.getElementById("image").files[0];
+	// var file = document.getElementById("image").files[0];
 	var content = $("#editYsNewsForm #content").val();
-	/*var author = document.getElementById("author").value;
-	var topNews = $("#editYsNewsForm #topNews").combobox('getValue');
-	var remark = document.getElementById("remark").value;
-	//var status = $("#editYsNewsForm #status").combobox('getValue');
-	// var createDate=$("#editYsNewsForm #createDate").datebox('getValue');
-	var createName = $("#editYsNewsForm #createName").val();
-	// var updateDate=$("#editYsNewsForm #updateDate").datebox('getValue');
-	var updateName = $("#editYsNewsForm #updateName").val();*/
+	/*
+	 * var author = document.getElementById("author").value; var topNews =
+	 * $("#editYsNewsForm #topNews").combobox('getValue'); var remark =
+	 * document.getElementById("remark").value; //var status =
+	 * $("#editYsNewsForm #status").combobox('getValue'); // var
+	 * createDate=$("#editYsNewsForm #createDate").datebox('getValue'); var
+	 * createName = $("#editYsNewsForm #createName").val(); // var
+	 * updateDate=$("#editYsNewsForm #updateDate").datebox('getValue'); var
+	 * updateName = $("#editYsNewsForm #updateName").val();
+	 */
 
 	if ($.isEmptyObject(title)) {
 		$.messager.alert("提示", "新闻标题不能为空");
@@ -261,10 +222,10 @@ function save_YsNews() {
 	} else if ($.isEmptyObject(content)) {
 		$.messager.alert("提示", "地址不能为空");
 		return;
-	} /*else if ($.isEmptyObject(author)) {
-		$.messager.alert("提示", "作者不能为空");
-		return;
-	}*/
+	} /*
+		 * else if ($.isEmptyObject(author)) { $.messager.alert("提示", "作者不能为空");
+		 * return; }
+		 */
 	/*
 	 * else if($.isEmptyObject(createName)){ $.messager.alert("提示","创建人不能为空");
 	 * return false; }
@@ -277,39 +238,34 @@ function save_YsNews() {
 
 	// 校验姓名
 	// checkName(author);
-	/*var pattern = new RegExp(
-			"[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）;—|{}【】‘；：”“'。，、？]");
-	if (pattern.test($.trim(author))) {
-		$.messager.alert("提示", "姓名只能是汉字字母或数字", "error");
-		return;
-	}
-	if (author.length > 10) {
-		$.messager.alert("提示", "姓名过长，请您最多输入10个汉字。", "error");
-		return;
-	}
-	if (author.length < 2) {
-		$.messager.alert("提示", "姓名必须大于2个汉字", "error");
-		return;
-	}*/
+	/*
+	 * var pattern = new RegExp( "[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）;—|{}【】‘；：”“'。，、？]");
+	 * if (pattern.test($.trim(author))) { $.messager.alert("提示",
+	 * "姓名只能是汉字字母或数字", "error"); return; } if (author.length > 10) {
+	 * $.messager.alert("提示", "姓名过长，请您最多输入10个汉字。", "error"); return; } if
+	 * (author.length < 2) { $.messager.alert("提示", "姓名必须大于2个汉字", "error");
+	 * return; }
+	 */
 
-	/*alert("id---->>" + id + "---title---" + title + "----file--" + file
-			+ "---content---" + content + "---author----" + author
-			+ "----topNews----" + topNews + "----remark---" + remark
-			+ "----status---" + status + "----createDate---");*/
+	/*
+	 * alert("id---->>" + id + "---title---" + title + "----file--" + file +
+	 * "---content---" + content + "---author----" + author + "----topNews----" +
+	 * topNews + "----remark---" + remark + "----status---" + status +
+	 * "----createDate---");
+	 */
 
 	object.append("id", id);
 	object.append("title", title);
 	object.append("content", content);
-	/*object.append("content", content);
-	object.append("author", author);
-	object.append("topNews", topNews);
-	object.append("remark", remark);*/
-	//object.append("status", status);
+	/*
+	 * object.append("content", content); object.append("author", author);
+	 * object.append("topNews", topNews); object.append("remark", remark);
+	 */
+	// object.append("status", status);
 	// object.append("createDate",createDate);
 	// object.append("createName",createName);
 	// object.append("updateDate",updateDate);
 	// object.append("updateName",updateName);
-
 	var url = httpUrl + "/ysnews/saveYsNews.html?&rand=" + Math.random();
 	$.ajax({
 		type : 'POST',
@@ -321,7 +277,7 @@ function save_YsNews() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editYsNewsDiv").dialog("close");
-				$('tt_YsNews').datagrid('reload');
+				$('#tt_YsNews').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");
@@ -347,7 +303,9 @@ function deleteNotice(id) {
 				data : {},
 				success : function(data) {
 					if (data.ret == 1) {
+
 						$.messager.alert("新闻", "删除成功");
+						$('#tt_YsNews').datagrid('reload');
 						$('#tableGrid').datagrid('reload');
 					} else {
 						$.messager.alert("新闻", "删除失败，请稍后再试");

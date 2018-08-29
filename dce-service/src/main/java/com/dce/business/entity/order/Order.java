@@ -43,14 +43,6 @@ public class Order {
 	
 	private String phone; // 手机号码
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
 	private String awardStatus;
 
 	private String awardRemark;
@@ -64,6 +56,14 @@ public class Order {
 	private Long goodsid;
 
 	private Long price;
+	
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 	public String getAwardStatus() {
 		return awardStatus;

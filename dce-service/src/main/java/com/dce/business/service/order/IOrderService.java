@@ -30,13 +30,16 @@ public interface IOrderService {
 
 	// 根据订单编号更新订单
 	int updateByOrderCodeSelective(Order order);
+
+	// 根据条件打印订单数据
+	List<Order> selectOrderByCondition(Map<String, Object> paraMap);
+
+	// 更新订单状态发货
+	int updateByPrimaryKeySelective(Order record, Integer userId);
+
+	// 奖励计算成功清空奖励状态
+	int updateAwardStatusByOrder(Order order);
 	
-	//根据条件打印订单数据
-	 List<Order> selectOrderByCondition(Map<String, Object> paraMap);
-
-	//更新订单状态发货
-	int updateByPrimaryKeySelective(Order record,Integer userId);
-
 	Integer addOrder(Order order);
 
 	List<Order> selectOrder(Map<String, Object> params);
@@ -54,25 +57,27 @@ public interface IOrderService {
 	 * @return
 	 */
 	Order buyOrder(Order order);
-	
+
 	/**
 	 * 
 	 * @param chooseGoodsLst
 	 * @return
 	 */
-	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order, HttpServletRequest request, HttpServletResponse response);
+	Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
+			HttpServletRequest request, HttpServletResponse response);
 
 	// 查询总业绩
 	Map<String, Object> selectSum(Map<String, Object> paraMap);
-	
+
 	public Result<String> getAlipayorderStr(Order order);
-	
+
 	public String notify(Map<String, String> conversionParams) throws Exception;
-	
-	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order) throws Exception;
-	
+
+	public Result<String> getWXPayStr(HttpServletRequest request, HttpServletResponse response, Order order)
+			throws Exception;
+
 	public Result<?> alipayQuery(String outTradeNo);
-	
+
 	public void orderPay(String orderCode, String gmtPayment);
 
 }

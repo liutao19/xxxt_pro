@@ -338,7 +338,7 @@
 	</select>
 	
 	<select id="queryListPage" parameterType="Map" resultType="Map">
-		SELECT f.*,u.true_name AS truename
+		SELECT f.*,u.true_name AS truename,u.mobile AS mobile
 		  FROM ct_user_feedback AS f
 		  LEFT JOIN ct_user AS u ON f.userid=u.id
 		  <trim prefix="WHERE" prefixOverrides="AND |OR "> 

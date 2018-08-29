@@ -219,7 +219,12 @@ public class OrderServiceImpl implements IOrderService {
 				logger.debug("用户状态激活结果=====" + j);
 			}
 			// 计算奖励， 如果计算过程失败，这个服务不会抛异常， 会记录在订单的奖金计算状态的字段， 后台管理员可以重新计算
-			awardService.calcAward(order.getUserid(), order.getOrderid());
+			// 假如已经计算过奖励就不再重复计算
+			logger.debug("用户奖励状态======》》》》"+order.getAwardStatus());
+			if(!order.getAwardStatus().equals("success")){
+				awardService.calcAward(order.getUserid(), order.getOrderid());
+			}
+			
 
 		} catch (Exception e) {
 			logger.debug("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
@@ -769,14 +774,9 @@ public class OrderServiceImpl implements IOrderService {
 			if(userAddress == null){
 				continue;
 			}
-			logger.debug("获取的收货人信息"+userAddress);
 			order.setPhone(userAddress.getUserphone());
 			order.setTrueName(userAddress.getUsername());
-			order.setAddress(userAddress.getRemark());
-			
-			logger.debug("订单地址========》》》》》"+order.getAddress());
-			logger.debug("收货人========》》》》》"+order.getTrueName());
-			logger.debug("订单详情========》》》》》"+order.getRemark());
+			order.setAddress(userAddress.getAddress());
 			
 			//获取每条订单的商品详情
 			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
@@ -799,4 +799,13 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return list;
 	}
+
+	@Override
+	public int updateAwardStatusByOrder(Order order) {
+		if(order == null){
+			return 0;
+		}
+		return orderDao.updateAwardStatusByOrder(order);
+	}
+
 }

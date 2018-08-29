@@ -58,7 +58,7 @@ public enum IncomeType {
     /**
      * 会员奖励
      */
-    TYPE_AWARD_BUYER(331, "会员奖励"),
+    TYPE_AWARD_BUYER(331, "旅游奖励"),
     
     /**
      * 会员体验奖
@@ -71,11 +71,11 @@ public enum IncomeType {
     /**
      * 报单
      */
-    TYPE_AWARD_BAODAN(401, "一级发分销奖"),
+    TYPE_AWARD_BAODAN(401, "一级分销奖"),
     /**
      * 加金
      */
-    TYPE_AWARD_JIAJIN(411, "二级发分销奖"),
+    TYPE_AWARD_JIAJIN(411, "二级分销奖"),
     /**
      * 复投
      */

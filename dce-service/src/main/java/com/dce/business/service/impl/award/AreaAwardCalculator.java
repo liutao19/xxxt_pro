@@ -65,7 +65,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public void doAward(UserDo buyer, Order order) {
+	public  void doAward(UserDo buyer, Order order) {
 
 		if (order == null) {
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");

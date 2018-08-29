@@ -795,7 +795,7 @@
 
 	<!-- 查询总业绩 -->
 	<select id="selectSum" parameterType="Map" resultType="map">
-		SELECT SUM( totalPrice) as Totalperformance from ct_order where 1=1
+		SELECT SUM(price) as Totalperformance from ct_order where 1=1
 		<if test="userId!=null">
 			and userId=#{userId}
 		</if>

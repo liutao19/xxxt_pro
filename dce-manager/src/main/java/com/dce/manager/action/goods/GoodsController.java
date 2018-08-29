@@ -203,12 +203,12 @@ public class GoodsController extends BaseAction {
 					CTGoodsDo.setSaleTime(new Date());
 				}
 				i = goodsService.updateGoodsById(CTGoodsDo);
+				
 			} else {
 				if (CTGoodsDo.getStatus() == 1) {
 					CTGoodsDo.setSaleTime(new Date());
 				}
 				CTGoodsDo.setCreateTime(new Date());
-				System.out.println(CTGoodsDo.getTitle());
 				if (goodsService.insertSelectiveService(CTGoodsDo)) {
 					i = 1;
 				}

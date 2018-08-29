@@ -732,5 +732,6 @@
 		<if test="userId!=null">
 			and userId=#{userId}
 		</if>
+		and payStatus=1
 	</select>
 </mapper>

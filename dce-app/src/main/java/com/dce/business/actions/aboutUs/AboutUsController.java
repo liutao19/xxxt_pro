@@ -9,14 +9,12 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.common.result.Result;
 import com.dce.business.entity.aboutUs.AboutusDo;
-import com.dce.business.entity.message.NewsDo;
 import com.dce.business.service.aboutUs.IAboutusService;
 
 @RestController

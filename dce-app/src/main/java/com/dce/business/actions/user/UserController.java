@@ -180,7 +180,6 @@ public class UserController extends BaseController {
 			Integer userId = getUserId();
 			Assert.hasText(userDo.getTwoPassword(), "支付密码不能为空");
 			logger.info("修改用户支付密码，userId:" + userId); // 更改支付密码的用户信息
-
 			userDo.setId(userId);
 			// 支付密码加密
 			if (StringUtils.isNotBlank(userDo.getTwoPassword())) {
@@ -304,12 +303,6 @@ public class UserController extends BaseController {
 
 		return BigDecimal.ZERO;
 	}
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * 用户信息认证
@@ -319,7 +312,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/Authentication", method = RequestMethod.POST)
 	public Result<?> Authentication() {
 		try {
-			
+
 			Integer userId = getUserId();
 			String trueName = getString("trueName");
 			String mobile = getString("mobile");
@@ -352,18 +345,20 @@ public class UserController extends BaseController {
 
 			// 手机号验证
 
-			/*String REGEX_MOBILE = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
-			Pattern p = Pattern.compile(REGEX_MOBILE);
-			Matcher m = p.matcher(mobile);
-			if (!m.matches()) {
-				return Result.failureResult("手机号码错误");
-			}*/
+			/*
+			 * String REGEX_MOBILE =
+			 * "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+			 * Pattern p = Pattern.compile(REGEX_MOBILE); Matcher m =
+			 * p.matcher(mobile); if (!m.matches()) { return
+			 * Result.failureResult("手机号码错误"); }
+			 */
 
 			// 身份号验证
-			/*if (!isIDNumber(idnumber)) {
-
-				return Result.failureResult("该身份证号不合法");
-			}*/
+			/*
+			 * if (!isIDNumber(idnumber)) {
+			 * 
+			 * return Result.failureResult("该身份证号不合法"); }
+			 */
 
 			System.out.println("用户信息----------》》》" + userDo);
 
@@ -570,7 +565,8 @@ public class UserController extends BaseController {
 		map.put("idnumber", userDo.getIdnumber()); // 用户身份证号
 		map.put("sex", userDo.getSex()); // 用户性别
 		map.put("refereeUserMobile", userDo.getRefereeUserMobile()); // 用户推荐人
-		map.put("banktype", userDo.getBanktype());
+		map.put("banknumber", userDo.getBanknumber());// 银行卡卡号
+		map.put("banktype", userDo.getBanktype());// 银行卡开户行
 		return Result.successResult("查询成功", map);
 	}
 }

@@ -65,7 +65,7 @@ $(function() {
 			},
 			{
 				field : "userName",
-				title : "手机号码",
+				title : "登录号[姓名]",
 				width : 100,
 				align : "center",
 				formatter : function(value, row, index) {
@@ -99,12 +99,6 @@ $(function() {
 				}
 			},
 			{
-				field : "trueName",
-				title : "用户姓名",
-				width : 80,
-				align : "center"
-			},
-			{
 				field : "mobile",
 				title : "联系方式",
 				width : 80,
@@ -125,6 +119,12 @@ $(function() {
 			{
 				field : "twoPassword",
 				title : "支付密码",
+				width : 80,
+				align : "center"
+			},
+			{
+				field : "banknumber",
+				title : "银行卡号",
 				width : 80,
 				align : "center"
 			},

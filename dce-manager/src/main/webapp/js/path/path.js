@@ -159,7 +159,7 @@ function deletePath(id) {
 				success : function(data) {
 					if (data.ret == 1) {
 						$.messager.alert("消息", "删除成功");
-						$('#tableGrid').datagrid('reload');
+						$('#tt_Path').datagrid('reload');
 					} else {
 						$.messager.alert("消息", "删除失败，请稍后再试");
 					}
@@ -230,7 +230,7 @@ function save_Path() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editPathDiv").dialog("close");
-				$('tt_Path').datagrid('reload');
+				$('#tt_Path').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");
@@ -240,7 +240,7 @@ function save_Path() {
 }
 
 function reloadDataGrid() {
-	$("tt_Path").datagrid("reload");
+	$("#tt_Path").datagrid("reload");
 }
 
 /* ##########################公用方法##begin############################ */

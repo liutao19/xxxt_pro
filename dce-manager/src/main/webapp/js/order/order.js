@@ -33,7 +33,8 @@ $(function(){
 /*######################grid columns begin##############################*/
 	var columns_tt = [
       			[	 				
-							{field:'orderid',title:'orderid',width:100,hidden:true},						
+							{field:'orderid',title:'orderid',width:100,hidden:true},
+							{field:'userid',title:'userid',width:100,hidden:true},
 								{field:"ordercode",title:"订单编号",width:180,align:"center"},
 								{field:"trueName",title:"收货人",width:180,align:"center"},
 								{field:"phone",title:"手机号码",width:180,align:"center"},
@@ -59,17 +60,7 @@ $(function(){
 				 							return "其他";
 				 						}
 				 					}},
-								/*{field:"alipayStatus",title:"订单支付状态",width:180,align:"center",
-				 						formatter:function(value,row,index){
-					 						if(value == "0"){
-					 							return "支付失败";
-					 						}else if(value == "1"){
-					 							return "支付成功";
-					 						}else if(value == "2"){
-					 							return "未确定";
-					 						}
-					 					}},*/
-								{field:"address",title:"地址",width:180,align:"center"},
+								{field:"address",title:"收获地址",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",
 									formatter:function(value,row,index){
 			 						if(value == "0"){
@@ -80,11 +71,14 @@ $(function(){
 			 					}},
 					{field:"edit",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
+	 						var str = '';
 	 						if(row.orderstatus == "0"){
-	 							return '<a href="javascript:void(0);" onclick="to_editorder(\''+row.orderid+'\');">发货</a>';
-	 						}else{
-	 							return '';
+	 							str = '<a href="javascript:void(0);" onclick="to_editorder(\''+row.orderid+'\');">发货</a>';
 	 						}
+	 						if(row.awardStatus == "fail"){
+ 								str += ' <a href="javascript:void(0);" onclick="recalculteReward(\''+row.userid+'\',\''+row.orderid+'\');">重计奖励</a>';
+ 							}
+	 						return str;
 	 					}
 	 				}					
 	 			]
@@ -137,11 +131,41 @@ $(function(){
  * 导出Excel
  */
 function export_excel() {
+	var orderStatus = $("#orderStatus").combobox('getValue');
 	var exportIframe = document.createElement('iframe');
-	exportIframe.src = httpUrl + "/order/export.html";
+	exportIframe.src = httpUrl + "/order/export.html?orderStatus="+orderStatus;
 
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);
+}
+
+/**
+ * 重新计算奖励
+ * @param userid
+ * @param orderid
+ * @returns
+ */
+function recalculteReward(userid,orderid){
+	var url = httpUrl + "/order/recalculteReward.html";
+	console.log("订单的用户id"+userid);
+	console.log("订单的订单id"+orderid);
+	$.ajax({
+		type : 'POST',
+		url : url,
+		data : {"userId":userid,"orderId":orderid},
+		success : function(data){
+			if(data.ret == 1){
+				$('#tt_Order').datagrid('reload');
+				$.messager.alert("提示","重新计算奖励成功","info");
+			}else if(data.ret == -1){
+				$.messager.alert("提示","重新计算奖励失败，请稍后重试！","error");
+			}else if(data.ret == -2){
+				$.messager.alert("提示","该订单不存在，计算重新奖励失败！","error");
+			}else if(data.ret == -3){
+				$.messager.alert("提示","请勿重复进行计算奖励操作！","error");
+			}
+		}
+	});
 }
 
 
@@ -150,13 +174,11 @@ function export_excel() {
  * @param id
  */
 function to_editorder(id){
-	console.info("订单id："+id);
 	var url = httpUrl+"/order/sendOut.html?&rand=" + Math.random()+"&orderid="+id;
 	 $.ajax({   
 		 type: 'POST',
 		 dataType: 'json',
 		 url: url,  
-		 /*data:$("#editOrderForm").serialize(),*/
 		 success: function(data){ 
 			 if(data.code =="0"){
 				 $('#tt_Order').datagrid('reload');
@@ -170,7 +192,6 @@ function to_editorder(id){
 
 function save_Order(){
 	var formdata = $("#editOrderForm").serialize();
-	console.info("formdata");
 	console.info(formdata);
 	var  url =httpUrl+"/order/saveOrder.html?&rand=" + Math.random();
 	 $.ajax({   

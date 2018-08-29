@@ -184,13 +184,17 @@ public class OrderServiceImpl implements IOrderService {
 	 * @return 处理出错抛异常
 	 */
 	public void orderPay(String ordercode, String gmtPayment) {
+		logger.debug("订单编号==================》》》》》"+ordercode);
 		try {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
+			if(order == null){
+				throw new BusinessException("支付宝回调失败，order为空：" + order, "lipay002");
+			}
 			logger.debug("根据订单编号查询出的订单：" + order);
 			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
 			logger.debug("获取的订单支付状态========》》》》》"+order.getPaystatus());
-			//如果订单状态为支付失败状态才进行更新
+			//如果订单状态为支付失败状态才进行更新 
 			if(order.getPaystatus().equals("0")){
 				Map<String, Object> paraMap = new HashMap<String, Object>();
 				// 付款状态为已支付
@@ -221,7 +225,7 @@ public class OrderServiceImpl implements IOrderService {
 			// 计算奖励， 如果计算过程失败，这个服务不会抛异常， 会记录在订单的奖金计算状态的字段， 后台管理员可以重新计算
 			// 假如已经计算过奖励就不再重复计算
 			logger.debug("用户奖励状态======》》》》"+order.getAwardStatus());
-			if(!order.getAwardStatus().equals("success") || order.getAwardStatus() == null|| order.getAwardStatus().equals("")||order.getAwardStatus().equals(null)){
+			if(order.getAwardStatus() == null|| order.getAwardStatus().equals("")||order.getAwardStatus().equals(null) ||!(order.getAwardStatus().equals("success"))){
 				awardService.calcAward(order.getUserid(), order.getOrderid());
 			}
 			

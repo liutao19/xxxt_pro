@@ -30,7 +30,8 @@
 							<label for="name">feedbackcontent</label>
 						</td>	
 						<td>
-								<input type="text" id="feedbackcontent" name="feedbackcontent" value="${userfeedback.feedbackcontent}"/>												
+								<textarea rows="3" cols="20" id="feedbackcontent"
+							form="editUserFeedbackForm">${userfeedback.feedbackcontent}</textarea>												
 						</td>						   
 					</tr>
 					 <%-- <tr>	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

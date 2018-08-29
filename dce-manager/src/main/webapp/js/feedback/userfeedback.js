@@ -26,12 +26,13 @@ $(function(){
 	var columns_tt = [
       			[	 				
 							{field:'feedbackid',title:'id',width:100,hidden:true},						
+							{field:"mobile",title:"账号",width:180,align:"center"},
 								{field:"truename",title:"反馈人姓名",width:180,align:"center"},
 								{field:"feedbackcontent",title:"内容",width:180,align:"center"},
 								{field:"createtime",title:"反馈时间",width:180,align:"center",formatter:dateTimeFormatter},
 					{field:"操作",title:"操作",width:80,align:"left",
 	 					formatter:function(value,row,index){
-	 					  var str= '<a href="javascript:void(0);" onclick="deleteFeedBack(\''+row.feedbackid+'\');">删除</a>';
+	 					  var str= '<a href="javascript:void(0);" onclick="to_edituserFeedback(\''+ row.feedbackid+ '\');">详情</a>  <a href="javascript:void(0);" onclick="deleteFeedBack(\''+row.feedbackid+'\');">删除</a>';
 	 					  return str;
 	 					}
 	 				}	 				
@@ -119,7 +120,7 @@ function to_edituserFeedback(id){
 	
 	var url = httpUrl+"/userfeedback/addUserFeedback.html?&rand=" + Math.random()+"&id="+id;
 	$('#editUserFeedbackDiv').dialog({
-		title: "编辑",
+		title: "查看",
 		width: 760,
 		height: 500,
 		closed: false,
@@ -128,10 +129,6 @@ function to_edituserFeedback(id){
 		href: url,
 		modal: true,
 		toolbar:[
-				{
-					iconCls:"icon-save",text:"保存",
-					handler:save_UserFeedback
-				},
 				{
 					iconCls:"icon-no",text:"关闭",
 					handler:function(){

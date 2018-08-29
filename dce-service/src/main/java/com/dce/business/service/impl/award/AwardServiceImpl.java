@@ -35,7 +35,7 @@ public class AwardServiceImpl implements IAwardService {
 
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void calcAward(Integer buyUserId, Integer orderId) {
+	public boolean calcAward(Integer buyUserId, Integer orderId) {
 		logger.info("计算奖励开始 购买者ID:"+buyUserId+" 订单id"+orderId);
 		try{
 			Assert.notNull(buyUserId, "购买者ID不能为空");
@@ -59,8 +59,10 @@ public class AwardServiceImpl implements IAwardService {
 			order.setAwardStatus("fail");
 			order.setAwardRemark(e.getMessage());
 			orderService.updateOrder(order);
+			return false;
 		}
 		logger.info("计算奖励结束 购买者ID:"+buyUserId+" 订单id"+orderId);
+		return true;
 	}
 
 }

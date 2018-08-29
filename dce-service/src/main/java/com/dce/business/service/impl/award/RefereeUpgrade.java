@@ -67,7 +67,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 	public void doAward(UserDo buyer, Order order) {
 
 		if (buyer.getUserLevel() == 4) {
-			// 计算奖励成功，清空订单表的奖励出错记录
+			// 计算奖励成功，清空订单表的奖励出错
 			orderService.updateAwardStatusByOrder(order);
 			logger.error("此用戶為以是最高等级");
 			return;

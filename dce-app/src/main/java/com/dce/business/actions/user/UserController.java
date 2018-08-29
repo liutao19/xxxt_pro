@@ -569,4 +569,88 @@ public class UserController extends BaseController {
 		map.put("banktype", userDo.getBanktype());// 银行卡开户行
 		return Result.successResult("查询成功", map);
 	}
+	
+	
+	 /** 
+     * 修改用户信息
+     * @return  
+     */
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
+    public Result<?> updateUser() {
+    	try{
+	        Integer userId = getUserId();
+	        String trueName = getString("trueName");  //真实姓名
+	        String mobile = getString("mobile"); //手机号
+	        String email = getString("email");
+	        String idnumber = getString("idnumber"); //身份证
+	        String banktype = getString("banktype"); //银行类型
+	        String bankUserName = getString("bankUserName"); //银行开户名称
+	        String banknumber = getString("banknumber"); //银行卡
+	        String userPassword = getString("userPassword"); //登录密码
+	        String twoPassword = getString("twoPassword"); //支付密码
+	        logger.info("修改用户信息，userId:" + userId);
+	
+//	        Assert.hasText(trueName, "姓名不能为空");
+//	        Assert.hasText(mobile, "手机号码不能为空");
+//	        Assert.hasText(email, "邮箱不能为空");
+//	        Assert.hasText(idnumber, "身份证不能为空");
+//	        Assert.hasText(banktype, "银行不能为空");
+//	        Assert.hasText(bankUserName, "开户名不能为空");
+//	        Assert.hasText(banknumber, "银行卡号不能为空");
+//	        Assert.hasText(bankContent, "支行不能为空");
+	
+	        //用户信息
+	        UserDo userDo = new UserDo();
+	        userDo.setId(userId);
+	        
+	        if(StringUtils.isNotBlank(trueName)){
+	        	trueName = trueName.replaceAll(" ","");
+	        	userDo.setTrueName(trueName);
+	        }
+	        
+	        if(StringUtils.isNotBlank(mobile)){
+	        	mobile = mobile.replaceAll(" ","");
+	        	userDo.setMobile(mobile);
+	        }
+	        
+	        if(StringUtils.isNotBlank(email)){
+	        	email = email.replaceAll(" ","");
+	        	userDo.setEmail(email);
+	        }
+	        
+	        
+	        if (StringUtils.isNotBlank(idnumber)) {
+	        	idnumber =  idnumber.replaceAll(" ","");
+	        	userDo.setIdnumber(idnumber);
+	        }
+	
+	        if (StringUtils.isNotBlank(banktype)) {
+	        	banktype =  banktype.replaceAll(" ","");
+	            userDo.setBanktype(banktype);
+	        }
+	        
+	        if (StringUtils.isNotBlank(bankUserName)) {
+	        	bankUserName =  bankUserName.replaceAll(" ","");
+	            userDo.setBankUserName(bankUserName);
+	        }
+	        
+	        if (StringUtils.isNotBlank(banknumber)) {
+	        	banknumber =  banknumber.replaceAll(" ","");
+	        	userDo.setBanknumber(banknumber);
+	        }
+	        if (StringUtils.isNotBlank(userPassword)) {
+	            userPassword = DataEncrypt.encrypt(userPassword);
+	            userDo.setUserPassword(userPassword);
+	        }
+	        if (StringUtils.isNotBlank(twoPassword)) {
+	            twoPassword = DataEncrypt.encrypt(twoPassword);
+	            userDo.setTwoPassword(twoPassword);
+	        }
+	        
+        	return userService.update(userDo);
+        }catch(Exception e){
+        	return Result.failureResult("用户信息修改失败");
+        }
+    }
+    
 }

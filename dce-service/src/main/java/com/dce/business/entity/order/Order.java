@@ -15,7 +15,11 @@ public class Order {
 
 	private BigDecimal totalprice; // 订单总金额
 
-	private String recaddress;
+	private BigDecimal price; // 商品金额
+
+	private BigDecimal giftAmount; // 赠品金额
+	
+	private BigDecimal salqty; //赠品数量
 
 	private String createtime; // 订单创建之间
 
@@ -31,17 +35,19 @@ public class Order {
 
 	private Integer alipayStatus; // 支付状态：0支付失败1支付成功2未确定状态
 
-	private List<OrderDetail> orderDetailList; // 订单明细
+	private List<OrderDetail> orderDetailList; // 订单商品明细
 
-	private List<OrderDetail> awardDetailLst; // 订单优惠明细
+	private List<OrderDetail> awardDetailLst; // 订单奖励明细
 
 	private String remark; // 商品详情
 
 	private String trueName; // 客户姓名
 
 	private String address; // 收货地址
-	
+
 	private String phone; // 手机号码
+
+	private String recaddress;
 
 	private String awardStatus;
 
@@ -49,14 +55,10 @@ public class Order {
 
 	private Long matchorderid;
 
-	private BigDecimal salqty;
-
 	private String accounttype;
 
 	private Long goodsid;
 
-	private Long price;
-	
 	public String getPhone() {
 		return phone;
 	}
@@ -249,11 +251,11 @@ public class Order {
 		this.goodsid = goodsid;
 	}
 
-	public Long getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(Long price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
@@ -265,16 +267,24 @@ public class Order {
 		this.remark = remark;
 	}
 
+	public BigDecimal getGiftAmount() {
+		return giftAmount;
+	}
+
+	public void setGiftAmount(BigDecimal giftAmount) {
+		this.giftAmount = giftAmount;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [orderid=" + orderid + ", ordercode=" + ordercode + ", userid=" + userid + ", qty=" + qty
-				+ ", totalprice=" + totalprice + ", recaddress=" + recaddress + ", createtime=" + createtime
-				+ ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime + ", ordertype="
-				+ ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus + ", orderDetailList="
-				+ orderDetailList + ", awardDetailLst=" + awardDetailLst + ", remark=" + remark + ", trueName="
-				+ trueName + ", address=" + address + ", phone=" + phone + ", awardStatus=" + awardStatus
-				+ ", awardRemark=" + awardRemark + ", matchorderid=" + matchorderid + ", salqty=" + salqty
-				+ ", accounttype=" + accounttype + ", goodsid=" + goodsid + ", price=" + price + "]";
+				+ ", totalprice=" + totalprice + ", price=" + price + ", giftAmount=" + giftAmount + ", createtime="
+				+ createtime + ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime
+				+ ", ordertype=" + ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus
+				+ ", orderDetailList=" + orderDetailList + ", awardDetailLst=" + awardDetailLst + ", remark=" + remark
+				+ ", trueName=" + trueName + ", address=" + address + ", phone=" + phone + ", recaddress=" + recaddress
+				+ ", awardStatus=" + awardStatus + ", awardRemark=" + awardRemark + ", matchorderid=" + matchorderid
+				+ ", salqty=" + salqty + ", accounttype=" + accounttype + ", goodsid=" + goodsid + "]";
 	}
 
 }

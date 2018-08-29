@@ -92,7 +92,7 @@ public class OrderController extends BaseController {
 			if (order.getOrderDetailList() != null) {
 				for (OrderDetail orderDetail : order.getOrderDetailList()) {
 					long id = Long.valueOf(orderDetail.getGoodsId());
-
+					
 					CTGoodsDo goods = ctGoodsService.selectById(id);
 					logger.info("单个商品信息：ID--->>>" + orderDetail.getGoodsId()+"商品名称--->>>"+goods.getTitle()+"商品数量--->>>"+orderDetail.getQuantity());
 

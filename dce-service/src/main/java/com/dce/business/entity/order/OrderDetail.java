@@ -14,7 +14,7 @@ public class OrderDetail {
 
 	private String goodsName; // 商品名称
 
-	private String remark; // 备注
+	private String remark; // 0为赠品1为商品
 
 	public String getRemark() {
 		return remark;

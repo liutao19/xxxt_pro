@@ -39,7 +39,7 @@ public interface IOrderService {
 
 	// 奖励计算成功清空奖励状态
 	int updateAwardStatusByOrder(Order order);
-	
+
 	Integer addOrder(Order order);
 
 	List<Order> selectOrder(Map<String, Object> params);
@@ -51,13 +51,13 @@ public interface IOrderService {
 	public PageDo<Map<String, Object>> selectOrderByPage(PageDo<Map<String, Object>> page, Map<String, Object> params);
 
 	/**
-	 * 购买的时候保存订单，并返回优惠明细
+	 * 保存订单商品明细
 	 * 
 	 * @param order
 	 * @return
 	 */
-	Order buyOrder(Order order);
-
+	Order buyOrder(Order order, int goodstype, List<OrderDetail> orderDetail);
+	
 	/**
 	 * 
 	 * @param chooseGoodsLst

@@ -579,15 +579,15 @@ public class UserController extends BaseController {
     public Result<?> updateUser() {
     	try{
 	        Integer userId = getUserId();
-	        String trueName = getString("trueName");
-	        String mobile = getString("mobile");
+	        String trueName = getString("trueName");  //真实姓名
+	        String mobile = getString("mobile"); //手机号
 	        String email = getString("email");
-	        String idnumber = getString("idnumber");
-	        String banktype = getString("banktype");
-	        String bankUserName = getString("bankUserName");
-	        String banknumber = getString("banknumber");
-	        String userPassword = getString("userPassword");
-	        String twoPassword = getString("twoPassword");
+	        String idnumber = getString("idnumber"); //身份证
+	        String banktype = getString("banktype"); //银行类型
+	        String bankUserName = getString("bankUserName"); //银行开户名称
+	        String banknumber = getString("banknumber"); //银行卡
+	        String userPassword = getString("userPassword"); //登录密码
+	        String twoPassword = getString("twoPassword"); //支付密码
 	        logger.info("修改用户信息，userId:" + userId);
 	
 //	        Assert.hasText(trueName, "姓名不能为空");

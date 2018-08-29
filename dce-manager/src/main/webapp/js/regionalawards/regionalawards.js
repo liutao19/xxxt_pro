@@ -263,6 +263,7 @@ window.onresize = function() {
 function domresize() {
 	$('tt_Regionalawards').datagrid(
 			'resize',
+			
 			{
 				height : $("#body").height()
 						- $('#search_areaRegionalawards').height() - 5,

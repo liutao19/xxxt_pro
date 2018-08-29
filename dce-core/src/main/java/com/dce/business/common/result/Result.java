@@ -26,7 +26,6 @@ public final class Result<T> {
 		return new Result<T>(successCode, msg, data);
 	}
 
-	public static <T> Result<T> failureResult(String msg) {
 		return new Result<T>(failureCode, msg, null);
 	}
 

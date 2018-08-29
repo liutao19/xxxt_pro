@@ -82,7 +82,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	/**
-	 * 前端：用户注册
+	 * 用户注册
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

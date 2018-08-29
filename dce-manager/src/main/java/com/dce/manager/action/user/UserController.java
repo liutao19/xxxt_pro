@@ -308,7 +308,7 @@ public class UserController extends BaseAction {
 		String userPassword = getString("userPassword");// 登录密码
 		String twoPassword = getString("twoPassword");// 支付密码
 		String userLevel = getString("userLevel");// 用户等级
-		String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
+		// String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
 		String sex = getString("sex"); // 性别
 		String idnumber = getString("idnumber");// 身份证号
 		String banknumber = getString("banknumber");// 银行卡号
@@ -321,7 +321,7 @@ public class UserController extends BaseAction {
 		logger.info("修改用户信息:userPassword=" + userPassword);
 		logger.info("修改用户信息:twoPassword=" + twoPassword);
 		logger.info("修改用户信息:userLevel=" + userLevel);
-		logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
+		// logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
 		logger.info("修改用户信息:sex=" + sex);
 		logger.info("修改用户信息:idunmber=" + idnumber);
 		logger.info("修改用户信息:banknumber=" + banknumber);
@@ -356,7 +356,7 @@ public class UserController extends BaseAction {
 		user.setMobile(mobile); // 手机号
 		user.setUserPassword(DataEncrypt.encrypt(userPassword));// 登录密码
 		user.setTwoPassword(DataEncrypt.encrypt(twoPassword));// 支付密码
-		user.setRefereeUserMobile(refereeUserMobile);// 推荐人
+		// user.setRefereeUserMobile(refereeUserMobile);// 推荐人
 		user.setIdnumber(idnumber);// 身份证
 		user.setBanknumber(banknumber);// 银行卡号
 		user.setBanktype(banktype);// 开户行

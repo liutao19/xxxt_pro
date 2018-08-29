@@ -65,8 +65,8 @@ $(function() {
 			},
 			{
 				field : "userName",
-				title : "登录号[姓名]",
-				width : 100,
+				title : "用户名[姓名]",
+				width : 125,
 				align : "center",
 				formatter : function(value, row, index) {
 					var str = "";
@@ -75,14 +75,23 @@ $(function() {
 					}
 					if (row.trueName != null && row.trueName != undefined) {
 						str += "[" + row.trueName + "]";
+					} else if (row.trueName != null
+							&& row.trueName != undefined) {
+						str += "[未认证]";
 					}
 					return str;
 				}
 			},
 			{
+				field : "banknumber",
+				title : "银行卡号",
+				width : 125,
+				align : "center"
+			},
+			{
 				field : "userLevel",
 				title : "级别",
-				width : 80,
+				width : 70,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == "0") {
@@ -100,38 +109,32 @@ $(function() {
 			},
 			{
 				field : "mobile",
-				title : "联系方式",
-				width : 80,
+				title : "手机号码",
+				width : 70,
 				align : "center"
 			},
 			{
 				field : "refereeUserMobile",
 				title : "推荐人",
-				width : 80,
+				width : 70,
 				align : "center"
 			},
 			{
 				field : "userPassword",
 				title : "登录密码",
-				width : 80,
+				width : 70,
 				align : "center"
 			},
 			{
 				field : "twoPassword",
 				title : "支付密码",
-				width : 80,
-				align : "center"
-			},
-			{
-				field : "banknumber",
-				title : "银行卡号",
-				width : 80,
+				width : 70,
 				align : "center"
 			},
 			{
 				field : "regTime",
 				title : "注册时间",
-				width : 100,
+				width : 110,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == 0 || value == undefined) {
@@ -144,7 +147,7 @@ $(function() {
 			{
 				field : "certification",
 				title : "认证状态",
-				width : 80,
+				width : 75,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == undefined) {
@@ -160,7 +163,7 @@ $(function() {
 			{
 				field : "status",
 				title : "冻结状态",
-				width : 80,
+				width : 75,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == undefined) {

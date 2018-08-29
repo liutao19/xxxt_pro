@@ -41,7 +41,7 @@ public class UserDo {
 	private BigDecimal balanceIntegral;
 
 	// 证件性别
-	private int sex;
+	private Integer sex;
 
 	private String displaySex;
 
@@ -123,7 +123,7 @@ public class UserDo {
 	private Integer parentid;
 
 	// 认证状态
-	private int certification;
+	private Integer certification;
 
 	// 报单金额
 	private BigDecimal baodan_amount;
@@ -338,11 +338,20 @@ public class UserDo {
 		this.district = district;
 	}
 
-	public int getCertification() {
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+
+	public Integer getCertification() {
 		return certification;
 	}
 
-	public void setCertification(int certification) {
+	public void setCertification(Integer certification) {
 		this.certification = certification;
 	}
 
@@ -442,13 +451,7 @@ public class UserDo {
 		this.balanceIntegral = balanceIntegral;
 	}
 
-	public int getSex() {
-		return sex;
-	}
 
-	public void setSex(int sex) {
-		this.sex = sex;
-	}
 
 	public Long getLoginTimes() {
 		return loginTimes;

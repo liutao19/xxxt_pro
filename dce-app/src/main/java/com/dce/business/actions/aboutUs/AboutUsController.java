@@ -26,18 +26,13 @@ public class AboutUsController {
 	
 	 @RequestMapping("/index")
 	 public Result<?> list() {
-	 logger.info("查询关于湘信.....");
-
-	 //List<NewsDo> newsList = newsService.selectNewsList(Integer.parseInt(pageNum), Integer.parseInt(rows));
-	 List<AboutusDo> aboutUs = aboutusService.getAllAboutUs();
-	 List<Map<String, Object>> result = new ArrayList<>();
-	 if (!CollectionUtils.isEmpty(aboutUs)) {
-	    AboutusDo message=aboutUs.get(0);
-	    Map<String, Object> map = new HashMap<>();
-	    map.put("url", message.getUrl());
-	    result.add(map);
-	  }
-	 return Result.successResult("查询成功", result);
+		 logger.info("查询关于湘信.....");
+	
+		 //List<NewsDo> newsList = newsService.selectNewsList(Integer.parseInt(pageNum), Integer.parseInt(rows));
+		 List<AboutusDo> aboutUs = aboutusService.getAllAboutUs();
+		 Map<String, Object> map = new HashMap<>();
+		 map.put("url",aboutUs.get(0).getUrl());
+		 return Result.successResult("查询成功", map);
 	 }
 
 }

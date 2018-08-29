@@ -67,8 +67,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 	public void doAward(UserDo buyer, Order order) {
 
 		if (buyer.getUserLevel() == 4) {
-			// 计算奖励成功，清空订单表的奖励出错
-			orderService.updateAwardStatusByOrder(order);
+			
 			logger.error("此用戶為以是最高等级");
 			return;
 		}
@@ -78,8 +77,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 				order.getQty());
 
 		if (promote == null) {
-			// 计算奖励成功，清空订单表的奖励出错记录
-			orderService.updateAwardStatusByOrder(order);
+			
 			logger.error("用户购买数量无法升级");
 			return;
 		}
@@ -92,8 +90,6 @@ public class RefereeUpgrade implements IAwardCalculator {
 		// 多种奖励办法以;分隔
 		String[] bAwardLst = buyerAward.split(";");
 		onepromote(buyer.getUserLevel(), bAwardLst, buyer);
-		// 计算奖励成功，清空订单表的奖励出错记录
-		orderService.updateAwardStatusByOrder(order);
 	}
 
 	/**

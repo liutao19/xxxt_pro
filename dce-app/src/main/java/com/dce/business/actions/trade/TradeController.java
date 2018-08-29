@@ -260,7 +260,7 @@ public class TradeController extends BaseController {
         for (Order orderDo : list) {
             Map<String, Object> map = new HashMap<>();
             map.put("time", orderDo.getCreatetime());
-            map.put("price", orderDo.getPrice()); //单价
+            map.put("price", orderDo.getGoodsprice()); //单价
             map.put("num", orderDo.getQty()); //成交量
             map.put("totalmoney", orderDo.getTotalprice()); //总金额
             result.add(map);

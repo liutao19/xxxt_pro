@@ -15,7 +15,7 @@ public class Order {
 
 	private BigDecimal totalprice; // 订单总金额
 
-	private BigDecimal price; // 商品金额
+	private BigDecimal goodsprice; // 商品金额
 
 	private BigDecimal giftAmount; // 赠品金额
 	
@@ -251,12 +251,12 @@ public class Order {
 		this.goodsid = goodsid;
 	}
 
-	public BigDecimal getPrice() {
-		return price;
+	public BigDecimal getGoodsprice() {
+		return goodsprice;
 	}
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
+	public void setGoodsprice(BigDecimal goodsprice) {
+		this.goodsprice = goodsprice;
 	}
 
 	public String getRemark() {
@@ -278,13 +278,13 @@ public class Order {
 	@Override
 	public String toString() {
 		return "Order [orderid=" + orderid + ", ordercode=" + ordercode + ", userid=" + userid + ", qty=" + qty
-				+ ", totalprice=" + totalprice + ", price=" + price + ", giftAmount=" + giftAmount + ", createtime="
-				+ createtime + ", orderstatus=" + orderstatus + ", paystatus=" + paystatus + ", paytime=" + paytime
-				+ ", ordertype=" + ordertype + ", addressid=" + addressid + ", alipayStatus=" + alipayStatus
-				+ ", orderDetailList=" + orderDetailList + ", awardDetailLst=" + awardDetailLst + ", remark=" + remark
-				+ ", trueName=" + trueName + ", address=" + address + ", phone=" + phone + ", recaddress=" + recaddress
-				+ ", awardStatus=" + awardStatus + ", awardRemark=" + awardRemark + ", matchorderid=" + matchorderid
-				+ ", salqty=" + salqty + ", accounttype=" + accounttype + ", goodsid=" + goodsid + "]";
+				+ ", totalprice=" + totalprice + ", goodsprice=" + goodsprice + ", giftAmount=" + giftAmount
+				+ ", salqty=" + salqty + ", createtime=" + createtime + ", orderstatus=" + orderstatus + ", paystatus="
+				+ paystatus + ", paytime=" + paytime + ", ordertype=" + ordertype + ", addressid=" + addressid
+				+ ", alipayStatus=" + alipayStatus + ", orderDetailList=" + orderDetailList + ", awardDetailLst="
+				+ awardDetailLst + ", remark=" + remark + ", trueName=" + trueName + ", address=" + address + ", phone="
+				+ phone + ", recaddress=" + recaddress + ", awardStatus=" + awardStatus + ", awardRemark=" + awardRemark
+				+ ", matchorderid=" + matchorderid + ", accounttype=" + accounttype + ", goodsid=" + goodsid + "]";
 	}
 
 }

@@ -80,27 +80,45 @@ public class OrderController extends BaseController {
 		Integer userId = getUserId();
 
 		List<Order> orderLitst = orderService.selectByUesrIdOneToMany(userId);
-		logger.info("获取当前用户的所有订单:" + orderLitst);
-		
-		if(orderLitst.size() == 0 || orderLitst.isEmpty()){
-			return Result.successResult("当前用户订单为空",new JSONArray());
-		}
-		logger.debug("获取用户所有订单=======》》》》》"+orderLitst);
 
+		if (orderLitst.size() == 0 || orderLitst.isEmpty()) {
+			return Result.successResult("当前用户订单为空", new JSONArray());
+		}
+		logger.debug("获取用户所有订单=======》》》》》" + orderLitst);
+
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String, Object>> newOrderlist = new ArrayList<>();
 		// 设置商品名称
 		for (Order order : orderLitst) {
 			if (order.getOrderDetailList() != null) {
 				for (OrderDetail orderDetail : order.getOrderDetailList()) {
 					long id = Long.valueOf(orderDetail.getGoodsId());
-					
+					logger.debug("获取的商品id======》》》"+id);
 					CTGoodsDo goods = ctGoodsService.selectById(id);
-					logger.info("单个商品信息：ID--->>>" + orderDetail.getGoodsId()+"商品名称--->>>"+goods.getTitle()+"商品数量--->>>"+orderDetail.getQuantity());
-
+					logger.info("单个商品信息：ID--->>>" + orderDetail.getGoodsId() + "商品名称--->>>" + goods.getTitle()
+							+ "商品数量--->>>" + orderDetail.getQuantity());
 					orderDetail.setGoodsName(goods.getTitle());
 				}
 			}
+			map.put("orderid", order.getOrderid());
+			map.put("ordercode", order.getOrdercode());
+			map.put("userid", order.getUserid());
+			map.put("qty", order.getQty());
+			map.put("salqty", order.getSalqty());
+			map.put("totalprice", order.getTotalprice());
+			map.put("giftAmount", order.getGiftAmount());
+			map.put("createTime", order.getCreatetime());
+			map.put("orderstatus", order.getOrderstatus());
+			map.put("paystatus", order.getPaystatus());
+			map.put("paytime", order.getPaytime());
+			map.put("ordertype", order.getOrdertype());
+			map.put("addressid", order.getAddressid());
+			map.put("price", order.getGoodsprice());
+			map.put("orderDetailList", order.getOrderDetailList());
+			map.put("awardDetailLst", order.getAwardDetailLst());
+			newOrderlist.add(map);
 		}
-		return Result.successResult("获取订单成功", orderLitst);
+		return Result.successResult("获取订单成功", newOrderlist);
 	}
 
 	/**
@@ -118,21 +136,22 @@ public class OrderController extends BaseController {
 		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 		String orderType = getString("orderType") == null ? "" : request.getParameter("orderType");
 
-		//假如获取参数某一个为空，直接返回结果至前端
+		// 假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
 
-			return Result.successResult("获取userId、addressId、orderType、cart参数为空！",new JSONArray());
+			return Result.successResult("获取userId、addressId、orderType、cart参数为空！", new JSONArray());
 		}
-		
-		//判断该用户是否存在
-		UserDo user = userService.getUser(Integer.valueOf(userId));
-		if(user == null){
-			return Result.successResult("该用户不存在！",new JSONArray());
-		}
+
+		// 判断该用户是否存在
+		/*UserDo user = userService.getUser(Integer.valueOf(userId));
+		if (user == null) {
+			return Result.successResult("该用户不存在！", new JSONArray());
+		}*/
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));
-		order.setAddressid(Integer.valueOf(addressId));;
+		order.setAddressid(Integer.valueOf(addressId));
+		;
 		order.setOrdertype(orderType);
 
 		logger.info("获取的商品信息-------》》》》》" + goods);
@@ -164,7 +183,7 @@ public class OrderController extends BaseController {
 	@ResponseBody
 	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String ret = "failure";
-		try{
+		try {
 			logger.info("==================支付宝异步返回支付结果开始");
 			// 1.从支付宝回调的request域中取值
 			// 获取支付宝返回的参数集合
@@ -179,22 +198,24 @@ public class OrderController extends BaseController {
 					valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
 				}
 				// 乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
-				// valueStr = new String(valueStr.getBytes("ISO-8859-1"), "uft-8");
+				// valueStr = new String(valueStr.getBytes("ISO-8859-1"),
+				// "uft-8");
 				conversionParams.put(key, valueStr);
 			}
 			logger.info("==================支付宝返回参数集合：" + conversionParams);
-			logger.info("==================原本的参数ALIPAY_PUBLIC_KEY：" + AlipayConfig.ALIPAY_PUBLIC_KEY+"\tCHARSET："+AlipayConfig.CHARSET);
-			
+			logger.info("==================原本的参数ALIPAY_PUBLIC_KEY：" + AlipayConfig.ALIPAY_PUBLIC_KEY + "\tCHARSET："
+					+ AlipayConfig.CHARSET);
+
 			String status = orderService.notify(conversionParams);
 			logger.info("===========》》》》》验签结果：" + status);
-			
+
 			ret = "success";
-			
-		}catch(Exception e ){
+
+		} catch (Exception e) {
 			logger.error("支付宝异步返回支付结果处理失败", e);
 			ret = "failure";
-			
-		}finally{
+
+		} finally {
 			return ret;
 		}
 	}
@@ -277,7 +298,7 @@ public class OrderController extends BaseController {
 	public Result<?> queryOrderByOutTradeNo() {
 
 		String outTradeNo = getString("outTradeNo") == null ? "" : getString("outTradeNo");
-		if(outTradeNo == ""){
+		if (outTradeNo == "") {
 			Result.failureResult("支付宝订单参数outTradeNo为空！");
 		}
 		logger.info("========获取的订单号======：" + outTradeNo);

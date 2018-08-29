@@ -161,19 +161,27 @@ public class OrderServiceImpl implements IOrderService {
 
 		List<Order> list = new ArrayList<Order>();
 		list = orderDao.selectByUesrIdOneToMany(userId);
-		for (Order order : list) {
-			// 订单商品明细
-			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
-			// 订单赠品明细
-			List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
-			for (OrderDetail detail : order.getOrderDetailList()) {
-				if (detail.getRemark().equals("0")) { // 赠品
-					awardDetailLst.add(detail);
-				} else { // 商品
-					orderDetailList.add(detail);
+
+		/*// 订单商品明细
+		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
+		// 订单赠品明细
+		List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
+		
+		for(Order order : list){
+			List<OrderDetail> orderDetail = order.getOrderDetailList();
+			if(orderDetail != null){
+				for(OrderDetail detail : orderDetail){
+					//设置商品名称
+					CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
+					logger.debug("商品名称====》》"+goods.getTitle());
+					detail.setGoodsName(goods.getTitle());
+					//赠品明细
+					if(detail.getRemark().equals("0")){
+						
+					}
 				}
 			}
-		}
+		}*/
 		return list;
 	}
 
@@ -262,7 +270,6 @@ public class OrderServiceImpl implements IOrderService {
 			// 获取订单对象
 			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
 			logger.debug("获取的订单明细类型=====》》》》" + goodstype);
-
 			if (orderDetail == null) {
 				return oldOrder;
 			}
@@ -382,7 +389,7 @@ public class OrderServiceImpl implements IOrderService {
 		// 总金额加上赠品需要补的差价
 		if (giftAmount != 0) {
 			totalprice = price.add(new BigDecimal(giftAmount));
-		}else{
+		} else {
 			totalprice = price;
 		}
 		logger.debug("订单总金额========》》》：" + totalprice);
@@ -397,7 +404,7 @@ public class OrderServiceImpl implements IOrderService {
 		order.setTotalprice(totalprice); // 订单总金额
 		order.setGiftAmount(new BigDecimal(giftAmount)); // 差价
 		order.setSalqty(new BigDecimal(salqty)); // 赠品总数量
-		order.setPrice(price); // 商品总金额
+		order.setGoodsprice(price); // 商品总金额
 		order.setOrderDetailList(chooseGoodsLst); // 订单商品明细
 		order.setOrderDetailList(premiumList); // 订单赠品明细
 

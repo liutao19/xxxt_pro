@@ -221,7 +221,7 @@ public class OrderServiceImpl implements IOrderService {
 			// 计算奖励， 如果计算过程失败，这个服务不会抛异常， 会记录在订单的奖金计算状态的字段， 后台管理员可以重新计算
 			// 假如已经计算过奖励就不再重复计算
 			logger.debug("用户奖励状态======》》》》"+order.getAwardStatus());
-			if(!order.getAwardStatus().equals("success") || order.getAwardStatus() == null|| order.getAwardStatus().equals("")){
+			if(!order.getAwardStatus().equals("success") || order.getAwardStatus() == null|| order.getAwardStatus().equals("")||order.getAwardStatus().equals(null)){
 				awardService.calcAward(order.getUserid(), order.getOrderid());
 			}
 			

@@ -39,7 +39,7 @@ public interface IOrderService {
 
 	// 奖励计算成功清空奖励状态
 	int updateAwardStatusByOrder(Order order);
-
+	
 	Integer addOrder(Order order);
 
 	List<Order> selectOrder(Map<String, Object> params);

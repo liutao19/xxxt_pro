@@ -219,7 +219,12 @@ public class OrderServiceImpl implements IOrderService {
 				logger.debug("用户状态激活结果=====" + j);
 			}
 			// 计算奖励， 如果计算过程失败，这个服务不会抛异常， 会记录在订单的奖金计算状态的字段， 后台管理员可以重新计算
-			awardService.calcAward(order.getUserid(), order.getOrderid());
+			// 假如已经计算过奖励就不再重复计算
+			logger.debug("用户奖励状态======》》》》"+order.getAwardStatus());
+			if(!order.getAwardStatus().equals("success")){
+				awardService.calcAward(order.getUserid(), order.getOrderid());
+			}
+			
 
 		} catch (Exception e) {
 			logger.debug("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
@@ -802,4 +807,5 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		return orderDao.updateAwardStatusByOrder(order);
 	}
+
 }

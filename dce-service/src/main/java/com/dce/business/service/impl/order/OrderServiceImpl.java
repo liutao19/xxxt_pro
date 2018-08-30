@@ -1084,7 +1084,9 @@ public class OrderServiceImpl implements IOrderService {
 		map.put("salqty", salqty);
 		map.put("userLevel", userLevel);
 		map.put("orderId", order.getOrderid());
+		
 
+		logger.debug("userId:"+order.getUserid()+"获取赠品成功:"+map);
 		return Result.successResult("获取赠品成功", map);
 	}
 }

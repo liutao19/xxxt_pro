@@ -117,6 +117,38 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		params.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = orderDao.selectOrderByPage(params);
+		
+		// 查询出赠品和商品详情
+				for (Map<String, Object> order : list) {
+					Integer orderId = Integer.valueOf(order.get("orderid").toString());
+					List<OrderDetail> orderDetail = orderDetailDao.selectByOrderId(orderId);
+					// 拼接商品和赠品
+					StringBuffer orderStr = new StringBuffer();
+					StringBuffer awardStr = new StringBuffer();
+					for (OrderDetail detail : orderDetail) {
+						// 过滤没有明细的订单
+						if (null == detail.getGoodsId()) {
+							continue;
+						}
+						// 设置商品名称
+						CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
+						logger.debug("商品名称====》》" + goods.getTitle());
+						detail.setGoodsName(goods.getTitle());
+						// 赠品
+						if (detail.getRemark().equals("0")) {
+							awardStr.append(detail.getGoodsName());
+							awardStr.append(detail.getQuantity() + "盒");
+							awardStr.append(" ");
+							// 商品
+						} else {
+							orderStr.append(detail.getGoodsName());
+							orderStr.append(detail.getQuantity() + "盒");
+							orderStr.append(" ");
+						}
+					}
+					order.put("orderDetailList", orderStr);
+					order.put("awardDetailLst", awardStr);
+				}
 		page.setModelList(list);
 		return page;
 	}

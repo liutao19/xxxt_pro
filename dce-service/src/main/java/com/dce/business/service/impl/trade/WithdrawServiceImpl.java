@@ -190,9 +190,9 @@ public class WithdrawServiceImpl implements IWithdrawService {
 			if ("1".equals(withdraw.getType())){
 				withdraw.setType("支付宝");
 			}else if("2".equals(withdraw.getType())){
-				withdraw.setType("微信");
-			}else if("3".equals(withdraw.getType())){
 				withdraw.setType("银行卡");
+			}else if("3".equals(withdraw.getType())){
+				withdraw.setType("微信");
 			}
 			
 

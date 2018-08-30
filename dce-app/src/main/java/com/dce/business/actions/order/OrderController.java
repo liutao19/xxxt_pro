@@ -192,6 +192,16 @@ public class OrderController extends BaseController {
 		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====获取的赠品信息：" + premiumList + "=====获取的地址id：" + addressId
 				+ "=====获取的支付方式：" + orderType + "=====用户id：" + userId);
 
+		//前端页面没有传orderId
+		for(OrderDetail od : premiumList ){
+			od.setOrderid(Integer.valueOf(orderId));
+		}
+		
+		//前端页面没有传orderId
+		for(OrderDetail od : chooseGoodsLst ){
+			od.setOrderid(Integer.valueOf(orderId));
+		}
+				
 		// 生成预付单，保存订单和订单明显
 		return orderService.saveOrder(premiumList, chooseGoodsLst, order, request, response);
 	}

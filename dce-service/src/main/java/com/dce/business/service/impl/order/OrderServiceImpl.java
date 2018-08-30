@@ -240,20 +240,18 @@ public class OrderServiceImpl implements IOrderService {
 			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
 			logger.debug("获取的订单支付状态========》》》》》" + order.getPaystatus());
 			// 如果订单状态为支付失败状态才进行更新
-			if (order.getPaystatus().equals("0")) {
-				Map<String, Object> paraMap = new HashMap<String, Object>();
-				// 付款状态为已支付
-				paraMap.put("newStatus", 1);
-				paraMap.put("oldStatus", 0);
-				// 支付时间
-				paraMap.put("payTime", gmtPayment);
-				paraMap.put("orderId", order.getOrderid());
-				logger.debug("更新订单状态的参数=======》》》》》" + paraMap);
-				// 更新订单表状态,从未付改成已付
-				int i = orderDao.updateOrderStatusByOldStatus(paraMap);
-				if (i <= 0) {
-					throw new BusinessException("支付宝回调更新订单失败，order：" + order, "lipay002");
-				}
+			Map<String, Object> paraMap = new HashMap<String, Object>();
+			// 付款状态为已支付
+			paraMap.put("newStatus", 1);
+			paraMap.put("oldStatus", 0);
+			// 支付时间
+			paraMap.put("payTime", gmtPayment);
+			paraMap.put("orderId", order.getOrderid());
+			logger.debug("更新订单状态的参数=======》》》》》" + paraMap);
+			// 更新订单表状态,从未付改成已付
+			int i = orderDao.updateOrderStatusByOldStatus(paraMap);
+			if (i <= 0) {
+				throw new BusinessException("重复通知，order：" + order, "lipay002");
 			}
 
 			// 激活用户状态
@@ -334,27 +332,21 @@ public class OrderServiceImpl implements IOrderService {
 			return totalprice;
 		}
 
-		// 赠品是鹿无忧时
+		
+		if (premiumList.size() == 1) {
+			if (premiumList.get(0).getOrderid().intValue() == 1002) { // 女版差价
+				totalprice = premiumList.get(0).getQuantity() * price;
+			} 
+			return totalprice;
+		}
+		
+		
+		// 混合
 		for (OrderDetail premium : premiumList) {
-			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
-				// 一、当赠品为男版或者女版时
-				if (premiumList.size() == 1) {
-					if (premiumList.get(0).getOrderid() == 1001) { // 男版
-						totalprice = 0;
-					} else { // 女版差价
-						totalprice = premiumList.get(0).getQuantity() * price;
-					}
-
-					// 二、当赠品为混合版时
-				} else {
-					for (int j = 0; j < premiumList.size(); j++) {
-						// 计算出需补的差价
-						if (premiumList.get(j).getGoodsId() == 1002) {
-							totalprice = premiumList.get(j).getQuantity() * price;
-						}
-					}
-				}
+			if (premium.getOrderid().intValue() == 1002) { // 女版差价
+				totalprice += premium.getQuantity() * price;
 			}
+			
 		}
 		return totalprice;
 	}

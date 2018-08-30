@@ -73,35 +73,26 @@ public class UserAccountController extends BaseAction {
 			if(accoutList != null && !CollectionUtils.isEmpty(accoutList.getModelList())){
 				Map<String,Object> total = new HashMap<String,Object>();
 			}
-			/*//当前合计
+			//当前合计
 			if(accoutList != null && !CollectionUtils.isEmpty(accoutList.getModelList())){
 				Map<String,Object> total = new HashMap<String,Object>();
 				total.put("userName", "本页合计:");
-				BigDecimal wallet_original = BigDecimal.ZERO;
-				BigDecimal wallet_original_release = BigDecimal.ZERO;
-				BigDecimal wallet_interest = BigDecimal.ZERO;
-				BigDecimal wallet_bonus = BigDecimal.ZERO;
-				BigDecimal wallet_release_release = BigDecimal.ZERO;
-				BigDecimal wallet_score = BigDecimal.ZERO;
-				BigDecimal wallet_cash = BigDecimal.ZERO;
-				String wallet_original=null;
+				BigDecimal wallet_money = BigDecimal.ZERO;
+				BigDecimal wallet_travel = BigDecimal.ZERO;
+				BigDecimal wallet_goods = BigDecimal.ZERO;
+				BigDecimal wallet_active = BigDecimal.ZERO;
+				
 				for(Map<String,Object> temp : accoutList.getModelList()){
-					wallet_original = wallet_original.add((BigDecimal) temp.get("wallet_original"));
-					wallet_original_release = wallet_original_release.add((BigDecimal) temp.get("wallet_original_release"));
-					wallet_interest = wallet_interest.add((BigDecimal) temp.get("wallet_interest"));
-					wallet_bonus = wallet_bonus.add((BigDecimal) temp.get("wallet_bonus"));
-					wallet_release_release = wallet_release_release.add((BigDecimal) temp.get("wallet_release_release"));
-					wallet_score = wallet_score.add((BigDecimal) temp.get("wallet_score"));
-					wallet_cash = wallet_cash.add((BigDecimal) temp.get("wallet_cash"));
-					wallet_original=temp);
+					wallet_money =wallet_money.add((BigDecimal) temp.get("wallet_money"));
+					wallet_travel = wallet_travel.add((BigDecimal) temp.get("wallet_travel"));
+					wallet_goods = wallet_goods.add((BigDecimal) temp.get("wallet_goods"));
+					wallet_active = wallet_active.add((BigDecimal) temp.get("wallet_active"));
 				}
-				total.put("wallet_original", wallet_original);
-				total.put("wallet_original_release", wallet_original_release);
-				total.put("wallet_interest", wallet_interest);
-				total.put("wallet_bonus", wallet_bonus);
-				total.put("wallet_release_release", wallet_release_release);
-				total.put("wallet_score", wallet_score);
-				total.put("wallet_cash", wallet_cash);
+				total.put("wallet_money", wallet_money);
+				total.put("wallet_travel", wallet_travel);
+				total.put("wallet_goods", wallet_goods);
+				total.put("wallet_active", wallet_active);
+
 				accoutList.getModelList().add(total);
 			}
 			
@@ -118,7 +109,7 @@ public class UserAccountController extends BaseAction {
 					}
 				}
 				accoutList.getModelList().add(sum);
-			}*/
+			}
 			
 			pagination = PageDoUtil.getPageValue(pagination, accoutList);
 			outPrint(response, JSON.toJSONString(pagination));

@@ -45,9 +45,10 @@ public class UserAccountDetailController extends BaseAction {
 			String startDate = getString(request, "startDate");
 			String endDate = getString(request, "endDate");
 			String seacrchAccountType = getString(request, "seacrchAccountType");
+			String remark = getString(request, "remark");
+			System.out.println("remark"+remark);
+			System.out.println("userName"+userName);
 			System.out.println("seacrchAccountType"+seacrchAccountType);
-			String seacrchIncomeType = getString(request, "seacrchIncomeType");
-			
 			
 			Map<String,Object> params = new HashMap<String,Object>();
 			
@@ -60,8 +61,8 @@ public class UserAccountDetailController extends BaseAction {
 			if(StringUtils.isNotBlank(endDate)){
 				params.put("endDate", endDate);
 			}
-			if(StringUtils.isNotBlank(seacrchIncomeType)){
-				params.put("incomeType", seacrchIncomeType);
+			if(StringUtils.isNotBlank(remark)){
+				params.put("remark", remark);
 			}
 			if(StringUtils.isNotBlank(seacrchAccountType)){
 				params.put("accountType", seacrchAccountType);

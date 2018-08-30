@@ -134,18 +134,12 @@ public class WithDrawController extends BaseAction {
 					withdraws.setOrderId(DataDecrypt.decrypt(withdraws.getOrderId()));
 					withdraws.setOutbizno(DataDecrypt.decrypt(withdraws.getOutbizno()));
 					Trans trans=payService.withdraw(withdraws);
-					System.out.println("getArrival_time_end:"+trans.getArrival_time_end());
-					System.out.println("getFail_reason:"+trans.getFail_reason());
-					System.out.println("getOrder_fee:"+trans.getOrder_fee());
-					System.out.println("getOrder_id:"+trans.getOrder_id());
-					System.out.println("getOut_biz_no:"+trans.getOut_biz_no());
-					System.out.println("getPay_date:"+trans.getPay_date());
 					modelMap.addAttribute("queryWithdraw", trans);
 				}
 			}
 			return "withdraw/viewWithDraw";
 		} catch (Exception e) {
-			logger.error("跳转到数据字典编辑页面异常", e);
+			logger.error("跳转异常", e);
 			throw new BusinessException("系统繁忙，请稍后再试");
 		}
     }

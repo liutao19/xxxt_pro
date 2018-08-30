@@ -19,9 +19,11 @@ public class DCEExceptionHandler implements HandlerExceptionResolver {
     public ModelAndView resolveException( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
 
         if (ex instanceof IllegalArgumentException || ex instanceof BusinessException) {
+        	ex.printStackTrace();
         	logger.error(ex);
         	print(response, Result.failureCode, ex.getMessage());
         } else {
+        	ex.printStackTrace();
         	logger.error(ex);
             print(response, Result.failureCode, "系统繁忙，请稍后再试");
         }
@@ -37,6 +39,7 @@ public class DCEExceptionHandler implements HandlerExceptionResolver {
             pw = response.getWriter();
             pw.print(JSON.toJSONString(result));
         } catch (IOException e) {
+        	e.printStackTrace();
         	logger.error(e);
         } finally {
             if (pw != null) {

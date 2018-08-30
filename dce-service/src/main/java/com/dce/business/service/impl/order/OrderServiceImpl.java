@@ -117,38 +117,38 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		params.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = orderDao.selectOrderByPage(params);
-		
+
 		// 查询出赠品和商品详情
-				for (Map<String, Object> order : list) {
-					Integer orderId = Integer.valueOf(order.get("orderid").toString());
-					List<OrderDetail> orderDetail = orderDetailDao.selectByOrderId(orderId);
-					// 拼接商品和赠品
-					StringBuffer orderStr = new StringBuffer();
-					StringBuffer awardStr = new StringBuffer();
-					for (OrderDetail detail : orderDetail) {
-						// 过滤没有明细的订单
-						if (null == detail.getGoodsId()) {
-							continue;
-						}
-						// 设置商品名称
-						CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
-						logger.debug("商品名称====》》" + goods.getTitle());
-						detail.setGoodsName(goods.getTitle());
-						// 赠品
-						if (detail.getRemark().equals("0")) {
-							awardStr.append(detail.getGoodsName());
-							awardStr.append(detail.getQuantity() + "盒");
-							awardStr.append(" ");
-							// 商品
-						} else {
-							orderStr.append(detail.getGoodsName());
-							orderStr.append(detail.getQuantity() + "盒");
-							orderStr.append(" ");
-						}
-					}
-					order.put("orderDetailList", orderStr);
-					order.put("awardDetailLst", awardStr);
+		for (Map<String, Object> order : list) {
+			Integer orderId = Integer.valueOf(order.get("orderid").toString());
+			List<OrderDetail> orderDetail = orderDetailDao.selectByOrderId(orderId);
+			// 拼接商品和赠品
+			StringBuffer orderStr = new StringBuffer();
+			StringBuffer awardStr = new StringBuffer();
+			for (OrderDetail detail : orderDetail) {
+				// 过滤没有明细的订单
+				if (null == detail.getGoodsId()) {
+					continue;
 				}
+				// 设置商品名称
+				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
+				logger.debug("商品名称====》》" + goods.getTitle());
+				detail.setGoodsName(goods.getTitle());
+				// 赠品
+				if (detail.getRemark().equals("0")) {
+					awardStr.append(detail.getGoodsName());
+					awardStr.append(detail.getQuantity() + "盒");
+					awardStr.append(" ");
+					// 商品
+				} else {
+					orderStr.append(detail.getGoodsName());
+					orderStr.append(detail.getQuantity() + "盒");
+					orderStr.append(" ");
+				}
+			}
+			order.put("orderDetailList", orderStr);
+			order.put("awardDetailLst", awardStr);
+		}
 		page.setModelList(list);
 		return page;
 	}
@@ -245,7 +245,7 @@ public class OrderServiceImpl implements IOrderService {
 					// 赠品明细
 					if ("0".equals(detail.getRemark())) {
 						logger.debug("商品名称====》》" + goods.getTitle());
-						detail.setGoodsName("赠品:"+goods.getTitle());
+						detail.setGoodsName("赠品:" + goods.getTitle());
 					} else {
 						// 设置商品名称
 						logger.debug("商品名称====》》" + goods.getTitle());
@@ -254,7 +254,7 @@ public class OrderServiceImpl implements IOrderService {
 					orderDetailList.add(detail);
 				}
 				order.setOrderDetailList(orderDetailList);
-				//order.setAwardDetailLst(awardDetailLst);
+				// order.setAwardDetailLst(awardDetailLst);
 			}
 		}
 
@@ -359,28 +359,36 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	private Double countPremiumPriceSpread(List<OrderDetail> premiumList) {
 
+		logger.debug("计算赠品差价开始=========》》》》》");
 		double price = 40.0; // 每盒差价
 		double totalprice = 0; // 总差价
 
 		if (premiumList.isEmpty() || premiumList.size() == 0) {
+			logger.debug("赠品集合为空，不计算差价========》》》》");
 			return totalprice;
 		}
 
-		
-		if (premiumList.size() == 1) {
-			if (premiumList.get(0).getOrderid().intValue() == 1002) { // 女版差价
-				totalprice = premiumList.get(0).getQuantity() * price;
-			} 
-			return totalprice;
-		}
-		
-		
-		// 混合
+		// 赠品是鹿无忧时
 		for (OrderDetail premium : premiumList) {
-			if (premium.getOrderid().intValue() == 1002) { // 女版差价
-				totalprice += premium.getQuantity() * price;
+			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
+				// 一、当赠品为男版或者女版时
+				if (premiumList.size() <= 1) {
+					if (premiumList.get(0).getOrderid() == 1001) { // 男版
+						totalprice = 0;
+					} else { // 女版差价
+						totalprice = premiumList.get(0).getQuantity() * price;
+					}
+
+					// 二、当赠品为混合版时
+				} else {
+					for (int j = 0; j < premiumList.size(); j++) {
+						// 计算出需补的差价
+						if (premiumList.get(j).getGoodsId() == 1002) {
+							totalprice = premiumList.get(j).getQuantity() * price;
+						}
+					}
+				}
 			}
-			
 		}
 		return totalprice;
 	}
@@ -393,11 +401,12 @@ public class OrderServiceImpl implements IOrderService {
 	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		logger.debug("获取订单的支付方式====》》》》"+order.getOrdertype());
 		if (order.getOrderid() != null) {
+			logger.debug("支付成功，更新订单====》》》》");
 			return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 			// 若传过来的订单id为空，则重新生成订单
 		} else {
+			logger.debug("支付成功，orderId为空，重新产生订单====》》》》");
 			return this.createOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 		}
 	}
@@ -509,7 +518,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 查询出原来的订单
 		Order oldOrder = this.selectByPrimaryKey(order.getOrderid());
-		logger.debug("更新订单前查询出的订单========》》》》"+oldOrder);
+		logger.debug("更新订单前查询出的订单========》》》》" + oldOrder);
 		OrderDetailExample example = new OrderDetailExample();
 		example.createCriteria().andOrderidEqualTo(oldOrder.getOrderid());
 		// 删除原来的明细
@@ -1116,9 +1125,8 @@ public class OrderServiceImpl implements IOrderService {
 		map.put("salqty", salqty);
 		map.put("userLevel", userLevel);
 		map.put("orderId", order.getOrderid());
-		
 
-		logger.debug("userId:"+order.getUserid()+"获取赠品成功:"+map);
+		logger.debug("userId:" + order.getUserid() + "获取赠品成功:" + map);
 		return Result.successResult("获取赠品成功", map);
 	}
 }

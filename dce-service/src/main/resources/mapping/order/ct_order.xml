@@ -17,7 +17,7 @@
 		<result column="salqty" jdbcType="DECIMAL" property="salqty" />
 		<result column="accountType" jdbcType="VARCHAR" property="accounttype" />
 		<result column="goodsId" jdbcType="BIGINT" property="goodsid" />
-		<result column="price" jdbcType="DECIMAL" property="goodsprice" />
+		<result column="goodsprice" jdbcType="DECIMAL" property="goodsprice" />
 		<result column="giftAmount" jdbcType="DECIMAL" property="giftAmount" />
 		<result column="addressId" jdbcType="INTEGER" property="addressid" />
 		<result column="alipayStatus" jdbcType="INTEGER" property="alipayStatus" />
@@ -31,7 +31,7 @@
 		payStatus,
 		date_format(payTime,'%Y-%m-%d %H:%i:%s'), orderType, matchOrderId,
 		salqty, accountType, goodsId,
-		price,giftAmount,
+		goodsprice,giftAmount,
 		addressId,
 		alipayStatus,awardStatus,awardRemark
 	</sql>
@@ -44,7 +44,7 @@
 		a.qty qty, a.totalPrice totalprice, a.createTime createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus,a.giftAmount giftAmount,
 		a.payTime
-		paytime,a.orderType ordertype,a.addressId addressid, a.price goodsprice,
+		paytime,a.orderType ordertype,a.addressId addressid, a.goodsprice goodsprice,
 		a.alipayStatus
 		alipayStatus,a.awardStatus awardStatus,a.awardRemark awardRemark,
 		CONCAT(b.address,b.addressDetails) address
@@ -80,7 +80,7 @@
 		select
 		a.orderId, a.orderCode, a.userId, a.qty, a.totalPrice,
 		date_format(a.createTime,'%Y-%m-%d %H:%i:%s') createtime,
-		a.orderStatus,a.giftAmount,a.price goodsprice,a.salqty,
+		a.orderStatus,a.giftAmount,a.goodsprice goodsprice,a.salqty,
 		a.payStatus,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime, a.orderType,a.alipayStatus,a.awardRemark,
@@ -105,7 +105,7 @@
 		<result column="userId" jdbcType="INTEGER" property="userid" />
 		<result column="qty" jdbcType="INTEGER" property="qty" />
 		<result column="totalPrice" jdbcType="DECIMAL" property="totalprice" />
-		<result column="price" jdbcType="DECIMAL" property="goodsprice" />
+		<result column="goodsprice" jdbcType="DECIMAL" property="goodsprice" />
 		<result column="giftAmount" jdbcType="DECIMAL" property="giftAmount" />
 		<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
 		<result column="orderStatus" jdbcType="INTEGER" property="orderstatus" />
@@ -131,13 +131,12 @@
 	<insert id="insert" parameterType="com.dce.business.entity.order.Order">
 		insert into ct_order (orderId,
 		orderCode, userId,
-		qty, totalPrice, price, giftAmount, recAddress,
+		qty, totalPrice, goodsprice, giftAmount, recAddress,
 		createTime, orderStatus,
 		payStatus,
 		orderType, matchOrderId,
 		salqty, accountType,
 		goodsId,
-		price,
 		addressId, alipayStatus,awardStatus,awardRemark
 		)
 		values
@@ -146,7 +145,7 @@
 		#{userid,jdbcType=INTEGER},
 		#{qty,jdbcType=DECIMAL},
 		#{totalprice,jdbcType=DECIMAL},
-		#{price,jdbcType=DECIMAL},
+		#{goodsprice,jdbcType=DECIMAL},
 		#{giftAmount,jdbcType=DECIMAL},
 		#{recaddress,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
@@ -157,7 +156,6 @@
 		#{salqty,jdbcType=DECIMAL},
 		#{accounttype,jdbcType=VARCHAR},
 		#{goodsid,jdbcType=BIGINT},
-		#{price,jdbcType=DECIMAL},
 		#{addressid,jdbcType=INTEGER},
 		#{alipayStatus,jdbcType=VARCHAR},
 		#{awardStatus,jdbcType=VARCHAR},
@@ -166,7 +164,8 @@
 	</insert>
 
 	<!-- 生成一个订单 -->
-	<insert id="insertSelective" parameterType="com.dce.business.entity.order.Order">
+	<insert id="insertSelective" parameterType="com.dce.business.entity.order.Order"
+		useGeneratedKeys="true" keyProperty="orderid">
 		insert into ct_order
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="ordercode != null">
@@ -182,7 +181,7 @@
 				totalPrice,
 			</if>
 			<if test="goodsprice != null">
-				price,
+				goodsprice,
 			</if>
 			<if test="giftAmount != null">
 				giftAmount,
@@ -286,7 +285,7 @@
 				totalPrice = #{totalprice,jdbcType=DECIMAL},
 			</if>
 			<if test="goodsprice != null">
-				price = #{goodsprice,jdbcType=DECIMAL},
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="giftAmount != null">
 				giftAmount = #{giftAmount,jdbcType=DECIMAL},
@@ -321,8 +320,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
@@ -353,7 +352,7 @@
 				totalPrice = #{totalprice,jdbcType=DECIMAL},
 			</if>
 			<if test="goodsprice != null">
-				price = #{goodsprice,jdbcType=DECIMAL},
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="giftAmount != null">
 				giftAmount = #{giftAmount,jdbcType=DECIMAL},
@@ -388,8 +387,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
@@ -415,7 +414,7 @@
 		qty = #{qty,jdbcType=DECIMAL},
 		totalPrice =
 		#{totalprice,jdbcType=DECIMAL},
-		price =
+		goodsprice =
 		#{goodsprice,jdbcType=DECIMAL},
 		giftAmount =
 		#{giftAmount,jdbcType=DECIMAL},
@@ -435,7 +434,6 @@
 		accountType = #{accounttype,jdbcType=VARCHAR},
 		goodsId =
 		#{goodsid,jdbcType=BIGINT},
-		price = #{price,jdbcType=DECIMAL},
 		addressId = #{addressid,jdbcType=INTEGER},
 		alipayStatus =
 		#{alipayStatus,jdbcType=VARCHAR},
@@ -554,7 +552,7 @@
 				totalPrice = #{totalprice,jdbcType=DECIMAL},
 			</if>
 			<if test="goodsprice != null">
-				price = #{goodsprice,jdbcType=DECIMAL},
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="giftAmount != null">
 				giftAmount = #{giftAmount,jdbcType=DECIMAL},
@@ -589,8 +587,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				goodsprice = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
@@ -639,7 +637,7 @@
 
 
 	<select id="getBaseInfo" resultType="Map">
-		SELECT COUNT(1) AS salnum, MAX(price) AS maxPrice,MIN(price) AS
+		SELECT COUNT(1) AS salnum, MAX(goodsprice) AS maxPrice,MIN(goodsprice) AS
 		minPrice
 		FROM ct_order WHERE payStatus = 1
 		AND <![CDATA[ createTime > STR_TO_DATE(#{queryTime},'%Y-%m-%d') ]]>
@@ -654,7 +652,7 @@
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime,a.orderType
 		ordertype,a.addressId addressid,a.awardRemark
-		awardRemark, a.price goodsprice, a.giftAmount, a.salqty,
+		awardRemark, a.goodsprice goodsprice, a.giftAmount, a.salqty,
 		a.awardStatus awardStatus,
 		a.alipayStatus alipayStatus,
 		c.userName
@@ -702,7 +700,7 @@
 		SELECT a.orderId orderid, a.orderCode ordercode, a.userId userid,
 		a.qty qty, a.totalPrice totalprice, date_format(a.createTime,'%Y-%m-%d
 		%H:%i:%s') createtime,
-		a.orderStatus orderstatus,a.payStatus paystatus, a.price goodsprice, a.giftAmount,
+		a.orderStatus orderstatus,a.payStatus paystatus, a.goodsprice goodsprice, a.giftAmount,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
 		paytime,a.orderType
 		ordertype,a.addressId addressid,a.awardRemark
@@ -796,7 +794,7 @@
 
 	<!-- 查询总业绩 -->
 	<select id="selectSum" parameterType="Map" resultType="map">
-		SELECT SUM(price) as Totalperformance from ct_order where 1=1
+		SELECT SUM(goodsprice) as Totalperformance from ct_order where 1=1
 		<if test="userId!=null">
 			and userId=#{userId}
 		</if>

@@ -2,6 +2,7 @@ package com.dce.business.service.impl.order;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
+import com.dce.business.entity.order.OrderDetailExample;
 import com.dce.business.entity.order.OrderSendOut;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserAddressDo;
@@ -95,6 +97,14 @@ public class OrderServiceImpl implements IOrderService {
 			result = new HashMap<String, Object>();
 		}
 		return result;
+	}
+
+	@Override
+	public int updateAwardStatusByOrder(Order order) {
+		if (order == null) {
+			return 0;
+		}
+		return orderDao.updateAwardStatusByOrder(order);
 	}
 
 	/**
@@ -153,38 +163,6 @@ public class OrderServiceImpl implements IOrderService {
 		return orderDao.selectByOrderCode(orderCode);
 	}
 
-	/**
-	 * 订单记录
-	 */
-	@Override
-	public List<Order> selectByUesrIdOneToMany(Integer userId) {
-
-		List<Order> list = new ArrayList<Order>();
-		list = orderDao.selectByUesrIdOneToMany(userId);
-
-		/*// 订单商品明细
-		List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
-		// 订单赠品明细
-		List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
-		
-		for(Order order : list){
-			List<OrderDetail> orderDetail = order.getOrderDetailList();
-			if(orderDetail != null){
-				for(OrderDetail detail : orderDetail){
-					//设置商品名称
-					CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
-					logger.debug("商品名称====》》"+goods.getTitle());
-					detail.setGoodsName(goods.getTitle());
-					//赠品明细
-					if(detail.getRemark().equals("0")){
-						
-					}
-				}
-			}
-		}*/
-		return list;
-	}
-
 	@Override
 	public int updateByOrderCodeSelective(Order order) {
 
@@ -202,6 +180,51 @@ public class OrderServiceImpl implements IOrderService {
 	public Map<String, Object> selectSum(Map<String, Object> paraMap) {
 
 		return orderDao.selectSum(paraMap);
+	}
+
+	/**
+	 * 订单记录
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Order> selectByUesrIdOneToMany(Integer userId) {
+
+		List<Order> list = orderDao.selectByUesrIdOneToMany(userId);
+		if (null == list || list.isEmpty()) {
+			return Collections.EMPTY_LIST;
+		}
+
+		for (Order order : list) {
+			List<OrderDetail> orderDetail = order.getOrderDetailList();
+			if (orderDetail != null) {
+				// 订单商品明细
+				List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
+				// 订单赠品明细
+				List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
+
+				for (OrderDetail detail : orderDetail) {
+
+					if (null == detail.getGoodsId()) {// 过滤没有明细的订单
+						continue;
+					}
+
+					// 设置商品名称
+					CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
+					logger.debug("商品名称====》》" + goods.getTitle());
+					detail.setGoodsName(goods.getTitle());
+					// 赠品明细
+					if ("0".equals(detail.getRemark())) {
+						awardDetailLst.add(detail);
+					} else {
+						orderDetailList.add(detail);
+					}
+				}
+				order.setOrderDetailList(orderDetailList);
+				order.setAwardDetailLst(awardDetailLst);
+			}
+		}
+
+		return list;
 	}
 
 	/**
@@ -265,10 +288,10 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	@Override
 	public Order buyOrder(Order order, int goodstype, List<OrderDetail> orderDetail) {
-
+		logger.debug("获取订单id=====>>>>" + order.getOrderid());
 		try {
 			// 获取订单对象
-			Order oldOrder = orderDao.selectByOrderCode(order.getOrdercode());
+			Order oldOrder = orderDao.selectByPrimaryKey(order.getOrderid());
 			logger.debug("获取的订单明细类型=====》》》》" + goodstype);
 			if (orderDetail == null) {
 				return oldOrder;
@@ -337,12 +360,34 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
-	 * 保存订单和订单明细，获取签名后的订单信息，并返回加签后的订单信息
+	 * 支付成功，保存订单和订单明细，获取签名后的订单信息，并返回加签后的订单信息
 	 * 
 	 * @param chooseGoodsLst
 	 */
 	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
 			HttpServletRequest request, HttpServletResponse response) {
+
+		logger.debug("获取订单的支付方式====》》》》"+order.getOrdertype());
+		if (order.getOrderid() != null) {
+			return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
+			// 若传过来的订单id为空，则重新生成订单
+		} else {
+			return this.createOrderToPay(premiumList, chooseGoodsLst, order, request, response);
+		}
+	}
+
+	/**
+	 * 若传过来的订单id为空，则重新生成订单
+	 * 
+	 * @param premiumList
+	 * @param chooseGoodsLst
+	 * @param order
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	private Result<String> createOrderToPay(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst,
+			Order order, HttpServletRequest request, HttpServletResponse response) {
 
 		// 选择的商品信息为空
 		if (chooseGoodsLst.size() == 0) {
@@ -418,6 +463,112 @@ public class OrderServiceImpl implements IOrderService {
 		// 添加赠品明细
 		order = buyOrder(order, 0, premiumList);
 
+		// 获取加签后的订单
+		return getSignByPayType(request, response, order);
+
+	}
+
+	/**
+	 * 若已有订单，直接更新订单，并生成加签后的订单返回出去
+	 * 
+	 * @param premiumList
+	 * @param chooseGoodsLst
+	 * @param order
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	private Result<String> updateOrderToPay(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst,
+			Order order, HttpServletRequest request, HttpServletResponse response) {
+
+		// 查询出原来的订单
+		Order oldOrder = this.selectByPrimaryKey(order.getOrderid());
+		logger.debug("更新订单前查询出的订单========》》》》"+oldOrder);
+		OrderDetailExample example = new OrderDetailExample();
+		example.createCriteria().andOrderidEqualTo(oldOrder.getOrderid());
+		// 删除原来的明细
+		orderDetailDao.deleteByExample(example);
+
+		// 计算是否需要补赠品的差价
+		Double giftAmount = countPremiumPriceSpread(premiumList);
+		logger.debug("需要补的赠品差价========》》》：" + giftAmount);
+
+		// 产生订单编号
+		String orderCode = OrderCodeUtil.genOrderCode(order.getUserid());
+		logger.debug("产生订单号=====》》》" + orderCode);
+
+		Integer quantity = 0; // 商品总数量
+		BigDecimal totalprice = new BigDecimal(0); // 订单总金额
+		BigDecimal price = new BigDecimal(0); // 商品总金额
+		Integer salqty = 0; // 赠品数量
+
+		// 循环遍历出商品信息，计算商品总价格和商品总数量
+		for (OrderDetail orderDetail : chooseGoodsLst) {
+			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
+			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
+			quantity += orderDetail.getQuantity(); // 商品总数量
+			price = BigDecimal.valueOf(orderDetail.getPrice() * (orderDetail.getQuantity())).add(price); // 商品总金额
+			logger.debug("商品总金额---------》》》》》》》》》" + price);
+		}
+
+		// 计算赠品总数量
+		if (premiumList != null) {
+			for (OrderDetail orderDetail : premiumList) {
+				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
+				orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
+				salqty += orderDetail.getQuantity(); // 商品总数量
+			}
+			logger.debug("赠品总数量---------》》》》》》》》》" + salqty);
+		}
+
+		// 总金额加上赠品需要补的差价
+		if (giftAmount != 0) {
+			totalprice = price.add(new BigDecimal(giftAmount));
+		} else {
+			totalprice = price;
+		}
+		logger.debug("订单总金额========》》》：" + totalprice);
+
+		// 更新订单
+		Date date = new Date();
+		oldOrder.setUserid(order.getUserid());
+		oldOrder.setOrdertype(order.getOrdertype());
+		oldOrder.setAddressid(order.getAddressid());
+		oldOrder.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
+		oldOrder.setTotalprice(totalprice); // 订单总金额
+		oldOrder.setGiftAmount(new BigDecimal(giftAmount)); // 差价
+		oldOrder.setSalqty(new BigDecimal(salqty)); // 赠品总数量
+		oldOrder.setQty(quantity); // 商品总数量
+		oldOrder.setOrdercode(orderCode);
+		oldOrder.setGoodsprice(price); // 商品总金额
+		oldOrder.setOrderDetailList(chooseGoodsLst); // 订单商品明细
+		oldOrder.setOrderDetailList(premiumList); // 订单赠品明细
+
+		orderDao.updateByPrimaryKeySelective(oldOrder);
+		logger.debug("==========》》》》》更新的订单信息：" + oldOrder);
+
+		// 添加商品明细
+		order = buyOrder(order, 1, chooseGoodsLst);
+
+		// 添加赠品明细
+		order = buyOrder(order, 0, premiumList);
+
+		// 获取加签后的订单
+		return getSignByPayType(request, response, oldOrder);
+	}
+
+	/**
+	 * 根据支付方式获取对应加签后的订单
+	 * 
+	 * @param request
+	 * @param response
+	 * @param order
+	 * @return
+	 */
+	private Result<String> getSignByPayType(HttpServletRequest request, HttpServletResponse response, Order order) {
+		if (order.getOrdertype() == null) {
+			return Result.failureResult("获取的订单支付方式为空！！！");
+		}
 		// 判断支付方式，生成预支付订单
 		if (order.getOrdertype().equals("1")) {
 			// 微信支付
@@ -436,7 +587,7 @@ public class OrderServiceImpl implements IOrderService {
 	}
 
 	/**
-	 * 获取签名后的订单信息，并返回加签后的订单信息
+	 * 获取签名后的订单信息，并返回加签后的支付宝订单信息
 	 * 
 	 * @param order
 	 * @return
@@ -866,12 +1017,80 @@ public class OrderServiceImpl implements IOrderService {
 		return list;
 	}
 
+	/**
+	 * 通过用户等级和购买商品数量，计算赠品
+	 */
 	@Override
-	public int updateAwardStatusByOrder(Order order) {
-		if (order == null) {
-			return 0;
-		}
-		return orderDao.updateAwardStatusByOrder(order);
-	}
+	public Result<?> chooseGoods(List<OrderDetail> chooseGoodsLst, Order order) {
 
+		// 选择的商品信息为空
+		if (chooseGoodsLst.size() == 0) {
+			logger.debug("获取的商品清单为空=====》》》");
+			return Result.successResult("商品清单为空");
+		}
+
+		if (order == null) {
+			logger.debug("获取的商品信息为空（地址id、用户id）=====》》》");
+			return Result.successResult("获取的商品信息为空（地址id、用户id）");
+		}
+
+		Integer quantity = 0; // 商品总数量
+		BigDecimal totalprice = new BigDecimal(0); // 订单总金额
+		BigDecimal price = new BigDecimal(0); // 商品总金额
+		Integer salqty = 0; // 赠品数量
+
+		// 循环遍历出商品信息，计算商品总价格和商品总数量
+		for (OrderDetail orderDetail : chooseGoodsLst) {
+			CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(orderDetail.getGoodsId()));
+			orderDetail.setGoodsName(goods.getTitle()); // 获取商品名称
+			quantity += orderDetail.getQuantity(); // 商品总数量
+			price = BigDecimal.valueOf(orderDetail.getPrice() * (orderDetail.getQuantity())).add(price); // 商品总金额
+			logger.debug("商品总金额---------》》》》》》》》》" + price);
+		}
+
+		// 计算赠品
+		// 判断用户等级
+		UserDo user = userService.getUser(order.getUserid());
+		Byte userLevel = user.getUserLevel();
+		// 普通用户、会员购买5盒送一盒
+		if (userLevel.intValue() == 0 || userLevel.intValue() == 1) {
+			if (quantity >= 5 && quantity < 50) {
+				salqty = 1;
+			}
+		}
+		// 普通用户、会员、VIP买50盒送十八盒
+		if (userLevel.intValue() != 3 && userLevel.intValue() != 4) {
+			if (quantity >= 50) {
+				salqty = 18;
+			}
+		}
+
+		// 订单总金额
+		totalprice = price;
+		// 创建订单
+		Date date = new Date();
+		order.setCreatetime(DateUtil.dateformat(date));// 订单创建时间
+		order.setOrderstatus("0"); // 未发货状态
+		order.setPaystatus("0"); // 未支付状态
+		order.setQty(quantity); // 商品总数量
+		order.setTotalprice(totalprice); // 订单总金额
+		order.setSalqty(new BigDecimal(salqty)); // 赠品总数量
+		order.setGoodsprice(price); // 商品总金额
+		order.setOrderDetailList(chooseGoodsLst); // 订单商品明细
+
+		// 保存订单
+		orderDao.insertSelective(order);
+		logger.debug("==========》》》》》添加的订单信息：" + order);
+
+		// 添加商品明细
+		order = buyOrder(order, 1, chooseGoodsLst);
+
+		// 赠品信息
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("salqty", salqty);
+		map.put("userLevel", userLevel);
+		map.put("orderId", order.getOrderid());
+
+		return Result.successResult("获取赠品成功", map);
+	}
 }

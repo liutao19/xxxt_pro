@@ -33,7 +33,6 @@ import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.wxPay.util.XMLUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
-import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.user.UserDo;
@@ -86,20 +85,10 @@ public class OrderController extends BaseController {
 		}
 		logger.debug("获取用户所有订单=======》》》》》" + orderLitst);
 
-		Map<String, Object> map = new HashMap<>();
 		List<Map<String, Object>> newOrderlist = new ArrayList<>();
 		// 设置商品名称
 		for (Order order : orderLitst) {
-			if (order.getOrderDetailList() != null) {
-				for (OrderDetail orderDetail : order.getOrderDetailList()) {
-					long id = Long.valueOf(orderDetail.getGoodsId());
-					logger.debug("获取的商品id======》》》"+id);
-					CTGoodsDo goods = ctGoodsService.selectById(id);
-					logger.info("单个商品信息：ID--->>>" + orderDetail.getGoodsId() + "商品名称--->>>" + goods.getTitle()
-							+ "商品数量--->>>" + orderDetail.getQuantity());
-					orderDetail.setGoodsName(goods.getTitle());
-				}
-			}
+			Map<String, Object> map = new HashMap<>();
 			map.put("orderid", order.getOrderid());
 			map.put("ordercode", order.getOrdercode());
 			map.put("userid", order.getUserid());
@@ -122,7 +111,45 @@ public class OrderController extends BaseController {
 	}
 
 	/**
-	 * 用户选择商品，下单生成预支付订单
+	 * 用户选择商品用来判断是否需要赠品
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/chooseGoods", method = RequestMethod.POST)
+	public Result<?> chooseGoods(HttpServletRequest request, HttpServletResponse response) {
+
+		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
+		String userId = getString("userId") == null ? "" : request.getParameter("userId");
+		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
+
+		// 假如获取参数某一个为空，直接返回结果至前端
+		if (userId == "" || goods == "") {
+			return Result.successResult("获取userId、cart参数为空！", new JSONArray());
+		}
+
+		// 判断该用户是否存在
+		UserDo user = userService.getUser(Integer.valueOf(userId));
+		if (user == null) {
+			return Result.successResult("该用户不存在！", new JSONArray());
+		}
+
+		Order order = new Order();
+		order.setUserid(Integer.valueOf(userId));
+		order.setAddressid(Integer.valueOf(addressId));
+		logger.info("获取的商品信息-------》》》》》" + goods);
+
+		// 将商品信息的JSON数据解析为list集合
+		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
+		logger.info("======用户选择的商品信息：" + chooseGoodsLst +  "=====获取的地址id：" + addressId + "=====用户id：" + userId);
+
+		// 生成订单，保存订单和订单明细
+	   //orderService.chooseGoods(chooseGoodsLst, order);
+		return orderService.chooseGoods(chooseGoodsLst, order);
+
+	}
+	
+	/**
+	 * 下单生成预支付订单
 	 * 
 	 * @return
 	 */
@@ -131,27 +158,28 @@ public class OrderController extends BaseController {
 
 		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
 		String premium = request.getParameter("premium") == null ? "" : request.getParameter("premium");
-
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
 		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 		String orderType = getString("orderType") == null ? "" : request.getParameter("orderType");
 
+		String orderId = getString("orderId") == null ? "" : request.getParameter("orderId");
+		
 		// 假如获取参数某一个为空，直接返回结果至前端
-		if (userId == "" || goods == "" || addressId == "" || orderType == "") {
+		if (userId == "" || goods == "" || addressId == "" || orderType == "" || StringUtils.isBlank(orderId)) {
 
-			return Result.successResult("获取userId、addressId、orderType、cart参数为空！", new JSONArray());
+			return Result.successResult("获取orderId,userId、addressId、orderType、cart参数为空！", new JSONArray());
 		}
 
 		// 判断该用户是否存在
-		/*UserDo user = userService.getUser(Integer.valueOf(userId));
+		UserDo user = userService.getUser(Integer.valueOf(userId));
 		if (user == null) {
 			return Result.successResult("该用户不存在！", new JSONArray());
-		}*/
+		}
 
 		Order order = new Order();
+		order.setOrderid(Integer.valueOf(orderId));
 		order.setUserid(Integer.valueOf(userId));
 		order.setAddressid(Integer.valueOf(addressId));
-		;
 		order.setOrdertype(orderType);
 
 		logger.info("获取的商品信息-------》》》》》" + goods);
@@ -167,9 +195,9 @@ public class OrderController extends BaseController {
 
 		// 生成预付单，保存订单和订单明显
 		return orderService.saveOrder(premiumList, chooseGoodsLst, order, request, response);
-
 	}
-
+	
+	
 	/**
 	 * 支付宝支付异步通知该接口
 	 * 
@@ -327,6 +355,10 @@ public class OrderController extends BaseController {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			OrderDetail orderDetail = new OrderDetail();
 			JSONObject obj = jsonArray.getJSONObject(i);
+			//过滤数量为0的商品
+			if(Integer.valueOf(obj.getString("qty")) == 0){
+				continue;
+			}
 			orderDetail.setGoodsId(Integer.valueOf(obj.getString("goodsId")));
 			orderDetail.setQuantity(Integer.valueOf(obj.getString("qty")));
 			orderDetail.setPrice(Double.valueOf(obj.getString("price")));

@@ -80,4 +80,11 @@ public interface IOrderService {
 
 	public void orderPay(String orderCode, String gmtPayment);
 
+	/**
+	 * 选择商品查询赠品
+	 * @param chooseGoodsLst
+	 * @param order
+	 */
+	Result<?> chooseGoods(List<OrderDetail> chooseGoodsLst, Order order);
+
 }

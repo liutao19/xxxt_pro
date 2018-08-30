@@ -159,12 +159,19 @@ public class WithDrawController extends BaseAction {
 			Long time = System.currentTimeMillis();
 			WithdrawalsDo example = new WithdrawalsDo();
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("type", type);
-			map.put("endDate", endDate);
-			map.put("userName", userName);
-			map.put("endDate", endDate);
+			System.out.println("type:"+type);
+			if (StringUtils.isNotBlank(userName)) {
+				map.put("type", type);
+			}
+			if (StringUtils.isNotBlank(startDate)) {
+				map.put("endDate", startDate);
+			}if (StringUtils.isNotBlank(endDate)) {
+				map.put("endDate", endDate);
+			}if (StringUtils.isNotBlank(type)) {
+				map.put("type", type);
+			}
 			
-			List<WithdrawalsDo> applytravelLst = withdrawService.selectByExample(example);
+			List<WithdrawalsDo> applytravelLst = withdrawService.selectByExample(map);
 
 			String excelHead = "数据导出";
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());

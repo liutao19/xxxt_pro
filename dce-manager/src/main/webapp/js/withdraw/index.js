@@ -249,7 +249,7 @@ function export_excel(){
 	var endDate=$("#searchForm #user_reg_endDate").datebox('getValue');
 
 	var exportIframe = document.createElement('iframe');
-	exportIframe.src =basePath+"/withdraw/export.html"+"?type="+type+"userName"+userName+"startDate"+startDate+"endDate"+endDate;
+	exportIframe.src =basePath+"/withdraw/export.html"+"?type="+type+"&userName"+userName+"&startDate"+startDate+"&endDate"+endDate;
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);
 }

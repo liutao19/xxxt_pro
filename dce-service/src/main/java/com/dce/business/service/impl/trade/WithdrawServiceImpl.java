@@ -169,10 +169,10 @@ public class WithdrawServiceImpl implements IWithdrawService {
 	}
 
 	@Override
-	public List<WithdrawalsDo> selectByExample(WithdrawalsDo example) {
+	public List<WithdrawalsDo> selectByExample(Map<String,Object> param) {
 		// TODO Auto-generated method stub
 		logger.info("----selectByExample----");
-		List<WithdrawalsDo> result = withdrawDao.selectByExample(example);
+		List<WithdrawalsDo> result = withdrawDao.selectByExample(param);
 
 		for (WithdrawalsDo withdraw : result) {
 			if ("1".equals(withdraw.getProcessStatus())) {

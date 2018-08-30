@@ -197,12 +197,15 @@ public class PayServiceImpl implements IPayService {
 		 * return Result.failureResult("请先获取以太坊地址再提现"); }
 		 */
 
-		Map<String, Object> param = new HashMap<String, Object>();
+		/*Map<String, Object> param = new HashMap<String, Object>();
 		param.put("qty", qty);
-		param.put("userId", userId);
+		param.put("userId", userId);*/
+		
+		
+		UserAccountDo accont = new UserAccountDo(new BigDecimal(-qty.intValue()), userId,"wallet_money");
 
 		// 用户余额减去
-		int mk = accountService.updateMoney(param);
+		int mk = accountService.updateUserAmountById(accont, IncomeType.TYPE_WITHDRAW);
 
 		if (mk != 0) {
 			// 写提现表

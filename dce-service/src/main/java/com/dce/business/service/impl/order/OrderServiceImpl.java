@@ -338,7 +338,7 @@ public class OrderServiceImpl implements IOrderService {
 		for (OrderDetail premium : premiumList) {
 			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
 				// 一、当赠品为男版或者女版时
-				if (premiumList.size() <= 1) {
+				if (premiumList.size() == 1) {
 					if (premiumList.get(0).getOrderid() == 1001) { // 男版
 						totalprice = 0;
 					} else { // 女版差价

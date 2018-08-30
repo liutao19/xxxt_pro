@@ -139,7 +139,7 @@ public class OrderController extends BaseController {
 
 		// 将商品信息的JSON数据解析为list集合
 		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
-		logger.info("======用户选择的商品信息：" + chooseGoodsLst +  "=====获取的地址id：" + addressId + "=====用户id：" + userId);
+		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====用户id：" + userId);
 
 		// 生成订单，保存订单和订单明细
 	   //orderService.chooseGoods(chooseGoodsLst, order);

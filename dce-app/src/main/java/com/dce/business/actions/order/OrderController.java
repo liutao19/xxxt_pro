@@ -120,7 +120,6 @@ public class OrderController extends BaseController {
 
 		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
-		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 
 		// 假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "") {
@@ -135,7 +134,7 @@ public class OrderController extends BaseController {
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));
-		order.setAddressid(Integer.valueOf(addressId));
+		
 		logger.info("获取的商品信息-------》》》》》" + goods);
 
 		// 将商品信息的JSON数据解析为list集合

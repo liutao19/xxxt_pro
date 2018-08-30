@@ -492,6 +492,9 @@
 			<if test="userName != null">  
                AND b.user_name=#{userName}
 			</if>
+			<if test="type != null">  
+               AND a.type=#{type}
+			</if>
 			<if test="trueName != null">  
                AND b.true_name=#{trueName}
 			</if>
@@ -524,6 +527,9 @@
 			</if>
 			<if test="processStatus != null">  
                AND a.process_status=#{processStatus}
+			</if>
+			<if test="type != null">  
+               AND a.type=#{type}
 			</if>
 			<if test="startDate != null">  
                AND <![CDATA[a.withdraw_date >= UNIX_TIMESTAMP(#{startDate})]]>

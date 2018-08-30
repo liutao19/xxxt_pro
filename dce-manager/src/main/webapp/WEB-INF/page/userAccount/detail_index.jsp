@@ -43,7 +43,7 @@
 							 		<option value="wallet_active">奖励活动 </option>
 							 </select>
 					   	</td>
-					   	<td class="tdfont" colspan="2">流水类别:
+					   	<!-- <td class="tdfont" colspan="2">流水类别:
 							 <select class="easyui-combobox" id="seacrchIncomeType" name="seacrchIncomeType" style="width:140px;">
 							 		<option value="">-选择流水类别-</option>
 							 		<option value="11">卖出订单</option>
@@ -54,7 +54,7 @@
 							 		<option value="22">提现</option>
 							 		<option value="23">提现拒绝</option>
 							 		<option value="311">推荐奖励</option>
-							 	<!-- 	<option value="312">领导奖励</option> -->
+							 		<option value="312">领导奖励</option>
 							 		<option value="401">报单激活</option>
 							 		<option value="501">挂单卖出</option>
 							 		<option value="502">挂单买入</option>
@@ -68,10 +68,10 @@
 							 		<option value="1004">原始币钱包释放</option>
 							 		<option value="1005">日息币钱包释放</option>
 							 		<option value="1006">释放币钱包释放</option>
-							 		<!-- <option value="1011">充值奖励</option>
-							 		<option value="1012">充值代数奖励</option> -->
+							 		<option value="1011">充值奖励</option>
+							 		<option value="1012">充值代数奖励</option>
 							 </select>
-					   	</td>
+					   	</td> -->
 						<td >
 						  	<a  href="javascript:void(0);" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>
 							<a  href="javascript:void(0);" id="resetButton" class="easyui-linkbutton" iconCls="icon-reset" plain="true" >重置</a>

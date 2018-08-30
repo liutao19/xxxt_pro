@@ -34,6 +34,14 @@
 						 <input type="text" id="user_reg_startDate"  name="user_reg_startDate" class="easyui-datetimebox" size="14" data-options="editable : true" />-
 						 <input type="text" id="user_reg_endDate" name="user_reg_endDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
 					   	</td>
+					   	<td class="tdfont">提现方式:
+						   	 <select class="easyui-combobox" id="type" name="type" style="width:140px;">
+								 <option value="">-选择账户类别-</option>
+								 <option value="1">支付宝</option>
+						   		 <option value="2">银行卡</option>
+						   		 <option value="3">微信</option>
+						     </select>
+					   	</td>
 						<td >
 						  	<a  href="javascript:void(0);" id="searchButton" class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>
 							<a  href="javascript:void(0);" id="resetButton" class="easyui-linkbutton" iconCls="icon-reset" plain="true" >重置</a>

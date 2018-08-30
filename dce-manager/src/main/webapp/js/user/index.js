@@ -199,6 +199,12 @@ $(function() {
 						href = href
 								+ ' <a href="javascript:void(0);"  onclick="baoKongDan('
 								+ row.id + ');">认证</a>';
+					} else if (row.certification == "") {
+						href = href + '';
+
+					} else if (row.certification == null) {
+						href = href + '';
+
 					}
 
 					return href;
@@ -321,7 +327,7 @@ function to_lock(userId, optType) {
 
 }
 
-function baoKongDan(id) {
+function baoKongDan(userId) {
 	var url = basePath + "/user/toActivity.html?userId=" + id;
 	$('#activityUserDiv').dialog({
 		title : "用户认证",
@@ -345,6 +351,44 @@ function baoKongDan(id) {
 		} ]
 	});
 
+}
+/**
+ * 认证（激活）
+ */
+function save_activity() {
+	var userId = $("#act_level_userId").val();
+	var trueName = $("#act_trueName").val();
+	var mobile = $("#act_user_mobile").val();
+	var idnumber = $("#act_user_idnumber").val();
+	var banknumber = $("#act_user_banknumber").val();
+	var banktype = $("#act_user_banktype").val();
+	var sex = $("#act_change_sex").combobox('getValue');
+	var userLevel = $("#act_change_level").combobox('getValue');
+
+	$.ajax({
+		url : basePath + "/user/saveActivity.html",
+		type : "post",
+		dataType : 'json',
+		data : {
+			"userId" : userId,
+			"trueName" : trueName,
+			"mobile" : mobile,
+			"idnumber" : idnumber,
+			"banknumber" : banknumber,
+			"banktype" : banktype,
+			"sex" : sex,
+			"userLevel" : userLevel
+		},
+		success : function(ret) {
+			if (ret.code == 0) {
+				$.messager.alert("成功", ret.msg);
+				$("#activityUserDiv").dialog("close");
+				reloadDataGrid();// 重新加载数据网格
+			} else {
+				$.messager.alert("失败", ret.msg);
+			}
+		}
+	});
 }
 
 function editVip() {
@@ -491,44 +535,6 @@ function save_edit() {
 	});
 }
 
-/**
- * 认证（激活）
- */
-function save_activity() {
-	var userId = $("#act_level_userId").val();
-	var trueName = $("#act_trueName").val();
-	var mobile = $("#act_user_mobile").val();
-	var idnumber = $("#act_user_idnumber").val();
-	var banknumber = $("#act_user_banknumber").val();
-	var banktype = $("#act_user_banktype").val();
-	var sex = $("#act_change_sex").combobox('getValue');
-	var userLevel = $("#act_change_level").combobox('getValue');
-
-	$.ajax({
-		url : basePath + "/user/saveActivity.html",
-		type : "post",
-		dataType : 'json',
-		data : {
-			"userId" : userId,
-			"trueName" : trueName,
-			"mobile" : mobile,
-			"idnumber" : idnumber,
-			"banknumber" : banknumber,
-			"banktype" : banktype,
-			"sex" : sex,
-			"userLevel" : userLevel
-		},
-		success : function(ret) {
-			if (ret.code == 0) {
-				$.messager.alert("成功", ret.msg);
-				$("#activityUserDiv").dialog("close");
-				reloadDataGrid();// 重新加载数据网格
-			} else {
-				$.messager.alert("失败", ret.msg);
-			}
-		}
-	});
-}
 // 重新加载数据网格
 function reloadDataGrid() {
 	$("#usertable").datagrid("reload");

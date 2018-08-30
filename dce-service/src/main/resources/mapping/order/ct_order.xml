@@ -146,7 +146,7 @@
 		#{userid,jdbcType=INTEGER},
 		#{qty,jdbcType=DECIMAL},
 		#{totalprice,jdbcType=DECIMAL},
-		#{price,jdbcType=DECIMAL},
+		#{goodsprice,jdbcType=DECIMAL},
 		#{giftAmount,jdbcType=DECIMAL},
 		#{recaddress,jdbcType=VARCHAR},
 		#{createTime,jdbcType=TIMESTAMP},
@@ -157,7 +157,6 @@
 		#{salqty,jdbcType=DECIMAL},
 		#{accounttype,jdbcType=VARCHAR},
 		#{goodsid,jdbcType=BIGINT},
-		#{price,jdbcType=DECIMAL},
 		#{addressid,jdbcType=INTEGER},
 		#{alipayStatus,jdbcType=VARCHAR},
 		#{awardStatus,jdbcType=VARCHAR},
@@ -166,7 +165,9 @@
 	</insert>
 
 	<!-- 生成一个订单 -->
-	<insert id="insertSelective" parameterType="com.dce.business.entity.order.Order">
+	<insert id="insertSelective" parameterType="com.dce.business.entity.order.Order"
+		useGeneratedKeys="true" keyColumn="orderid" 
+	   >
 		insert into ct_order
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="ordercode != null">
@@ -321,8 +322,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				price = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
@@ -388,8 +389,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				price = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},
@@ -435,7 +436,6 @@
 		accountType = #{accounttype,jdbcType=VARCHAR},
 		goodsId =
 		#{goodsid,jdbcType=BIGINT},
-		price = #{price,jdbcType=DECIMAL},
 		addressId = #{addressid,jdbcType=INTEGER},
 		alipayStatus =
 		#{alipayStatus,jdbcType=VARCHAR},
@@ -589,8 +589,8 @@
 			<if test="goodsid != null">
 				goodsId = #{goodsid,jdbcType=BIGINT},
 			</if>
-			<if test="price != null">
-				price = #{price,jdbcType=DECIMAL},
+			<if test="goodsprice != null">
+				price = #{goodsprice,jdbcType=DECIMAL},
 			</if>
 			<if test="addressid != null">
 				addressId = #{addressid,jdbcType=INTEGER},

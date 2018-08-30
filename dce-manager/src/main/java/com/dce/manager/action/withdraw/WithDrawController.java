@@ -63,7 +63,7 @@ public class WithDrawController extends BaseAction {
 			String userName = getString(request, "userName");
 			String startDate = getString(request, "startDate");
 			String endDate = getString(request, "endDate");
-
+			String type = getString("type");
 			Map<String, Object> params = new HashMap<String, Object>();
 
 			if (StringUtils.isNotBlank(userName)) {
@@ -74,6 +74,9 @@ public class WithDrawController extends BaseAction {
 			}
 			if (StringUtils.isNotBlank(endDate)) {
 				params.put("endDate", endDate);
+			}
+			if (StringUtils.isNotBlank(type)) {
+				params.put("type", type);
 			}
 			PageDo<Map<String, Object>> orderList = withdrawService.selectWithDrawByPage(page, params);
 			Long amount = withdrawService.selectWithDrawTotallAmount(params);
@@ -151,12 +154,24 @@ public class WithDrawController extends BaseAction {
 	 * 导出数据
 	 */
 	@RequestMapping("/export")
-	public void export(HttpServletResponse response) throws IOException {
+	public void export(HttpServletResponse response,String type,String userName,String startDate,String endDate) throws IOException {
 		try {
 			Long time = System.currentTimeMillis();
 			WithdrawalsDo example = new WithdrawalsDo();
+			Map<String, Object> map = new HashMap<String, Object>();
+			System.out.println("type:"+type);
+			if (StringUtils.isNotBlank(userName)) {
+				map.put("userName", userName);
+			}
+			if (StringUtils.isNotBlank(startDate)) {
+				map.put("endDate", startDate);
+			}if (StringUtils.isNotBlank(endDate)) {
+				map.put("endDate", endDate);
+			}if (StringUtils.isNotBlank(type)) {
+				map.put("type", type);
+			}
 			
-			List<WithdrawalsDo> applytravelLst = withdrawService.selectByExample(example);
+			List<WithdrawalsDo> applytravelLst = withdrawService.selectByExample(map);
 
 			String excelHead = "数据导出";
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());

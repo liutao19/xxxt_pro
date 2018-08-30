@@ -302,7 +302,7 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public Result<?> updateByPrimaryKeyPayPass(UserDo userDo) {
 		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改用户支付密码错误!");
+			return Result.failureResult("修改支付密码参数错误!");
 		}
 		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userDo.getId());
@@ -323,7 +323,7 @@ public class UserServiceImpl implements IUserService {
 	public Result<?> updateByPrimaryKeyLogPass(UserDo userDo) {
 		System.out.println("xiugaidenglumima" + userDo.getUserPassword());
 		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改登录密码错误!");
+			return Result.failureResult("修改登录密码参数错误!");
 		}
 		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userDo.getId());
@@ -849,10 +849,10 @@ public class UserServiceImpl implements IUserService {
 	 * 单独修改用户等级方法
 	 */
 	@Override
-	public boolean  updateLevel(UserDo record) {
-		boolean flag=false;
-		if(userDao.updateLevel(record)>0){
-			flag=true;
+	public boolean updateLevel(UserDo record) {
+		boolean flag = false;
+		if (userDao.updateLevel(record) > 0) {
+			flag = true;
 		}
 		return flag;
 	}

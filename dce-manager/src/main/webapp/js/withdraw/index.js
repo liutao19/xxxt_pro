@@ -9,7 +9,8 @@ $(function(){
 		$("#withDrawTable").datagrid('load',{
 			'userName': $("#searchForm #userName").val(),
 			'startDate':$("#searchForm #user_reg_startDate").datebox('getValue'),
-			'endDate':$("#searchForm #user_reg_endDate").datebox('getValue')
+			'endDate':$("#searchForm #user_reg_endDate").datebox('getValue'),
+			'type':$("#searchForm #type").datebox('getValue')
 		});
 	});
 
@@ -49,6 +50,8 @@ $(function(){
 	 						if(row.type == "1"){
 	 							return "支付宝";
 	 						}else if(row.type == "2"){
+	 							return "银行卡";
+	 						}else if(row.type == "3"){
 	 							return "微信";
 	 						}
 	 					}
@@ -240,12 +243,20 @@ function formatDate(value) {
 }
 /*################***导出**begin*################### */
 function export_excel(){
-	var exportIframe = document.createElement('iframe');
-	exportIframe.src =basePath+"/withdraw/export.html"
+	var type=$("#searchForm #type").datebox('getValue');
+	var userName= $("#searchForm #userName").val();
+	var startDate=$("#searchForm #user_reg_startDate").datebox('getValue');
+	var endDate=$("#searchForm #user_reg_endDate").datebox('getValue');
 
+	var exportIframe = document.createElement('iframe');
+	exportIframe.src =basePath+"/withdraw/export.html"+"?type="+type+"&userName"+userName+"&startDate"+startDate+"&endDate"+endDate;
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);
 }
+
+$("#searchForm #resetButton").on("click",function(){
+	$("#searchForm").form('reset');
+});
 /*################***导出**end*################### */
 
 

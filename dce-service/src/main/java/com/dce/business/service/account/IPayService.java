@@ -23,7 +23,7 @@ public interface IPayService {
 	 * @param qty
 	 * @return  
 	 */
-	Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo);
+	Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty,String bankNo,String trueName);
 	
 	Trans withdraw(WithdrawalsDo withdraw);
 	/**

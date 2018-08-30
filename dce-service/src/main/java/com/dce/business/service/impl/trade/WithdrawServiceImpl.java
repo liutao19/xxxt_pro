@@ -83,7 +83,7 @@ public class WithdrawServiceImpl implements IWithdrawService {
         if ("2".equals(auditResult)||"4".equals(auditResult)) {
         	check(withdrawId); //重复性校验
         	if(withdrawDo.getType().equals("1")){
-                result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo());
+                result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo(),withdrawDo.getTrue_name());
         	}
             if(result.isSuccess()){
             	result.setMsg("提现成功！");
@@ -169,10 +169,10 @@ public class WithdrawServiceImpl implements IWithdrawService {
 	}
 
 	@Override
-	public List<WithdrawalsDo> selectByExample(WithdrawalsDo example) {
+	public List<WithdrawalsDo> selectByExample(Map<String,Object> param) {
 		// TODO Auto-generated method stub
 		logger.info("----selectByExample----");
-		List<WithdrawalsDo> result = withdrawDao.selectByExample(example);
+		List<WithdrawalsDo> result = withdrawDao.selectByExample(param);
 
 		for (WithdrawalsDo withdraw : result) {
 			if ("1".equals(withdraw.getProcessStatus())) {

@@ -534,10 +534,6 @@
 		</trim>
 	</select>
 
-	<!-- <update id="updateOrderStatusByOldStatus" parameterType="Map"> UPDATE 
-		ct_order <trim prefix="SET" suffixOverrides=","> <if test="newStatus != null"> 
-		payStatus = #{newStatus}, </if> </trim> WHERE orderId = #{orderId} and payStatus 
-		= #{oldStatus} </update> -->
 	<!-- 支付成功更新订单状态 -->
 	<update id="updateOrderStatusByOldStatus" parameterType="Map">
 		update ct_order
@@ -616,7 +612,7 @@
 				payTime = #{payTime,jdbcType=TIMESTAMP},
 			</if>
 			<if test="salqty != null">
-				totalPrice = price * (ifnull(qty,0) - ifnull(salqty,0) -
+				totalPrice = goodsprice * (ifnull(qty,0) - ifnull(salqty,0) -
 				#{salqty}),
 				salqty = ifnull(salqty,0) + #{salqty},
 			</if>
@@ -702,9 +698,9 @@
 		%H:%i:%s') createtime,
 		a.orderStatus orderstatus,a.payStatus paystatus, a.goodsprice goodsprice, a.giftAmount,
 		date_format(a.payTime,'%Y-%m-%d %H:%i:%s')
-		paytime,a.orderType
+		paytime,a.orderType,d.remark,
 		ordertype,a.addressId addressid,a.awardRemark
-		awardRemark, a.salqyt salqyt,
+		awardRemark, a.salqty salqty,
 		a.alipayStatus alipayStatus,
 		c.userName trueName, c.userPhone phone,
 		CONCAT(c.address,c.addressDetails)

@@ -9,6 +9,7 @@ $(function(){
 			'userName': $("#searchorderForm #userName").val(),
 			'startDate':$("#searchorderForm #startDate").datebox('getValue'),
 			'endDate':$("#searchorderForm #endDate").datebox('getValue'),
+			'orderStatus':$("#searchorderForm #orderStatus").datebox('getValue'),
 		});
 		
 	});
@@ -61,6 +62,8 @@ $(function(){
 				 						}
 				 					}},
 								{field:"address",title:"收获地址",width:180,align:"center"},
+								{field:"orderDetailList",title:"商品详情",width:180,align:"center"},
+								{field:"awardDetailLst",title:"赠品详情",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",
 									formatter:function(value,row,index){
 			 						if(value == "0"){
@@ -114,7 +117,8 @@ $(function(){
 		queryParams:{
 			'userName': $("#searchorderForm #userName").val(),
 			'startDate':$("#searchorderForm #startDate").val(),
-			'endDate':$("#searchorderForm #endDate").val()
+			'endDate':$("#searchorderForm #endDate").val(),
+			'orderStatus':$("#searchorderForm #orderStatus").val()
 		},
 		onLoadSuccess:function(data){//根据状态限制checkbox
 			
@@ -131,10 +135,12 @@ $(function(){
  * 导出Excel
  */
 function export_excel() {
-	var orderStatus = $("#orderStatus").combobox('getValue');
+	var orderStatus = $("#orderStatus").datebox('getValue');
+	var userName= $("#searchorderForm #userName").val();
+	var startDate=$("#searchorderForm #startDate").datebox('getValue');
+	var endDate=$("#searchorderForm #endDate").datebox('getValue');
 	var exportIframe = document.createElement('iframe');
-	exportIframe.src = httpUrl + "/order/export.html?orderStatus="+orderStatus;
-
+	exportIframe.src = httpUrl + "/order/export.html?orderStatus="+orderStatus+"&userName="+userName+"&startDate="+startDate+"&endDate="+endDate;
 	exportIframe.style.display = 'none';
 	document.body.appendChild(exportIframe);
 }

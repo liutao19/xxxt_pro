@@ -27,6 +27,7 @@ import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.util.ExeclTools;
+import com.dce.business.common.util.StringUtil;
 import com.dce.business.entity.order.Order;
 import com.dce.business.entity.order.OrderDo;
 import com.dce.business.entity.page.NewPagination;
@@ -96,6 +97,14 @@ public class OrderController extends BaseAction {
 				param.put("endDate", endDate);
 				model.addAttribute("endDate", endDate);
 			}
+			
+			String orderStatus = getString("orderStatus");
+			if (StringUtils.isNotBlank(orderStatus)) {
+				param.put("orderStatus", orderStatus);
+				model.addAttribute("orderStatus", orderStatus);
+			}
+			//支付成功的订单
+			param.put("payStatus", 1);
 
 			page = orderService.selectOrderByPage(page, param);
 			pagination = PageDoUtil.getPageValue(pagination, page);
@@ -147,17 +156,27 @@ public class OrderController extends BaseAction {
 	}
 
 	@RequestMapping("/export")
-	public void exportOrder(HttpServletResponse response, String orderStatus) {
+	public void exportOrder(HttpServletResponse response, String orderStatus,String userName,String startDate,String endDate) {
 		logger.debug("获取的下拉框值======》》》》》paystatus" + orderStatus);
 		Long startTime = System.currentTimeMillis();
-		if ("".equals(orderStatus)) {
-			orderStatus = null;
-		}
 
 		try {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("orderStatus", orderStatus);
-
+			if (StringUtils.isNotBlank(startDate)) {
+				map.put("startDate", startDate);
+			}
+			if (StringUtils.isNotBlank(endDate)) {
+				map.put("endDate", endDate);
+			}
+			if (StringUtils.isNotBlank(orderStatus)) {
+				map.put("orderStatus", orderStatus);
+			}
+			if (StringUtils.isNotBlank(userName)) {
+				map.put("userName", userName);
+			}
+			//付款成功的订单
+			map.put("payStatus", 1);
+			
 			// 条件查询订单
 			List<Order> orderList = new ArrayList<Order>();
 			orderList = orderService.selectOrderByCondition(map);
@@ -166,11 +185,11 @@ public class OrderController extends BaseAction {
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "订单编号", "收货人", "手机号码", "数量（盒）", "总金额（元）", "下单时间", "付款状态", "支付方式", "收获地址", "详情",
-					"是否发货" };
+			String[] excelheader = { "订单编号", "收货人", "手机号码", "数量（盒）", "总金额（元）", "下单时间", "付款状态", "支付方式", "收获地址", "商品详情",
+					"赠品详情","是否发货" };
 			excelheaderList.add(0, excelheader);
 			String[] excelData = { "ordercode", "trueName", "phone", "qty", "totalprice", "createtime", "paystatus",
-					"ordertype", "address", "remark", "orderstatus" };
+					"ordertype", "address", "remark","awardRemark", "orderstatus" };
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, orderList);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");
 			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);

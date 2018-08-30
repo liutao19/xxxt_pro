@@ -25,4 +25,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		return 0;
 	}
 
+	@Override
+	public List<OrderDetail> selectByOrderId(Integer orderId) {
+		// TODO Auto-generated method stub
+		return orderDetailDao.selectByOrderId(orderId);
+	}
+
 }

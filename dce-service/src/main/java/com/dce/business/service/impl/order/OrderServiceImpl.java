@@ -210,17 +210,19 @@ public class OrderServiceImpl implements IOrderService {
 
 					// 设置商品名称
 					CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
-					logger.debug("商品名称====》》" + goods.getTitle());
-					detail.setGoodsName(goods.getTitle());
 					// 赠品明细
 					if ("0".equals(detail.getRemark())) {
-						awardDetailLst.add(detail);
+						logger.debug("商品名称====》》" + goods.getTitle());
+						detail.setGoodsName("赠品:"+goods.getTitle());
 					} else {
-						orderDetailList.add(detail);
+						// 设置商品名称
+						logger.debug("商品名称====》》" + goods.getTitle());
+						detail.setGoodsName(goods.getTitle());
 					}
+					orderDetailList.add(detail);
 				}
 				order.setOrderDetailList(orderDetailList);
-				order.setAwardDetailLst(awardDetailLst);
+				//order.setAwardDetailLst(awardDetailLst);
 			}
 		}
 

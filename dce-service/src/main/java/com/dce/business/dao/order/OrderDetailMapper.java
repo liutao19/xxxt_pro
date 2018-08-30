@@ -14,6 +14,9 @@ public interface OrderDetailMapper {
 	int deleteByPrimaryKey(Integer orderdetailid);
 
 	int insert(OrderDetail record);
+	
+	//根据订单id查询订单明细
+	List<OrderDetail> selectByOrderId(Integer orderId);
 
 	int insertSelective(OrderDetail record);
 

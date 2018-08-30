@@ -120,7 +120,6 @@ public class OrderController extends BaseController {
 
 		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
-		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 
 		// 假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "") {
@@ -135,12 +134,12 @@ public class OrderController extends BaseController {
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));
-		order.setAddressid(Integer.valueOf(addressId));
+		
 		logger.info("获取的商品信息-------》》》》》" + goods);
 
 		// 将商品信息的JSON数据解析为list集合
 		List<OrderDetail> chooseGoodsLst = convertGoodsFromJson(goods);
-		logger.info("======用户选择的商品信息：" + chooseGoodsLst +  "=====获取的地址id：" + addressId + "=====用户id：" + userId);
+		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====用户id：" + userId);
 
 		// 生成订单，保存订单和订单明细
 	   //orderService.chooseGoods(chooseGoodsLst, order);
@@ -193,6 +192,16 @@ public class OrderController extends BaseController {
 		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====获取的赠品信息：" + premiumList + "=====获取的地址id：" + addressId
 				+ "=====获取的支付方式：" + orderType + "=====用户id：" + userId);
 
+		//前端页面没有传orderId
+		for(OrderDetail od : premiumList ){
+			od.setOrderid(Integer.valueOf(orderId));
+		}
+		
+		//前端页面没有传orderId
+		for(OrderDetail od : chooseGoodsLst ){
+			od.setOrderid(Integer.valueOf(orderId));
+		}
+				
 		// 生成预付单，保存订单和订单明显
 		return orderService.saveOrder(premiumList, chooseGoodsLst, order, request, response);
 	}

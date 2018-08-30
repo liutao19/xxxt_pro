@@ -512,9 +512,11 @@ public class PayServiceImpl implements IPayService {
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
 		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + 
 		"\"payee_type\":\"ALIPAY_LOGONID\","+ 
-		"\"payee_account\":"+bankNo+"," + 
+		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+		"\"amount\":" + 10 + "," + 
+		/*"\"payee_account\":"+bankNo+"," + 
 		"\"amount\":" + 50 + "," + 
-		"\"payee_real_name\":"+trueName + "," + 
+		"\"payee_real_name\":"+trueName + "," + */
 		"\"remark\":\"提现\""
 		+ "}");
 		AlipayFundTransToaccountTransferResponse response = null;

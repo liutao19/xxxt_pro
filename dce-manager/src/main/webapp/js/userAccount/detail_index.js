@@ -10,8 +10,8 @@ $(function(){
 			'userName': $("#searchForm #userName").val(),
 			'startDate':$("#searchForm #user_reg_startDate").datebox('getValue'),
 			'endDate':$("#searchForm #user_reg_endDate").datebox('getValue'),
-			'seacrchAccountType':$("#seacrchAccountType").combobox('getValue'),
-			'seacrchIncomeType':$("#seacrchIncomeType").combobox('getValue'),
+			'seacrchAccountType':$("#searchForm #seacrchAccountType").datebox('getValue'),
+			'remark':$("#searchForm #remark").val()
 		});
 	});
 
@@ -42,7 +42,7 @@ $(function(){
 	 				{field:"amount",title:"金额",width:40,align:"center"},
 	 				{field:"balanceAmount",title:"余额",width:40,align:"center"},
 	 				{field:"moreOrLess",title:"增加/减少",width:30,align:"center"},
-	 				{field:"incomeType",title:"流水类型",width:80,align:"center",
+	 				/*{field:"incomeType",title:"流水类型",width:80,align:"center",
 	 					formatter:function(value,row,index){
 	 						if(value == "1"){
 	 							return "静态释放";
@@ -128,20 +128,20 @@ $(function(){
 	 						}
 	 						return value;
 	 					}
-	 				},
+	 				},*/
 	 				{field:"accountType",title:"账户类型",width:80,align:"center",
 	 					formatter:function(value,row,index){
 	 						if(value == "wallet_money"){
-	 							return "现金账户";
+	 							return "账户余额";
 							}
 							if (value == "wallet_travel") {
-								return "旅游";
+								return "奖励旅游";
 							}
 							if (value == "wallet_goods") {
-								return "赠送商品";
+								return "奖励商品";
 							}
 							if (value == "wallet_active") {
-								return "赠送活动";
+								return "奖励活动";
 							}
 							return value;
 						}

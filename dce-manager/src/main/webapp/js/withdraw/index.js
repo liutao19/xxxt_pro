@@ -61,16 +61,22 @@ $(function(){
 	 				
 	 				{field:"edit",title:"审核",width:80,align:"center",
 	 					formatter:function(value,row,index){
-	 						if(row.process_status=="1"){
-	 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +
-	 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
-	 						}else if(row.process_status == "2"){
-	 							if(row.withdrawStatus == "未到账"){
-	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a>';
-	 							}else{
-	 								return '<a href="javascript:void(0);"  onclick="to_viewTrans('+row.id+');">查看进展</a>';
-	 							}
+	 						if(row.type=='2'){
+	 							
+	 						}else{
+	 							if(row.process_status=="1"){
+		 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +
+		 							'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
+		 						}else if(row.process_status == "2"){
+		 							if(row.withdrawStatus == "未到账"){
+		 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+4+'\');">重做</a> |'+
+		 								'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
+		 							}else{
+		 								return '<a href="javascript:void(0);"  onclick="to_viewTrans('+row.id+');">查看进展</a>';
+		 							}
+		 						}
 	 						}
+	 						
 		 				}
 	 				}
 	 			]

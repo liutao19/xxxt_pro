@@ -1977,22 +1977,22 @@
 			</if>
 		</trim>
 	</select>
-	
-	<!-- 自定義方法 -->
+
+	<!-- 自定义方法 -->
 	<update id="updateLevel" parameterType="com.dce.business.entity.user.UserDo">
-	update ct_user
+		update ct_user
 		<set>
 			<if test="userLevel != null">
 				user_level = #{userLevel,jdbcType=TINYINT},
 			</if>
 			<if test="district !=null">
-			  district=#{district,jdbcType=VARCHAR}
+				district=#{district,jdbcType=VARCHAR}
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}
-	
+
 	</update>
-	
-	
-	
+
+
+
 </mapper>

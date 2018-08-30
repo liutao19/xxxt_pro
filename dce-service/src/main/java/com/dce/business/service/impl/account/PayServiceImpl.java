@@ -197,12 +197,15 @@ public class PayServiceImpl implements IPayService {
 		 * return Result.failureResult("请先获取以太坊地址再提现"); }
 		 */
 
-		Map<String, Object> param = new HashMap<String, Object>();
+		/*Map<String, Object> param = new HashMap<String, Object>();
 		param.put("qty", qty);
-		param.put("userId", userId);
+		param.put("userId", userId);*/
+		
+		
+		UserAccountDo accont = new UserAccountDo(new BigDecimal(-qty.intValue()), userId,"wallet_money");
 
 		// 用户余额减去
-		int mk = accountService.updateMoney(param);
+		int mk = accountService.updateUserAmountById(accont, IncomeType.TYPE_WITHDRAW);
 
 		if (mk != 0) {
 			// 写提现表
@@ -214,7 +217,7 @@ public class PayServiceImpl implements IPayService {
 			record.setType(type);
 			// 提现到银行卡
 			if (type.equals("2")) {
-				record.setOutbizno(userDo.getTrueName());// 真实姓名
+				record.setMoneyType(userDo.getTrueName());// 真实姓名
 				record.setBank(userDo.getBanktype());// 开卡行
 				record.setBankNo(userDo.getBanknumber());// 卡号
 			} else {
@@ -235,7 +238,7 @@ public class PayServiceImpl implements IPayService {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo) {
+	public Result<?> withdraw(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo,String trueName) {
 		Result<?> result = Result.successResult("审核成功!");
 		Map<String, Object> param = new HashMap<String, Object>();
 		WithdrawalsDo withdrawDo = withdrawDao.selectByPrimaryKey(withdrawId);
@@ -253,7 +256,7 @@ public class PayServiceImpl implements IPayService {
 			if (i <= 0) {
 				throw new BusinessException("交易正在进行，请稍后...");
 			} else {
-				result = this.trans(withdrawId, userId, qty, bankNo, orderId);
+				result = this.trans(withdrawId, userId, qty, bankNo, orderId,trueName);
 			}
 		} else {
 			// 流水信息
@@ -270,7 +273,7 @@ public class PayServiceImpl implements IPayService {
 			if (i <= 0) {
 				throw new BusinessException("交易正在进行，请稍后...");
 			} else {
-				result = this.trans(withdrawId, userId, qty, bankNo, orderId);
+				result = this.trans(withdrawId, userId, qty, bankNo, orderId,trueName);
 			}
 		}
 		return result;
@@ -499,7 +502,7 @@ public class PayServiceImpl implements IPayService {
 		return Result.successResult(null);
 	}
 
-	public Result<?> trans(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo, String orderId) {
+	public Result<?> trans(Integer withdrawId, Integer userId, BigDecimal qty, String bankNo, String orderId,String trueName) {
 		Result<?> result = Result.successResult("提现成功!");
 		// EthereumTransInfoDo ethtransInfo=etherenumTranInfodao.select(params);
 		WithdrawalsDo withdraw = new WithdrawalsDo();
@@ -507,9 +510,13 @@ public class PayServiceImpl implements IPayService {
 				AlipayConfig.RSA_PRIVATE_KEY, AlipayConfig.FORMAT, AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY,
 				AlipayConfig.SIGNTYPE);
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
-		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + "\"payee_type\":\"ALIPAY_LOGONID\","
-				+ "\"payee_account\":\"wvavyw6896@sandbox.com\"," + "\"amount\":" + 50 + "," + "\"remark\":\"提现\""
-				+ "}");
+		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + 
+		"\"payee_type\":\"ALIPAY_LOGONID\","+ 
+		"\"payee_account\":"+bankNo+"," + 
+		"\"amount\":" + 50 + "," + 
+		"\"payee_real_name\":"+trueName + "," + 
+		"\"remark\":\"提现\""
+		+ "}");
 		AlipayFundTransToaccountTransferResponse response = null;
 		try {
 			response = alipayClient.execute(request);

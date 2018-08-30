@@ -45,6 +45,7 @@ public class UserAccountDetailController extends BaseAction {
 			String startDate = getString(request, "startDate");
 			String endDate = getString(request, "endDate");
 			String seacrchAccountType = getString(request, "seacrchAccountType");
+			System.out.println("seacrchAccountType"+seacrchAccountType);
 			String seacrchIncomeType = getString(request, "seacrchIncomeType");
 			
 			

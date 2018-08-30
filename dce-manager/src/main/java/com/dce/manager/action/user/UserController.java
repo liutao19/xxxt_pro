@@ -88,7 +88,7 @@ public class UserController extends BaseAction {
 	}
 
 	/**
-	 * 报单总计
+	 * 报单（统计）总计
 	 * 
 	 * @param pagination
 	 * @param request
@@ -132,9 +132,9 @@ public class UserController extends BaseAction {
 				}
 			}
 
-			UserDo sum = new UserDo();
-			sum.setUserName("报单总计:" + (amount == null ? 0 : amount));
-			usersList.getModelList().add(sum);
+			// UserDo sum = new UserDo();
+			// sum.setUserName("统计总计:" + (amount == null ? 0 : amount));
+			// usersList.getModelList().add(sum);
 
 			pagination = PageDoUtil.getPageValue(pagination, usersList);
 			outPrint(response, JSON.toJSONString(pagination));

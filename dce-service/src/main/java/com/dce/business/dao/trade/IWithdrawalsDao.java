@@ -64,6 +64,6 @@ public interface IWithdrawalsDao {
 	 * @param example
 	 * @return
 	 */
-	List<WithdrawalsDo> selectByExample(WithdrawalsDo example);
+	List<WithdrawalsDo> selectByExample(Map<String,Object> param);
 	
 }

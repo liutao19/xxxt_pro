@@ -161,7 +161,7 @@ public class WithDrawController extends BaseAction {
 			Map<String, Object> map = new HashMap<String, Object>();
 			System.out.println("type:"+type);
 			if (StringUtils.isNotBlank(userName)) {
-				map.put("type", type);
+				map.put("userName", userName);
 			}
 			if (StringUtils.isNotBlank(startDate)) {
 				map.put("endDate", startDate);

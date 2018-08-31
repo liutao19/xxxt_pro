@@ -144,9 +144,9 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	/**
 	 * 
 	 * @param userId
-	 *            区域人id
+	 * 区域人id
 	 * @param resfor
-	 *            区分区域人奖励和推荐人奖励
+	 * 区分区域人奖励和推荐人奖励
 	 * @return
 	 */
 	public Map<String, Object> gainAward(Integer userId, int resfor, int count) {

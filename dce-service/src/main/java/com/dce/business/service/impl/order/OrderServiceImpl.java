@@ -232,10 +232,9 @@ public class OrderServiceImpl implements IOrderService {
 				// 订单商品明细
 				List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 				// 订单赠品明细
-				List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
+				//List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
 
 				for (OrderDetail detail : orderDetail) {
-
 					if (null == detail.getGoodsId()) {// 过滤没有明细的订单
 						continue;
 					}
@@ -271,7 +270,7 @@ public class OrderServiceImpl implements IOrderService {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
 			logger.debug("根据订单编号查询出的订单：" + order);
-			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
+			logger.debug("=============订单支付成功，开始处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
 			logger.debug("获取的订单支付状态========》》》》》" + order.getPaystatus());
 			// 如果订单状态为支付失败状态才进行更新
 			Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -308,7 +307,6 @@ public class OrderServiceImpl implements IOrderService {
 			}
 
 		} catch (Exception e) {
-			logger.debug("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
 			e.printStackTrace();
 			logger.error("订单支付成功，处理逻辑业务失败！", e);
 			throw e;
@@ -402,11 +400,11 @@ public class OrderServiceImpl implements IOrderService {
 			HttpServletRequest request, HttpServletResponse response) {
 
 		if (order.getOrderid() != null) {
-			logger.debug("支付成功，更新订单====》》》》");
+			logger.debug("===========支付成功，更新订单==========");
 			return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 			// 若传过来的订单id为空，则重新生成订单
 		} else {
-			logger.debug("支付成功，orderId为空，重新产生订单====》》》》");
+			logger.debug("===========支付成功，orderId为空，重新产生订单=========");
 			return this.createOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 		}
 	}
@@ -697,7 +695,7 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	@Override
 	public String notify(Map<String, String> conversionParams) throws Exception {
-		logger.debug("==================支付宝异步请求逻辑处理=============");
+		logger.debug("==================支付宝异步通知逻辑处理=============");
 
 		// 签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
 		boolean signVerified = false;

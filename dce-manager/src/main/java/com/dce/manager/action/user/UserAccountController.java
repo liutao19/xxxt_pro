@@ -36,6 +36,7 @@ import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.page.Pagination;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
+import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
 
@@ -47,6 +48,8 @@ public class UserAccountController extends BaseAction {
 	private IAccountService accountService;
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private IOrderService orderService;
 	
 	@RequestMapping("/index")
 	public String index(){
@@ -196,7 +199,12 @@ public class UserAccountController extends BaseAction {
 	
 	@RequestMapping("/sumAccount")
 	public String sumAccount(HttpServletRequest request, HttpServletResponse response){
+		Map<String,Object> params = new HashMap<String,Object>();
 		List<UserAccountDo> select = accountService.sumAccount(Collections.EMPTY_MAP);
+		Map<String, Object> sum=orderService.selectSum(params);
+		Object ob = sum.get("Totalperformance").toString();
+		String s=ob.toString();
+		request.setAttribute("Totalperformance", s);
 		request.setAttribute("sumList", select);
 		return "/userAccount/sumAccount";
 	}

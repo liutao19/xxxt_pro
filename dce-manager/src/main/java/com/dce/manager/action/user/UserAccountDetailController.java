@@ -46,9 +46,6 @@ public class UserAccountDetailController extends BaseAction {
 			String endDate = getString(request, "endDate");
 			String seacrchAccountType = getString(request, "seacrchAccountType");
 			String remark = getString(request, "remark");
-			System.out.println("remark"+remark);
-			System.out.println("userName"+userName);
-			System.out.println("seacrchAccountType"+seacrchAccountType);
 			
 			Map<String,Object> params = new HashMap<String,Object>();
 			

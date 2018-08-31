@@ -19,9 +19,8 @@
 		style="padding-top: 105px; padding-left: 100px;"
 		action="<c:url value='district/saveDistrict.html'/>">
 		<div>
-			<input type="hidden" id="districtId" name="districtId"
-				value="${district.districtId}" /> <input type="hidden" id="userId"
-				name="userId" value="${district.userId}" />
+			<input type="hidden" id="id" name="id"
+				value="${user.id}" /> 
 			<table width="100%" border="0" align="center" cellpadding="3">
 				<tr>
 					<td align="right"><label for="name">区域名称:</label></td>
@@ -30,7 +29,7 @@
 					</select> <select id="city" onclick="toCity();">
 							<option value="-1">--请选择市---</option>
 					</select> <select id="children">
-							<option value="-1"></option>
+							<option value="-1">--请选择区---</option>
 					</select></td>
 				</tr>
 				<%-- <tr>	

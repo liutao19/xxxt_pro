@@ -65,7 +65,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 	 */
 	@Override
 	public void doAward(UserDo buyer, Order order) {
-
+	
 		if (buyer.getUserLevel() == 4) {
 			
 			logger.error("此用戶為以是最高等级");

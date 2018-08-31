@@ -35,12 +35,15 @@ import com.dce.business.dao.user.IUserParentDao;
 import com.dce.business.dao.user.IUserRefereeDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.dict.LoanDictDtlDo;
+import com.dce.business.entity.district.District;
+import com.dce.business.entity.order.Order;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
 import com.dce.business.entity.user.UserRefereeDo;
 import com.dce.business.service.bonus.IPerformanceDailyService;
 import com.dce.business.service.dict.ILoanDictService;
+import com.dce.business.service.district.IDistrictService;
 import com.dce.business.service.third.IEthereumService;
 import com.dce.business.service.user.IUserService;
 
@@ -64,7 +67,8 @@ public class UserServiceImpl implements IUserService {
 	private ITouchBonusRecordDao touchBonusRecordDao;
 	@Resource
 	private IPerformanceDailyService performanceDailyService;
-
+	@Resource
+	private IDistrictService districtService;
 	/**
 	 * 查询用户名是否存在
 	 */
@@ -855,5 +859,36 @@ public class UserServiceImpl implements IUserService {
 			flag = true;
 		}
 		return flag;
+	}
+
+	@Override
+	public PageDo<UserDo> getUserPage(Map<String, Object> param, PageDo<UserDo> page) {
+		// TODO Auto-generated method stub
+		if (param == null) {
+			param = new HashMap<String, Object>();
+		}
+		param.put(Constants.MYBATIS_PAGE, page);
+		List<UserDo> list = userDao.selectByPage(param);
+		page.setModelList(list);
+		return page;
+	}
+
+	@Override
+	public int updateUserDistrict(UserDo user) {
+		int i=0;
+		if(user!=null&&user.getDistrict()!=null){
+			i=userDao.updateLevel(user);
+			District district=new District();
+			district.setUserId(user.getId());
+			if(districtService.selectByPrimaryKeySelective(district)==null){
+				district.setDistrctName(user.getDistrict());
+				district.setDistrictStatus(1);
+				districtService.insertSelective(district);
+			}else{
+				district.setDistrctName(user.getDistrict());
+				districtService.updateDistrictById(district);
+			}
+		}
+		return i;
 	}
 }

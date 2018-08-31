@@ -47,6 +47,11 @@
 					</td>
 		        </tr>
 		        </c:forEach>
+		        <tr>
+		        <td class="tdfont">
+		        	收账汇总:${Totalperformance}
+		        </td>
+		        </tr>
 		      </table>
   
   </div>

@@ -215,9 +215,9 @@ public class PayServiceImpl implements IPayService {
 			record.setAmount(qty);
 			record.setWithdrawDate((new Date()).getTime() / 1000);
 			record.setType(type);
-			record.setMoneyType(userDo.getTrueName());// 真实姓名
 			// 提现到银行卡
 			if (type.equals("2")) {
+				record.setMoneyType(userDo.getTrueName());// 真实姓名
 				record.setBank(userDo.getBanktype());// 开卡行
 				record.setBankNo(userDo.getBanknumber());// 卡号
 			} else {
@@ -512,9 +512,10 @@ public class PayServiceImpl implements IPayService {
 		AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
 		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + 
 		"\"payee_type\":\"ALIPAY_LOGONID\","+ 
-		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+		/*"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
+		"\"amount\":" + 10 + "," + */
 		"\"payee_account\":"+bankNo+"," + 
-		"\"amount\":" + qty + "," + 
+		"\"amount\":" + 50 + "," + 
 		"\"payee_real_name\":"+trueName + "," + 
 		"\"remark\":\"提现\""
 		+ "}");

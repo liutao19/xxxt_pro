@@ -49,11 +49,7 @@
 						</td>						   
 					</tr> --%>
 
-				<!-- <tr>
-					<td colspan="2">
-						<input id="submitButton" name="submitButton" type="button" onclick="district_submit();"  value="提交" />	
-					</td>
-				<tr> -->
+				
 			</table>
 		</div>
 	</form>
@@ -61,33 +57,7 @@
 		$().ready(function() {
 			init();
 		})
-
-		function district_submit() {
-			alert($("#editDistrictForm").serialize());
-			$.ajax({
-				url : "<c:url value='/district/saveDistrict.html'/>",
-				data : $("#editDistrictForm").serialize(),
-				type : "post",
-				dataType : "json",
-				success : function(ret) {
-					if (ret.code === "0") {
-						$.messager.confirm("保存成功", '是否继续添加？', function(r) {
-							if (r == false) {
-								$("#editDistrictDiv").dialog("close");
-							}
-						});
-					} else {
-						$.messager.alert("error", ret.msg);
-					}
-				}
-			});
-		};
 	</script>
-
-
-
-
-
 
 </body>
 

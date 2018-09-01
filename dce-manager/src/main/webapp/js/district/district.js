@@ -184,7 +184,7 @@ function save_User() {
 		contentType : false,
 		success : function(data) {
 			if (data.code === "0") {
-				$('tt_District').datagrid('reload');
+				$('#tt_District').datagrid('reload');
 				$("#editDistrictDiv").dialog("close");
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
@@ -195,7 +195,7 @@ function save_User() {
 }
 
 function reloadDataGrid() {
-	$("tt_District").datagrid("reload");
+	$("#tt_District").datagrid("reload");
 }
 
 var list = [ {

@@ -139,7 +139,10 @@ public class DistrictController extends BaseAction {
 				return;
 			}
 			outPrint(response, this.toJSONString(Result.successResult("操作成功")));
-		} catch (Exception e) {
+		}  catch (BusinessException be) {
+			logger.error("保存更新失败", be);
+			outPrint(response, this.toJSONString(Result.failureResult(be.getMessage())));
+		}catch (Exception e) {
 			logger.error("保存更新失败", e);
 			outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
 		}

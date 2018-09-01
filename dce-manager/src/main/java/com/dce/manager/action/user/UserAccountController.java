@@ -202,8 +202,11 @@ public class UserAccountController extends BaseAction {
 		Map<String,Object> params = new HashMap<String,Object>();
 		List<UserAccountDo> select = accountService.sumAccount(Collections.EMPTY_MAP);
 		Map<String, Object> sum=orderService.selectSum(params);
-		Object ob = sum.get("Totalperformance").toString();
-		String s=ob.toString();
+		String s="0.000000";
+		if(sum!=null){
+			Object ob = sum.get("Totalperformance").toString();
+			s=ob.toString();
+		}
 		request.setAttribute("Totalperformance", s);
 		request.setAttribute("sumList", select);
 		return "/userAccount/sumAccount";

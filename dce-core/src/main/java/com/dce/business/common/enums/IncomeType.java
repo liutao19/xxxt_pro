@@ -22,16 +22,16 @@ public enum IncomeType {
      */
     TYPE_SELL(11, "卖出订单"),
     /** 
-     * 撤销订单
+     * 活动奖
      * @return  
      */
-    TYPE_CANCEL(13, "卖单撤销返还"),
+    TYPE_CANCEL(13, "活动奖"),
     
     /** 
-     * 撤销订单
+     * 赠送商品奖
      * @return  
      */
-    TYPE_CANCEL_BUY(14, "买单撤销返还"),
+    TYPE_CANCEL_BUY(14, "赠送商品奖"),
     
     /** 
      * 充值

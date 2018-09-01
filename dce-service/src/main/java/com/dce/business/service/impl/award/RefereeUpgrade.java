@@ -110,14 +110,6 @@ public class RefereeUpgrade implements IAwardCalculator {
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
 				if (userService.updateLevel(userDo)) {
 					logger.error("用户升级成功");
-					if (promoteLevel.equals("3")) {
-						District dis = new District();
-						dis.setUserId(buyer.getId());
-						if (districtService.insertSelective(dis) > 0) {
-							logger.error("添加区域管理记录成功");
-						}
-						shareholder(buyer);
-					}
 				}
 			}
 		}

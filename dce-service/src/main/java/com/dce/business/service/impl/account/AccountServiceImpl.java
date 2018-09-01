@@ -133,7 +133,7 @@ public class AccountServiceImpl implements IAccountService {
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public int updateUserAmountById(UserAccountDo userAccountDo, IncomeType type) {
+	public int updateUserAmountById(UserAccountDo userAccountDo, IncomeType incomeType) {
 		BigDecimal amount = userAccountDo.getAmount();
 
 		// 金额为0时不需要对账户变更操作，不需要记流水
@@ -154,8 +154,8 @@ public class AccountServiceImpl implements IAccountService {
 		String accountType = userAccountDo.getAccountType();
 		// 判断用户是否存在此帐户 没有刚增加
 		UserAccountDo udo = selectUserAccount(userId, accountType);
-		int result = 0;
 		userAccountDo.setUpdateTime(new Date());
+		int result = 0;
 		if (null == udo && amount.compareTo(BigDecimal.ZERO) >= 0) {
 			result = userAccountDao.insertSelective(userAccountDo);
 		} else {
@@ -166,8 +166,11 @@ public class AccountServiceImpl implements IAccountService {
 			throw new BusinessException("余额不足");
 		}
 
-		updateUserAmountDetail(amount, type, userId, accountType, userAccountDo.getRemark(),userAccountDo.getSeqId(),
-				userAccountDo.getRelevantUser());
+		updateUserAmountDetail(amount, incomeType, 
+							  userId, accountType, 
+							  userAccountDo.getRemark(),
+							  userAccountDo.getSeqId(),
+							  userAccountDo.getRelevantUser());
 
 		return result;
 	}
@@ -181,7 +184,7 @@ public class AccountServiceImpl implements IAccountService {
 	 * @return
 	 */
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	private boolean updateUserAmountDetail(BigDecimal amount, IncomeType type, Integer userId, String accountType,
+	private boolean updateUserAmountDetail(BigDecimal amount, IncomeType incomeType, Integer userId, String accountType,
 			String remark, String seqId, String relevantUserid) {
 		// 读取账户余额
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -192,16 +195,16 @@ public class AccountServiceImpl implements IAccountService {
 
 		// 增加用户消费列表
 		UserAccountDetailDo uaDetail = new UserAccountDetailDo();
-		uaDetail.setAmount(amount);
+		uaDetail.setAmount(amount);   //本次操作金额
 		uaDetail.setCreateTime(new Date());
-		uaDetail.setIncomeType(type.getIncomeType());
-		uaDetail.setMoreOrLess(moreOrLessStr(amount));
+		uaDetail.setIncomeType(incomeType.getIncomeType());
+		uaDetail.setMoreOrLess(moreOrLessStr(amount)); //资金变动方向
 		uaDetail.setAccountType(accountType);
-		uaDetail.setBalanceAmount(balance);
+		uaDetail.setBalanceAmount(balance); //余额
 		uaDetail.setSeqId(seqId);
 		uaDetail.setRelevantUser(relevantUserid);
 		if (StringUtils.isBlank(remark)) {
-			uaDetail.setRemark(type.getRemark());
+			uaDetail.setRemark(incomeType.getRemark());
 		} else {
 			uaDetail.setRemark(remark);
 		}

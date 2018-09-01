@@ -55,6 +55,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 	@Resource
 	private IUserRefereeDao userRefereeDao;
+	
+	private ThreadLocal<Map<String,Object>> awardContextMap = new ThreadLocal<Map<String,Object>>() ;
 
 	/**
 	 * 计算奖励的方法
@@ -67,6 +69,10 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 */
 	@Override
 	public  void doAward(UserDo buyer, Order order) {
+		Map<String,Object> contextMap = new HashMap<String,Object>();
+		contextMap.put("buyer", buyer);
+		contextMap.put("order", order);
+		awardContextMap.set(contextMap);
 
 		if (order == null) {
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");
@@ -139,11 +145,31 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			String accountType = "wallet_money";
 
 			if (wardAmount.intValue() > 0) {
-				UserAccountDo accont = new UserAccountDo(new BigDecimal(wardAmount), buyUserId, accountType);
+				UserAccountDo account = new UserAccountDo(new BigDecimal(wardAmount), buyUserId, accountType);
+				buildAccountRemark(account);
 				// 账户对象增加金额
-				accountService.updateUserAmountById(accont, awardsShow);
+				accountService.updateUserAmountById(account, awardsShow);
 			}
 		}
+	}
+
+	/**
+	 * 创建奖励备注
+	 * @param account
+	 */
+	private void buildAccountRemark(UserAccountDo account) {
+		
+		Map<String,Object> contextMap = awardContextMap.get();
+		UserDo buyer =(UserDo)contextMap.get("buyer");
+		Order order =(Order) contextMap.get("order");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("用户:").append(buyer.getUserName())
+		  .append("购买:").append(order.getQty())
+		  .append("获得:").append(account.getAmount());
+		account.setRemark(sb.toString());
+		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户
+		
 	}
 
 	/**

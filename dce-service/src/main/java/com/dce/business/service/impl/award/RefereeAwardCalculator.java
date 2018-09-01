@@ -46,6 +46,9 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 
 	@Resource
 	private IOrderService orderService;
+	
+	private ThreadLocal<Map<String,Object>> awardContextMap = new ThreadLocal<Map<String,Object>>() ;
+	
 
 	/**
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励 计算奖励的方法
@@ -59,7 +62,10 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	@Override
 	public void doAward(UserDo buyer, Order order) {
 		
-		
+		Map<String,Object> contextMap = new HashMap<String,Object>();
+		contextMap.put("buyer", buyer);
+		contextMap.put("order", order);
+		awardContextMap.set(contextMap);
 
 		// 获取推荐人
 		UserDo ref1 = userService.getUser(buyer.getRefereeid());
@@ -140,10 +146,30 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 
 			if (wardAmount.compareTo(BigDecimal.ZERO) > 0) {
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
+				buildAccountRemark(accont);
 				// 账户对象增加金额
 				accountService.updateUserAmountById(accont,awardsShow);
 			}
 		}
+	}
+	
+	/**
+	 * 创建奖励备注
+	 * @param account
+	 */
+	private void buildAccountRemark(UserAccountDo account) {
+		
+		Map<String,Object> contextMap = awardContextMap.get();
+		UserDo buyer =(UserDo)contextMap.get("buyer");
+		Order order =(Order) contextMap.get("order");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("用户:").append(buyer.getUserName())
+		  .append("购买:").append(order.getQty())
+		  .append("获得:").append(account.getAmount());
+		account.setRemark(sb.toString());
+		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户
+		
 	}
 
 	/**

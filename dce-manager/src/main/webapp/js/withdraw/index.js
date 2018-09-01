@@ -62,7 +62,7 @@ $(function(){
 	 				{field:"edit",title:"审核",width:80,align:"center",
 	 					formatter:function(value,row,index){
 	 						if(row.type=='2'){
-	 							
+	 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 						}else{
 	 							if(row.process_status=="1"){
 		 							return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +

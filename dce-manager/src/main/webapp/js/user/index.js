@@ -15,10 +15,10 @@ $(function() {
 						{
 							'userName' : $("#searchForm #userName").val(),
 							'userMobile' : $("#searchForm #userMobile").val(),
-							'startDate' : $("#searchForm #user_reg_startDate")
-									.datebox('getValue'),
-							'endDate' : $("#searchForm #user_reg_endDate")
-									.datebox('getValue')
+							'startDate' : $("#searchForm #user_reg_startDate").datebox('getValue'),
+							'endDate' : $("#searchForm #user_reg_endDate").datebox('getValue'),
+							'userLevel' : $("#searchForm #user_level").val(),
+							'address' : $("#searchForm #address").val()
 						});
 			});
 
@@ -64,7 +64,7 @@ $(function() {
 				checkbox : true
 			},
 			{
-				field : "userName",
+				field : "user_name",
 				title : "用户名[姓名]",
 				width : 125,
 				align : "center",
@@ -73,17 +73,17 @@ $(function() {
 					if (value != null && value != undefined) {
 						str += value;
 					}
-					if (row.trueName != null && row.trueName != undefined) {
-						str += "[" + row.trueName + "]";
-					} else if (row.trueName != null
-							&& row.trueName != undefined) {
+					if (row.true_name != null && row.true_name != undefined) {
+						str += "[" + row.true_name + "]";
+					} else if (row.true_name != null
+							&& row.true_name != undefined) {
 						str += "[未认证]";
 					}
 					return str;
 				}
 			},
 			{
-				field : "userLevel",
+				field : "user_level",
 				title : "级别",
 				width : 65,
 				align : "center",
@@ -97,22 +97,8 @@ $(function() {
 						return "VIP"; // 铂金会员
 					} else if (value == "3") {// 黄金会员
 						return "合伙人"
-						// if (row.district != null && row.district !=
-						// undefined) {
-						// return str += "合伙人" + "[" + row.district + "]";
-						// } else if (row.district == null
-						// && row.district == undefined) {
-						// return str += "合伙人" + "";
-						// }
 					} else if (value == "4") {
 						return "股东";
-						// if (row.district != null && row.district !=
-						// undefined) {
-						// return str += "股东" + "[" + res + "]";
-						// } else if (row.district == null
-						// && row.district == undefined) {
-						// return str += "股东" + "";
-						// }
 					}
 				}
 			},
@@ -129,13 +115,13 @@ $(function() {
 				align : "center"
 			},
 			{
-				field : "userPassword",
+				field : "user_password",
 				title : "登录密码",
 				width : 65,
 				align : "center"
 			},
 			{
-				field : "twoPassword",
+				field : "two_password",
 				title : "支付密码",
 				width : 65,
 				align : "center"
@@ -153,7 +139,7 @@ $(function() {
 				align : "center"
 			},
 			{
-				field : "regTime",
+				field : "reg_time",
 				title : "注册时间",
 				width : 110,
 				align : "center",
@@ -621,6 +607,7 @@ function export_excel() {
 	var userMobile = $("#searchForm #userMobile").val();
 	var startDate = $("#searchForm #user_reg_startDate").datebox('getValue');
 	var endDate = $("#searchForm #user_reg_endDate").datebox('getValue');
+	
 
 	var exportIframe = document.createElement('iframe');
 	exportIframe.src = basePath + "/user/export.html" + "?userName=" + userName

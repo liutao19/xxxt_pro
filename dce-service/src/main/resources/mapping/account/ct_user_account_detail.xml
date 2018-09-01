@@ -62,7 +62,7 @@
                 <![CDATA[AND d.createTime <= str_to_date(#{endTime},'%Y-%m-%d %H') ]]>
 			</if>
 		</trim>
-		order by createTime desc
+		order by d.createTime desc,d.amount desc
 	</select>
 
 	<select id="selectUserAccountDetail" parameterType="Map"

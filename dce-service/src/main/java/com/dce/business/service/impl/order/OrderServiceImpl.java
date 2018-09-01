@@ -143,15 +143,15 @@ public class OrderServiceImpl implements IOrderService {
 				}
 				// 设置商品名称
 				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
-				logger.debug("商品名称====》》" + goods.getTitle());
-				detail.setGoodsName(goods.getTitle());
 				// 赠品
 				if (detail.getRemark().equals("0")) {
+					detail.setGoodsName(goods.getTitle());
 					awardStr.append(detail.getGoodsName());
 					awardStr.append(detail.getQuantity() + "盒");
 					awardStr.append(" ");
 					// 商品
 				} else {
+					detail.setGoodsName(goods.getTitle());
 					orderStr.append(detail.getGoodsName());
 					orderStr.append(detail.getQuantity() + "盒");
 					orderStr.append(" ");
@@ -254,11 +254,9 @@ public class OrderServiceImpl implements IOrderService {
 					CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
 					// 赠品明细
 					if ("0".equals(detail.getRemark())) {
-						logger.debug("商品名称====》》" + goods.getTitle());
 						detail.setGoodsName("赠品:" + goods.getTitle());
 					} else {
 						// 设置商品名称
-						logger.debug("商品名称====》》" + goods.getTitle());
 						detail.setGoodsName(goods.getTitle());
 					}
 					orderDetailList.add(detail);
@@ -382,10 +380,9 @@ public class OrderServiceImpl implements IOrderService {
 			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
 				// 一、当赠品为男版或者女版时
 				if (premiumList.size() <= 1) {
-					if (premiumList.get(0).getOrderid() == 1001) { // 男版
-						totalprice = 0;
-					} else { // 女版差价
+					if (premiumList.get(0).getOrderid() == 1002) { // 女版差价
 						totalprice = premiumList.get(0).getQuantity() * price;
+						logger.debug("当赠品为女版时补的差价："+totalprice);
 					}
 
 					// 二、当赠品为混合版时
@@ -393,9 +390,11 @@ public class OrderServiceImpl implements IOrderService {
 					for (int j = 0; j < premiumList.size(); j++) {
 						// 计算出需补的差价
 						if (premiumList.get(j).getGoodsId() == 1002) {
+							logger.debug("获取的女版赠品的数量======》》》》"+premiumList.get(j).getQuantity());
 							totalprice = premiumList.get(j).getQuantity() * price;
 						}
 					}
+					logger.debug("当赠品为混合版时补的差价："+totalprice);
 				}
 			}
 		}

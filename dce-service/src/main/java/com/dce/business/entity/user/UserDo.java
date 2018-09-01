@@ -1154,4 +1154,42 @@ public class UserDo {
 		this.refereeUserMobile = refereeUserMobile;
 	}
 
+	@Override
+	public String toString() {
+		return "UserDo [id=" + id + ", userName=" + userName + ", trueName=" + trueName + ", email=" + email
+				+ ", mobile=" + mobile + ", userPassword=" + userPassword + ", twoPassword=" + twoPassword
+				+ ", userFace=" + userFace + ", balanceIntegral=" + balanceIntegral + ", sex=" + sex + ", displaySex="
+				+ displaySex + ", loginTimes=" + loginTimes + ", lastLoginTime=" + lastLoginTime + ", lastLoginIp="
+				+ lastLoginIp + ", regIp=" + regIp + ", regTime=" + regTime + ", status=" + status + ", displayStatus="
+				+ displayStatus + ", balanceBonus=" + balanceBonus + ", balanceRepeat=" + balanceRepeat
+				+ ", balanceCash=" + balanceCash + ", balanceDongjie=" + balanceDongjie + ", balanceShopping="
+				+ balanceShopping + ", forzenShopping=" + forzenShopping + ", totalBonus=" + totalBonus
+				+ ", totalRepeat=" + totalRepeat + ", totalCash=" + totalCash + ", totalIntegral=" + totalIntegral
+				+ ", totalShopping=" + totalShopping + ", refereeid=" + refereeid + ", parentid=" + parentid
+				+ ", certification=" + certification + ", baodan_amount=" + baodan_amount + ", refereeUserName="
+				+ refereeUserName + ", refereeUserMobile=" + refereeUserMobile + ", parentUserName=" + parentUserName
+				+ ", refereeNumber=" + refereeNumber + ", refereeStatus=" + refereeStatus + ", sonNumber=" + sonNumber
+				+ ", isServerCenter=" + isServerCenter + ", myServerCenter=" + myServerCenter + ", userscore="
+				+ userscore + ", userType=" + userType + ", userGroup=" + userGroup + ", userLevel=" + userLevel
+				+ ", displayUserLevel=" + displayUserLevel + ", userPost=" + userPost + ", regMoney=" + regMoney
+				+ ", yfMoney=" + yfMoney + ", fdMoney=" + fdMoney + ", totalPerformance=" + totalPerformance
+				+ ", touchedPerformance=" + touchedPerformance + ", activationTime=" + activationTime + ", userQq="
+				+ userQq + ", userWechat=" + userWechat + ", openid=" + openid + ", register=" + register
+				+ ", expressPassword=" + expressPassword + ", totalDividends=" + totalDividends + ", dividendsDays="
+				+ dividendsDays + ", country=" + country + ", province=" + province + ", city=" + city + ", darea="
+				+ darea + ", balanceEt=" + balanceEt + ", idnumber=" + idnumber + ", identity=" + identity
+				+ ", banktype=" + banktype + ", bankUserName=" + bankUserName + ", banknumber=" + banknumber
+				+ ", bankContent=" + bankContent + ", question1=" + question1 + ", question2=" + question2
+				+ ", question3=" + question3 + ", answer1=" + answer1 + ", answer2=" + answer2 + ", answer3=" + answer3
+				+ ", groupid=" + groupid + ", ticket=" + ticket + ", balanceGouwu=" + balanceGouwu + ", qrcodeStatus="
+				+ qrcodeStatus + ", bonusTime=" + bonusTime + ", isEmpty=" + isEmpty + ", balanceHeart=" + balanceHeart
+				+ ", kuoLevel=" + kuoLevel + ", backfillStatus=" + backfillStatus + ", backfillMoney=" + backfillMoney
+				+ ", backfillSheng=" + backfillSheng + ", guadanNum=" + guadanNum + ", allstatic=" + allstatic
+				+ ", dis=" + dis + ", releaseTime=" + releaseTime + ", isshop=" + isshop + ", isimport=" + isimport
+				+ ", pos=" + pos + ", isout=" + isout + ", touchDistance=" + touchDistance + ", userLevelName="
+				+ userLevelName + ", ableTouchQty=" + ableTouchQty + ", ethAccount=" + ethAccount + ", undoOpts="
+				+ undoOpts + ", tranDirect=" + tranDirect + ", isActivated=" + isActivated + ", displayIsActivated="
+				+ displayIsActivated + ", district=" + district + "]";
+	}
+	
 }

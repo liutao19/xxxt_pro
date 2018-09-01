@@ -98,6 +98,7 @@ public class DistrictServiceImpl implements IDistrictService {
 	 * 选择性更新
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public int updateSelectiveDistrictById(District district) {
 		
 		return districtDao.updateByPrimaryKeySelective(district);
@@ -106,6 +107,7 @@ public class DistrictServiceImpl implements IDistrictService {
 	 * 选择性新增
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public int insertSelective(District record) {
 		
 		return districtDao.insertSelective(record);

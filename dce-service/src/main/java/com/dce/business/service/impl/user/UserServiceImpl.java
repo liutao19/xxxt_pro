@@ -898,13 +898,18 @@ public class UserServiceImpl implements IUserService {
 			i=userDao.updateLevel(user);
 			District district=new District();
 			district.setUserId(user.getId());
-			if(districtService.selectByPrimaryKeySelective(district)==null){
+			District oldDistrict =districtService.selectByPrimaryKeySelective(district);
+			if(oldDistrict == null){
 				district.setDistrctName(user.getDistrict());
 				district.setDistrictStatus(1);
 				districtService.insertSelective(district);
 			}else{
 				district.setDistrctName(user.getDistrict());
-				districtService.updateDistrictById(district);
+				district.setDistrictId(oldDistrict.getDistrictId());
+				int ret = districtService.updateDistrictById(district);
+				if(ret <1){
+					throw new BusinessException("重复设置区域代表"+user.getDistrict());
+				}
 			}
 		}
 		return i;

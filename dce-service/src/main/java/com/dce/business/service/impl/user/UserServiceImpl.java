@@ -872,8 +872,26 @@ public class UserServiceImpl implements IUserService {
 		page.setModelList(list);
 		return page;
 	}
+	
+	
+	
+	/**
+	 * 区域管理查询
+	 */
+	@Override
+	public PageDo<UserDo> getUserDistrictPage(Map<String, Object> param, PageDo<UserDo> page) {
+		// TODO Auto-generated method stub
+		if (param == null) {
+			param = new HashMap<String, Object>();
+		}
+		param.put(Constants.MYBATIS_PAGE, page);
+		List<UserDo> list = userDao.selectDistrictPage(param);
+		page.setModelList(list);
+		return page;
+	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public int updateUserDistrict(UserDo user) {
 		int i=0;
 		if(user!=null&&user.getDistrict()!=null){

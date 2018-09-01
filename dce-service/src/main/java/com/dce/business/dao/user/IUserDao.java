@@ -134,7 +134,7 @@ public interface IUserDao {
 	/**
 	 * 区域查询
 	 */
-	List<UserDo> selectDistrict(Map<String,Object> map);
+	List<UserDo> selectDistrictPage(Map<String,Object> map);
 	
 	
 	/**

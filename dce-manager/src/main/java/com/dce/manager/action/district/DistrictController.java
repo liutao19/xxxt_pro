@@ -62,17 +62,7 @@ public class DistrictController extends BaseAction {
 		logger.info("----listUser----");
 		try {
 			PageDo<UserDo> page = PageDoUtil.getPage(pagination);
-			String companyName = getString("searchPolicyName");
 			Map<String, Object> param = new HashMap<String, Object>();
-			if (StringUtils.isNotBlank(companyName)) {
-				param.put("policyName", companyName);
-				model.addAttribute("searchPolicyName", companyName);
-			}
-			String managerName = getString("searManagerName");
-			if (StringUtils.isNotBlank(managerName)) {
-				param.put("managerName", managerName);
-				model.addAttribute("searManagerName", managerName);
-			}
 			String distrct_name=getString("distrct_name");
 			if (StringUtils.isNotBlank(distrct_name)) {
 				param.put("district", distrct_name);
@@ -83,7 +73,7 @@ public class DistrictController extends BaseAction {
 				param.put("trueName", trueName);
 				model.addAttribute("trueName", trueName);
 			}
-			page = userService.getUserPage(param, page);
+			page = userService.getUserDistrictPage(param, page);
 			System.err.println("数据---" + JSONObject.toJSON(pagination));
 			pagination = PageDoUtil.getPageValue(pagination, page);
 			outPrint(response, JSONObject.toJSON(pagination));

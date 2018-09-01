@@ -66,7 +66,6 @@
 		<if test="userId!=null">
 			and user_id= #{userId,jdbcType=INTEGER}
 		</if>
-
 		<if test="districtStatus!=null">
 			and districtStatus=#{districtStatus,jdbcType=INTEGER}
 		</if>

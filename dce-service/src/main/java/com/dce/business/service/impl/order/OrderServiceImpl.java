@@ -380,7 +380,7 @@ public class OrderServiceImpl implements IOrderService {
 			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
 				// 一、当赠品为男版或者女版时
 				if (premiumList.size() <= 1) {
-					if (premiumList.get(0).getOrderid() == 1002) { // 女版差价
+					if (premiumList.get(0).getGoodsId() == 1002) { // 女版差价
 						totalprice = premiumList.get(0).getQuantity() * price;
 						logger.debug("当赠品为女版时补的差价："+totalprice);
 					}
@@ -548,6 +548,7 @@ public class OrderServiceImpl implements IOrderService {
 		// 删除原来的明细
 		orderDetailDao.deleteByExample(example);
 
+		logger.debug("用户选择的赠品信息======》》》："+premiumList);
 		// 计算是否需要补赠品的差价
 		Double giftAmount = countPremiumPriceSpread(premiumList);
 		logger.debug("需要补的赠品差价========》》》：" + giftAmount);

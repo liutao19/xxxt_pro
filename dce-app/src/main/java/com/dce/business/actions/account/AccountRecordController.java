@@ -71,7 +71,7 @@ public class AccountRecordController extends BaseController {
 			map2.put("amount", userAccountDetail.getAmount());
 			map2.put("moreOrLess", userAccountDetail.getMoreOrLess());
 			map2.put("balanceAmount", userAccountDetail.getBalanceAmount());
-			map2.put("createTime", DateUtil.dateToString(userAccountDetail.getCreateTime()));
+			map2.put("createTime", DateUtil.YYYY_MM_DD_MM_HH_SS.format(userAccountDetail.getCreateTime()));
 			map2.put("remark", userAccountDetail.getRemark());
 			map2.put("seqId", userAccountDetail.getSeqId());
 			map2.put("accountType", userAccountDetail.getAccountType());

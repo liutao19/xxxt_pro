@@ -312,7 +312,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		Map<String, Object> map = new HashMap<>();
 		UserDo user = userService.getUser(userid);
 		map.put("userId", userid);
-		map.put("remark", IncomeType.TYPE_AWARD_EXPERIENCE.getRemark());
+		map.put("incomeType", IncomeType.TYPE_AWARD_EXPERIENCE.getIncomeType());
 		if ((!accountService.selectUserAccountDetail(map).isEmpty())
 				|| accountService.selectUserAccountDetail(map).size() >0) {
 			logger.error("已享受会员体验奖");

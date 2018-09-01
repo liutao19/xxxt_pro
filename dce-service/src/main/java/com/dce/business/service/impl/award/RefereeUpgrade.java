@@ -109,6 +109,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 				userDo.setId(buyer.getId());
 				userDo.setUserLevel(Byte.valueOf(promoteLevel));
 				if (userService.updateLevel(userDo)) {
+					shareholder(buyer);
 					logger.error("用户升级成功");
 				}
 			}
@@ -133,7 +134,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 
 		UserDo userDo = new UserDo();
 		userDo.setId(buyer.getRefereeid());
-		userDo.setUserLevel((byte) (buyer.getUserLevel() + 1));
+		userDo.setUserLevel((byte) (buyer.getUserLevel() + 2));
 		System.err.println(JSON.toJSON(userService.updateLevel(userDo)));
 
 	}

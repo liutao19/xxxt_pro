@@ -26,14 +26,14 @@ import com.alipay.api.request.AlipayFundTransOrderQueryRequest;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.response.AlipayFundTransOrderQueryResponse;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-//import com.dce.business.common.alipay.util.AlipayConfig;
+import com.dce.business.common.alipay.util.AlipayConfig;
 
 import com.dce.business.common.enums.AccountType;
 import com.dce.business.common.enums.CurrencyType;
 import com.dce.business.common.enums.DictCode;
 import com.dce.business.common.enums.IncomeType;
 import com.dce.business.common.exception.BusinessException;
-import com.dce.business.common.pay.util.AlipayConfig;
+//import com.dce.business.common.pay.util.AlipayConfig;
 import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DataDecrypt;
@@ -513,10 +513,9 @@ public class PayServiceImpl implements IPayService {
 		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + 
 		"\"payee_type\":\"ALIPAY_LOGONID\","+ 
 		"\"payee_account\":\"wvavyw6896@sandbox.com\"," +
-		"\"amount\":" + 10 + "," + 
-		/*"\"payee_account\":"+bankNo+"," + 
-		"\"amount\":" + 50 + "," + 
-		"\"payee_real_name\":"+trueName + "," + */
+		"\"payee_account\":"+bankNo+"," + 
+		"\"amount\":" + qty + "," + 
+		"\"payee_real_name\":"+trueName + "," + 
 		"\"remark\":\"提现\""
 		+ "}");
 		AlipayFundTransToaccountTransferResponse response = null;

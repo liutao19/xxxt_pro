@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.dce.business.entity.order.Order;
-import com.dce.business.entity.user.UserAddressDo;
+import com.dce.business.entity.order.OrderAddressDo;
 
 public interface IOrderDao {
 	int deleteByPrimaryKey(Long orderId);
@@ -67,5 +67,5 @@ public interface IOrderDao {
 	Order selectAwardStatus(String orderCode);
 
 	// 根据订单查询出收货人的信息
-	UserAddressDo selectAddressByOrder(Integer orderId);
+	OrderAddressDo selectAddressByOrder(Integer orderId);
 }

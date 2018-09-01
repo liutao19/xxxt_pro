@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ import com.dce.business.dao.trade.IKLineDao;
 import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
 import com.dce.business.entity.goods.CTGoodsDo;
 import com.dce.business.entity.order.Order;
+import com.dce.business.entity.order.OrderAddressDo;
 import com.dce.business.entity.order.OrderDetail;
 import com.dce.business.entity.order.OrderDetailExample;
 import com.dce.business.entity.order.OrderSendOut;
@@ -53,9 +55,11 @@ import com.dce.business.service.award.IAwardService;
 import com.dce.business.service.dict.ICtCurrencyService;
 import com.dce.business.service.dict.ILoanDictService;
 import com.dce.business.service.goods.ICTGoodsService;
+import com.dce.business.service.order.IOrderAdressService;
 import com.dce.business.service.order.IOrderSendoutService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserService;
+import com.dce.business.service.user.UserAdressService;
 
 @Service("orderService")
 public class OrderServiceImpl implements IOrderService {
@@ -82,6 +86,13 @@ public class OrderServiceImpl implements IOrderService {
 	private IAwardService awardService;
 	@Resource
 	private IUserService userService;
+	
+	
+	@Resource
+	private UserAdressService userAdressService;
+	@Resource
+	private IOrderAdressService orderAdressService;
+	
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -399,14 +410,30 @@ public class OrderServiceImpl implements IOrderService {
 	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		if (order.getOrderid() != null) {
-			logger.debug("===========支付成功，更新订单==========");
-			return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
-			// 若传过来的订单id为空，则重新生成订单
-		} else {
-			logger.debug("===========支付成功，orderId为空，重新产生订单=========");
-			return this.createOrderToPay(premiumList, chooseGoodsLst, order, request, response);
+		// 若传过来的订单id为空，则重新生成订单
+		if(order.getOrderid() == null){
+			throw new BusinessException("无效的订单ID");
 		}
+		logger.debug("===========支付成功，更新订单==========");
+		//维护订单地址
+		Integer orderAddressId = mainOrderAddress(order);
+		order.setAddressid(orderAddressId);
+		return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
+	}
+	
+	
+	/**
+	 * 从用户地址copy到订单地址
+	 * @param order
+	 * @return
+	 */
+	private Integer mainOrderAddress(Order order) {
+		UserAddressDo  userAddressDo = userAdressService.selectByPrimaryKey(order.getAddressid());
+		OrderAddressDo orderAddressDo = new OrderAddressDo();
+		BeanUtils.copyProperties(userAddressDo, orderAddressDo );
+		orderAdressService.deleteByPrimaryKeyInt(order.getAddressid());
+		orderAdressService.insertSelective(orderAddressDo);
+		return orderAddressDo.getAddressid();
 	}
 
 	/**
@@ -1020,13 +1047,13 @@ public class OrderServiceImpl implements IOrderService {
 				order.setOrderstatus("未发货");
 			}
 			// 获取收货人的信息
-			UserAddressDo userAddress = orderDao.selectAddressByOrder(order.getOrderid());
-			if (userAddress == null) {
+			OrderAddressDo orderAddress = orderDao.selectAddressByOrder(order.getOrderid());
+			if (orderAddress == null) {
 				continue;
 			}
-			order.setPhone(userAddress.getUserphone());
-			order.setTrueName(userAddress.getUsername());
-			order.setAddress(userAddress.getAddress());
+			order.setPhone(orderAddress.getUserphone());
+			order.setTrueName(orderAddress.getUsername());
+			order.setAddress(orderAddress.getAddress());
 
 			// 获取每条订单的商品详情
 			List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();

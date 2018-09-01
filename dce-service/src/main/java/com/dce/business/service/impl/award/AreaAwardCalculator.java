@@ -1,6 +1,7 @@
 package com.dce.business.service.impl.award;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,13 @@ import com.dce.business.dao.user.IUserRefereeDao;
 import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.entity.district.Regionalawards;
 import com.dce.business.entity.order.Order;
-import com.dce.business.entity.user.UserAddressDo;
+import com.dce.business.entity.order.OrderAddressDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IAccountService;
 import com.dce.business.service.district.IRegionalawardsService;
+import com.dce.business.service.order.IOrderAdressService;
 import com.dce.business.service.order.IOrderService;
 import com.dce.business.service.user.IUserService;
-import com.dce.business.service.user.UserAdressService;
 
 /**
  * 区域奖金计算类
@@ -40,7 +41,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	private IOrderService orderService;
 
 	@Resource
-	private UserAdressService userAdressService;
+	private IOrderAdressService orderAdressService;
 
 	@Resource
 	private IUserService userService;
@@ -78,15 +79,15 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		// 获取订单信息
 		Integer buyQty = order.getQty();
 		// 获取地址信息
-		UserAddressDo useraddress = userAdressService.selectByPrimaryKey(order.getAddressid());
-		if (useraddress == null) {
+		OrderAddressDo orderAddress = orderAdressService.selectByPrimaryKey(order.getAddressid());
+		if (orderAddress == null) {
 			logger.warn("订单地址ID无效");
 			return;
 		}
 
 		// 获取区域代表信息
 		Map<String, Object> map = new HashMap<>();
-		map.put("district", useraddress.getAddress());
+		map.put("district", orderAddress.getAddress());
 		List<UserDo> userLst = userService.selectUserCondition(map);
 
 		if (userLst == null || userLst.size() < 1) {
@@ -97,6 +98,9 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		// 获取奖励记录
 		if (userLst != null) {
 			Map<String, Object> maps = gainAward(buyer.getId(), 0, buyQty);
+			if(null == maps || maps.isEmpty()){
+				return;
+			}
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
@@ -107,7 +111,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
-			if (maps.isEmpty()) {
+			if(null == maps || maps.isEmpty()){
 				return;
 			}
 			// 多种奖励办法以;分隔
@@ -190,7 +194,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			UserDo user = userService.getUser(id);
 			if (user == null) {
 				logger.error("该区域的推荐人无推荐人");
-				return null;
+				return Collections.EMPTY_MAP;
 			}
 			// 防止空指针
 			if (user != null) {
@@ -207,13 +211,14 @@ public class AreaAwardCalculator implements IAwardCalculator {
 					// 如果该用户没有推荐人，则终止循环不派送20元奖励
 					if (user.getRefereeid() == null || user.getRefereeid() == 0) {
 						logger.error("该用户无推荐人为城市合伙人，不派发20元奖励");
-						return null;
+						return Collections.EMPTY_MAP;
 					}
 					// 递归循环，直到找到城市合伙人
 					twentyAward(user.getRefereeid(), count);
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error("发放区域20元奖励异常");
 		}
 		return maps;

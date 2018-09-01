@@ -3,7 +3,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>订单</title>
+<title>客户</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache" />
 
@@ -35,17 +35,29 @@
 				<form id="searchForm" style="margin-top: 7px; margin-left: 5px;">
 					<table border="0">
 						<tr>
-							<td class="tdfont">用户名:<input type="text" size="14"
-								id="userName" name="userName" placeholder="用户名"></td>
-							<td class="tdfont">手机号:<input type="text" size="14"
-								id="userMobile" name="userMobile" placeholder="手机号"></td>
-							<td class="tdfont" colspan="2">注册时间: <input type="text"
-								id="user_reg_startDate" name="user_reg_startDate"
-								class="easyui-datetimebox" size="14"
-								data-options="editable : true" />- <input type="text"
-								id="user_reg_endDate" name="user_reg_endDate"
-								class="easyui-datetimebox" size="14"
-								data-options="editable : true" />
+							<td>等级<select class="tdfont" id="user_level" name="user_level" style="width: 140px;" style="height:30px;">
+									<option value="">--搜索等级--</option>
+									<option value="0">普通</option>
+									<option value="1">会员</option>
+									<option value="2">VIP</option>
+									<option value="3">合伙人</option>
+									<option value="4">股东</option>
+							</select></td>
+
+							<td class="tdfont">
+								用户名:
+								<input type="text" size="14" id="userName" name="userName" placeholder="用户名"></td>
+							<td class="tdfont">
+								手机号:
+								<input type="text" size="14" id="userMobile" name="userMobile" placeholder="手机号"></td>
+							<td class="tdfont">
+								收货地址:
+								<input type="text" size="14" id="address" name="address" placeholder="收货地址"></td>
+							<td class="tdfont" colspan="2">
+								注册时间: 
+								<input type="text" id="user_reg_startDate" name="user_reg_startDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
+								- 
+								<input type="text" id="user_reg_endDate" name="user_reg_endDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
 							</td>
 							<td><a href="javascript:void(0);" id="searchButton"
 								class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>

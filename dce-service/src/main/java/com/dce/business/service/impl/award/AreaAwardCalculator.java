@@ -108,6 +108,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 			oneAward((int) maps.get("userId"), bAwardLst,awardsShow);
 		}
 
+		//区域代表推荐人信息
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
@@ -184,7 +185,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		return new Integer(awds[0].trim());
 	}
 
-	// 推荐人id count 数量
+	// 推荐人id count 数量 20元奖励
 	public Map<String, Object> twentyAward(Integer id, int count) {
 		// 返回值
 		Map<String, Object> maps = new HashMap<>();

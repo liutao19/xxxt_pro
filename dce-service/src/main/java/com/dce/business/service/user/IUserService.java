@@ -167,7 +167,7 @@ public interface IUserService {
 	 */
 	Result<?> setUserLevel(String userCode, String userLevel);
 
-	PageDo<UserDo> selectUserByPage(PageDo<UserDo> page, Map<String, Object> params);
+	PageDo<Map<String,Object>> selectUserByPage(PageDo<Map<String,Object>> page, Map<String, Object> params);
 
 	PageDo<UserDo> selectEthAccountByPage(PageDo<UserDo> page, Map<String, Object> params);
 
@@ -195,13 +195,6 @@ public interface IUserService {
 	
 	boolean updateLevel(UserDo record);
 	
-	/**
-	 * 分页查询显示区域
-	 * @param param
-	 * @param page
-	 * @return
-	 */
-	public PageDo<UserDo> getUserPage(Map<String, Object> param, PageDo<UserDo> page);
 	
 	/**
 	 * 分配区域方法

@@ -1583,11 +1583,12 @@
 		</if>
 	</select>
 
-	<select id="selectByPage" parameterType="java.util.Map"
-		resultMap="BaseResultMap">
-		SELECT u.*,u1.user_name AS refereeUserName
-		FROM ct_user u LEFT JOIN
-		ct_user u1 ON u.refereeid = u1.id
+	<select id="selectByPage" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT u.*,u1.user_name AS refereeUserName,a.* FROM
+		ct_user u LEFT JOIN
+		ct_user u1 ON u.refereeid = u1.id LEFT JOIN
+		ct_user_address a on u.id=
+		a.userId
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="userName != null">
 				AND u.user_name like concat('', #{userName}, '%')
@@ -1597,6 +1598,12 @@
 			</if>
 			<if test="mobile != null">
 				AND u.mobile like concat('', #{mobile}, '%')
+			</if>
+			<if test="userLevel != null">
+				AND u.user_level = #{userLevel}
+			</if>
+			<if test="address != null">
+				AND a.address = #{address}
 			</if>
 			<if test="startDate != null">
 				AND <![CDATA[ u.reg_time >= #{startDate} ]]>
@@ -1992,19 +1999,19 @@
 		where id = #{id,jdbcType=INTEGER}
 
 	</update>
-  <select id="selectDistrictPage" parameterType="com.dce.business.entity.user.UserDo"
+	<select id="selectDistrictPage" parameterType="com.dce.business.entity.user.UserDo"
 		resultMap="BaseResultMap">
 		<![CDATA[
 			select * from ct_user 
 			where user_level >= 3
 		]]>
-			<if test="district !=null">
-				AND district=#{district,jdbcType=VARCHAR}
-			</if>
-			<if test="trueName !=null">
-				AND true_name=#{trueName,jdbcType=VARCHAR}
-			</if>
-		</select>
+		<if test="district !=null">
+			AND district=#{district,jdbcType=VARCHAR}
+		</if>
+		<if test="trueName !=null">
+			AND true_name=#{trueName,jdbcType=VARCHAR}
+		</if>
+	</select>
 
 
 </mapper>

@@ -106,7 +106,7 @@ public interface IUserDao {
 	 * @param params
 	 * @return
 	 */
-	List<UserDo> selectByPage(Map<String, Object> params);
+	List<Map<String,Object>> selectByPage(Map<String, Object> params);
 
 	/**
 	 * 

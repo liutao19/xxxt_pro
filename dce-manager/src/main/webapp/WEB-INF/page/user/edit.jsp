@@ -94,6 +94,8 @@
 						<c:if test="${user.userLevel==2 }">selected="selected"</c:if>>VIP</option>
 					<option value="3"
 						<c:if test="${user.userLevel==3 }">selected="selected"</c:if>>合伙人</option>
+					<option value="4"
+						<c:if test="${user.userLevel==4 }">selected="selected"</c:if>>股东</option>
 			</select></td>
 		</tr>
 		<tr>

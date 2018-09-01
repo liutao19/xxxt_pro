@@ -79,10 +79,10 @@ public class WithdrawServiceImpl implements IWithdrawService {
         withdraw.setProcessStatus(auditResult);
         withdraw.setConfirmDate(new Date().getTime()/1000);
         //审核通过同意
-       System.out.println("name:"+withdrawDo.getMoneyType()); 
         if ("2".equals(auditResult)||"4".equals(auditResult)) {
         	check(withdrawId); //重复性校验
         	if(withdrawDo.getType().equals("1")){
+        		System.out.println("trueName:"+withdrawDo.getMoneyType());
                 result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo(),withdrawDo.getMoneyType());
         	}
             if(result.isSuccess()){

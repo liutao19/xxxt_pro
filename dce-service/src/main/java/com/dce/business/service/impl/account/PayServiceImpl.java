@@ -215,9 +215,9 @@ public class PayServiceImpl implements IPayService {
 			record.setAmount(qty);
 			record.setWithdrawDate((new Date()).getTime() / 1000);
 			record.setType(type);
+			record.setMoneyType(userDo.getTrueName());// 真实姓名
 			// 提现到银行卡
 			if (type.equals("2")) {
-				record.setMoneyType(userDo.getTrueName());// 真实姓名
 				record.setBank(userDo.getBanktype());// 开卡行
 				record.setBankNo(userDo.getBanknumber());// 卡号
 			} else {

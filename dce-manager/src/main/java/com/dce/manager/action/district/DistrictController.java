@@ -6,15 +6,15 @@
 
 package com.dce.manager.action.district;
 
-import java.util.Map;
-
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -118,28 +118,23 @@ public class DistrictController extends BaseAction {
 	public void saveUser(UserDo userDo, HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----saveUser------");
 		try {
-			Integer id = userDo.getId();
-			// Long userId = new Long(this.getUserId());
-
-			int i = 0;
-			if (id != null && id.intValue() > 0) {
-				userDo.setId(id);
-				userDo.setDistrict(userDo.getDistrict());
-				i = userService.updateUserDistrict(userDo);
-			} else {
-				/*
-				 * userDo.setId(id); // userDo.setCreateTime(new Date());
-				 * 
-				 * i = userService.addUser(userDo);
-				 */
+			Integer userId = userDo.getId();
+			if (userId == null) {
+				outPrint(response, this.toJSONString(Result.failureResult("请选定用户")));
 			}
-
+			int i = userService.updateUserDistrict(userDo);
 			if (i <= 0) {
-				outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
+				outPrint(response, this.toJSONString(Result.failureResult("重复区域")));
 				return;
 			}
 			outPrint(response, this.toJSONString(Result.successResult("操作成功")));
-		} catch (Exception e) {
+		}catch (BusinessException be) {
+			logger.error("保存更新失败", be);
+			outPrint(response, this.toJSONString(Result.failureResult(be.getMessage())));
+		}catch (DuplicateKeyException be) {
+			logger.error("保存更新失败", be);
+			outPrint(response, this.toJSONString(Result.failureResult("重复设置区域代表")));
+		}catch (Exception e) {
 			logger.error("保存更新失败", e);
 			outPrint(response, this.toJSONString(Result.failureResult("操作失败")));
 		}

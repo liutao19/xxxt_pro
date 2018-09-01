@@ -99,7 +99,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 				if(order.getQty() >=50&&buyer.getUserLevel()<3&&ref1.getUserLevel()>1){
 				 awardsShow=IncomeType.TYPE_GD_SAL;
 				}
-				if(ref1.getUserLevel()<1&&order.getQty()>=5){
+				if(ref1.getUserLevel()<2&&order.getQty()>=5){
 					logger.debug("用户等级不支持享用5盒以上的奖励");
 					return;
 				}

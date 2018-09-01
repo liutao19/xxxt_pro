@@ -167,7 +167,8 @@ function save_User() {
 			.text();
 	var userId = $("#id").val();
 	if (province == "--请选择省份--" || city == "--请选择市---"
-			|| district == "--请选择区---") {
+			|| district == "--请选择区---"||province == "" || city ==""
+				|| district =="") {
 		$.messager.alert("提示", "请选择地区", "error");
 		return;
 	}
@@ -190,7 +191,7 @@ function save_User() {
 				$("#editDistrictDiv").dialog("close");
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
-				$.messager.alert("提示", "操作失败", "error");
+				$.messager.alert("提示", data.msg, "error");
 			}
 		}
 	});

@@ -73,7 +73,7 @@ public class DistrictController extends BaseAction {
 				param.put("managerName", managerName);
 				model.addAttribute("searManagerName", managerName);
 			}
-			page = userService.getUserPage(param, page);
+			page = userService.getUserDistrictPage(param, page);
 			System.err.println("数据---" + JSONObject.toJSON(pagination));
 			pagination = PageDoUtil.getPageValue(pagination, page);
 			outPrint(response, JSONObject.toJSON(pagination));

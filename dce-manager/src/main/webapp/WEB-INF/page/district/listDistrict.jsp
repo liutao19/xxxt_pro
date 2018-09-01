@@ -9,7 +9,7 @@
 <jsp:include page="../common_easyui_cus.jsp"></jsp:include>
 <link rel="stylesheet" type="text/css" href="<c:url value='/css/icons.css'/>" />
 <script type="text/javascript" src="<c:url value='/js/common/js/jquery-easyui-1.4.1/extension/jquery-easyui-datagridview/datagrid-detailview.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/js/district/district.js?v='/>"></script>
+<script type="text/javascript" src="<c:url value='/js/district/district.js?v='/>12121"></script>
 <style type="text/css">
 .tdfont{
 	font-size: 12px;

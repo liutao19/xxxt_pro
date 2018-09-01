@@ -47,7 +47,7 @@ $(function() {
 			},
 			{
 				field : "trueName",
-				title : "真实姓名",
+				title : "用户等级",
 				width : 180,
 				align : "center"
 			},

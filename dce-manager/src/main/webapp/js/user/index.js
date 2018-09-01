@@ -83,52 +83,73 @@ $(function() {
 				}
 			},
 			{
-				field : "banknumber",
-				title : "银行卡号",
-				width : 125,
-				align : "center"
-			},
-			{
 				field : "userLevel",
 				title : "级别",
-				width : 70,
+				width : 65,
 				align : "center",
 				formatter : function(value, row, index) {
+					// var str = "";
 					if (value == "0") {
 						return "普通会员";
 					} else if (value == "1") {
 						return "会员";
 					} else if (value == "2") {
 						return "VIP"; // 铂金会员
-					} else if (value == "3") {
-						return "合伙人"; // 黄金会员
+					} else if (value == "3") {// 黄金会员
+						return "合伙人"
+						// if (row.district != null && row.district !=
+						// undefined) {
+						// return str += "合伙人" + "[" + row.district + "]";
+						// } else if (row.district == null
+						// && row.district == undefined) {
+						// return str += "合伙人" + "";
+						// }
 					} else if (value == "4") {
 						return "股东";
+						// if (row.district != null && row.district !=
+						// undefined) {
+						// return str += "股东" + "[" + res + "]";
+						// } else if (row.district == null
+						// && row.district == undefined) {
+						// return str += "股东" + "";
+						// }
 					}
 				}
 			},
 			{
 				field : "mobile",
 				title : "手机号码",
-				width : 70,
+				width : 75,
 				align : "center"
 			},
 			{
 				field : "refereeUserMobile",
 				title : "推荐人",
-				width : 70,
+				width : 75,
 				align : "center"
 			},
 			{
 				field : "userPassword",
 				title : "登录密码",
-				width : 70,
+				width : 65,
 				align : "center"
 			},
 			{
 				field : "twoPassword",
 				title : "支付密码",
-				width : 70,
+				width : 65,
+				align : "center"
+			},
+			{
+				field : "address",
+				title : "收货地址",
+				width : 100,
+				align : "center"
+			},
+			{
+				field : "banknumber",
+				title : "银行卡号",
+				width : 125,
 				align : "center"
 			},
 			{
@@ -147,7 +168,7 @@ $(function() {
 			{
 				field : "certification",
 				title : "认证状态",
-				width : 75,
+				width : 65,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == undefined) {
@@ -163,7 +184,7 @@ $(function() {
 			{
 				field : "status",
 				title : "冻结状态",
-				width : 75,
+				width : 65,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == undefined) {
@@ -179,7 +200,7 @@ $(function() {
 			{
 				field : "edit",
 				title : "操作",
-				width : 80,
+				width : 70,
 				align : "center",
 				formatter : function(value, row, index) {
 					var href = "";
@@ -327,7 +348,7 @@ function to_lock(userId, optType) {
 
 }
 
-function baoKongDan(userId) {
+function baoKongDan(id) {
 	var url = basePath + "/user/toActivity.html?userId=" + id;
 	$('#activityUserDiv').dialog({
 		title : "用户认证",

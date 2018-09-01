@@ -132,6 +132,7 @@ public class UserController extends BaseAction {
 				}
 			}
 
+			// 在html插入报单信息
 			// UserDo sum = new UserDo();
 			// sum.setUserName("统计总计:" + (amount == null ? 0 : amount));
 			// usersList.getModelList().add(sum);

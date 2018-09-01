@@ -192,7 +192,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		}
 
 		if (resfor == 1) {
-			maps = twentyAward(userService.getUser(userId).getRefereeid(), count);
+			maps = twentyAward(userService.getUser(userId).getId(), count);
 		}
 		return maps;
 

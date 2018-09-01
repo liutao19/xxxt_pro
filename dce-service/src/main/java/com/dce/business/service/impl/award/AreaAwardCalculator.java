@@ -96,7 +96,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 		// 获取奖励记录
 		if (userLst != null) {
-			Map<String, Object> maps = gainAward(buyer.getId(), 0, buyQty);
+			Map<String, Object> maps = gainAward(userLst.get(0).getId(), 0, buyQty);
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");

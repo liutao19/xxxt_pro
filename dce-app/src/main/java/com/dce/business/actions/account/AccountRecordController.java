@@ -1,6 +1,5 @@
 package com.dce.business.actions.account;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.entity.account.UserAccountDetailDo;
+import com.dce.business.entity.account.UserAccountDo;
 import com.dce.business.service.account.IAccountService;
 
 /**
@@ -40,10 +40,21 @@ public class AccountRecordController extends BaseController {
 	@RequestMapping(value = "/selectAccountRecord", method=RequestMethod.GET)
 	public Map<String,Object> selectAccountRecord(){
 		
-		Map<String,Object> map = new HashMap<String,Object>();
 		Integer userId = getUserId();
+		String accountType = getString("accountType"); 
 		logger.info("获取当前用户的id："+userId);
-		List<UserAccountDetailDo> list = accountService.selectUserAccountDetailByUserId(userId);
+		
+		
+		//当前账户总额度
+		Map<String,Object> map = new HashMap<String,Object>();
+		UserAccountDo currentUserAccountDo = accountService.selectUserAccount(userId, accountType);
+		map.put("balance", currentUserAccountDo.getAmount()); //当前用户的账户余额
+		
+		//查询账户流水
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		paraMap.put("userId", userId);
+		paraMap.put("accountType", accountType);
+		List<UserAccountDetailDo> list = accountService.selectUserAccountDetailByUserId(paraMap);
 		
 		if(list.isEmpty() || list.size() ==0){
 			map.put("code", "0");
@@ -63,22 +74,10 @@ public class AccountRecordController extends BaseController {
 			map2.put("createTime", DateUtil.dateToString(userAccountDetail.getCreateTime()));
 			map2.put("remark", userAccountDetail.getRemark());
 			map2.put("seqId", userAccountDetail.getSeqId());
+			map2.put("accountType", userAccountDetail.getAccountType());
 			accountlist.add(map2);
 		}
-		logger.info("======获取的交易流水记录======》》》"+accountlist);
-		BigDecimal balance = accountService.getUserAmount(userId);
-		map.put("balance", balance); //当前用户的账户余额
 		map.put("data", accountlist);
-		
-		// 查询当前账户的最新总余额失败
-		if(balance.compareTo(BigDecimal.ZERO) == 0){
-			map.put("code", "0");
-			map.put("msg", "获取当前账户的总余额为0");
-			map.put("data", new JSONArray());
-			return map;
-		}
-		map.put("code", "0");
-		map.put("msg", "获取交易流水记录成功");
 		
 		return map;
 	}

@@ -31,7 +31,7 @@ public interface IUserAccountDetailDao {
      * @param userId
      * @return
      */
-    public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId);
+    public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Map map);
 
     /**
      * 更新

@@ -22,7 +22,7 @@ public interface IAccountService {
 	 * @param userId
 	 * @return
 	 */
-	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId);
+	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Map map);
 
 	/**
 	 * 新建账户

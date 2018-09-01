@@ -456,9 +456,9 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Integer userId) {
+	public List<UserAccountDetailDo> selectUserAccountDetailByUserId(Map map) {
 
-		return userAccountDetailDao.selectUserAccountDetailByUserId(userId);
+		return userAccountDetailDao.selectUserAccountDetailByUserId(map);
 	}
 
 	@Override

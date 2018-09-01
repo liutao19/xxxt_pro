@@ -203,11 +203,8 @@ public class AccountServiceImpl implements IAccountService {
 		uaDetail.setBalanceAmount(balance); //余额
 		uaDetail.setSeqId(seqId);
 		uaDetail.setRelevantUser(relevantUserid);
-		if (StringUtils.isBlank(remark)) {
-			uaDetail.setRemark(incomeType.getRemark());
-		} else {
-			uaDetail.setRemark(remark);
-		}
+		uaDetail.setRemark(remark+":"+incomeType.getRemark());
+		
 		uaDetail.setUserId(userId);
 		userAccountDetailDao.addUserAccountDetail(uaDetail);
 		return true;

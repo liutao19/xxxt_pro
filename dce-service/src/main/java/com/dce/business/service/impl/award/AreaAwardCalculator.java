@@ -165,7 +165,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("用户:").append(buyer.getUserName())
-		  .append("购买:").append(order.getQty())
+		  .append("购买:").append(order.getQty()).append("盒")
 		  .append("获得:").append(account.getAmount());
 		account.setRemark(sb.toString());
 		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户

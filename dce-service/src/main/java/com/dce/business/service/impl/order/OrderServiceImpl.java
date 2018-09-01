@@ -714,14 +714,14 @@ public class OrderServiceImpl implements IOrderService {
 		// 对验签进行处理
 		if (!signVerified) {
 			logger.debug("============验签不通过 ！");
-			return "failure";
+			return "fail";
 		}
 
 		// 验签通过
 		// 获取需要保存的数据
 		boolean isPass = checkAlipayParamer(conversionParams);
 		if (isPass == false) {
-			return "failure";
+			return "fail";
 		}
 
 		String tradeStatus = conversionParams.get("trade_status");// 获取交易状态

@@ -103,7 +103,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 		// 获取奖励记录
 		if (userLst != null) {
-			Map<String, Object> maps = gainAward(buyer.getId(), 0, buyQty);
+			Map<String, Object> maps = gainAward(userLst.get(0).getId(), 0, buyQty);
 			if(null == maps || maps.isEmpty()){
 				return;
 			}
@@ -117,7 +117,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		//区域代表推荐人信息
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
-			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
+			Map<String, Object> maps = gainAward(usertwo.getId(), 1, buyQty);
 			if(null == maps || maps.isEmpty()){
 				return;
 			}

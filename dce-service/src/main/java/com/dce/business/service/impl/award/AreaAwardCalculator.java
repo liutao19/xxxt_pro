@@ -103,7 +103,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 		// 获取奖励记录
 		if (userLst != null) {
-			Map<String, Object> maps = gainAward(buyer.getRefereeid(), 0, buyQty);
+			Map<String, Object> maps = gainAward(userLst.get(0).getId(), 0, buyQty);
 			if(null == maps || maps.isEmpty()){
 				return;
 			}
@@ -117,7 +117,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		//区域代表推荐人信息
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
-			Map<String, Object> maps = gainAward(usertwo.getRefereeid(), 1, buyQty);
+			Map<String, Object> maps = gainAward(usertwo.getId(), 1, buyQty);
 			if(null == maps || maps.isEmpty()){
 				return;
 			}
@@ -165,7 +165,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append("用户:").append(buyer.getUserName())
-		  .append("购买:").append(order.getQty())
+		  .append("购买:").append(order.getQty()).append("盒")
 		  .append("获得:").append(account.getAmount());
 		account.setRemark(sb.toString());
 		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户
@@ -192,7 +192,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		}
 
 		if (resfor == 1) {
-			maps = twentyAward(userService.getUser(userId).getRefereeid(), count);
+			maps = twentyAward(userService.getUser(userId).getId(), count);
 		}
 		return maps;
 

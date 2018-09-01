@@ -850,6 +850,9 @@ public class UserServiceImpl implements IUserService {
 		return flag;
 	}
 
+	/**
+	 *后台客户分页査询
+	 */
 	@Override
 	public PageDo<Map<String,Object>> selectUserByPage(PageDo<Map<String,Object>> page, Map<String, Object> param){
 		// TODO Auto-generated method stub
@@ -858,6 +861,16 @@ public class UserServiceImpl implements IUserService {
 		}
 		param.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = userDao.selectByPage(param);
+		logger.debug("分页查询用户信息："+list);
+		//过滤重复的用户地址
+		for(int i=0 ; i<list.size(); i++){
+			if(i==list.size()){
+				break;
+			}
+			if(list.get(i).get("id").equals(list.get(i+1).get("id"))){
+				list.remove(i+1);
+			}
+		}
 		page.setModelList(list);
 		return page;
 	}

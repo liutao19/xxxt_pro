@@ -7,15 +7,14 @@ $(function() {
 
 	$("#searchdistrictForm #searchButton").on("click", function() {
 		var dataUrl = basePath + "/district/listDistrict.html";
-		$("#tt_District").datagrid('options').url = dataUrl;
-		$("#searchdistrictForm").datagrid('load', {
+		$("#tt_District").datagrid('load', {
 			'distrct_name' : $("#searchdistrictForm #distrct_name").val(),
 			'trueName' : $("#searchdistrictForm #true_name").val()
 		});
 	});
 
-	$("#searchuserForm #resetButton").on("click", function() {
-		$("#searchuserForm").form('reset');
+	$("#searchdistrictForm #resetButton").on("click", function() {
+		$("#searchdistrictForm").form('reset');
 	});
 
 	/*
@@ -100,8 +99,8 @@ $(function() {
 		columns : columns_tt,
 		toolbar : toolbar_tt,
 		queryParams : {
-			'searchStr' : $("#searchdistrictForm #searchStr").val(),
-			'searchCodeStr' : $("#searchdistrictForm #searchCodeStr").val()
+			'distrct_name' : $("#searchdistrictForm #distrct_name").val(),
+			'trueName' : $("#searchdistrictForm #true_name").val()
 		},
 		onLoadSuccess : function(data) {// 根据状态限制checkbox
 

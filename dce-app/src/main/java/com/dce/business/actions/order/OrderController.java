@@ -30,7 +30,6 @@ import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.alipay.util.AlipayConfig;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.DateUtil;
-import com.dce.business.common.util.ResponseUtils;
 import com.dce.business.common.wxPay.util.XMLUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
 import com.dce.business.entity.alipaymentOrder.AlipaymentOrder;
@@ -222,8 +221,7 @@ public class OrderController extends BaseController {
 	 */
 	@SuppressWarnings({ "unchecked", "finally" })
 	@RequestMapping(value = "/notify_url", method = RequestMethod.POST)
-	@ResponseBody
-	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String ret = "failure";
 		try {
 			logger.info("==================支付宝异步返回支付结果开始");
@@ -254,15 +252,18 @@ public class OrderController extends BaseController {
 
 		} catch (Exception e) {
 			logger.error("支付宝异步返回支付结果处理失败", e);
-			ret = "failure";
+			ret = "fail";
 
 		} finally {
+			response.setContentType("text/html;charset=utf-8");
 			PrintWriter out = response.getWriter();
 			out.print(ret);
+			out.flush();
 			out.close();
+			System.out.println("支付宝异步通知返回："+ret);
 			logger.debug("==========最终返回给支付宝的验签结果=========="+ret);
 			
-			return ret;
+			//return ret;
 		}
 	}
 

@@ -97,16 +97,24 @@ public class UserController extends BaseAction {
 	@SuppressWarnings("unchecked")
 	@ResponseBody
 	@RequestMapping("/list")
-	public void list(Pagination<UserDo> pagination, HttpServletRequest request, HttpServletResponse response) {
+	public void list(Pagination<Map<String,Object>> pagination, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			PageDo<UserDo> page = PageDoUtil.getPage(pagination);
+			PageDo<Map<String,Object>> page = PageDoUtil.getPage(pagination);
 			String userName = getString(request, "userName");
 			String userMobile = getString(request, "userMobile");
 			String startDate = getString(request, "startDate");
 			String endDate = getString(request, "endDate");
-
+			String userLevel = getString(request, "userLevel");
+			String address = getString(request, "address");
+			
 			Map<String, Object> params = new HashMap<String, Object>();
 
+			if (StringUtils.isNotBlank(userLevel)) {
+				params.put("userLevel", userLevel);
+			}
+			if (StringUtils.isNotBlank(address)) {
+				params.put("address", address);
+			}
 			if (StringUtils.isNotBlank(userName)) {
 				params.put("userName", userName);
 			}
@@ -121,22 +129,24 @@ public class UserController extends BaseAction {
 				long etd = DateUtil.getTimeStamp(endDate);
 				params.put("endDate", etd);
 			}
-			PageDo<UserDo> usersList = userService.selectUserByPage(page, params);
+			PageDo<Map<String,Object>> userPage = userService.selectUserByPage(page, params);
 
 			Long amount = userService.selectBaoDanAmount(params);
 
-			if (!CollectionUtils.isEmpty(usersList.getModelList())) {
-				for (UserDo user : usersList.getModelList()) {
-					user.setUserPassword(DataDecrypt.decrypt(user.getUserPassword()));
-					user.setTwoPassword(DataDecrypt.decrypt(user.getTwoPassword()));
+			if (!CollectionUtils.isEmpty(userPage.getModelList())) {
+				List<Map<String,Object>> userLst = userPage.getModelList();
+				for (Map<String,Object> user :userLst ) {
+					user.put("user_password",DataDecrypt.decrypt(String.valueOf(user.get("user_password"))));
+					user.put("two_password",DataDecrypt.decrypt(String.valueOf(user.get("two_password"))));
 				}
 			}
 
+			// 在html插入报单信息
 			// UserDo sum = new UserDo();
 			// sum.setUserName("统计总计:" + (amount == null ? 0 : amount));
 			// usersList.getModelList().add(sum);
 
-			pagination = PageDoUtil.getPageValue(pagination, usersList);
+			pagination = PageDoUtil.getPageValue(pagination, userPage);
 			outPrint(response, JSON.toJSONString(pagination));
 		} catch (Exception e) {
 			logger.error("显示用户数据异常", e);
@@ -268,7 +278,7 @@ public class UserController extends BaseAction {
 			HttpServletResponse response) {
 
 		Result<?> result = null;
-		
+
 		result = userService.addUserInfo(userDo);
 		logger.info("用户新增结果:" + JSON.toJSONString(result));
 		outPrint(response, JSON.toJSONString(Result.successResult("用户新增成功", result)));

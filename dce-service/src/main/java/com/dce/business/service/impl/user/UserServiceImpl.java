@@ -615,17 +615,6 @@ public class UserServiceImpl implements IUserService {
 		return Result.successResult("修改成功!");
 	}
 
-	@Override
-	public PageDo<UserDo> selectUserByPage(PageDo<UserDo> page, Map<String, Object> params) {
-
-		if (params == null) {
-			params = new HashMap<String, Object>();
-		}
-		params.put(Constants.MYBATIS_PAGE, page);
-		List<UserDo> list = userDao.selectByPage(params);
-		page.setModelList(list);
-		return page;
-	}
 
 	@Override
 	public PageDo<UserDo> selectEthAccountByPage(PageDo<UserDo> page, Map<String, Object> params) {
@@ -862,13 +851,13 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public PageDo<UserDo> getUserPage(Map<String, Object> param, PageDo<UserDo> page) {
+	public PageDo<Map<String,Object>> selectUserByPage(PageDo<Map<String,Object>> page, Map<String, Object> param){
 		// TODO Auto-generated method stub
 		if (param == null) {
 			param = new HashMap<String, Object>();
 		}
 		param.put(Constants.MYBATIS_PAGE, page);
-		List<UserDo> list = userDao.selectByPage(param);
+		List<Map<String, Object>> list = userDao.selectByPage(param);
 		page.setModelList(list);
 		return page;
 	}

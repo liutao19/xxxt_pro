@@ -73,6 +73,16 @@ public class DistrictController extends BaseAction {
 				param.put("managerName", managerName);
 				model.addAttribute("searManagerName", managerName);
 			}
+			String distrct_name=getString("distrct_name");
+			if (StringUtils.isNotBlank(distrct_name)) {
+				param.put("district", distrct_name);
+				model.addAttribute("district", distrct_name);
+			}
+			String trueName=getString("trueName");
+			if (StringUtils.isNotBlank(trueName)) {
+				param.put("trueName", trueName);
+				model.addAttribute("trueName", trueName);
+			}
 			page = userService.getUserPage(param, page);
 			System.err.println("数据---" + JSONObject.toJSON(pagination));
 			pagination = PageDoUtil.getPageValue(pagination, page);

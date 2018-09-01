@@ -1,3 +1,4 @@
+var basePath = "/dce-manager";
 $(function() {
 	/*
 	 * #############################################search form
@@ -5,9 +6,11 @@ $(function() {
 	 */
 
 	$("#searchdistrictForm #searchButton").on("click", function() {
+		var dataUrl = basePath + "/district/listDistrict.html";
+		$("#tt_District").datagrid('options').url = dataUrl;
 		$("#searchdistrictForm").datagrid('load', {
-			'searchStr' : $("#searchdistrictForm #searchStr").val(),
-			'searchCodeStr' : $("#searchdistrictForm #searchCodeStr").val()
+			'distrct_name' : $("#searchdistrictForm #distrct_name").val(),
+			'trueName' : $("#searchdistrictForm #true_name").val()
 		});
 	});
 

@@ -141,7 +141,7 @@ $(function() {
 			{
 				field : "reg_time",
 				title : "注册时间",
-				width : 110,
+				width : 115,
 				align : "center",
 				formatter : function(value, row, index) {
 					if (value == null || value == 0 || value == undefined) {

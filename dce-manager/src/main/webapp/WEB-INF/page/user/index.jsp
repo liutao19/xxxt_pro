@@ -35,7 +35,15 @@
 				<form id="searchForm" style="margin-top: 7px; margin-left: 5px;">
 					<table border="0">
 						<tr>
-							<td>等级<select class="tdfont" id="user_level" name="user_level" style="width: 140px;" style="height:30px;">
+							<td class="tdfont">用户名: <input style="width: 100px;" type="text" size="14"
+								id="userName" name="userName" placeholder="用户名"></td>
+							<td class="tdfont">手机号: <input style="width: 100px;" type="text" size="14"
+								id="userMobile" name="userMobile" placeholder="手机号"></td>
+							<td class="tdfont">收货地址: <input style="width: 100px;" type="text" size="14"
+								id="address" name="address" placeholder="收货地址"></td>
+							<td style="font-family: Tahoma, Verdana, 微软雅黑, 宋体;">等级:<select
+								class="tdfont" id="user_level" name="user_level" size="14" 
+								style="height: 25px; vertical-align: middle; border-width: 1px; border: 1px solid #95B8E7; background-color: #fff; border-radius: 5px 5px 5px 5px; line-height: 45px; text-align: center; width: 100px;">
 									<option value="">--搜索等级--</option>
 									<option value="0">普通</option>
 									<option value="1">会员</option>
@@ -43,21 +51,13 @@
 									<option value="3">合伙人</option>
 									<option value="4">股东</option>
 							</select></td>
-
-							<td class="tdfont">
-								用户名:
-								<input type="text" size="14" id="userName" name="userName" placeholder="用户名"></td>
-							<td class="tdfont">
-								手机号:
-								<input type="text" size="14" id="userMobile" name="userMobile" placeholder="手机号"></td>
-							<td class="tdfont">
-								收货地址:
-								<input type="text" size="14" id="address" name="address" placeholder="收货地址"></td>
-							<td class="tdfont" colspan="2">
-								注册时间: 
-								<input type="text" id="user_reg_startDate" name="user_reg_startDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
-								- 
-								<input type="text" id="user_reg_endDate" name="user_reg_endDate" class="easyui-datetimebox" size="14" data-options="editable : true" />
+							<td class="tdfont" colspan="2">注册时间: <input type="text"
+								id="user_reg_startDate" name="user_reg_startDate"
+								class="easyui-datetimebox" size="14"
+								data-options="editable : true" /> - <input type="text"
+								id="user_reg_endDate" name="user_reg_endDate"
+								class="easyui-datetimebox" size="14"
+								data-options="editable : true" />
 							</td>
 							<td><a href="javascript:void(0);" id="searchButton"
 								class="easyui-linkbutton" iconCls="icon-search" plain="true">查询</a>

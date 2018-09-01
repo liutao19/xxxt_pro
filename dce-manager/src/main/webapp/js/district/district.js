@@ -164,22 +164,22 @@ function save_User() {
 	var district = $("#editDistrictForm #children").find("option:selected")
 			.text();
 	var userId = $("#id").val();
-	if (province == "--请选择省份--" || city == "--请选择市---"||district=="--请选择区---") {
+	if (province == "--请选择省份--" || city == "--请选择市---"
+			|| district == "--请选择区---") {
 		$.messager.alert("提示", "请选择地区", "error");
 		return;
 	}
 	var object = new FormData();
 	object.append("id", userId);
-	object.append("district", province + city + district);
-	console.info(province + city + district + "id==" + "userId="
-			+ userId);
+	object.append("district", province + "-" + city + "-" + district);
+	console.info(province + city + district + "id==" + "userId=" + userId);
 	var url = httpUrl + "/district/saveUser.html?&rand=" + Math.random();
-	
+
 	$.ajax({
 		type : 'POST',
 		dataType : 'json',
 		url : url,
-		data :object,
+		data : object,
 		processData : false,
 		contentType : false,
 		success : function(data) {

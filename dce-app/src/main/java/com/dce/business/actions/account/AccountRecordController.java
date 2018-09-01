@@ -47,7 +47,7 @@ public class AccountRecordController extends BaseController {
 		
 		//当前账户总额度
 		Map<String,Object> map = new HashMap<String,Object>();
-		UserAccountDo currentUserAccountDo = accountService.selectUserAccount(userId, accountType);
+		UserAccountDo currentUserAccountDo = accountService.selectUserAccount(userId, accountType==null?"wallet_money":accountType);
 		map.put("balance", currentUserAccountDo.getAmount()); //当前用户的账户余额
 		
 		//查询账户流水

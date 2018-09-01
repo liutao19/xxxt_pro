@@ -103,7 +103,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 		// 获取奖励记录
 		if (userLst != null) {
-			Map<String, Object> maps = gainAward(buyer.getId(), 0, buyQty);
+			Map<String, Object> maps = gainAward(buyer.getRefereeid(), 0, buyQty);
 			if(null == maps || maps.isEmpty()){
 				return;
 			}

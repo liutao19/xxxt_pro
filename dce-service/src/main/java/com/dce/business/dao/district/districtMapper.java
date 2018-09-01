@@ -54,4 +54,9 @@ public interface districtMapper {
      */
     List<District> queryListPage(Map<String,Object>  map);
     
+    /**
+     * 多条件查询
+     */
+    District  selectByPrimaryKeySelective(District record);
+    
 }

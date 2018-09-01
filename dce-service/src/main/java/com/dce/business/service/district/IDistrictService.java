@@ -18,6 +18,7 @@ import java.util.Map;
 
 import com.dce.business.entity.district.District;
 import com.dce.business.entity.page.PageDo;
+import com.dce.business.entity.user.UserDo;
 
 
 public interface IDistrictService{
@@ -55,12 +56,17 @@ public interface IDistrictService{
 	 * @param page
 	 * @return
 	 */
-	public PageDo<District> getDistrictPage(Map<String, Object> param, PageDo<District> page);
+	public PageDo<UserDo> getDistrictPage(Map<String, Object> param, PageDo<UserDo> page);
 	
 	
 	/**
 	 * 删除
 	 */
 	public int deleteById(Integer districtId);
+	
+	/**
+	 * 多条件查询
+	 */
+	District selectByPrimaryKeySelective(District record);
 
 }

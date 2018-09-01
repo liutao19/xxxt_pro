@@ -58,6 +58,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 */
 	@Override
 	public void doAward(UserDo buyer, Order order) {
+		
+		
 
 		// 获取推荐人
 		UserDo ref1 = userService.getUser(buyer.getRefereeid());
@@ -94,11 +96,15 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 				// 多种奖励办法以;分隔
 				String[] bAwardLst = awardConf.split(";");
 				IncomeType awardsShow=IncomeType.TYPE_AWARD_FUTOU;
-				if( order.getQty() >=50&&buyer.getUserLevel()<3){
+				if(order.getQty() >=50&&buyer.getUserLevel()<3&&ref1.getUserLevel()>1){
 				 awardsShow=IncomeType.TYPE_GD_SAL;
 				}
+				if(ref1.getUserLevel()<2&&order.getQty()>=5){
+					logger.debug("用户等级不支持享用5盒以上的奖励");
+					return;
+				}
 				oneAward(ref1.getId(), bAwardLst, order,awardsShow);
-			}
+			} 
 		}
 
 		// 推荐人为空，下一个

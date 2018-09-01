@@ -83,9 +83,9 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 			String accountType = getAccountTypeByAward(oneAward);
 			
 			//是否首次才能奖励
-			boolean isFirst = getIsFirstByAward(oneAward);
+		//	boolean isFirst = getIsFirstByAward(oneAward);
 			
-			
+			/*
 			//仅首次才给的奖励
 			if(isFirst){
 				//给每个奖励一个编号，根据编号查询是否已经获取过该奖励
@@ -94,7 +94,7 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 					return;
 				}
 			}
-			
+			*/
 			if(wardAmount.compareTo(BigDecimal.ZERO)>0){
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId,accountType);
 				//账户对象增加金额
@@ -110,12 +110,12 @@ public class BuyerAwardCalculator implements IAwardCalculator {
 	 * @param awardNo
 	 * @return
 	 */
-	private boolean userIsFirst(int buyUserId, String awardNo,String accountType) {
+	/*private boolean userIsFirst(int buyUserId, String awardNo,String accountType) {
 		UserAccountDo userAccount = accountService.selectUserAccount(buyUserId, accountType);
 		//TODO 判断是否存在
 		
 		return false;
-	}
+	}*/
 
 
 	/**

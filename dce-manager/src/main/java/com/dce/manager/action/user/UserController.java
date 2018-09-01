@@ -265,18 +265,11 @@ public class UserController extends BaseAction {
 	 */
 	@RequestMapping(value = "/memberAdmin", method = { RequestMethod.POST })
 	@ResponseBody
-	public void memberAdmin(@Valid UserDo userDo, BindingResult bindingResult, HttpServletRequest request,
+	public void memberAdmin(UserDo userDo, BindingResult bindingResult, HttpServletRequest request,
 			HttpServletResponse response) {
 
 		Result<?> result = null;
-		// 新增会员
-		if (bindingResult.hasErrors()) {// 参数校验
-			List<ObjectError> errors = bindingResult.getAllErrors();
-			logger.info("新增会员，参数校验错误：" + JSON.toJSONString(errors));
-			Result.failureResult(errors.get(0).getDefaultMessage());
-			return;
-		}
-
+		
 		result = userService.addUserInfo(userDo);
 		logger.info("用户新增结果:" + JSON.toJSONString(result));
 		outPrint(response, JSON.toJSONString(Result.successResult("用户新增成功", result)));

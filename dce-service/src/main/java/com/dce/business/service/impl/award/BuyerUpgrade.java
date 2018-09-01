@@ -21,7 +21,7 @@ import com.dce.business.service.user.IUserService;
 
 
 /**
- * 购买用户升级
+ * 购买用户奖励
  * @author harry
  *
  */
@@ -49,6 +49,8 @@ public class BuyerUpgrade implements IAwardCalculator {
 	 */
 	@Override
 	public void doAward(UserDo buyer, Order order) {
+		
+		
 		
 		// 得到奖励记录
 		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(),order.getQty());

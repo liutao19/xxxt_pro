@@ -1992,7 +1992,19 @@
 		where id = #{id,jdbcType=INTEGER}
 
 	</update>
-
+  <select id="selectDistrictPage" parameterType="com.dce.business.entity.user.UserDo"
+		resultMap="BaseResultMap">
+		<![CDATA[
+			select * from ct_user 
+			where user_level >= 3
+		]]>
+			<if test="district !=null">
+				AND district=#{district,jdbcType=VARCHAR}
+			</if>
+			<if test="trueName !=null">
+				AND true_name=#{trueName,jdbcType=VARCHAR}
+			</if>
+		</select>
 
 
 </mapper>

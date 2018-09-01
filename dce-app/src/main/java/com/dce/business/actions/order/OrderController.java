@@ -78,6 +78,12 @@ public class OrderController extends BaseController {
 	public Result<?> getOrder() {
 		Integer userId = getUserId();
 
+		// 判断该用户是否存在
+		UserDo user = userService.getUser(Integer.valueOf(userId));
+		if (user == null) {
+			return Result.successResult("该用户不存在！", new JSONArray());
+		}
+
 		List<Order> orderLitst = orderService.selectByUesrIdOneToMany(userId);
 
 		if (orderLitst.size() == 0 || orderLitst.isEmpty()) {
@@ -134,7 +140,7 @@ public class OrderController extends BaseController {
 
 		Order order = new Order();
 		order.setUserid(Integer.valueOf(userId));
-		
+
 		logger.info("获取的商品信息-------》》》》》" + goods);
 
 		// 将商品信息的JSON数据解析为list集合
@@ -142,11 +148,11 @@ public class OrderController extends BaseController {
 		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====用户id：" + userId);
 
 		// 生成订单，保存订单和订单明细
-	   //orderService.chooseGoods(chooseGoodsLst, order);
+		// orderService.chooseGoods(chooseGoodsLst, order);
 		return orderService.chooseGoods(chooseGoodsLst, order);
 
 	}
-	
+
 	/**
 	 * 下单生成预支付订单
 	 * 
@@ -160,9 +166,8 @@ public class OrderController extends BaseController {
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
 		String addressId = getString("addressId") == null ? "" : request.getParameter("addressId");
 		String orderType = getString("orderType") == null ? "" : request.getParameter("orderType");
-
 		String orderId = getString("orderId") == null ? "" : request.getParameter("orderId");
-		
+
 		// 假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "" || addressId == "" || orderType == "" || StringUtils.isBlank(orderId)) {
 
@@ -192,21 +197,20 @@ public class OrderController extends BaseController {
 		logger.info("======用户选择的商品信息：" + chooseGoodsLst + "=====获取的赠品信息：" + premiumList + "=====获取的地址id：" + addressId
 				+ "=====获取的支付方式：" + orderType + "=====用户id：" + userId);
 
-		//前端页面没有传orderId
-		for(OrderDetail od : premiumList ){
+		// 前端页面没有传orderId
+		for (OrderDetail od : premiumList) {
 			od.setOrderid(Integer.valueOf(orderId));
 		}
-		
-		//前端页面没有传orderId
-		for(OrderDetail od : chooseGoodsLst ){
+
+		// 前端页面没有传orderId
+		for (OrderDetail od : chooseGoodsLst) {
 			od.setOrderid(Integer.valueOf(orderId));
 		}
-				
+
 		// 生成预付单，保存订单和订单明显
 		return orderService.saveOrder(premiumList, chooseGoodsLst, order, request, response);
 	}
-	
-	
+
 	/**
 	 * 支付宝支付异步通知该接口
 	 * 
@@ -217,8 +221,7 @@ public class OrderController extends BaseController {
 	 */
 	@SuppressWarnings({ "unchecked", "finally" })
 	@RequestMapping(value = "/notify_url", method = RequestMethod.POST)
-	@ResponseBody
-	public String notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void notify(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String ret = "failure";
 		try {
 			logger.info("==================支付宝异步返回支付结果开始");
@@ -245,15 +248,22 @@ public class OrderController extends BaseController {
 
 			String status = orderService.notify(conversionParams);
 			logger.info("===========》》》》》验签结果：" + status);
-
 			ret = "success";
 
 		} catch (Exception e) {
 			logger.error("支付宝异步返回支付结果处理失败", e);
-			ret = "failure";
+			ret = "fail";
 
 		} finally {
-			return ret;
+			response.setContentType("text/html;charset=utf-8");
+			PrintWriter out = response.getWriter();
+			out.print(ret);
+			out.flush();
+			out.close();
+			System.out.println("支付宝异步通知返回："+ret);
+			logger.debug("==========最终返回给支付宝的验签结果=========="+ret);
+			
+			//return ret;
 		}
 	}
 
@@ -364,8 +374,8 @@ public class OrderController extends BaseController {
 		for (int i = 0; i < jsonArray.size(); i++) {
 			OrderDetail orderDetail = new OrderDetail();
 			JSONObject obj = jsonArray.getJSONObject(i);
-			//过滤数量为0的商品
-			if(Integer.valueOf(obj.getString("qty")) == 0){
+			// 过滤数量为0的商品
+			if (Integer.valueOf(obj.getString("qty")) == 0) {
 				continue;
 			}
 			orderDetail.setGoodsId(Integer.valueOf(obj.getString("goodsId")));

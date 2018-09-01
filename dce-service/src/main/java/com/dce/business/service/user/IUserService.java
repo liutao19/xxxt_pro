@@ -1,10 +1,12 @@
 package com.dce.business.service.user;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.dce.business.common.result.Result;
+import com.dce.business.common.util.Constants;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.entity.user.UserParentDo;
@@ -193,8 +195,24 @@ public interface IUserService {
 	
 	boolean updateLevel(UserDo record);
 	
+	/**
+	 * 分页查询显示区域
+	 * @param param
+	 * @param page
+	 * @return
+	 */
+	public PageDo<UserDo> getUserPage(Map<String, Object> param, PageDo<UserDo> page);
+	
+	/**
+	 * 分配区域方法
+	 * @param params
+	 * @return
+	 */
+	public int updateUserDistrict(UserDo user);
 
 	// 下单购买商品之后，用户状态激活
 	int updateUserStatus(Map<String, Object> params);
+
+	PageDo<UserDo> getUserDistrictPage(Map<String, Object> param, PageDo<UserDo> page);
 
 }

@@ -117,38 +117,38 @@ public class OrderServiceImpl implements IOrderService {
 		}
 		params.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = orderDao.selectOrderByPage(params);
-		
+
 		// 查询出赠品和商品详情
-				for (Map<String, Object> order : list) {
-					Integer orderId = Integer.valueOf(order.get("orderid").toString());
-					List<OrderDetail> orderDetail = orderDetailDao.selectByOrderId(orderId);
-					// 拼接商品和赠品
-					StringBuffer orderStr = new StringBuffer();
-					StringBuffer awardStr = new StringBuffer();
-					for (OrderDetail detail : orderDetail) {
-						// 过滤没有明细的订单
-						if (null == detail.getGoodsId()) {
-							continue;
-						}
-						// 设置商品名称
-						CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
-						logger.debug("商品名称====》》" + goods.getTitle());
-						detail.setGoodsName(goods.getTitle());
-						// 赠品
-						if (detail.getRemark().equals("0")) {
-							awardStr.append(detail.getGoodsName());
-							awardStr.append(detail.getQuantity() + "盒");
-							awardStr.append(" ");
-							// 商品
-						} else {
-							orderStr.append(detail.getGoodsName());
-							orderStr.append(detail.getQuantity() + "盒");
-							orderStr.append(" ");
-						}
-					}
-					order.put("orderDetailList", orderStr);
-					order.put("awardDetailLst", awardStr);
+		for (Map<String, Object> order : list) {
+			Integer orderId = Integer.valueOf(order.get("orderid").toString());
+			List<OrderDetail> orderDetail = orderDetailDao.selectByOrderId(orderId);
+			// 拼接商品和赠品
+			StringBuffer orderStr = new StringBuffer();
+			StringBuffer awardStr = new StringBuffer();
+			for (OrderDetail detail : orderDetail) {
+				// 过滤没有明细的订单
+				if (null == detail.getGoodsId()) {
+					continue;
 				}
+				// 设置商品名称
+				CTGoodsDo goods = ctGoodsService.selectById(Long.valueOf(detail.getGoodsId()));
+				logger.debug("商品名称====》》" + goods.getTitle());
+				detail.setGoodsName(goods.getTitle());
+				// 赠品
+				if (detail.getRemark().equals("0")) {
+					awardStr.append(detail.getGoodsName());
+					awardStr.append(detail.getQuantity() + "盒");
+					awardStr.append(" ");
+					// 商品
+				} else {
+					orderStr.append(detail.getGoodsName());
+					orderStr.append(detail.getQuantity() + "盒");
+					orderStr.append(" ");
+				}
+			}
+			order.put("orderDetailList", orderStr);
+			order.put("awardDetailLst", awardStr);
+		}
 		page.setModelList(list);
 		return page;
 	}
@@ -232,10 +232,9 @@ public class OrderServiceImpl implements IOrderService {
 				// 订单商品明细
 				List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 				// 订单赠品明细
-				List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
+				//List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
 
 				for (OrderDetail detail : orderDetail) {
-
 					if (null == detail.getGoodsId()) {// 过滤没有明细的订单
 						continue;
 					}
@@ -245,7 +244,7 @@ public class OrderServiceImpl implements IOrderService {
 					// 赠品明细
 					if ("0".equals(detail.getRemark())) {
 						logger.debug("商品名称====》》" + goods.getTitle());
-						detail.setGoodsName("赠品:"+goods.getTitle());
+						detail.setGoodsName("赠品:" + goods.getTitle());
 					} else {
 						// 设置商品名称
 						logger.debug("商品名称====》》" + goods.getTitle());
@@ -254,7 +253,7 @@ public class OrderServiceImpl implements IOrderService {
 					orderDetailList.add(detail);
 				}
 				order.setOrderDetailList(orderDetailList);
-				//order.setAwardDetailLst(awardDetailLst);
+				// order.setAwardDetailLst(awardDetailLst);
 			}
 		}
 
@@ -271,7 +270,7 @@ public class OrderServiceImpl implements IOrderService {
 			// 根据订单编号查询出订单
 			Order order = orderDao.selectByOrderCode(ordercode);
 			logger.debug("根据订单编号查询出的订单：" + order);
-			logger.debug("=============订单支付成功，处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
+			logger.debug("=============订单支付成功，开始处理逻辑业务=========》》》：更新订单表状态，奖励计算，激活用户状态");
 			logger.debug("获取的订单支付状态========》》》》》" + order.getPaystatus());
 			// 如果订单状态为支付失败状态才进行更新
 			Map<String, Object> paraMap = new HashMap<String, Object>();
@@ -308,7 +307,6 @@ public class OrderServiceImpl implements IOrderService {
 			}
 
 		} catch (Exception e) {
-			logger.debug("=============订单支付成功，处理逻辑业务失败！！！更新订单表状态，奖励计算，激活用户状态");
 			e.printStackTrace();
 			logger.error("订单支付成功，处理逻辑业务失败！", e);
 			throw e;
@@ -359,28 +357,36 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	private Double countPremiumPriceSpread(List<OrderDetail> premiumList) {
 
+		logger.debug("计算赠品差价开始=========》》》》》");
 		double price = 40.0; // 每盒差价
 		double totalprice = 0; // 总差价
 
 		if (premiumList.isEmpty() || premiumList.size() == 0) {
+			logger.debug("赠品集合为空，不计算差价========》》》》");
 			return totalprice;
 		}
 
-		
-		if (premiumList.size() == 1) {
-			if (premiumList.get(0).getOrderid().intValue() == 1002) { // 女版差价
-				totalprice = premiumList.get(0).getQuantity() * price;
-			} 
-			return totalprice;
-		}
-		
-		
-		// 混合
+		// 赠品是鹿无忧时
 		for (OrderDetail premium : premiumList) {
-			if (premium.getOrderid().intValue() == 1002) { // 女版差价
-				totalprice += premium.getQuantity() * price;
+			if (premium.getGoodsId() == 1001 || premium.getGoodsId() == 1002) {
+				// 一、当赠品为男版或者女版时
+				if (premiumList.size() <= 1) {
+					if (premiumList.get(0).getOrderid() == 1001) { // 男版
+						totalprice = 0;
+					} else { // 女版差价
+						totalprice = premiumList.get(0).getQuantity() * price;
+					}
+
+					// 二、当赠品为混合版时
+				} else {
+					for (int j = 0; j < premiumList.size(); j++) {
+						// 计算出需补的差价
+						if (premiumList.get(j).getGoodsId() == 1002) {
+							totalprice = premiumList.get(j).getQuantity() * price;
+						}
+					}
+				}
 			}
-			
 		}
 		return totalprice;
 	}
@@ -393,11 +399,12 @@ public class OrderServiceImpl implements IOrderService {
 	public Result<String> saveOrder(List<OrderDetail> premiumList, List<OrderDetail> chooseGoodsLst, Order order,
 			HttpServletRequest request, HttpServletResponse response) {
 
-		logger.debug("获取订单的支付方式====》》》》"+order.getOrdertype());
 		if (order.getOrderid() != null) {
+			logger.debug("===========支付成功，更新订单==========");
 			return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 			// 若传过来的订单id为空，则重新生成订单
 		} else {
+			logger.debug("===========支付成功，orderId为空，重新产生订单=========");
 			return this.createOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 		}
 	}
@@ -509,7 +516,7 @@ public class OrderServiceImpl implements IOrderService {
 
 		// 查询出原来的订单
 		Order oldOrder = this.selectByPrimaryKey(order.getOrderid());
-		logger.debug("更新订单前查询出的订单========》》》》"+oldOrder);
+		logger.debug("更新订单前查询出的订单========》》》》" + oldOrder);
 		OrderDetailExample example = new OrderDetailExample();
 		example.createCriteria().andOrderidEqualTo(oldOrder.getOrderid());
 		// 删除原来的明细
@@ -688,7 +695,7 @@ public class OrderServiceImpl implements IOrderService {
 	 */
 	@Override
 	public String notify(Map<String, String> conversionParams) throws Exception {
-		logger.debug("==================支付宝异步请求逻辑处理=============");
+		logger.debug("==================支付宝异步通知逻辑处理=============");
 
 		// 签名验证(对支付宝返回的数据验证，确定是支付宝返回的)
 		boolean signVerified = false;
@@ -707,14 +714,14 @@ public class OrderServiceImpl implements IOrderService {
 		// 对验签进行处理
 		if (!signVerified) {
 			logger.debug("============验签不通过 ！");
-			return "failure";
+			return "fail";
 		}
 
 		// 验签通过
 		// 获取需要保存的数据
 		boolean isPass = checkAlipayParamer(conversionParams);
 		if (isPass == false) {
-			return "failure";
+			return "fail";
 		}
 
 		String tradeStatus = conversionParams.get("trade_status");// 获取交易状态
@@ -1116,9 +1123,8 @@ public class OrderServiceImpl implements IOrderService {
 		map.put("salqty", salqty);
 		map.put("userLevel", userLevel);
 		map.put("orderId", order.getOrderid());
-		
 
-		logger.debug("userId:"+order.getUserid()+"获取赠品成功:"+map);
+		logger.debug("userId:" + order.getUserid() + "获取赠品成功:" + map);
 		return Result.successResult("获取赠品成功", map);
 	}
 }

@@ -1,9 +1,7 @@
 package com.dce.manager.action.news;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +36,6 @@ import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.message.INewsService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
-
-import net.coobird.thumbnailator.Thumbnails;
 
 @Controller
 @RequestMapping("/ysnews")
@@ -263,13 +258,13 @@ public class YsNewsController extends BaseAction {
 	
 	
 	
-	/**
+/*	*//**
 	 * 图片压缩
 	 * @param oldpath
 	 * @param newspath
 	 * @param withd
 	 * @param height
-	 */
+	 *//*
 	public void Picture_Compression(String oldpath,String newspath,int withd,int height){
 		
 		try {
@@ -281,7 +276,7 @@ public class YsNewsController extends BaseAction {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	/**
 	 * 删除
 	 */

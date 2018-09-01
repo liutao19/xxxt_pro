@@ -131,6 +131,11 @@ public interface IUserDao {
 	 */
 	List<UserDo> selectUserCondition(Map<String, Object> map);
 	
+	/**
+	 * 区域查询
+	 */
+	List<UserDo> selectDistrictPage(Map<String,Object> map);
+	
 	
 	/**
 	 * 修改有用戶等级方法

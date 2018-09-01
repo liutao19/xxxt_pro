@@ -43,10 +43,15 @@
 							商品赠送
 						</c:when>
 						</c:choose>
-						    :${li.amount}
+						    : ${li.amount}
 					</td>
 		        </tr>
 		        </c:forEach>
+		        <tr>
+		        <td class="tdfont">
+		        	收账汇总:${Totalperformance}
+		        </td>
+		        </tr>
 		      </table>
   
   </div>

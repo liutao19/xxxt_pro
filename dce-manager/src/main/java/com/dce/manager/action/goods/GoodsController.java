@@ -6,16 +6,12 @@
 
 package com.dce.manager.action.goods;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,8 +35,6 @@ import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.service.goods.ICTGoodsService;
 import com.dce.manager.action.BaseAction;
 import com.dce.manager.util.ResponseUtils;
-
-import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * @author huangzl QQ: 272950754

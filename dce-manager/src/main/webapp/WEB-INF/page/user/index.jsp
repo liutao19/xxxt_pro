@@ -43,7 +43,7 @@
 								id="address" name="address" placeholder="收货地址"></td>
 							<td style="font-family: Tahoma, Verdana, 微软雅黑, 宋体;">等级:<select
 								class="tdfont" id="user_level" name="user_level" size="14" 
-								style="height: 25px; vertical-align: middle; border-width: 1px; border: 1px solid #95B8E7; background-color: #fff; border-radius: 5px 5px 5px 5px; line-height: 45px; text-align: center; width: 100px;">
+								style="height: 30px; vertical-align: middle; border-width: 1px; border: 1px solid #95B8E7; background-color: #fff; border-radius: 5px 5px 5px 5px; line-height: 45px; text-align: center; width: 100px;">
 									<option value="">--搜索等级--</option>
 									<option value="0">普通</option>
 									<option value="1">会员</option>

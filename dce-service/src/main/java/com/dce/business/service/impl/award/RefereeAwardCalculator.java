@@ -133,19 +133,19 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	private void oneAward(int buyUserId, String[] bAwardLst, Order order,IncomeType awardsShow) {
          //获取购买者信息
 		UserDo user=userService.getUser(order.getUserid());
-		//int num=0;
+		int num=0;
 		for (String oneAward : bAwardLst) {
-		//	num+=1;
+			num+=1;
 			if (StringUtils.isBlank(oneAward)) {
 				return;
 			}
 			//判断是否隔代发放奖励
-		/*	if(num==2){
+			if(num==2){
 				if(user.getRefereeid()!=buyUserId){
 					logger.debug("隔代发放奖励");
 					return;
 				}
-			}*/
+			}
 			// 解析单个奖励配置
 			String[] awds = oneAward.split(",");
 			// 计算奖励金额

@@ -141,6 +141,7 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			}
 			//判断是否隔代发放奖励
 			if(num==2){
+				awardsShow=awardsShow.TYPE_AWARD_FUTOU;
 				if(user.getRefereeid()!=buyUserId){
 					logger.debug("隔代发放奖励");
 					return;

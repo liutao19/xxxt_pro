@@ -39,6 +39,25 @@ $(function(){
       			[
 	 			 	{field:'id',title:'id',width:30,halign:"center", align:"left",hidden:true},
 	 				{field:"userName",title:"用户名",width:40,align:"center"},
+	 				{field:"userLevel",title:"用户等级",width:40,align:"center",
+	 					formatter:function(value,row,index){
+	 						if(value == "1"){
+	 							return "普通用户";
+	 						}
+	 						if(value == "2"){
+	 							return "会员";
+	 						}
+	 						if(value == "3"){
+	 							return "vip";
+	 						}
+	 						if(value == "4"){
+	 							return "城市合伙人";
+	 						}
+	 						if(value == "5"){
+	 							return "分红股东";
+	 						}
+	 					}
+	 				},
 	 				{field:"amount",title:"金额",width:40,align:"center"},
 	 				{field:"balanceAmount",title:"余额",width:40,align:"center"},
 	 				{field:"moreOrLess",title:"增加/减少",width:30,align:"center"},
@@ -120,7 +139,7 @@ $(function(){
 								return "充值代数奖励";
 							}
 						}
-	 				},
+	 				},*/
 	 				{field:"createTime",title:"交易时间",width:80,align:"center",
 	 					formatter:function(value,row,index){
 	 						if(value > 0){
@@ -128,7 +147,7 @@ $(function(){
 	 						}
 	 						return value;
 	 					}
-	 				},*/
+	 				},
 	 				{field:"accountType",title:"账户类型",width:80,align:"center",
 	 					formatter:function(value,row,index){
 	 						if(value == "wallet_money"){

@@ -257,7 +257,7 @@
 
 	<select id="selectUserAccountDetailByPage" parameterType="Map"
 		resultMap="userAccountDetailResultMap">
-		SELECT d.*, u.user_name as userName
+		SELECT d.*, u.user_name as userName,u.user_level as userLevel
 		FROM ct_user_account_detail d
 		left join ct_user u on d.userId = u.id
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">

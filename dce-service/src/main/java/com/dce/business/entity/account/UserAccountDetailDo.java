@@ -49,6 +49,16 @@ public class UserAccountDetailDo implements java.io.Serializable {
 	private String seqId;
 
 	private String transactionObject; //转出对象
+	
+	private String userLevel;
+
+	public String getUserLevel() {
+		return userLevel;
+	}
+
+	public void setUserLevel(String userLevel) {
+		this.userLevel = userLevel;
+	}
 
 	private String relevantUser; //发生对象用户
 	

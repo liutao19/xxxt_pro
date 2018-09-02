@@ -33,12 +33,12 @@
 				type="text" name="trueName" value="${user.twoPassword }"
 				style="height: 30px;" /></td>
 		</tr>
-		<tr>
+<!-- 		<tr>
 			<td>推荐人:</td>
 			<td><input id="vip_user_refereeUserMobile"
 				class="easyui-validatebox" type="text" name="trueName"
 				value="${user.refereeUserMobile }" style="height: 30px;" /></td>
-		</tr>
+		</tr> -->
 		<tr>
 			<td>真实姓名:</td>
 			<td><input id="vip_trueName" class="easyui-validatebox"

@@ -46,9 +46,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 
 	@Resource
 	private IOrderService orderService;
-	
-	private ThreadLocal<Map<String,Object>> awardContextMap = new ThreadLocal<Map<String,Object>>() ;
-	
+
+	private ThreadLocal<Map<String, Object>> awardContextMap = new ThreadLocal<Map<String, Object>>();
 
 	/**
 	 * 根据购买者购买数量确定用户会员等级和给会员的奖励 计算奖励的方法
@@ -61,8 +60,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 */
 	@Override
 	public void doAward(UserDo buyer, Order order) {
-		
-		Map<String,Object> contextMap = new HashMap<String,Object>();
+
+		Map<String, Object> contextMap = new HashMap<String, Object>();
 		contextMap.put("buyer", buyer);
 		contextMap.put("order", order);
 		awardContextMap.set(contextMap);
@@ -83,7 +82,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		Awardlist award = awardlistService.getAwardConfigByQtyAndBuyerLevel(buyer.getUserLevel(), order.getQty());
 
 		// 分级奖励
-		if ((buyer.getUserLevel() == 0 && order.getQty() >= 5&& order.getQty() <50) || (buyer.getUserLevel() == 1 && order.getQty() >= 5&& order.getQty() <50)) {
+		if ((buyer.getUserLevel() == 0 && order.getQty() >= 5 && order.getQty() < 50)
+				|| (buyer.getUserLevel() == 1 && order.getQty() >= 5 && order.getQty() < 50)) {
 			distributionone(buyer.getRefereeid(), order.getQty(), award, order);
 			return;
 		}
@@ -94,23 +94,23 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 
 		if (ref1 != null) {
 
-			if (ref1.getUserLevel() < 2&&order.getQty()>0&&order.getQty()<5) {
-				//体验奖
+			if (ref1.getUserLevel() < 2 && order.getQty() > 0 && order.getQty() < 5) {
+				// 体验奖
 				experiencePrize(ref1.getId(), order.getQty(), award, order);
 			} else {
 				String awardConf = getAwardConfByRefLevel(ref1.getUserLevel(), 1, award);
 				// 多种奖励办法以;分隔
 				String[] bAwardLst = awardConf.split(";");
-				IncomeType awardsShow=IncomeType.TYPE_AWARD_FUTOU;
-				if(order.getQty() >=50&&buyer.getUserLevel()<3&&ref1.getUserLevel()>1){
-				 awardsShow=IncomeType.TYPE_GD_SAL;
+				IncomeType awardsShow = IncomeType.TYPE_AWARD_FUTOU;
+				if (order.getQty() >= 50 && buyer.getUserLevel() < 3 && ref1.getUserLevel() > 1) {
+					awardsShow = IncomeType.TYPE_GD_SAL;
 				}
-				if(ref1.getUserLevel()<2&&order.getQty()>=5){
+				if (ref1.getUserLevel() < 2 && order.getQty() >= 5) {
 					logger.debug("用户等级不支持享用5盒以上的奖励");
 					return;
 				}
-				oneAward(ref1.getId(), bAwardLst, order,awardsShow);
-			} 
+				oneAward(ref1.getId(), bAwardLst, order, awardsShow);
+			}
 		}
 
 		// 推荐人为空，下一个
@@ -118,8 +118,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String awardConf = getAwardConfByRefLevel(ref2.getUserLevel(), 2, award);
 			// 多种奖励办法以;分隔
 			String[] bAwardLst = awardConf.split(";");
-			IncomeType awardsShow=IncomeType.TYPE_AWARD_JIAJIN;
-			oneAward(ref2.getId(), bAwardLst, order,awardsShow);
+			IncomeType awardsShow = IncomeType.TYPE_AWARD_JIAJIN;
+			oneAward(ref2.getId(), bAwardLst, order, awardsShow);
 		}
 
 	}
@@ -130,19 +130,20 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 	 * @param buyUserId
 	 * @param bAwardLst
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst, Order order,IncomeType awardsShow) {
-         //获取购买者信息
-		UserDo user=userService.getUser(order.getUserid());
-		int num=0;
+	private void oneAward(int buyUserId, String[] bAwardLst, Order order, IncomeType awardsShow) {
+		// 获取购买者信息
+		UserDo user = userService.getUser(order.getUserid());
+		int num = 0;
 		for (String oneAward : bAwardLst) {
-			num+=1;
+			num += 1;
 			if (StringUtils.isBlank(oneAward)) {
 				return;
 			}
-			//判断是否隔代发放奖励
-			if(num==2){
-				awardsShow=awardsShow.TYPE_AWARD_FUTOU;
-				if(user.getRefereeid()!=buyUserId){
+			// 判断是否隔代发放奖励
+			if (num == 2) {
+				awardsShow = awardsShow.TYPE_AWARD_FUTOU;
+
+				if (user.getRefereeid() != buyUserId) {
 					logger.debug("隔代发放奖励");
 					return;
 				}
@@ -158,28 +159,28 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 				UserAccountDo accont = new UserAccountDo(wardAmount, buyUserId, accountType);
 				buildAccountRemark(accont);
 				// 账户对象增加金额
-				accountService.updateUserAmountById(accont,awardsShow);
+				accountService.updateUserAmountById(accont, awardsShow);
 			}
 		}
 	}
-	
+
 	/**
 	 * 创建奖励备注
+	 * 
 	 * @param account
 	 */
 	private void buildAccountRemark(UserAccountDo account) {
-		
-		Map<String,Object> contextMap = awardContextMap.get();
-		UserDo buyer =(UserDo)contextMap.get("buyer");
-		Order order =(Order) contextMap.get("order");
-		
+
+		Map<String, Object> contextMap = awardContextMap.get();
+		UserDo buyer = (UserDo) contextMap.get("buyer");
+		Order order = (Order) contextMap.get("order");
+
 		StringBuffer sb = new StringBuffer();
-		sb.append("用户:").append(buyer.getUserName())
-		  .append("购买:").append(order.getQty()).append("盒")
-		  .append("获得:").append(account.getAmount());
+		sb.append("用户:").append(buyer.getUserName()).append("购买:").append(order.getQty()).append("盒").append("获得:")
+				.append(account.getAmount());
 		account.setRemark(sb.toString());
-		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户
-		
+		account.setRelevantUser(String.valueOf(buyer.getId()));// 关联用户
+
 	}
 
 	/**
@@ -285,8 +286,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String awardConf = getAwardConfByRefLevel(userone.getUserLevel(), 1, award);
 			// 多种奖励办法以;分隔
 			String[] bAwardLst = awardConf.split(";");
-			IncomeType awardsShow=IncomeType.TYPE_AWARD_BAODAN;
-			oneAward(userone.getId(), bAwardLst, order,awardsShow);
+			IncomeType awardsShow = IncomeType.TYPE_AWARD_BAODAN;
+			oneAward(userone.getId(), bAwardLst, order, awardsShow);
 			// 派发500奖励
 			distributiontwo(userone.getRefereeid(), count, award, order);
 
@@ -310,8 +311,8 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 			String awardConf = getAwardConfByRefLevel(userone.getUserLevel(), 2, award);
 			// 多种奖励办法以;分隔
 			String[] bAwardLst = awardConf.split(";");
-			IncomeType awardsShow=IncomeType.TYPE_AWARD_JIAJIN;
-			oneAward(userone.getId(), bAwardLst, order,awardsShow);
+			IncomeType awardsShow = IncomeType.TYPE_AWARD_JIAJIN;
+			oneAward(userone.getId(), bAwardLst, order, awardsShow);
 		} else {
 			distributiontwo(userone.getRefereeid(), count, award, order);
 		}
@@ -324,15 +325,15 @@ public class RefereeAwardCalculator implements IAwardCalculator {
 		map.put("userId", userid);
 		map.put("incomeType", IncomeType.TYPE_AWARD_EXPERIENCE.getIncomeType());
 		if ((!accountService.selectUserAccountDetail(map).isEmpty())
-				|| accountService.selectUserAccountDetail(map).size() >0) {
+				|| accountService.selectUserAccountDetail(map).size() > 0) {
 			logger.error("已享受会员体验奖");
 			return;
 		}
 		String awardConf = getAwardConfByRefLevel(user.getUserLevel(), 1, award);
 		// 多种奖励办法以;分隔
 		String[] bAwardLst = awardConf.split(";");
-		IncomeType awardsShow=IncomeType.TYPE_AWARD_EXPERIENCE;
-		oneAward(user.getId(), bAwardLst, order,awardsShow);
+		IncomeType awardsShow = IncomeType.TYPE_AWARD_EXPERIENCE;
+		oneAward(user.getId(), bAwardLst, order, awardsShow);
 	}
 
 }

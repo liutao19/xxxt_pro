@@ -69,6 +69,7 @@ public class UserServiceImpl implements IUserService {
 	private IPerformanceDailyService performanceDailyService;
 	@Resource
 	private IDistrictService districtService;
+
 	/**
 	 * 查询用户名是否存在
 	 */
@@ -615,7 +616,6 @@ public class UserServiceImpl implements IUserService {
 		return Result.successResult("修改成功!");
 	}
 
-
 	@Override
 	public PageDo<UserDo> selectEthAccountByPage(PageDo<UserDo> page, Map<String, Object> params) {
 		if (params == null) {
@@ -756,12 +756,14 @@ public class UserServiceImpl implements IUserService {
 		userDo.setRegTime(new Date().getTime());// 新增时间（注册时间）
 		userDo.setIsActivated(1);// 激活状态
 		userDo.setCertification(1);// 认证状态
+		userDo.setRegTime(new Date().getTime());// 保存当前时间
+		// 密码加密处理
+		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
+		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
 
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
-
 			Map<String, Object> params = new HashMap<String, Object>();
-
 			params.put("mobile", userDo.getRefereeUserMobile());
 
 			List<UserDo> refUserLst = this.selectMobile(params);
@@ -770,15 +772,22 @@ public class UserServiceImpl implements IUserService {
 			}
 			ref = refUserLst.get(0);
 		}
-		// 密码加密处理
-		userDo.setRegTime(new Date().getTime());
-		userDo.setUserPassword(DataEncrypt.encrypt(userDo.getUserPassword())); // 登录密码
-		userDo.setTwoPassword(DataEncrypt.encrypt(userDo.getTwoPassword())); // 支付密码
+
 		// 维护推荐人关系
 		if (ref != null) {
 			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
 			userDo.setParentid(ref.getId());// 获取上级id
 		}
+
+		if (ref != null) {
+			// 维护父节点关系
+			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+			// 维护推荐人关系
+			maintainUserReferee(userDo.getId(), ref.getId());
+		}
+
+		// 维护賬戶
+		maintainUserAccount(userDo.getId());
 
 		// 新增的会员信息
 		logger.info("用户信息:userName=" + userDo.getUserName());
@@ -798,16 +807,6 @@ public class UserServiceImpl implements IUserService {
 		// 新增会员
 		int result = userDao.insertSelective(userDo);
 
-		if (ref != null) {
-			// 维护父节点关系
-			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
-			// 维护推荐人关系
-			maintainUserReferee(userDo.getId(), ref.getId());
-		}
-
-		// 维护賬戶
-		maintainUserAccount(userDo.getId());
-
 		return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
 	}
 
@@ -815,19 +814,100 @@ public class UserServiceImpl implements IUserService {
 	 * 修改用户信息
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public Result<?> update(UserDo userDo) {
-		if (userDo == null || userDo.getId() == null) {
-			return Result.failureResult("修改用户信息参数错误!");
+		UserDo ref = null;
+
+		userDo.setId(userDo.getId());// 用户id
+		logger.info("修改用户信息:userId=" + userDo.getId());
+		userDo.setUserName(userDo.getUserName());// 用户名
+		logger.info("修改用户信息:userName=" + userDo.getUserName());
+		userDo.setTrueName(userDo.getTrueName());// 用户真实姓名
+		logger.info("修改用户信息:trueName=" + userDo.getTrueName());
+		userDo.setMobile(userDo.getMobile());// 用户手机号
+		logger.info("修改用户信息:mobile=" + userDo.getMobile());
+		userDo.setUserPassword(userDo.getUserPassword());// 登录密码
+		logger.info("修改用户信息:userPassword=" + userDo.getUserPassword());
+		userDo.setTwoPassword(userDo.getTwoPassword());// 支付密码
+		logger.info("修改用户信息:twoPassword=" + userDo.getTwoPassword());
+		userDo.setRefereeUserMobile(userDo.getRefereeUserMobile());// 用户的推荐人
+		logger.info("修改用户信息:refereeUserMobile=" + userDo.getRefereeUserMobile());
+		userDo.setIdnumber(userDo.getIdnumber());// 身份证号
+		logger.info("修改用户信息:idunmber=" + userDo.getIdnumber());
+		userDo.setBanknumber(userDo.getBanknumber());// 银行卡号
+		logger.info("修改用户信息:banknumber=" + userDo.getBanknumber());
+		userDo.setBanktype(userDo.getBanktype());// 银行卡的开户行
+		logger.info("修改用户信息:banktype=" + userDo.getBanktype());
+
+		UserDo user = new UserDo();
+		if (userDo.getId() != 0 && userDo.getId() != null) {
+			return Result.failureResult("请选择要修改的用户!");
+		}
+		// 等级
+		if (userDo.getUserLevel() != 0 && userDo.getId() != null) {
+			user.setUserLevel(userDo.getUserLevel());
+			// 激活状态
+			if (userDo.getUserLevel() >= 1) {
+				user.setIsActivated(1);
+			}
+		}
+		// 性别
+		if (userDo.getSex() > 1 && userDo.getSex() != null) {
+			user.setSex(Integer.valueOf(userDo.getSex()));
+		}
+		// 认证状态
+		if (userDo.getTrueName() != null || userDo.getMobile() != null || userDo.getIdnumber() != null
+				|| userDo.getBanknumber() != null || userDo.getBanktype() != null) {
+			userDo.setCertification(userDo.getCertification());
 		}
 
-		int flag = userDao.updateByPrimaryKeySelective(userDo);
-		if (flag > 0) {
-			return Result.successResult("修改成功");
-		} else {
+		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
+		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("mobile", userDo.getRefereeUserMobile());
 
-			return Result.failureResult("修改失败");
+			List<UserDo> refUserLst = this.selectMobile(params);
+			if (refUserLst == null || refUserLst.size() < 1) {
+				return Result.failureResult("推荐人不存在");
+			}
+			ref = refUserLst.get(0);
 		}
+
+		// 维护推荐人关系
+		if (ref != null) {
+			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
+			userDo.setParentid(ref.getId());// 获取上级id
+		}
+
+		if (ref != null) {
+			// 维护父节点关系
+			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+			// 维护推荐人关系
+			maintainUserReferee(userDo.getId(), ref.getId());
+		}
+
+		Result<?> flag = Result.failureResult("信息修改失败!");
+		if (userDo.getId() != 0 && userDo.getId() != null) {
+			int result = userDao.updateByPrimaryKeySelective(userDo);
+			return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
+		}
+		return flag;
 	}
+
+	// @Override
+	// public Result<?> update(UserDo userDo) {
+	// if (userDo == null || userDo.getId() == null) {
+	// return Result.failureResult("修改用户信息参数错误!");
+	// }
+	//
+	// int flag = userDao.updateByPrimaryKeySelective(userDo);
+	// if (flag > 0) {
+	// return Result.successResult("修改成功");
+	// } else {
+	//
+	// return Result.failureResult("修改失败");
+	// }
+	// }
 
 	/**
 	 * 下单购买商品之后，用户状态激活
@@ -851,18 +931,18 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	/**
-	 *后台客户分页査询
+	 * 后台客户分页査询
 	 */
 	@Override
-	public PageDo<Map<String,Object>> selectUserByPage(PageDo<Map<String,Object>> page, Map<String, Object> param){
+	public PageDo<Map<String, Object>> selectUserByPage(PageDo<Map<String, Object>> page, Map<String, Object> param) {
 		// TODO Auto-generated method stub
 		if (param == null) {
 			param = new HashMap<String, Object>();
 		}
 		param.put(Constants.MYBATIS_PAGE, page);
 		List<Map<String, Object>> list = userDao.selectByPage(param);
-		logger.debug("分页查询用户信息："+list);
-		//过滤重复的用户地址
+		logger.debug("分页查询用户信息：" + list);
+		// 过滤重复的用户地址
 		// for(int i=0 ; i<list.size(); i++){
 		// if(i==list.size()){
 		// break;
@@ -874,9 +954,7 @@ public class UserServiceImpl implements IUserService {
 		page.setModelList(list);
 		return page;
 	}
-	
-	
-	
+
 	/**
 	 * 区域管理查询
 	 */
@@ -895,22 +973,22 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public int updateUserDistrict(UserDo user) {
-		int i=0;
-		if(user!=null&&user.getDistrict()!=null){
-			i=userDao.updateLevel(user);
-			District district=new District();
+		int i = 0;
+		if (user != null && user.getDistrict() != null) {
+			i = userDao.updateLevel(user);
+			District district = new District();
 			district.setUserId(user.getId());
-			District oldDistrict =districtService.selectByPrimaryKeySelective(district);
-			if(oldDistrict == null){
+			District oldDistrict = districtService.selectByPrimaryKeySelective(district);
+			if (oldDistrict == null) {
 				district.setDistrctName(user.getDistrict());
 				district.setDistrictStatus(1);
 				districtService.insertSelective(district);
-			}else{
+			} else {
 				district.setDistrctName(user.getDistrict());
 				district.setDistrictId(oldDistrict.getDistrictId());
 				int ret = districtService.updateDistrictById(district);
-				if(ret <1){
-					throw new BusinessException("重复设置区域代表"+user.getDistrict());
+				if (ret < 1) {
+					throw new BusinessException("重复设置区域代表" + user.getDistrict());
 				}
 			}
 		}

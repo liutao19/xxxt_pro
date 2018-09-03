@@ -58,8 +58,16 @@ public class UserAddressController extends BaseController {
 			addressService.updateByPrimaryKeySelective(addressadd);
 			return Result.successResult("地址修改成功");
 		} else {
+			// 判断添加的是否是第一条数据，否则修改地址
+			// if(){
 			addressService.insertSelective(addressadd);
 			return Result.successResult("地址添加成功");
+			// }else if(){
+			// addressadd.setAddressid(Integer.parseInt(addressId));
+			// addressService.updateByPrimaryKeySelective(addressadd);
+			// return Result.successResult("地址添加成功");
+			// }
+
 		}
 
 	}

@@ -57,7 +57,7 @@ public interface IOrderService {
 	 * @return
 	 */
 	Order buyOrder(Order order, int goodstype, List<OrderDetail> orderDetail);
-	
+
 	/**
 	 * 
 	 * @param chooseGoodsLst
@@ -82,9 +82,20 @@ public interface IOrderService {
 
 	/**
 	 * 选择商品查询赠品
+	 * 
 	 * @param chooseGoodsLst
 	 * @param order
 	 */
 	Result<?> chooseGoods(List<OrderDetail> chooseGoodsLst, Order order);
 
+	/**
+	 * 从用户地址copy到订单地址
+	 * 
+	 * @param order
+	 * @return
+	 */
+	public Integer mainOrderAddress(Order order);
+
+	// 获取订单总金额
+	List<Order> sumAmount();
 }

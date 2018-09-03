@@ -86,13 +86,11 @@ public class OrderServiceImpl implements IOrderService {
 	private IAwardService awardService;
 	@Resource
 	private IUserService userService;
-	
-	
+
 	@Resource
 	private UserAdressService userAdressService;
 	@Resource
 	private IOrderAdressService orderAdressService;
-	
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -243,7 +241,8 @@ public class OrderServiceImpl implements IOrderService {
 				// 订单商品明细
 				List<OrderDetail> orderDetailList = new ArrayList<OrderDetail>();
 				// 订单赠品明细
-				//List<OrderDetail> awardDetailLst = new ArrayList<OrderDetail>();
+				// List<OrderDetail> awardDetailLst = new
+				// ArrayList<OrderDetail>();
 
 				for (OrderDetail detail : orderDetail) {
 					if (null == detail.getGoodsId()) {// 过滤没有明细的订单
@@ -382,7 +381,7 @@ public class OrderServiceImpl implements IOrderService {
 				if (premiumList.size() <= 1) {
 					if (premiumList.get(0).getGoodsId() == 1002) { // 女版差价
 						totalprice = premiumList.get(0).getQuantity() * price;
-						logger.debug("当赠品为女版时补的差价："+totalprice);
+						logger.debug("当赠品为女版时补的差价：" + totalprice);
 					}
 
 					// 二、当赠品为混合版时
@@ -390,11 +389,11 @@ public class OrderServiceImpl implements IOrderService {
 					for (int j = 0; j < premiumList.size(); j++) {
 						// 计算出需补的差价
 						if (premiumList.get(j).getGoodsId() == 1002) {
-							logger.debug("获取的女版赠品的数量======》》》》"+premiumList.get(j).getQuantity());
+							logger.debug("获取的女版赠品的数量======》》》》" + premiumList.get(j).getQuantity());
 							totalprice = premiumList.get(j).getQuantity() * price;
 						}
 					}
-					logger.debug("当赠品为混合版时补的差价："+totalprice);
+					logger.debug("当赠品为混合版时补的差价：" + totalprice);
 				}
 			}
 		}
@@ -410,27 +409,44 @@ public class OrderServiceImpl implements IOrderService {
 			HttpServletRequest request, HttpServletResponse response) {
 
 		// 若传过来的订单id为空，则重新生成订单
-		if(order.getOrderid() == null){
+		if (order.getOrderid() == null) {
 			throw new BusinessException("无效的订单ID");
 		}
 		logger.debug("===========支付成功，更新订单==========");
-		//维护订单地址
+		// 维护订单地址
 		Integer orderAddressId = mainOrderAddress(order);
 		order.setAddressid(orderAddressId);
 		return this.updateOrderToPay(premiumList, chooseGoodsLst, order, request, response);
 	}
-	
-	
+
 	/**
 	 * 从用户地址copy到订单地址
+	 * 
 	 * @param order
 	 * @return
 	 */
-	private Integer mainOrderAddress(Order order) {
-		UserAddressDo  userAddressDo = userAdressService.selectByPrimaryKey(order.getAddressid());
+	public Integer mainOrderAddress(Order order) {
+		UserAddressDo userAddressDo = userAdressService.selectByPrimaryKey(order.getAddressid());
+		String address = userAddressDo.getAddress();
+		String userName = userAddressDo.getUsername();
+		String userPhone = userAddressDo.getUserphone();
+		Integer userId = userAddressDo.getUserid();
+		
+		if (address==null || userName==null || userPhone==null || userId==null) {
+			throw new BusinessException("从用户地址中获取收货人信息为空！！！");
+		}
+
 		OrderAddressDo orderAddressDo = new OrderAddressDo();
-		BeanUtils.copyProperties(userAddressDo, orderAddressDo );
-		orderAdressService.deleteByPrimaryKeyInt(order.getAddressid());
+		orderAddressDo.setAddress(address);
+		orderAddressDo.setAddressDetails(userAddressDo.getAddressDetails());
+		orderAddressDo.setUsername(userName);
+		orderAddressDo.setUserphone(userPhone);
+		orderAddressDo.setUserid(userId);
+
+		
+	    //BeanUtils.copyProperties(userAddressDo, orderAddressDo );
+		//orderAdressService.deleteByPrimaryKeyInt(order.getAddressid());
+		//orderAddressDo.setAddressid(null); 
 		orderAdressService.insertSelective(orderAddressDo);
 		return orderAddressDo.getAddressid();
 	}
@@ -548,7 +564,7 @@ public class OrderServiceImpl implements IOrderService {
 		// 删除原来的明细
 		orderDetailDao.deleteByExample(example);
 
-		logger.debug("用户选择的赠品信息======》》》："+premiumList);
+		logger.debug("用户选择的赠品信息======》》》：" + premiumList);
 		// 计算是否需要补赠品的差价
 		Double giftAmount = countPremiumPriceSpread(premiumList);
 		logger.debug("需要补的赠品差价========》》》：" + giftAmount);
@@ -1153,5 +1169,11 @@ public class OrderServiceImpl implements IOrderService {
 
 		logger.debug("userId:" + order.getUserid() + "获取赠品成功:" + map);
 		return Result.successResult("获取赠品成功", map);
+	}
+
+	@Override
+	public List<Order> sumAmount() {
+
+		return orderDao.sumAmount();
 	}
 }

@@ -37,10 +37,10 @@ $(function(){
 							{field:'orderid',title:'orderid',width:100,hidden:true},
 							{field:'userid',title:'userid',width:100,hidden:true},
 								{field:"ordercode",title:"订单编号",width:180,align:"center"},
-								{field:"trueName",title:"收货人",width:180,align:"center"},
+								{field:"totalprice",title:"总金额（元）",width:180,align:"center"},
 								{field:"phone",title:"手机号码",width:180,align:"center"},
 								{field:"qty",title:"数量（盒）",width:180,align:"center"},
-								{field:"totalprice",title:"总金额（元）",width:180,align:"center"},
+								{field:"trueName",title:"收货人",width:180,align:"center"},
 								{field:"createtime",title:"创建时间",width:180,align:"center",formatter:dateTimeFormatter},
 								{field:"paystatus",title:"付款状态",width:180,align:"center",
 			 						formatter:function(value,row,index){
@@ -61,7 +61,7 @@ $(function(){
 				 							return "其他";
 				 						}
 				 					}},
-								{field:"address",title:"收获地址",width:180,align:"center"},
+								{field:"address",title:"收货地址",width:180,align:"center"},
 								{field:"orderDetailList",title:"商品详情",width:180,align:"center"},
 								{field:"awardDetailLst",title:"赠品详情",width:180,align:"center"},
 								{field:"orderstatus",title:"订单状态",width:180,align:"center",

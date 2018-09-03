@@ -54,6 +54,10 @@
 		#{orderId,jdbcType=BIGINT}
 
 	</select>
+	
+	<select id="sumAmount" resultMap="BaseResultMap">
+		select sum(totalPrice) totalprice from ct_order where paystatus = 1
+	</select>
 
 	<select id="selectByOrderCode" parameterType="java.lang.String"
 		resultMap="BaseResultMap">

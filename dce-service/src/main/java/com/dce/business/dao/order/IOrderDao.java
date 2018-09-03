@@ -68,4 +68,7 @@ public interface IOrderDao {
 
 	// 根据订单查询出收货人的信息
 	OrderAddressDo selectAddressByOrder(Integer orderId);
+	
+	//获取订单总金额
+	List<Order> sumAmount();
 }

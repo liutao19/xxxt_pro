@@ -2,6 +2,7 @@ package com.dce.manager.action.order;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
@@ -105,10 +107,37 @@ public class OrderController extends BaseAction {
 			//支付成功的订单
 			param.put("payStatus", 1);
 
-			page = orderService.selectOrderByPage(page, param);
-			pagination = PageDoUtil.getPageValue(pagination, page);
-
+			//本页合计
+			PageDo<Map<String,Object>> orderList = orderService.selectOrderByPage(page, param);
+			if(orderList != null && !CollectionUtils.isEmpty(orderList.getModelList())){
+				Map<String,Object> total = new HashMap<String,Object>();
+				total.put("ordercode", "本页合计");
+				BigDecimal pageTotalprice= BigDecimal.ZERO; 
+				for(Map<String,Object> temp : orderList.getModelList()){
+					pageTotalprice = pageTotalprice.add((BigDecimal)temp.get("totalprice"));
+				}
+				total.put("totalprice", pageTotalprice);
+				orderList.getModelList().add(total);
+			}
+			
+			//所有订单总金额
+			List<Order> listorder = orderService.sumAmount();
+			if(!CollectionUtils.isEmpty(listorder)){
+				Map<String,Object> sum = new HashMap<String,Object>();
+				sum.put("ordercode", "订单总金额");
+				for(Order order : listorder){
+					if(order.getTotalprice() == null){
+						sum.put("totalprice", BigDecimal.ZERO);
+					}else{
+						sum.put("totalprice", order.getTotalprice());
+					}
+				}
+				orderList.getModelList().add(sum);
+			}
+			
+			pagination = PageDoUtil.getPageValue(pagination, orderList);
 			outPrint(response, JSONObject.toJSON(pagination));
+			
 		} catch (Exception e) {
 			logger.error("查询订单异常", e);
 			throw new BusinessException("系统繁忙，请稍后再试");
@@ -184,10 +213,10 @@ public class OrderController extends BaseAction {
 			String date = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 			String fileName = URLEncoder.encode(excelHead + date + ".xls", "utf-8");
 			List<String[]> excelheaderList = new ArrayList<String[]>();
-			String[] excelheader = { "订单编号", "收货人", "手机号码", "数量（盒）", "总金额（元）", "下单时间", "付款状态", "支付方式", "收获地址", "商品详情",
+			String[] excelheader = { "订单编号", "总金额（元）", "手机号码", "数量（盒）", "收货人", "下单时间", "付款状态", "支付方式", "收货地址", "商品详情",
 					"赠品详情","是否发货" };
 			excelheaderList.add(0, excelheader);
-			String[] excelData = { "ordercode", "trueName", "phone", "qty", "totalprice", "createtime", "paystatus",
+			String[] excelData = { "ordercode", "totalprice", "phone", "qty", "trueName", "createtime", "paystatus",
 					"ordertype", "address", "remark","awardRemark", "orderstatus" };
 			HSSFWorkbook wb = ExeclTools.execlExport(excelheaderList, excelData, excelHead, orderList);
 			response.setContentType("application/vnd.ms-excel;charset=utf-8");

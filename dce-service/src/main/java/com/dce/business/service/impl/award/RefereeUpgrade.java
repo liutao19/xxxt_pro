@@ -134,7 +134,7 @@ public class RefereeUpgrade implements IAwardCalculator {
 
 		UserDo userDo = new UserDo();
 		userDo.setId(buyer.getRefereeid());
-		userDo.setUserLevel((byte) (buyer.getUserLevel() + 2));
+		userDo.setUserLevel((byte)4);
 		System.err.println(JSON.toJSON(userService.updateLevel(userDo)));
 
 	}

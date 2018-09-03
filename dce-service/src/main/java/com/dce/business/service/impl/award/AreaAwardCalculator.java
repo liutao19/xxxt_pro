@@ -55,8 +55,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 	@Resource
 	private IUserRefereeDao userRefereeDao;
-	
-	private ThreadLocal<Map<String,Object>> awardContextMap = new ThreadLocal<Map<String,Object>>() ;
+
+	private ThreadLocal<Map<String, Object>> awardContextMap = new ThreadLocal<Map<String, Object>>();
 
 	/**
 	 * 计算奖励的方法
@@ -68,8 +68,8 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @return
 	 */
 	@Override
-	public  void doAward(UserDo buyer, Order order) {
-		Map<String,Object> contextMap = new HashMap<String,Object>();
+	public void doAward(UserDo buyer, Order order) {
+		Map<String, Object> contextMap = new HashMap<String, Object>();
 		contextMap.put("buyer", buyer);
 		contextMap.put("order", order);
 		awardContextMap.set(contextMap);
@@ -77,10 +77,9 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		if (order == null) {
 			throw new BusinessException("无效的订单ID", "error-buyerAward-003");
 		}
-		if(buyer==null){
+		if (buyer == null) {
 			throw new BusinessException("购买者信息为空", "error-buyerAward-003");
 		}
-		
 
 		// 获取订单信息
 		Integer buyQty = order.getQty();
@@ -104,28 +103,28 @@ public class AreaAwardCalculator implements IAwardCalculator {
 		// 获取奖励记录
 		if (userLst != null) {
 			Map<String, Object> maps = gainAward(userLst.get(0).getId(), 0, buyQty);
-			if(null == maps || maps.isEmpty()){
+			if (null == maps || maps.isEmpty()) {
 				return;
 			}
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
-			IncomeType awardsShow=IncomeType.TYPE_AWARD_LEADER;
-			oneAward((int) maps.get("userId"), bAwardLst,awardsShow);
+			IncomeType awardsShow = IncomeType.TYPE_AWARD_LEADER;
+			oneAward((int) maps.get("userId"), bAwardLst, awardsShow);
 		}
 
-		//区域代表推荐人信息
+		// 区域代表推荐人信息
 		UserDo usertwo = userService.getUser(userLst.get(0).getRefereeid());
 		if (usertwo != null) {
 			Map<String, Object> maps = gainAward(usertwo.getId(), 1, buyQty);
-			if(null == maps || maps.isEmpty()){
+			if (null == maps || maps.isEmpty()) {
 				return;
 			}
 			// 多种奖励办法以;分隔
 			String buyerAward = maps.get("money").toString();
 			String[] bAwardLst = buyerAward.split(";");
-			IncomeType awardsShow=IncomeType.TYPE_AWARD_PASSIVITYLEADER;
-			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst,awardsShow);
+			IncomeType awardsShow = IncomeType.TYPE_AWARD_PASSIVITYLEADER;
+			oneAward(Integer.valueOf(maps.get("userId").toString()), bAwardLst, awardsShow);
 		}
 
 	}
@@ -136,7 +135,7 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	 * @param buyUserId
 	 * @param bAwardLst
 	 */
-	private void oneAward(int buyUserId, String[] bAwardLst,IncomeType awardsShow) {
+	private void oneAward(int buyUserId, String[] bAwardLst, IncomeType awardsShow) {
 		for (String oneAward : bAwardLst) {
 			// 奖励金额
 			Integer wardAmount = getAmtByAward(oneAward);
@@ -155,29 +154,29 @@ public class AreaAwardCalculator implements IAwardCalculator {
 
 	/**
 	 * 创建奖励备注
+	 * 
 	 * @param account
 	 */
 	private void buildAccountRemark(UserAccountDo account) {
-		
-		Map<String,Object> contextMap = awardContextMap.get();
-		UserDo buyer =(UserDo)contextMap.get("buyer");
-		Order order =(Order) contextMap.get("order");
-		
+
+		Map<String, Object> contextMap = awardContextMap.get();
+		UserDo buyer = (UserDo) contextMap.get("buyer");
+		Order order = (Order) contextMap.get("order");
+
 		StringBuffer sb = new StringBuffer();
-		sb.append("用户:").append(buyer.getUserName())
-		  .append("购买:").append(order.getQty()).append("盒")
-		  .append("获得:").append(account.getAmount());
+		sb.append("用户:").append(buyer.getUserName()).append("购买:").append(order.getQty()).append("盒").append("获得:")
+				.append(account.getAmount());
 		account.setRemark(sb.toString());
-		account.setRelevantUser(String.valueOf(buyer.getId()));//关联用户
-		
+		account.setRelevantUser(String.valueOf(buyer.getId()));// 关联用户
+
 	}
 
 	/**
 	 * 
 	 * @param userId
-	 * 区域人id
+	 *            区域人id
 	 * @param resfor
-	 * 区分区域人奖励和推荐人奖励
+	 *            区分区域人奖励和推荐人奖励
 	 * @return
 	 */
 	public Map<String, Object> gainAward(Integer userId, int resfor, int count) {
@@ -215,10 +214,10 @@ public class AreaAwardCalculator implements IAwardCalculator {
 	public Map<String, Object> twentyAward(Integer id, int count) {
 		// 返回值
 		Map<String, Object> maps = new HashMap<>();
-
+		// 查询推荐人信息
+		UserDo user = userService.getUser(id);
 		try {
-			// 查询推荐人信息
-			UserDo user = userService.getUser(id);
+
 			if (user == null) {
 				logger.error("该区域的推荐人无推荐人");
 				return Collections.EMPTY_MAP;
@@ -241,13 +240,12 @@ public class AreaAwardCalculator implements IAwardCalculator {
 						return Collections.EMPTY_MAP;
 					}
 					// 递归循环，直到找到城市合伙人
-					twentyAward(user.getRefereeid(), count);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("发放区域20元奖励异常");
 		}
-		return maps;
+		return twentyAward(user.getRefereeid(), count);
 	}
 }

@@ -41,19 +41,19 @@ $(function(){
 	 				{field:"userName",title:"用户名",width:40,align:"center"},
 	 				{field:"userLevel",title:"用户等级",width:40,align:"center",
 	 					formatter:function(value,row,index){
-	 						if(value == "1"){
+	 						if(value == "0"){
 	 							return "普通用户";
 	 						}
-	 						if(value == "2"){
+	 						if(value == "1"){
 	 							return "会员";
 	 						}
-	 						if(value == "3"){
+	 						if(value == "2"){
 	 							return "vip";
 	 						}
-	 						if(value == "4"){
+	 						if(value == "3"){
 	 							return "城市合伙人";
 	 						}
-	 						if(value == "5"){
+	 						if(value == "4"){
 	 							return "分红股东";
 	 						}
 	 					}

@@ -62,7 +62,7 @@
                 <![CDATA[AND d.createTime <= str_to_date(#{endTime},'%Y-%m-%d %H') ]]>
 			</if>
 		</trim>
-		order by d.createTime desc,d.amount desc
+		order by d.id desc
 	</select>
 
 	<select id="selectUserAccountDetail" parameterType="Map"
@@ -295,7 +295,7 @@
                 <![CDATA[AND d.createTime <= str_to_date(#{endDate},'%Y-%m-%d %H') ]]>
 			</if>
 		</trim>
-		order by d.createTime desc
+		order by d.id desc
 	</select>
 </mapper>
 

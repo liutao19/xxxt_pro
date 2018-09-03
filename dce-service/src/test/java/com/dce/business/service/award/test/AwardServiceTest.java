@@ -17,10 +17,10 @@ public class AwardServiceTest extends BaseTest {
 	private IUserRefereeDao userreferee;
 
 	@Test
-	@Rollback(false)
+	//@Rollback(false)
 	public void testCalcAward() {
-		Integer orderId = 26;
-		Integer buyUserId =9;
+		Integer orderId =15;
+		Integer buyUserId =6;
 		awardService.calcAward(buyUserId, orderId);
 	}
 

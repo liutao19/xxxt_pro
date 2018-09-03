@@ -19,8 +19,8 @@ public class AwardServiceTest extends BaseTest {
 	@Test
 	//@Rollback(false)
 	public void testCalcAward() {
-		Integer orderId = 9;
-		Integer buyUserId =4;
+		Integer orderId =15;
+		Integer buyUserId =6;
 		awardService.calcAward(buyUserId, orderId);
 	}
 

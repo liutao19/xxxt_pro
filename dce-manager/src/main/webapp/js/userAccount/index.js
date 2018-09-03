@@ -37,7 +37,7 @@ $(function(){
 	 			 	{field:'userId',title:'id',width:30,halign:"center", align:"left",checkbox:true},
 	 				{field:"userName",title:"用户名",width:30,align:"center"},
 	 				{field:"wallet_money",title:"账户余额(元)",width:80,align:"center"},
-	 				{field:"wallet_travel",title:"奖励旅游(次)",width:80,align:"center"},
+	 				{field:"wallet_travel",title:"奖励旅游(名额)",width:80,align:"center"},
 	 				{field:"wallet_goods",title:"奖励商品(盒)",width:80,align:"center"},
 	 				{field:"wallet_active",title:"奖励活动(场)",width:80,align:"center"}
 	 				/*{field:"wallet_score",title:"流通币钱包",width:80,align:"center"},

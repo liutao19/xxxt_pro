@@ -126,6 +126,7 @@ public class UserController extends BaseController {
 		map.put("token", token);
 		map.put("userId", userDo.getId());
 		map.put("certification", userDo.getCertification());
+		
 		return Result.successResult("登录成功", map);
 	}
 

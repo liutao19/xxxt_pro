@@ -48,8 +48,9 @@ public class TokenUtil {
         String checkSign = md5(userId, ts, uri, token);
         boolean result = checkSign.equals(sign);
         if (!result) { //记录日志，方便排查原因
+        	logger.info("客户端地址："+uri);
             logger.info("用户登录失效， userId:" + userId);
-            logger.info("token" + token);
+            logger.info("token：" + token);
             logger.info("请求签名：" + sign);
             logger.info("系统加签：" + checkSign);
         }
@@ -96,9 +97,9 @@ public class TokenUtil {
     }
     
     public static void main(String[] args) {
-        String userId="18553";
-        String ts="1525023386760";
-        String token="MGM4ZjQ5YWUtZTI4ZC00MjgxLTkwNjctYzkyMjdiODY1ZTM0MTg1NTM=";
+        String userId="6";
+        String ts="1536056498196";
+        String token="MmNmYTY2MzQtNTcxZi00MjRkLTkyODktZDRhNWQ5NDcyZGI4Ng==";
         
         System.out.println(md5(Integer.valueOf(userId), ts, "", token));
     }

@@ -75,13 +75,19 @@ public class OrderController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
-	public Result<?> getOrder() {
-		
+	public Result<?> getOrder(HttpServletRequest request) {
+
 		Integer userId = getUserId();
-		// 获取前端传过来的sign
-		String sign = getString("sign");
-		logger.debug("获取前端传过来的sign：" + sign);
-		//TokenUtil.checkToken(uri, userId, ts, sign)
+		// 验证用户token参数
+		//String uri = request.getRequestURI(); // 获得发出请求字符串的客户端地址
+		String uri = "";
+		String ts = request.getParameter(TokenUtil.TS);
+		String sign = request.getParameter(TokenUtil.SIGN);
+		// 验证token
+		boolean flag = TokenUtil.checkToken(uri, Integer.valueOf(userId), ts, sign);
+		if (!flag) {
+			return Result.failureResult("登录失效，请重新登录！");
+		}
 
 		// 判断该用户是否存在
 		UserDo user = userService.getUser(Integer.valueOf(userId));
@@ -129,12 +135,22 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/chooseGoods", method = RequestMethod.POST)
 	public Result<?> chooseGoods(HttpServletRequest request, HttpServletResponse response) {
 
+		//String uri = request.getRequestURI(); // 获得发出请求字符串的客户端地址
+		String uri = "";
+		String ts = request.getParameter(TokenUtil.TS);
+		String sign = request.getParameter(TokenUtil.SIGN);
 		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
 
 		// 假如获取参数某一个为空，直接返回结果至前端
 		if (userId == "" || goods == "") {
 			return Result.successResult("获取userId、cart参数为空！", new JSONArray());
+		}
+
+		// 验证token
+		boolean flag = TokenUtil.checkToken(uri, Integer.valueOf(userId), ts, sign);
+		if (!flag) {
+			return Result.failureResult("登录失效，请重新登录！");
 		}
 
 		// 判断该用户是否存在
@@ -166,6 +182,13 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/createOrder", method = RequestMethod.POST)
 	public Result<?> insertOrder(HttpServletRequest request, HttpServletResponse response) {
 
+		// token验证参数
+		//String uri = request.getRequestURI(); // 获得发出请求字符串的客户端地址
+		String uri = "";
+		String ts = request.getParameter(TokenUtil.TS);
+		String sign = request.getParameter(TokenUtil.SIGN);
+
+		// 订单参数
 		String goods = request.getParameter("cart") == null ? "" : request.getParameter("cart");
 		String premium = request.getParameter("premium") == null ? "" : request.getParameter("premium");
 		String userId = getString("userId") == null ? "" : request.getParameter("userId");
@@ -177,6 +200,12 @@ public class OrderController extends BaseController {
 		if (userId == "" || goods == "" || addressId == "" || orderType == "" || StringUtils.isBlank(orderId)) {
 
 			return Result.successResult("获取orderId,userId、addressId、orderType、cart参数为空！", new JSONArray());
+		}
+
+		// 验证token
+		boolean flag = TokenUtil.checkToken(uri, Integer.valueOf(userId), ts, sign);
+		if (!flag) {
+			return Result.failureResult("登录失效，请重新登录！");
 		}
 
 		// 判断该用户是否存在

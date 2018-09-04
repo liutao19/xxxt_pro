@@ -23,6 +23,7 @@ public class CTGoodsDo implements Serializable {
 	  private Long brandId ;
 	  private Long shopId ;
 	  private BigDecimal marketPrice ;
+	  //商品的价格
 	  private BigDecimal shopPrice ;
 	  private Long goodsStock ;
 	  private Long saleCount ;
@@ -44,6 +45,7 @@ public class CTGoodsDo implements Serializable {
 	  private Long cid3 ;
 	  private Long shopCatId1 ;
 	  private Long shopCatId2 ;
+	  // 商品的详情
 	  private String goodsDesc ;
 	  private Integer isShopRecomm ;
 	  private Integer isIndexRecomm ;
@@ -51,11 +53,13 @@ public class CTGoodsDo implements Serializable {
 	  private Integer isInnerRecomm ;
 	  //商品状态 0为上架 1 为未上架
 	  private Integer status ;
+	  //商品上架时间
 	  private Date saleTime ;
 	  private Long attrCatId ;
 	  private String goodsKeywords ;
 	  private Integer goodsFlag ;
 	  private String statusRemarks ;
+	  //商品创建时间
 	  private Date createTime ;
 	  
 	  

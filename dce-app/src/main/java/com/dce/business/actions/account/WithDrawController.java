@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.Assert;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.token.TokenUtil;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.account.IPayService;
 import com.dce.business.service.trade.IWithdrawService;
@@ -37,9 +39,20 @@ public class WithDrawController extends BaseController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "/withdraws", method = RequestMethod.POST)
-	public Result<?> withdraw() {
+	@RequestMapping(value = "/withdraws", method = RequestMethod.POST )
+	public Result<?> withdraw(HttpServletRequest request) {
+		
+		String uri = "";
+		String ts = request.getParameter(TokenUtil.TS);
+		String sign = request.getParameter(TokenUtil.SIGN);
 		Integer userId = getUserId();
+		// 验证token
+		boolean flag = TokenUtil.checkToken(uri,userId, ts, sign);
+		if(!flag){
+			return Result.failureResult("登录失效，请重新登录！");
+		};
+		
+		
 		String password = getString("password");
 		String qty = getString("qty");
 		String type = getString("type");

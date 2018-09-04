@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.dce.business.actions.common.BaseController;
 import com.dce.business.common.alipay.util.AlipayConfig;
 import com.dce.business.common.result.Result;
+import com.dce.business.common.token.TokenUtil;
 import com.dce.business.common.util.DateUtil;
 import com.dce.business.common.wxPay.util.XMLUtil;
 import com.dce.business.dao.account.IUserAccountDetailDao;
@@ -75,7 +76,12 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/orderInquiry", method = RequestMethod.POST)
 	public Result<?> getOrder() {
+		
 		Integer userId = getUserId();
+		// 获取前端传过来的sign
+		String sign = getString("sign");
+		logger.debug("获取前端传过来的sign：" + sign);
+		//TokenUtil.checkToken(uri, userId, ts, sign)
 
 		// 判断该用户是否存在
 		UserDo user = userService.getUser(Integer.valueOf(userId));
@@ -259,10 +265,10 @@ public class OrderController extends BaseController {
 			out.print(ret);
 			out.flush();
 			out.close();
-			System.out.println("支付宝异步通知返回："+ret);
-			logger.debug("==========最终返回给支付宝的验签结果=========="+ret);
-			
-			//return ret;
+			System.out.println("支付宝异步通知返回：" + ret);
+			logger.debug("==========最终返回给支付宝的验签结果==========" + ret);
+
+			// return ret;
 		}
 	}
 

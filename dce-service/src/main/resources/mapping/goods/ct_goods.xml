@@ -444,6 +444,12 @@
 			<if test="warnStock != null">
 				warnStock = #{warnStock},
 			</if>
+			<if test="goodsDesc != null">
+				goodsDesc = #{goodsDesc},
+			</if>
+			<if test="statusRemarks != null">
+				statusRemarks = #{statusRemarks},
+			</if>
 		</set>
 		where goodsId = #{goodsId}
 	</update>
@@ -478,7 +484,7 @@
 		status,
 		createTime,
 		goodsimg
-		from ct_goods where status=1 limit #{offset},#{rows}
+		from ct_goods where status=1 and statusRemarks=1 limit #{offset},#{rows}
 
 	</select>
 

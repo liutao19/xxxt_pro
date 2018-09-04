@@ -58,8 +58,6 @@ public class GoodsController extends BaseController {
 			return Result.failureResult("当前用户已被锁定,不允许登录!");
 		}
 
-		
-		
 		 String pageNum = getString("pageNum");  //当前页码
 		 String rows = getString("rows");   //每页显示记录数
 		 

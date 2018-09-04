@@ -58,7 +58,7 @@ public class CTGoodsDo implements Serializable {
 	  private Long attrCatId ;
 	  private String goodsKeywords ;
 	  private Integer goodsFlag ;
-	  private String statusRemarks ;
+	  private String statusRemarks ; //商品状态：0为删除1为未删除（逻辑删除）
 	  //商品创建时间
 	  private Date createTime ;
 	  

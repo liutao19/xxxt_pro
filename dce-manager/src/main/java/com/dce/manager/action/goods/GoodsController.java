@@ -93,7 +93,7 @@ public class GoodsController extends BaseAction {
 				param.put("endDate", endDate);
 				model.addAttribute("endDate", endDate);
 			}
-
+			param.put("statusRemarks", 1);
 			page = goodsService.getGoodsPage(param, page);
 			/*
 			 * List<CommonComboxConstants> statusList =
@@ -132,18 +132,28 @@ public class GoodsController extends BaseAction {
 	}
 
 	/**
-	 * 删除
+	 * 逻辑删除
 	 */
 	@RequestMapping("/deleteGoodsById")
 	public void deleteGoodsById(String id, HttpServletRequest request, HttpServletResponse response) {
 		logger.info("----deleteGoodsById----");
 		try {
 			if (StringUtils.isBlank(id) || !id.matches("\\d+")) {
-				logger.info(id);
+				logger.info("从前端获取的商品id=====》》》"+id);
 				ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
 				return;
 			}
-			int ret = goodsService.deleteGoodsService(Integer.valueOf(id));
+			//先查询出商品
+			CTGoodsDo goods = goodsService.selectById(Long.valueOf(id));
+			if(goods == null){
+				logger.debug("查询出的商品=====》》》"+goods);
+				ResponseUtils.renderJson(response, null, "{\"ret\":-1}");
+				return;
+			}
+			//更新商品状态，做逻辑删除
+			goods.setStatusRemarks("0");
+			int ret = goodsService.updateGoodsById(goods);
+			//int ret = goodsService.deleteGoodsService(Integer.valueOf(id));
 			ResponseUtils.renderJson(response, null, "{\"ret\":" + ret + "}");
 		} catch (Exception e) {
 			logger.error("删除商品异常", e);

@@ -50,8 +50,8 @@ public class CTGoodsServiceImpl implements ICTGoodsService {
 	}
 
 	@Override
-	public CTGoodsDo selectById(Long id) {
-		return ctGoodsDao.selectByPrimaryKey(id);
+	public CTGoodsDo selectById(Long goodsId) {
+		return ctGoodsDao.selectByPrimaryKey(goodsId);
 	}
 
 

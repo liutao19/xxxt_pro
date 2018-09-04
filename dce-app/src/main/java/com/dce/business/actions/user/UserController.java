@@ -101,9 +101,6 @@ public class UserController extends BaseController {
 		// String mobile = getString("mobile");
 		String userName = getString("userName");
 		String password = getString("password");
-		//获取前端传过来的sign
-		String sign = getString("sign");
-		logger.debug("获取前端传过来的sign："+sign);
 
 		Assert.hasText(userName, "请输入手机号");
 		Assert.hasText(password, "请输入密码");

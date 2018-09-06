@@ -709,7 +709,7 @@ public class OrderServiceImpl implements IOrderService {
 			// 【必填】商户订单号
 			model.setOutTradeNo(order.getOrdercode());
 			// 【必填】支付金额
-			// model.setTotalAmount(order.getTotalprice().toString());
+			//model.setTotalAmount(order.getTotalprice().toString());
 			model.setTotalAmount("0.01");
 			// 【必填】销售产品码，商家和支付宝签约的产品码，为固定值QUICK_MSECURITY_PAY
 			model.setProductCode("QUICK_MSECURITY_PAY");

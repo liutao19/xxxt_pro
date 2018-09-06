@@ -207,7 +207,7 @@ function save_Path() {
 
 	var pathid = $("#editPathForm #pathid").val();
 	var linename = $("#editPathForm #linename").val();
-	var state = $("#editPathForm #state").val();
+	var state = $("#editPathForm #state").datebox('getValue');
 	var remake = $("#editPathForm #remake").val();
 	if (linename == null || linename == "") {
 		$.messager.alert("错误", "请填写路线名称");

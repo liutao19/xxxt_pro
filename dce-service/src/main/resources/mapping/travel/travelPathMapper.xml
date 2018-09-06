@@ -271,6 +271,6 @@
 				AND remake like #{remake}
 			</if>
 		</trim>
-
+		order by pathid desc
 	</select>
 </mapper>

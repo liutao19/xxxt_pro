@@ -12,8 +12,7 @@
 <body>
 
 	<!-- 内容 -->
-	<form id="editPathForm" method="post"
-		action="<c:url value='path/savePath.html'/>">
+	<form id="editPathForm" method="post">
 		<div>
 
 			<table width="100%" border="0" align="center" cellpadding="3">
@@ -29,7 +28,7 @@
 						<!--  <input type="text" id="state" name="state" value="${path.state}"/> -->
 						<select id="state" class="easyui-combobox" name="state"
 						style="width: 150px;">
-								<option value="0" <c:if test="${path.state==0}">selected="selected"</c:if> >已开发</option>
+								<option value="0" <c:if test="${path.state==0}">selected="selected"</c:if>>已开发</option>
 								<option value="1" <c:if test="${path.state==1}">selected="selected"</c:if>>马上推出</option>
 								<option value="2" <c:if test="${path.state==2}">selected="selected"</c:if>>正在开发</option>
 						
@@ -46,7 +45,7 @@
 		</div>
 	</form>
 	<script type="text/javascript">
-		function path_submit() {
+		 function path_submit() {
 			$.ajax({
 				url : "<c:url value='/path/savePath.html'/>",
 				data : $("#editPathForm").serialize(),
@@ -64,7 +63,7 @@
 					}
 				}
 			});
-		}
+		} 
 	</script>
 
 </body>

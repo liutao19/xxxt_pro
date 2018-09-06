@@ -303,102 +303,97 @@ public class UserController extends BaseAction {
 	 */
 	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public void saveEdit(UserDo userDo, BindingResult bindingResult, HttpServletRequest request,
-			HttpServletResponse response) {
+	public void saveEdit(HttpServletResponse response) {
+		// Result<?> result = null;
+		// result = userService.update(userDo);
+		// logger.info("用户修改结果:" + JSON.toJSONString(result));
+		// outPrint(response, JSON.toJSONString(Result.successResult("用户修改成功",
+		// result)));
+		// return;
 
-		Result<?> result = null;
+		String userId = getString("userId");// 用户id
+		String userName = getString("userName");// 用户名
+		String trueName = getString("trueName");// 用户真实姓名
+		String mobile = getString("mobile");// 用户手机号
+		String userPassword = getString("userPassword");// 登录密码
+		String twoPassword = getString("twoPassword");// 支付密码
+		String userLevel = getString("userLevel");// 用户等级
+		String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
+		String sex = getString("sex"); // 性别
+		String idnumber = getString("idnumber");// 身份证号
+		String banknumber = getString("banknumber");// 银行卡号
+		String banktype = getString("banktype");// 银行卡的开户行
 
-		result = userService.update(userDo);
-		logger.info("用户修改结果:" + JSON.toJSONString(result));
-		outPrint(response, JSON.toJSONString(Result.successResult("用户修改成功", result)));
-		return;
+		logger.info("修改用户信息:userId=" + userId);
+		logger.info("修改用户信息:userName=" + userName);
+		logger.info("修改用户信息:trueName=" + trueName);
+		logger.info("修改用户信息:mobile=" + mobile);
+		logger.info("修改用户信息:userPassword=" + userPassword);
+		logger.info("修改用户信息:twoPassword=" + twoPassword);
+		logger.info("修改用户信息:userLevel=" + userLevel);
+		logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
+		logger.info("修改用户信息:sex=" + sex);
+		logger.info("修改用户信息:idunmber=" + idnumber);
+		logger.info("修改用户信息:banknumber=" + banknumber);
+		logger.info("修改用户信息:banktype=" + banktype);
 
+		UserDo user = new UserDo();
+		if (StringUtils.isBlank(userId)) {
+			outPrint(response, JSON.toJSONString(Result.failureResult("请选择要修改的用户!")));
+			return;
+		}
+		// 新增或编辑重复的用户名
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("userName", userName);
+		List<UserDo> list = userService.selectUser(params);
+		if (CollectionUtils.isEmpty(list)) {
+			outPrint(response, JSON.toJSONString(Result.failureResult("用户不存在!")));
+			return;
+		}
+		// 等级
+		if (StringUtils.isNotBlank(userLevel)) {
+			user.setUserLevel(Byte.parseByte(userLevel));
+			// 激活状态
+			if (Integer.parseInt(userLevel) >= 1) {
+				user.setIsActivated(1);
+			}
+		}
+		// 性别
+		if (StringUtils.isNotBlank(sex)) {
+			user.setSex(Integer.valueOf(sex));
+		}
+		user.setTrueName(trueName);// 姓名
+		user.setMobile(mobile); // 手机号
+		user.setUserPassword(DataEncrypt.encrypt(userPassword));// 登录密码
+		user.setTwoPassword(DataEncrypt.encrypt(twoPassword));// 支付密码
+		user.setRefereeUserMobile(refereeUserMobile);// 推荐人
+		user.setIdnumber(idnumber);// 身份证
+		user.setBanknumber(banknumber);// 银行卡号
+		user.setBanktype(banktype);// 开户行
+
+		// 认证状态
+		if (trueName != null || mobile != null || idnumber != null || banknumber != null || banktype != null) {
+			user.setCertification(1);
+		}
+
+		try {
+			user.setId(Integer.parseInt(userId));
+			Result<?> flag = Result.failureResult("信息修改失败!");
+			if (StringUtils.isNotBlank(userId)) {
+				flag = userService.update(user);
+			} else {
+			}
+			logger.info("修改结果:" + JSON.toJSONString(flag));
+
+			outPrint(response, JSON.toJSONString(flag));
+		} catch (BusinessException e) {
+			logger.info("充值报错BusinessException:", e);
+			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+		} catch (Exception e) {
+			logger.info("充值报错Exception:", e);
+			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
+		}
 	}
-
-	// String userId = getString("userId");// 用户id
-	// String userName = getString("userName");// 用户名
-	// String trueName = getString("trueName");// 用户真实姓名
-	// String mobile = getString("mobile");// 用户手机号
-	// String userPassword = getString("userPassword");// 登录密码
-	// String twoPassword = getString("twoPassword");// 支付密码
-	// String userLevel = getString("userLevel");// 用户等级
-	// String refereeUserMobile = getString("refereeUserMobile");// 用户的推荐人
-	// String sex = getString("sex"); // 性别
-	// String idnumber = getString("idnumber");// 身份证号
-	// String banknumber = getString("banknumber");// 银行卡号
-	// String banktype = getString("banktype");// 银行卡的开户行
-	//
-	// logger.info("修改用户信息:userId=" + userId);
-	// logger.info("修改用户信息:userName=" + userName);
-	// logger.info("修改用户信息:trueName=" + trueName);
-	// logger.info("修改用户信息:mobile=" + mobile);
-	// logger.info("修改用户信息:userPassword=" + userPassword);
-	// logger.info("修改用户信息:twoPassword=" + twoPassword);
-	// logger.info("修改用户信息:userLevel=" + userLevel);
-	// logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
-	// logger.info("修改用户信息:sex=" + sex);
-	// logger.info("修改用户信息:idunmber=" + idnumber);
-	// logger.info("修改用户信息:banknumber=" + banknumber);
-	// logger.info("修改用户信息:banktype=" + banktype);
-	//
-	// UserDo user = new UserDo();
-	// if (StringUtils.isBlank(userId)) {
-	// outPrint(response,
-	// JSON.toJSONString(Result.failureResult("请选择要修改的用户!")));
-	// return;
-	// }
-	// // 新增或编辑重复的用户名
-	// Map<String, Object> params = new HashMap<String, Object>();
-	// params.put("userName", userName);
-	// List<UserDo> list = userService.selectUser(params);
-	// if (CollectionUtils.isEmpty(list)) {
-	// outPrint(response, JSON.toJSONString(Result.failureResult("用户不存在!")));
-	// return;
-	// }
-	// // 等级
-	// if (StringUtils.isNotBlank(userLevel)) {
-	// user.setUserLevel(Byte.parseByte(userLevel));
-	// // 激活状态
-	// if (Integer.parseInt(userLevel) >= 1) {
-	// user.setIsActivated(1);
-	// }
-	// }
-	// // 性别
-	// if (StringUtils.isNotBlank(sex)) {
-	// user.setSex(Integer.valueOf(sex));
-	// }
-	// user.setTrueName(trueName);// 姓名
-	// user.setMobile(mobile); // 手机号
-	// user.setUserPassword(DataEncrypt.encrypt(userPassword));// 登录密码
-	// user.setTwoPassword(DataEncrypt.encrypt(twoPassword));// 支付密码
-	// user.setRefereeUserMobile(refereeUserMobile);// 推荐人
-	// user.setIdnumber(idnumber);// 身份证
-	// user.setBanknumber(banknumber);// 银行卡号
-	// user.setBanktype(banktype);// 开户行
-	//
-	// // 认证状态
-	// if (trueName != null || mobile != null || idnumber != null || banknumber
-	// != null || banktype != null) {
-	// user.setCertification(1);
-	// }
-	//
-	// try {
-	// user.setId(Integer.parseInt(userId));
-	// Result<?> flag = Result.failureResult("信息修改失败!");
-	// if (StringUtils.isNotBlank(userId)) {
-	// flag = userService.update(user);
-	// } else {
-	// }
-	// logger.info("修改结果:" + JSON.toJSONString(flag));
-	//
-	// outPrint(response, JSON.toJSONString(flag));
-	// } catch (BusinessException e) {
-	// logger.info("充值报错BusinessException:", e);
-	// outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
-	// } catch (Exception e) {
-	// logger.info("充值报错Exception:", e);
-	// outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
-	// }
 
 	/**
 	 * 认证（活动）

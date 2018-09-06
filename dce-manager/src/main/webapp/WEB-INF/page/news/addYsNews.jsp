@@ -30,7 +30,7 @@
 							<label for="name">新闻地址</label>
 						</td>	
 						<td>
-								<input type="text" id="content" name="content"/>												
+								<input type="text" id="content" name="content" value="${ysnews.content}"/>												
 						</td>						   
 					</tr>
 					

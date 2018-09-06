@@ -513,7 +513,8 @@ public class PayServiceImpl implements IPayService {
 		request.setBizContent("{" + "\"out_biz_no\":" + orderId + "," + 
 		"\"payee_type\":\"ALIPAY_LOGONID\","+ 
 		"\"payee_account\":"+bankNo+"," + 
-		"\"amount\":\" 0.1\"," +  
+		/*"\"amount\":0.1," +  */
+		"\"amount\":"+qty+","+
 		"\"payee_real_name\":\""+trueName+"\"," +
 		"\"remark\":\"提现\""
 		+ "}");

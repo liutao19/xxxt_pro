@@ -773,22 +773,6 @@ public class UserServiceImpl implements IUserService {
 			ref = refUserLst.get(0);
 		}
 
-		// 维护推荐人关系
-		if (ref != null) {
-			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
-			userDo.setParentid(ref.getId());// 获取上级id
-		}
-
-		if (ref != null) {
-			// 维护父节点关系
-			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
-			// 维护推荐人关系
-			maintainUserReferee(userDo.getId(), ref.getId());
-		}
-
-		// 维护賬戶
-		maintainUserAccount(userDo.getId());
-
 		// 新增的会员信息
 		logger.info("用户信息:userName=" + userDo.getUserName());
 		logger.info("用户信息:trueName=" + userDo.getTrueName());
@@ -803,9 +787,23 @@ public class UserServiceImpl implements IUserService {
 		logger.info("用户信息:idunmber=" + userDo.getIdnumber());
 		logger.info("用户信息:banknumber=" + userDo.getBanknumber());
 		logger.info("用户信息:banktype=" + userDo.getBanktype());
-
 		// 新增会员
 		int result = userDao.insertSelective(userDo);
+
+		// 维护推荐人关系
+		if (ref != null) {
+			userDo.setRefereeid(ref.getId());// 获取用户推荐人id
+			userDo.setParentid(ref.getId());// 获取上级id
+		}
+		if (ref != null) {
+			// 维护父节点关系
+			maintainUserParent(userDo.getId(), ref.getId(), userDo.getPos());
+			// 维护推荐人关系
+			maintainUserReferee(userDo.getId(), ref.getId());
+		}
+
+		// 维护賬戶
+		maintainUserAccount(userDo.getId());
 
 		return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
 	}
@@ -840,9 +838,15 @@ public class UserServiceImpl implements IUserService {
 		logger.info("修改用户信息:banktype=" + userDo.getBanktype());
 
 		UserDo user = new UserDo();
+
+		// // 获取修改用户的ID
+		// userDo.setId(userDo.getId());
+		// UserDo userId = id(userDo.getId());
+		// 获取修改用户的ID
 		if (userDo.getId() != 0 && userDo.getId() != null) {
 			return Result.failureResult("请选择要修改的用户!");
 		}
+
 		// 等级
 		if (userDo.getUserLevel() != 0 && userDo.getId() != null) {
 			user.setUserLevel(userDo.getUserLevel());
@@ -864,7 +868,7 @@ public class UserServiceImpl implements IUserService {
 		// 推荐用户：查出所有用户的手机号，判断用户的填写的推荐人是否存在
 		if (StringUtils.isNotBlank(userDo.getRefereeUserMobile())) {
 			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("mobile", userDo.getRefereeUserMobile());
+			params.put("refereeUserMobile", userDo.getRefereeUserMobile());
 
 			List<UserDo> refUserLst = this.selectMobile(params);
 			if (refUserLst == null || refUserLst.size() < 1) {
@@ -889,7 +893,7 @@ public class UserServiceImpl implements IUserService {
 		Result<?> flag = Result.failureResult("信息修改失败!");
 		if (userDo.getId() != 0 && userDo.getId() != null) {
 			int result = userDao.updateByPrimaryKeySelective(userDo);
-			return result > 0 ? Result.successResult("service：新增成功!") : Result.failureResult("service：新增失败");
+			return result > 0 ? Result.successResult("service：修改成功!") : Result.failureResult("service：修改失败");
 		}
 		return flag;
 	}

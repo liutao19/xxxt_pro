@@ -416,6 +416,11 @@ public class UserController extends BaseAction {
 		return "/user/activitiUser";
 	}
 
+	/**
+	 * 认证
+	 * 
+	 * @param response
+	 */
 	@RequestMapping(value = "/saveActivity", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public void saveActivity(HttpServletResponse response) {
@@ -427,7 +432,7 @@ public class UserController extends BaseAction {
 		String idnumber = getString("idnumber");// 身份证号
 		String banknumber = getString("banknumber");// 银行卡号
 		String banktype = getString("banktype");// 银行卡的开户行
-		String userLevel = getString("userLevel");
+		String userLevel = getString("userLevel");// 等级
 
 		logger.info("认证用户信息:userId=" + userId);
 		logger.info("修改用户信息:trueName=" + trueName);

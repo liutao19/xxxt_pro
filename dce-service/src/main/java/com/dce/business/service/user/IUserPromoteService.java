@@ -1,9 +1,3 @@
-/*
- * Powered By  huangzl QQ: 272950754
- * Web Site: http://www.hehenian.com
- * Since 2008 - 2018
- */
-
 package com.dce.business.service.user;
 
 import java.util.List;

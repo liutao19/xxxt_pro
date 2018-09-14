@@ -59,6 +59,7 @@
 			</if>
 		</trim>
 	</insert>
+	<!-- 修改用户推荐人关系 -->
 	<update id="updateByPrimaryKeySelective" parameterType="com.dce.business.entity.user.UserRefereeDo">
 		update ct_user_referee
 		<set>

@@ -8,11 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,8 +33,6 @@ import com.dce.business.common.util.ExeclTools;
 import com.dce.business.entity.page.PageDo;
 import com.dce.business.entity.page.PageDoUtil;
 import com.dce.business.entity.page.Pagination;
-import com.dce.business.entity.travel.TravelDo;
-import com.dce.business.entity.travel.TravelDoExample;
 import com.dce.business.entity.user.UserDo;
 import com.dce.business.service.user.IUserService;
 import com.dce.manager.action.BaseAction;
@@ -304,13 +299,6 @@ public class UserController extends BaseAction {
 	@RequestMapping(value = "/saveEdit", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public void saveEdit(HttpServletResponse response) {
-		// Result<?> result = null;
-		// result = userService.update(userDo);
-		// logger.info("用户修改结果:" + JSON.toJSONString(result));
-		// outPrint(response, JSON.toJSONString(Result.successResult("用户修改成功",
-		// result)));
-		// return;
-
 		String userId = getString("userId");// 用户id
 		String userName = getString("userName");// 用户名
 		String trueName = getString("trueName");// 用户真实姓名
@@ -331,7 +319,6 @@ public class UserController extends BaseAction {
 		logger.info("修改用户信息:userPassword=" + userPassword);
 		logger.info("修改用户信息:twoPassword=" + twoPassword);
 		logger.info("修改用户信息:userLevel=" + userLevel);
-		logger.info("修改用户信息:refereeUserMobile=" + refereeUserMobile);
 		logger.info("修改用户信息:sex=" + sex);
 		logger.info("修改用户信息:idunmber=" + idnumber);
 		logger.info("修改用户信息:banknumber=" + banknumber);
@@ -362,11 +349,29 @@ public class UserController extends BaseAction {
 		if (StringUtils.isNotBlank(sex)) {
 			user.setSex(Integer.valueOf(sex));
 		}
+		
+		// 推荐人关系
+		UserDo ref = null;
+		if (StringUtils.isNotBlank(user.getRefereeUserMobile())) {
+
+			Map<String, Object> referrer = new HashMap<String, Object>();
+
+			referrer.put("refereeUserMobile", user.getRefereeUserMobile());
+
+			List<UserDo> refUserLst = this.userService.selectMobile(referrer);
+			if (refUserLst == null || refUserLst.size() < 1) {
+				outPrint(response, JSON.toJSONString(Result.failureResult("推荐人不存在！")));
+			}
+			
+			
+			ref = refUserLst.get(0);
+		}
+
 		user.setTrueName(trueName);// 姓名
 		user.setMobile(mobile); // 手机号
 		user.setUserPassword(DataEncrypt.encrypt(userPassword));// 登录密码
 		user.setTwoPassword(DataEncrypt.encrypt(twoPassword));// 支付密码
-		user.setRefereeUserMobile(refereeUserMobile);// 推荐人
+		// user.setRefereeUserMobile(refereeUserMobile);// 推荐人
 		user.setIdnumber(idnumber);// 身份证
 		user.setBanknumber(banknumber);// 银行卡号
 		user.setBanktype(banktype);// 开户行
@@ -382,6 +387,9 @@ public class UserController extends BaseAction {
 			if (StringUtils.isNotBlank(userId)) {
 				flag = userService.update(user);
 			} else {
+				outPrint(response, JSON.toJSONString(Result.failureResult("用户不存在！")));
+				// Result.failureResult("用户不存在！");
+				// return ;
 			}
 			logger.info("修改结果:" + JSON.toJSONString(flag));
 
@@ -393,6 +401,17 @@ public class UserController extends BaseAction {
 			logger.info("充值报错Exception:", e);
 			outPrint(response, JSON.toJSONString(Result.failureResult("信息修改失败!")));
 		}
+	}
+
+	/**
+	 * 推荐关系
+	 * 
+	 * @param response
+	 */
+	@RequestMapping(value = "/", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
+	public void updateUserReferee(Integer userId, Integer refereeId, BindingResult bindingResult) {
+
 	}
 
 	/**

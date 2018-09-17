@@ -252,7 +252,6 @@ function save_YsNotice() {
 	var content = document.getElementById("content").value;
 	var topNotice = $('#topNotice').combobox('getValue');
 	var remark = document.getElementById("remark").value;
-	var file = document.getElementById("image").files[0];
 	if(title == null || title == ""){
 		$.messager.alert("错误", "请填写公告标题");
 		return;
@@ -268,7 +267,6 @@ function save_YsNotice() {
 	
 	
 	// 将数据添加至表单数据对象中
-	obj.append("file", file);
 	obj.append("id",id);
 	obj.append("title", title);
 	obj.append("content", content);
@@ -287,7 +285,7 @@ function save_YsNotice() {
 		success : function(data) {
 			if (data.code === "0") {
 				$("#editYsNoticeDiv").dialog("close");
-				$('tt_YsNotice').datagrid('reload');
+				$('#tt_YsNotice').datagrid('reload');
 				$.messager.alert("提示", "操作成功", "info");
 			} else {
 				$.messager.alert("提示", "操作失败", "error");
@@ -297,7 +295,7 @@ function save_YsNotice() {
 }
 
 function reloadDataGrid() {
-	$("tt_YsNotice").datagrid("reload");
+	$("#tt_YsNotice").datagrid("reload");
 }
 
 /* ##########################公用方法##begin############################ */

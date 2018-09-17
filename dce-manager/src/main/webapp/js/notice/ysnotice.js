@@ -195,7 +195,7 @@ function deleteNotice(id) {
 				success : function(data) {
 					if (data.ret == 1) {
 						$.messager.alert("消息", "删除成功");
-						$('#tableGrid').datagrid('reload');
+						$('#tt_YsNotice').datagrid('reload');
 					} else {
 						$.messager.alert("消息", "删除失败，请稍后再试");
 					}

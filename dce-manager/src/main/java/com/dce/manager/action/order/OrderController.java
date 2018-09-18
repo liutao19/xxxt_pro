@@ -124,14 +124,18 @@ public class OrderController extends BaseAction {
 			
 			//所有订单总金额
 			List<Order> listorder = orderService.sumAmount();
-			if(!CollectionUtils.isEmpty(listorder) && orderList != null){
+			if(listorder != null && !CollectionUtils.isEmpty(listorder)){
 				Map<String,Object> sum = new HashMap<String,Object>();
 				sum.put("ordercode", "订单总金额");
 				for(Order order : listorder){
-					if(order.getTotalprice() == null){
-						sum.put("totalprice", BigDecimal.ZERO);
+					if(order != null){
+						if(null != order.getTotalprice()){
+							sum.put("totalprice", order.getTotalprice());
+						}else{
+							sum.put("totalprice", BigDecimal.ZERO);
+						}
 					}else{
-						sum.put("totalprice", order.getTotalprice());
+						sum.put("totalprice", BigDecimal.ZERO);
 					}
 				}
 				orderList.getModelList().add(sum);

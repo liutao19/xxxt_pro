@@ -147,11 +147,11 @@ function save_OrderSendout(){
 	});
 }
 
-
+*/
 function reloadDataGrid()
 {
 	$("tt_OrderSendout").datagrid("reload");
-}*/
+}
 
 
 

@@ -515,7 +515,7 @@ public class PayServiceImpl implements IPayService {
 		"\"payee_account\":"+bankNo+"," + 
 		/*"\"amount\":0.1," +  */
 		"\"amount\":"+qty+","+
-		"\"payee_real_name\":\""+trueName+"\"," +
+		/*"\"payee_real_name\":\""+trueName+"\"," +*/
 		"\"remark\":\"提现\""
 		+ "}");
 		AlipayFundTransToaccountTransferResponse response = null;

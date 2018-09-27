@@ -200,6 +200,27 @@ public class WithdrawServiceImpl implements IWithdrawService {
 
 		return result;
 	}
-	
+	 /**
+     * @param auditResult 2 : 同意支付; 3:拒绝
+     */
+    @Override
+    public Result<?> auditWithdrawById_bank(String auditResult, Integer withdrawId) {
+    	
+    	Result<?> result = Result.successResult("审核成功!") ;
+    	
+        WithdrawalsDo withdrawDo = withdrawDao.selectByPrimaryKey(withdrawId);
+        
+        WithdrawalsDo withdraw = new WithdrawalsDo();
+        withdraw.setId(withdrawId);
+        withdraw.setProcessStatus(auditResult);
+        withdraw.setConfirmDate(new Date().getTime()/1000);
+        result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo(),withdrawDo.getMoneyType());
+        if(result.isSuccess()){
+           result.setMsg("提现成功！");
+        }
+
+        return result;
+    }
+
 	
 }

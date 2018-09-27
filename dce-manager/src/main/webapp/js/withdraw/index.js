@@ -63,7 +63,7 @@ $(function(){
 	 					formatter:function(value,row,index){
 	 						if(row.type=='2'){
 	 							if(row.process_status=="1"){
-	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+2+'\');">通过</a> |' +
+	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw_bank('+row.id+',\''+2+'\');">通过</a> |' +
 	 								'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 							}
 	 						}else{
@@ -229,6 +229,33 @@ function auditWithdraw(withdrawId, optType){
     }); 
 	
 }
+
+function auditWithdraw_bank(withdrawId, optType){
+	var msg = optType=='2'?'提现通过':optType=='3'?'提现拒绝':'重做'; 
+	$.messager.confirm("确认", "确认" + msg + "？", function (r) {  
+        if (r) {  
+        	$.ajax({
+        		url:basePath+"/withdraw/auditWithdraw_bank.html",
+        		type:"post",
+        		dataType: 'json',
+        		data:{
+        			"withdrawId":withdrawId,
+        			"auditResult":optType
+        		},
+        		success:function(ret){
+        			if(ret.code==0){
+        				$.messager.alert("成功",msg + "成功");
+        				reloadDataGrid();
+        			}else{
+        				$.messager.alert("失败",ret.msg);
+        			}
+        		}
+        	});
+        }  
+    }); 
+	
+}
+
 
 
 /**

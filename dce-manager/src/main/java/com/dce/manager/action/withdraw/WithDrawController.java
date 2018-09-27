@@ -118,6 +118,24 @@ public class WithDrawController extends BaseAction {
         outPrint(response, JSON.toJSONString(result));
     }
     
+    
+    @RequestMapping(value = "/auditWithdraw_bank", method = { RequestMethod.GET, RequestMethod.POST })
+    public void auditWithdraw_bank(HttpServletResponse response) {
+        String withdrawId = getString("withdrawId");
+        String auditResult = getString("auditResult");
+        
+        Result<?> result = Result.successResult("操作成功", withdrawId);
+        try {
+        	result = withdrawService.auditWithdrawById(auditResult, Integer.valueOf(withdrawId));
+        } catch (BusinessException e) {
+            logger.error("提现错误:", e);
+            result = Result.failureResult(e.getMessage());
+        } catch (Exception e) {
+            logger.error("提现错误:", e);
+            result = Result.failureResult("提现错误");
+        }
+        outPrint(response, JSON.toJSONString(result));
+    }
     /**
      * 查看转账详情
      * @return 

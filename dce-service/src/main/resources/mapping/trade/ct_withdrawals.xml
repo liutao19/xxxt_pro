@@ -227,7 +227,7 @@
 				remark = #{remark,jdbcType=VARCHAR}
 			</if>
 			<if test="processStatus != null">  
-               AND a.process_status=#{processStatus}
+                process_status=#{processStatus}
 			</if>
 		</set>
 		where id = #{id,jdbcType=INTEGER}

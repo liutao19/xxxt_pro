@@ -210,6 +210,8 @@ public class WithdrawServiceImpl implements IWithdrawService {
     	Result<?> result = Result.successResult("审核成功!") ;
     	WithdrawalsDo withdraw = new WithdrawalsDo();
         withdraw.setWithdraw_status("1");
+        withdraw.setProcessStatus("2");
+
 		withdraw.setPaymentDate((new Date()).getTime() / 1000);
 		withdraw.setId(withdrawId);
 		int i=withdrawDao.updateWithDrawStatus(withdraw);

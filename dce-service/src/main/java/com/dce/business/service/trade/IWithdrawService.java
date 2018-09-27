@@ -27,9 +27,8 @@ public interface IWithdrawService {
      */
     Result<?> auditWithdrawById(String auditResult,Integer withdrawId);
     
-    Result<?> auditWithdrawById_bank(String auditResult,Integer withdrawId);
-    
-  
+    Result<?> auditWithdrawById_bank(Integer withdrawId);
+
  
     
     int selectWithdrawCount(Map<String,Object> param);

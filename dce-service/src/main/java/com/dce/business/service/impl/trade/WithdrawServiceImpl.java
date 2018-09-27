@@ -19,6 +19,7 @@ import com.dce.business.common.exception.BusinessException;
 import com.dce.business.common.pay.util.Trans;
 import com.dce.business.common.result.Result;
 import com.dce.business.common.util.Constants;
+import com.dce.business.common.util.DataEncrypt;
 import com.dce.business.dao.etherenum.IEthereumTransInfoDao;
 import com.dce.business.dao.trade.IWithdrawalsDao;
 import com.dce.business.dao.user.IUserDao;
@@ -200,27 +201,25 @@ public class WithdrawServiceImpl implements IWithdrawService {
 
 		return result;
 	}
-	 /**
-     * @param auditResult 2 : 同意支付; 3:拒绝
-     */
-    @Override
-    public Result<?> auditWithdrawById_bank(String auditResult, Integer withdrawId) {
-    	
+
+	@Override
+	public Result<?> auditWithdrawById_bank(Integer withdrawId) {
+		// TODO Auto-generated method stub
+		
+
     	Result<?> result = Result.successResult("审核成功!") ;
-    	
-        WithdrawalsDo withdrawDo = withdrawDao.selectByPrimaryKey(withdrawId);
+    	WithdrawalsDo withdraw = new WithdrawalsDo();
+        withdraw.setWithdraw_status("1");
+		withdraw.setPaymentDate((new Date()).getTime() / 1000);
+		withdraw.setId(withdrawId);
+		int i=withdrawDao.updateWithDrawStatus(withdraw);
+        if(i>0){
+            result.setMsg("提现成功！");
+         }
+       
         
-        WithdrawalsDo withdraw = new WithdrawalsDo();
-        withdraw.setId(withdrawId);
-        withdraw.setProcessStatus(auditResult);
-        withdraw.setConfirmDate(new Date().getTime()/1000);
-        result = payService.withdraw(withdrawDo.getId(),withdrawDo.getUserid(), withdrawDo.getAmount(),withdrawDo.getBankNo(),withdrawDo.getMoneyType());
-        if(result.isSuccess()){
-           result.setMsg("提现成功！");
-        }
-
         return result;
-    }
-
+	}
+	
 	
 }

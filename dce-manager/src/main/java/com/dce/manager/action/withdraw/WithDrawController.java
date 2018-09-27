@@ -122,11 +122,10 @@ public class WithDrawController extends BaseAction {
     @RequestMapping(value = "/auditWithdraw_bank", method = { RequestMethod.GET, RequestMethod.POST })
     public void auditWithdraw_bank(HttpServletResponse response) {
         String withdrawId = getString("withdrawId");
-        String auditResult = getString("auditResult");
         
         Result<?> result = Result.successResult("操作成功", withdrawId);
         try {
-        	result = withdrawService.auditWithdrawById(auditResult, Integer.valueOf(withdrawId));
+        	result = withdrawService.auditWithdrawById_bank(Integer.valueOf(withdrawId));
         } catch (BusinessException e) {
             logger.error("提现错误:", e);
             result = Result.failureResult(e.getMessage());

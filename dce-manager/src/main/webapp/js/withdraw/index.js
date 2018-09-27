@@ -63,7 +63,7 @@ $(function(){
 	 					formatter:function(value,row,index){
 	 						if(row.type=='2'){
 	 							if(row.process_status=="1"){
-	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw_bank('+row.id+',\''+2+'\');">通过</a> |' +
+	 								return '<a href="javascript:void(0);"  onclick="auditWithdraw_bank('+row.id+');">通过</a> |' +
 	 								'<a href="javascript:void(0);"  onclick="auditWithdraw('+row.id+',\''+3+'\');">拒绝</a>';
 	 							}
 	 						}else{
@@ -240,7 +240,6 @@ function auditWithdraw_bank(withdrawId, optType){
         		dataType: 'json',
         		data:{
         			"withdrawId":withdrawId,
-        			"auditResult":optType
         		},
         		success:function(ret){
         			if(ret.code==0){
